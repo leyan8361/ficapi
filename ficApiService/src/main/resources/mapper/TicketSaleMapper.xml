@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fic.service.mapper.TicketSaleMapper">
+  <resultMap id="BaseResultMap" type="com.fic.service.entity.TicketSale">
+    <id column="ticket_sale_id" jdbcType="INTEGER" property="ticketSaleId" />
+    <result column="ticket_id" jdbcType="INTEGER" property="ticketId" />
+    <result column="user_id" jdbcType="INTEGER" property="userId" />
+    <result column="created_time" jdbcType="TIMESTAMP" property="createdTime" />
+    <result column="created_by" jdbcType="INTEGER" property="createdBy" />
+    <result column="updated_time" jdbcType="TIMESTAMP" property="updatedTime" />
+    <result column="updated_by" jdbcType="INTEGER" property="updatedBy" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    ticket_sale_id, ticket_id, user_id, created_time, created_by, updated_time, updated_by
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from ticket_sale
+    where ticket_sale_id = #{ticketSaleId,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from ticket_sale
+    where ticket_sale_id = #{ticketSaleId,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.fic.service.entity.TicketSale">
+    insert into ticket_sale (ticket_sale_id, ticket_id, user_id, 
+      created_time, created_by, updated_time, 
+      updated_by)
+    values (#{ticketSaleId,jdbcType=INTEGER}, #{ticketId,jdbcType=INTEGER}, #{userId,jdbcType=INTEGER}, 
+      #{createdTime,jdbcType=TIMESTAMP}, #{createdBy,jdbcType=INTEGER}, #{updatedTime,jdbcType=TIMESTAMP}, 
+      #{updatedBy,jdbcType=INTEGER})
+  </insert>
+  <insert id="insertSelective" parameterType="com.fic.service.entity.TicketSale">
+    insert into ticket_sale
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="ticketSaleId != null">
+        ticket_sale_id,
+      </if>
+      <if test="ticketId != null">
+        ticket_id,
+      </if>
+      <if test="userId != null">
+        user_id,
+      </if>
+      <if test="createdTime != null">
+        created_time,
+      </if>
+      <if test="createdBy != null">
+        created_by,
+      </if>
+      <if test="updatedTime != null">
+        updated_time,
+      </if>
+      <if test="updatedBy != null">
+        updated_by,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="ticketSaleId != null">
+        #{ticketSaleId,jdbcType=INTEGER},
+      </if>
+      <if test="ticketId != null">
+        #{ticketId,jdbcType=INTEGER},
+      </if>
+      <if test="userId != null">
+        #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="createdTime != null">
+        #{createdTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createdBy != null">
+        #{createdBy,jdbcType=INTEGER},
+      </if>
+      <if test="updatedTime != null">
+        #{updatedTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updatedBy != null">
+        #{updatedBy,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.fic.service.entity.TicketSale">
+    update ticket_sale
+    <set>
+      <if test="ticketId != null">
+        ticket_id = #{ticketId,jdbcType=INTEGER},
+      </if>
+      <if test="userId != null">
+        user_id = #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="createdTime != null">
+        created_time = #{createdTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createdBy != null">
+        created_by = #{createdBy,jdbcType=INTEGER},
+      </if>
+      <if test="updatedTime != null">
+        updated_time = #{updatedTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updatedBy != null">
+        updated_by = #{updatedBy,jdbcType=INTEGER},
+      </if>
+    </set>
+    where ticket_sale_id = #{ticketSaleId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.fic.service.entity.TicketSale">
+    update ticket_sale
+    set ticket_id = #{ticketId,jdbcType=INTEGER},
+      user_id = #{userId,jdbcType=INTEGER},
+      created_time = #{createdTime,jdbcType=TIMESTAMP},
+      created_by = #{createdBy,jdbcType=INTEGER},
+      updated_time = #{updatedTime,jdbcType=TIMESTAMP},
+      updated_by = #{updatedBy,jdbcType=INTEGER}
+    where ticket_sale_id = #{ticketSaleId,jdbcType=INTEGER}
+  </update>
+</mapper>
