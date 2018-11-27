@@ -7,21 +7,13 @@ import java.io.Serializable;
 /**
  * @Author Xie
  * @Date 2018/11/22
- * @Discription: 响应未登录模板
+ * @Discription: 响应模板
  **/
 public class ResponseVo<T> implements Serializable {
 
-    private Integer errorCode;
+    private Integer code;
     private String msg;
     private T data;
-
-    public Integer getErrorCode() {
-        return errorCode;
-    }
-
-    public void setErrorCode(Integer errorCode) {
-        this.errorCode = errorCode;
-    }
 
     public String getMsg() {
         return msg;
@@ -39,8 +31,16 @@ public class ResponseVo<T> implements Serializable {
         this.data = data;
     }
 
-    public ResponseVo(ErrorCodeEnum errorCodeEnum,T data) {
-        this.errorCode = errorCodeEnum.getErrorCode();
+    public Integer getCode() {
+        return code;
+    }
+
+    public void setCode(Integer code) {
+        this.code = code;
+    }
+
+    public ResponseVo(ErrorCodeEnum errorCodeEnum, T data) {
+        this.code = errorCodeEnum.getCode();
         this.msg = errorCodeEnum.getMsg();
         this.data = data;
     }
@@ -48,7 +48,7 @@ public class ResponseVo<T> implements Serializable {
     @Override
     public String toString() {
         return "{" +
-                "errorCode=" + errorCode +
+                "code=" + code +
                 ", msg='" + msg + '\'' +
                 ", data=" + data +
                 '}';

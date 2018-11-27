@@ -42,4 +42,6 @@ public interface UserMapper {
      * 获取最后自增ID
      */
     Integer getLastInsertID();
+
+    Integer checkExistByInviteCode(@Param("inviteCode") String inviteCode);
 }

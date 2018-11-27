@@ -31,6 +31,7 @@ public enum ErrorCodeEnum {
     OLD_PASSWORD_NOT_MATCH(1008,"OLD PASSWORD NOT MATCH"),
     RE_PASSWORD_NOT_MATCH(1009,"NEW PASSWORD NOT MATCH WITH RE"),
     TOKEN_NOT_EXIST(1010,"TOKEN NOT EXIST"),
+    INVITE_CODE_NOT_EXIST(1011,"INVALID INVITE CODE"),
     /**
      * System Error
      */
@@ -38,20 +39,20 @@ public enum ErrorCodeEnum {
     PARAMETER_MISSED(400,"Parameter Missed"),
     ;
 
-    private Integer errorCode;
+    private Integer code;
     private String msg;
 
-    ErrorCodeEnum(Integer errorCode, String msg) {
-        this.errorCode = errorCode;
+    ErrorCodeEnum(Integer code, String msg) {
+        this.code = code;
         this.msg = msg;
     }
 
-    public Integer getErrorCode() {
-        return errorCode;
+    public Integer getCode() {
+        return code;
     }
 
-    public void setErrorCode(Integer errorCode) {
-        this.errorCode = errorCode;
+    public void setCode(Integer code) {
+        this.code = code;
     }
 
     public String getMsg() {
@@ -65,7 +66,7 @@ public enum ErrorCodeEnum {
     public static ErrorCodeEnum matchCode(Integer code){
         if(null == code)return null;
         for(ErrorCodeEnum errorCode: values()){
-            if(errorCode.getErrorCode().equals(code)){
+            if(errorCode.getCode().equals(code)){
                 return errorCode;
             }
         }

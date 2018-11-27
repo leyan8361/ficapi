@@ -47,7 +47,7 @@ public class ApiAccountController {
     @ApiResponses({
             @ApiResponse(code = 400, message = "Parameter Missed"),
             @ApiResponse(code = 1001, message = "User Not Exist"),
-            @ApiResponse(code = 1001, message = "Password UnMatch"),
+            @ApiResponse(code = 1000, message = "Password UnMatch"),
             @ApiResponse(code = 200, message = "SUCCESS",response = LoginUserInfoVo.class)
     })
     public ResponseEntity login(HttpServletRequest request, HttpServletResponse response, @RequestParam String username, @RequestParam String password) {
@@ -57,7 +57,7 @@ public class ApiAccountController {
         if(null == user)return ResponseEntity.ok(new ResponseVo(ErrorCodeEnum.USER_NOT_EXIST,null));
         if(!password.equals(user.getPassword()))return ResponseEntity.ok(new ResponseVo(ErrorCodeEnum.PASSWORD_NOT_MATCH,null));
         LoginUserInfoVo result = accountService.login(request,user);
-        return ResponseEntity.ok(result);
+        return ResponseEntity.ok(new ResponseVo(ErrorCodeEnum.SUCCESS,result));
     }
 
     @PostMapping("/register")
@@ -73,10 +73,12 @@ public class ApiAccountController {
         if(StringUtils.isEmpty(userInfoVo.getUsername()))return ResponseEntity.ok(new ResponseVo(ErrorCodeEnum.PARAMETER_MISSED,null));
         User checkUser = userMapper.findByUsername(userInfoVo.getUsername());
         if(null != checkUser)return ResponseEntity.ok(new ResponseVo(ErrorCodeEnum.USERNAME_EXIST,null));
+        Integer checkInviteUserExist = userMapper.checkExistByInviteCode(userInfoVo.getInviteCode());
+        if(null == checkInviteUserExist || 0 == checkInviteUserExist)return ResponseEntity.ok(new ResponseVo(ErrorCodeEnum.INVITE_CODE_NOT_EXIST,null));
         User user = accountService.register(userInfoVo);
         if(null == user)return ResponseEntity.ok(new ResponseVo(ErrorCodeEnum.SYSTEM_EXCEPTION,null));
         LoginUserInfoVo result = accountService.login(request,user);
-        return ResponseEntity.ok(result);
+        return ResponseEntity.ok(new ResponseVo(ErrorCodeEnum.SUCCESS,result));
     }
 
     @PostMapping("/updatePassword")
@@ -99,7 +101,7 @@ public class ApiAccountController {
         LoginUserInfoVo refreshUser = null;
         if(result){
             refreshUser = accountService.login(request,checkUser);
-            return ResponseEntity.ok(refreshUser);
+            return ResponseEntity.ok(new ResponseVo(ErrorCodeEnum.SUCCESS,refreshUser));
         }
         return ResponseEntity.ok(new ResponseVo(ErrorCodeEnum.SYSTEM_EXCEPTION,null));
     }
@@ -109,7 +111,7 @@ public class ApiAccountController {
     @ApiImplicitParams({
             @ApiImplicitParam(dataType = "String", name = "username", value = "用户名", required = true),
             @ApiImplicitParam(dataType = "String", name = "newpassword", value = "新密码MD5结果", required = true),
-            @ApiImplicitParam(dataType = "String", name = "validateCode", value = "短信验证码", required = true)
+            @ApiImplicitParam(dataType = "String", name = "validateCode", value = "短信验证码", required = false)
     })
     @ApiResponses({
             @ApiResponse(code = 400, message = "Parameter Missed"),
@@ -121,13 +123,13 @@ public class ApiAccountController {
         log.debug(" Api Reset Password Action !!!");
         if(StringUtils.isEmpty(username))return ResponseEntity.ok(new ResponseVo(ErrorCodeEnum.PARAMETER_MISSED,null));
         User checkUser = userMapper.findByUsername(username);
-        if(null != checkUser)return ResponseEntity.ok(new ResponseVo(ErrorCodeEnum.USER_NOT_EXIST,null));
+        if(null == checkUser)return ResponseEntity.ok(new ResponseVo(ErrorCodeEnum.USER_NOT_EXIST,null));
         //TODO Check validate
         boolean result = accountService.updatePassword(newpassword,checkUser);
         LoginUserInfoVo refreshUser = null;
         if(result){
             refreshUser = accountService.login(request,checkUser);
-            return ResponseEntity.ok(refreshUser);
+            return ResponseEntity.ok(new ResponseVo(ErrorCodeEnum.SUCCESS,refreshUser));
         }
         return ResponseEntity.ok(new ResponseVo(ErrorCodeEnum.SYSTEM_EXCEPTION,null));
     }
@@ -145,7 +147,7 @@ public class ApiAccountController {
             return ResponseEntity.ok(new ResponseVo(ErrorCodeEnum.TOKEN_MISSED_HEADER,null));
         }
         boolean result = accountService.logout(token);
-        if(result)return ResponseEntity.ok().build();
+        if(result)return ResponseEntity.ok(new ResponseVo(ErrorCodeEnum.SUCCESS,null));
         return ResponseEntity.ok(new ResponseVo(ErrorCodeEnum.SYSTEM_EXCEPTION,null));
     }
 

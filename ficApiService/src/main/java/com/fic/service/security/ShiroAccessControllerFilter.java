@@ -18,6 +18,7 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.time.LocalDate;
+import java.util.Map;
 
 /**
  *   @Author Xie
@@ -45,36 +46,43 @@ public class ShiroAccessControllerFilter extends AccessControlFilter {
         log.debug("do validate token action !");
         HttpServletRequest request = (HttpServletRequest) servletRequest;
         HttpServletResponse response = (HttpServletResponse) servletResponse;
+        String uri = request.getRequestURI();
+        for(Map.Entry<String,String> filter: Constants.pathMatchFilterMap.entrySet()){
+            if(matcher.match(filter.getKey(),uri)){
+                return true;
+            }
+        }
+
         String token = request.getHeader(Constants.TOKEN_KEY);
         String userAgent = request.getHeader("User-Agent");
         if(StringUtils.isEmpty(token)){
-            request.setAttribute("javax.servlet.error.status_code",ErrorCodeEnum.TOKEN_MISSED_HEADER.getErrorCode());
+            request.setAttribute("javax.servlet.error.status_code",ErrorCodeEnum.TOKEN_MISSED_HEADER.getCode());
             request.getRequestDispatcher("/error").forward(request,response);
             return false;
         }
         TokenBase tokenBase = tokenBaseMapper.findByTokenValue(token);
         if(null == tokenBase){
-            request.setAttribute("javax.servlet.error.status_code",ErrorCodeEnum.TOKEN_NOT_EXIST.getErrorCode());
+            request.setAttribute("javax.servlet.error.status_code",ErrorCodeEnum.TOKEN_NOT_EXIST.getCode());
             request.getRequestDispatcher("/error").forward(request,response);
             return false;
         }
         if(null == tokenBase.getUserId()){
-            request.setAttribute("javax.servlet.error.status_code",ErrorCodeEnum.USER_NOT_EXIST.getErrorCode());
+            request.setAttribute("javax.servlet.error.status_code",ErrorCodeEnum.USER_NOT_EXIST.getCode());
             request.getRequestDispatcher("/error").forward(request,response);
             return false;
         }
         if(!token.equals(tokenBase.getTokenValue())){
-            request.setAttribute("javax.servlet.error.status_code",ErrorCodeEnum.TOKEN_NOT_MATCH.getErrorCode());
+            request.setAttribute("javax.servlet.error.status_code",ErrorCodeEnum.TOKEN_NOT_MATCH.getCode());
             request.getRequestDispatcher("/error").forward(request,response);
             return false;
         }
         if(DateUtil.dateToLocalDate(tokenBase.getTokenDate()).plusDays(Constants.TOKEN_VALIDITY_DAYS).isBefore(LocalDate.now())){
-            request.setAttribute("javax.servlet.error.status_code",ErrorCodeEnum.TOKEN_INVALID.getErrorCode());
+            request.setAttribute("javax.servlet.error.status_code",ErrorCodeEnum.TOKEN_INVALID.getCode());
             request.getRequestDispatcher("/error").forward(request,response);
             return false;
         }
         if(StringUtils.isEmpty(userAgent) || !tokenBase.getUserAgent().equals(userAgent)){
-            request.setAttribute("javax.servlet.error.status_code",ErrorCodeEnum.USER_AGENT_NOT_MATCH.getErrorCode());
+            request.setAttribute("javax.servlet.error.status_code",ErrorCodeEnum.USER_AGENT_NOT_MATCH.getCode());
             request.getRequestDispatcher("/error").forward(request,response);
             return false;
         }

@@ -47,13 +47,13 @@ public class LoginController {
             currentUser.login(token);
             return ResponseEntity.status(HttpStatus.OK).build();
         } catch (IncorrectCredentialsException e) {
-            return ResponseEntity.status(ErrorCodeEnum.PASSWORD_NOT_MATCH.getErrorCode()).body(ErrorCodeEnum.PASSWORD_NOT_MATCH.getMsg());
+            return ResponseEntity.status(ErrorCodeEnum.PASSWORD_NOT_MATCH.getCode()).body(ErrorCodeEnum.PASSWORD_NOT_MATCH.getMsg());
 //        } catch (LockedAccountException e) {
 //            //TODO 用户状态
         } catch (AuthenticationException e) {
-            return ResponseEntity.status(ErrorCodeEnum.USER_NOT_EXIST.getErrorCode()).body(ErrorCodeEnum.USER_NOT_EXIST.getMsg());
+            return ResponseEntity.status(ErrorCodeEnum.USER_NOT_EXIST.getCode()).body(ErrorCodeEnum.USER_NOT_EXIST.getMsg());
         } catch (Exception e) {
-            return ResponseEntity.status(ErrorCodeEnum.SYSTEM_EXCEPTION.getErrorCode()).body(ErrorCodeEnum.SYSTEM_EXCEPTION.getMsg());
+            return ResponseEntity.status(ErrorCodeEnum.SYSTEM_EXCEPTION.getCode()).body(ErrorCodeEnum.SYSTEM_EXCEPTION.getMsg());
         }
     }
 

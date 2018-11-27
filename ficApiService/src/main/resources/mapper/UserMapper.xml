@@ -390,4 +390,7 @@
   <select id="getLastInsertID" resultType="java.lang.Integer">
     SELECT LAST_INSERT_ID()
   </select>
+  <select id="checkExistByInviteCode" resultType="java.lang.Integer">
+    select id from user where user_invite_code = #{inviteCode};
+  </select>
 </mapper>
