@@ -2,8 +2,10 @@ package com.fic.service.mapper;
 
 import com.fic.service.entity.InvestDetail;
 import org.apache.ibatis.annotations.Mapper;
+import org.springframework.stereotype.Repository;
 
 @Mapper
+@Repository
 public interface InvestDetailMapper {
 
     int deleteByPrimaryKey(Integer investDetailId);

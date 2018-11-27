@@ -32,6 +32,19 @@ public enum ErrorCodeEnum {
     RE_PASSWORD_NOT_MATCH(1009,"NEW PASSWORD NOT MATCH WITH RE"),
     TOKEN_NOT_EXIST(1010,"TOKEN NOT EXIST"),
     INVITE_CODE_NOT_EXIST(1011,"INVALID INVITE CODE"),
+
+    /**
+     * 投资相关
+     */
+    INVEST_NOT_EXIST(2000,"INVEST NOT EXIST"),
+    INVEST_BALANCE_NOT_ENOUGH(2001,"INVEST_BALANCE_NOT_ENOUGH"),
+
+
+    /**
+     * 常量费率相关
+     */
+    EXCHANGE_RATE_MISSED(3000,"EXCHANGE_RATE_MISSED"),
+
     /**
      * System Error
      */

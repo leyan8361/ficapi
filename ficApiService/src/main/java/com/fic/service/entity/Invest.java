@@ -1,5 +1,6 @@
 package com.fic.service.entity;
 
+import java.math.BigDecimal;
 import java.util.Date;
 
 public class Invest {
@@ -7,9 +8,9 @@ public class Invest {
 
     private Integer userId;
 
-    private Long balance;
+    private BigDecimal balance;
 
-    private Byte qty;
+    private int qty;
 
     private Date createdTime;
 
@@ -35,19 +36,19 @@ public class Invest {
         this.userId = userId;
     }
 
-    public Long getBalance() {
+    public BigDecimal getBalance() {
         return balance;
     }
 
-    public void setBalance(Long balance) {
+    public void setBalance(BigDecimal balance) {
         this.balance = balance;
     }
 
-    public Byte getQty() {
+    public int getQty() {
         return qty;
     }
 
-    public void setQty(Byte qty) {
+    public void setQty(int qty) {
         this.qty = qty;
     }
 

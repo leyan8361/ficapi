@@ -115,6 +115,7 @@
     where invest_id = #{investId,jdbcType=INTEGER}
   </update>
   <update id="updateByPrimaryKey" parameterType="com.fic.service.entity.Invest">
+
     update invest
     set user_id = #{userId,jdbcType=INTEGER},
       balance = #{balance,jdbcType=DECIMAL},
@@ -125,4 +126,7 @@
       updated_by = #{updatedBy,jdbcType=INTEGER}
     where invest_id = #{investId,jdbcType=INTEGER}
   </update>
+  <select id="findByUserId" resultMap="BaseResultMap">
+    select * from invest where user_id= #{userId};
+  </select>
 </mapper>

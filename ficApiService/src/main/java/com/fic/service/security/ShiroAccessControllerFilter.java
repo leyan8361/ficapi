@@ -52,7 +52,6 @@ public class ShiroAccessControllerFilter extends AccessControlFilter {
                 return true;
             }
         }
-
         String token = request.getHeader(Constants.TOKEN_KEY);
         String userAgent = request.getHeader("User-Agent");
         if(StringUtils.isEmpty(token)){

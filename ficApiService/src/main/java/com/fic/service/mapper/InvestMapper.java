@@ -2,8 +2,10 @@ package com.fic.service.mapper;
 
 import com.fic.service.entity.Invest;
 import org.apache.ibatis.annotations.Mapper;
+import org.springframework.stereotype.Repository;
 
 @Mapper
+@Repository
 public interface InvestMapper {
 
     int deleteByPrimaryKey(Integer investId);
@@ -17,4 +19,6 @@ public interface InvestMapper {
     int updateByPrimaryKeySelective(Invest record);
 
     int updateByPrimaryKey(Invest record);
+
+    Invest findByUserId(Integer userId);
 }

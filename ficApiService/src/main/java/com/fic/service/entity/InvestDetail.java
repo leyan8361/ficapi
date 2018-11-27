@@ -1,5 +1,6 @@
 package com.fic.service.entity;
 
+import java.math.BigDecimal;
 import java.util.Date;
 
 public class InvestDetail {
@@ -11,7 +12,7 @@ public class InvestDetail {
 
     private Integer movieId;
 
-    private Long amount;
+    private BigDecimal amount;
 
     private Date obTime;
 
@@ -59,11 +60,11 @@ public class InvestDetail {
         this.movieId = movieId;
     }
 
-    public Long getAmount() {
+    public BigDecimal getAmount() {
         return amount;
     }
 
-    public void setAmount(Long amount) {
+    public void setAmount(BigDecimal amount) {
         this.amount = amount;
     }
 

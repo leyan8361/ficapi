@@ -1,13 +1,15 @@
 package com.fic.service.entity;
 
+import java.math.BigDecimal;
 import java.util.Date;
 
 public class ExchangeRate {
+
     private String coin1;
 
     private String coin2;
 
-    private Integer rate;
+    private BigDecimal rate;
 
     private Date createdTime;
 
@@ -33,11 +35,11 @@ public class ExchangeRate {
         this.coin2 = coin2;
     }
 
-    public Integer getRate() {
+    public BigDecimal getRate() {
         return rate;
     }
 
-    public void setRate(Integer rate) {
+    public void setRate(BigDecimal rate) {
         this.rate = rate;
     }
 

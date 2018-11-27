@@ -18,9 +18,21 @@ public class Constants {
 
         public static final int DEFAULT_TOKEN_LENGTH = 16;
 
+        public static final int KEEP_SCALE = 8;
+
+        /**
+         * 币种
+         */
+        public static final String FIC = "FIC";
+        public static final String CNY = "CNY";
+        public static final String ETH = "ETH";
+        public static final String BTC = "BTC";
+
         public static final String LOGIN_PATH = "/api/v1/login";
         public static final String REGISTER_PATH = "/api/v1/register";
         public static final String RESET_PASSWORD_PATH = "/api/v1/resetPassword";
+        public static final String RESOURCE_PATH = "/api/v1/static/**";
+
 
         public static final Map<String,String> pathMatchFilterMap = new HashMap<String,String>();
 
@@ -28,5 +40,6 @@ public class Constants {
                 pathMatchFilterMap.put(LOGIN_PATH,LOGIN_PATH);
                 pathMatchFilterMap.put(REGISTER_PATH,REGISTER_PATH);
                 pathMatchFilterMap.put(RESET_PASSWORD_PATH,RESET_PASSWORD_PATH);
+                pathMatchFilterMap.put(RESOURCE_PATH,RESOURCE_PATH);
         }
 }
