@@ -1,18 +1,22 @@
 package com.fic.service;
 
+import com.fic.service.constants.SmsProperties;
 import org.mybatis.spring.annotation.MapperScan;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.core.env.Environment;
+import org.springframework.scheduling.annotation.EnableScheduling;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 
 @SpringBootApplication
 @MapperScan("com.fic.service.mapper")
-//@EnableConfigurationProperties({})
+@EnableConfigurationProperties({SmsProperties.class})
+@EnableScheduling
 public class FicApiServiceApplication {
 
     private static final Logger log = LoggerFactory.getLogger(FicApiServiceApplication.class);

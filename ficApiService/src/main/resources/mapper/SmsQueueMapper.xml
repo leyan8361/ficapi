@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fic.service.mapper.SmsQueueMapper">
+  <resultMap id="BaseResultMap" type="com.fic.service.entity.SmsQueue">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="telephone" jdbcType="VARCHAR" property="telephone" />
+    <result column="code" jdbcType="VARCHAR" property="code" />
+    <result column="created_time" jdbcType="TIMESTAMP" property="createdTime" />
+    <result column="expired_time" jdbcType="TIMESTAMP" property="expiredTime" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, telephone, code, created_time, expired_time
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from sms_queue
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from sms_queue
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.fic.service.entity.SmsQueue">
+    insert into sms_queue (id, telephone, code, 
+      created_time, expired_time)
+    values (#{id,jdbcType=INTEGER}, #{telephone,jdbcType=VARCHAR}, #{code,jdbcType=INTEGER}, 
+      #{createdTime,jdbcType=TIMESTAMP}, #{expiredTime,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.fic.service.entity.SmsQueue">
+    insert into sms_queue
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="telephone != null">
+        telephone,
+      </if>
+      <if test="code != null">
+        code,
+      </if>
+      <if test="createdTime != null">
+        created_time,
+      </if>
+      <if test="expiredTime != null">
+        expired_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="telephone != null">
+        #{telephone,jdbcType=VARCHAR},
+      </if>
+      <if test="code != null">
+        #{code,jdbcType=INTEGER},
+      </if>
+      <if test="createdTime != null">
+        #{createdTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="expiredTime != null">
+        #{expiredTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.fic.service.entity.SmsQueue">
+    update sms_queue
+    <set>
+      <if test="telephone != null">
+        telephone = #{telephone,jdbcType=VARCHAR},
+      </if>
+      <if test="code != null">
+        code = #{code,jdbcType=INTEGER},
+      </if>
+      <if test="createdTime != null">
+        created_time = #{createdTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="expiredTime != null">
+        expired_time = #{expiredTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.fic.service.entity.SmsQueue">
+    update sms_queue
+    set telephone = #{telephone,jdbcType=VARCHAR},
+      code = #{code,jdbcType=VARCHAR},
+      created_time = #{createdTime,jdbcType=TIMESTAMP},
+      expired_time = #{expiredTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <select id="findByTelephone" resultMap="BaseResultMap">
+    select * from sms_queue where telephone = #{telephone} group by created_time desc limit 0,1;
+  </select>
+  <delete id="deleteByTelephone">
+    delete from sms_queue where telephone=#{telephone}
+  </delete>
+  <delete id="deleteAllBeforeNow">
+    delete from sms_queue where expired_time &lt;= now()
+  </delete>
+</mapper>

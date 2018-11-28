@@ -15,9 +15,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
-
+import org.apache.commons.lang3.StringUtils;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -73,8 +72,10 @@ public class ApiAccountController {
         if(StringUtils.isEmpty(userInfoVo.getUsername()))return ResponseEntity.ok(new ResponseVo(ErrorCodeEnum.PARAMETER_MISSED,null));
         User checkUser = userMapper.findByUsername(userInfoVo.getUsername());
         if(null != checkUser)return ResponseEntity.ok(new ResponseVo(ErrorCodeEnum.USERNAME_EXIST,null));
-        Integer checkInviteUserExist = userMapper.checkExistByInviteCode(userInfoVo.getInviteCode());
-        if(null == checkInviteUserExist || 0 == checkInviteUserExist)return ResponseEntity.ok(new ResponseVo(ErrorCodeEnum.INVITE_CODE_NOT_EXIST,null));
+        if(StringUtils.isNotEmpty(userInfoVo.getInviteCode())){
+            Integer checkInviteUserExist = userMapper.checkExistByInviteCode(userInfoVo.getInviteCode());
+            if(null == checkInviteUserExist || 0 == checkInviteUserExist)return ResponseEntity.ok(new ResponseVo(ErrorCodeEnum.INVITE_CODE_NOT_EXIST,null));
+        }
         User user = accountService.register(userInfoVo);
         if(null == user)return ResponseEntity.ok(new ResponseVo(ErrorCodeEnum.SYSTEM_EXCEPTION,null));
         LoginUserInfoVo result = accountService.login(request,user);

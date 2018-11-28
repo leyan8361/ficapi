@@ -174,4 +174,7 @@
       updated_by = #{updatedBy,jdbcType=INTEGER}
     where invest_detail_id = #{investDetailId,jdbcType=INTEGER}
   </update>
+  <select id="findByUserId" resultMap="BaseResultMap">
+    select * from invest_detail where user_id = #{userId} group by created_time asc;
+  </select>
 </mapper>

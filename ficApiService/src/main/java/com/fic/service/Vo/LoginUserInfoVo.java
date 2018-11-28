@@ -13,7 +13,7 @@ public class LoginUserInfoVo {
 
     @ApiModelProperty(value = "用户名")
     private String username;
-    @ApiModelProperty(value = "用户名ID")
+    @ApiModelProperty(value = "用户名ID",example = "0")
     private Integer userId;
     @ApiModelProperty(value = "Token Value")
     private String tokenValue;

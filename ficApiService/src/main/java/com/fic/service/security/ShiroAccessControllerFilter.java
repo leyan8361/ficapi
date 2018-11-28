@@ -47,13 +47,13 @@ public class ShiroAccessControllerFilter extends AccessControlFilter {
         HttpServletRequest request = (HttpServletRequest) servletRequest;
         HttpServletResponse response = (HttpServletResponse) servletResponse;
         String uri = request.getRequestURI();
+        String token = request.getHeader(Constants.TOKEN_KEY);
+        String userAgent = request.getHeader("User-Agent");
         for(Map.Entry<String,String> filter: Constants.pathMatchFilterMap.entrySet()){
             if(matcher.match(filter.getKey(),uri)){
                 return true;
             }
         }
-        String token = request.getHeader(Constants.TOKEN_KEY);
-        String userAgent = request.getHeader("User-Agent");
         if(StringUtils.isEmpty(token)){
             request.setAttribute("javax.servlet.error.status_code",ErrorCodeEnum.TOKEN_MISSED_HEADER.getCode());
             request.getRequestDispatcher("/error").forward(request,response);

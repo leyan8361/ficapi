@@ -17,10 +17,6 @@ public class InviteCodeUtil {
 
     private static final int S=6;
 
-//    public static void main(String[] args) {
-//        System.out.println(InviteCodeUtil.toSerialCode(50l));
-//    }
-
     public static String toSerialCode(long id) {
         char[] buf=new char[32];
         int charPos=32;
@@ -42,29 +38,6 @@ public class InviteCodeUtil {
             str+=sb.toString();
         }
         return str.toUpperCase();
-    }
-
-    public static long codeToId(String code) {
-        char chs[]=code.toCharArray();
-        long res=0L;
-        for(int i=0; i < chs.length; i++) {
-            int ind=0;
-            for(int j=0; j < BINLEN; j++) {
-                if(chs[i] == r[j]) {
-                    ind=j;
-                    break;
-                }
-            }
-            if(chs[i] == B) {
-                break;
-            }
-            if(i > 0) {
-                res=res * BINLEN + ind;
-            } else {
-                res=ind;
-            }
-        }
-        return res;
     }
 
 }

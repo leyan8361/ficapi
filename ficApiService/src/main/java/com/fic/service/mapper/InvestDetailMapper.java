@@ -4,6 +4,8 @@ import com.fic.service.entity.InvestDetail;
 import org.apache.ibatis.annotations.Mapper;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Mapper
 @Repository
 public interface InvestDetailMapper {
@@ -19,4 +21,6 @@ public interface InvestDetailMapper {
     int updateByPrimaryKeySelective(InvestDetail record);
 
     int updateByPrimaryKey(InvestDetail record);
+
+    List<InvestDetail> findByUserId(Integer userId);
 }

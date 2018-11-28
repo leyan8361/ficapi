@@ -1,16 +1,13 @@
 package com.fic.service.controller.api;
 
 import com.fic.service.Enum.ErrorCodeEnum;
+import com.fic.service.Vo.InvestBalanceInfoVo;
 import com.fic.service.Vo.InvestInfoVo;
-import com.fic.service.Vo.LoginUserInfoVo;
+import com.fic.service.Vo.InvestRecordInfoVo;
 import com.fic.service.Vo.ResponseVo;
 import com.fic.service.constants.Constants;
 import com.fic.service.entity.Invest;
-import com.fic.service.entity.InvestDetail;
-import com.fic.service.mapper.ExchangeRateMapper;
-import com.fic.service.mapper.InvestDetailMapper;
 import com.fic.service.mapper.InvestMapper;
-import com.fic.service.mapper.MovieMapper;
 import com.fic.service.service.InvestService;
 import io.swagger.annotations.*;
 import org.slf4j.Logger;
@@ -20,7 +17,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
-import java.util.Date;
 
 /**
  *   @Author Xie
@@ -34,8 +30,6 @@ public class ApiInvestController {
 
     private final Logger log = LoggerFactory.getLogger(ApiInvestController.class);
 
-    @Autowired
-    ExchangeRateMapper exchangeRateMapper;
     @Autowired
     InvestMapper investMapper;
     @Autowired
@@ -61,6 +55,36 @@ public class ApiInvestController {
         if(!result)return ResponseEntity.ok(new ResponseVo(ErrorCodeEnum.SYSTEM_EXCEPTION,null));
 
         return ResponseEntity.ok(new ResponseVo(ErrorCodeEnum.SUCCESS,null));
+    }
+
+    @GetMapping("/getInvestBalance")
+    @ApiOperation("Api-获取投资余额")
+    @ApiImplicitParams({
+            @ApiImplicitParam(dataType = "int", name = "userId", value = "用户ID", required = true)
+    })
+    @ApiResponses({
+            @ApiResponse(code = 2000, message = "INVEST NOT EXIST"),
+            @ApiResponse(code = 200, message = "SUCCESS",response = InvestBalanceInfoVo.class)
+    })
+    public ResponseEntity getInvestBalance(@RequestParam Integer userId) {
+        log.debug(" do get invest balance action !!");
+        Invest invest = investMapper.findByUserId(userId);
+        if(null == invest)return ResponseEntity.ok(new ResponseVo(ErrorCodeEnum.INVEST_NOT_EXIST,null));
+        return ResponseEntity.ok(new ResponseVo(ErrorCodeEnum.SUCCESS,new InvestBalanceInfoVo(invest.getUserId(),invest.getBalance())));
+    }
+
+    @GetMapping("/getInvestDetail")
+    @ApiOperation("Api-获取投资记录")
+    @ApiImplicitParams({
+            @ApiImplicitParam(dataType = "int", name = "userId", value = "用户ID", required = true)
+    })
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "SUCCESS",response = InvestRecordInfoVo.class)
+    })
+    public ResponseEntity getInvestDetail(@RequestParam Integer userId) {
+        log.debug(" do get invest detail action !!");
+        InvestRecordInfoVo result = investService.getInvestDetail(userId);
+        return ResponseEntity.ok(new ResponseVo(ErrorCodeEnum.SUCCESS,result));
     }
 
 }

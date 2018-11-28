@@ -32,8 +32,8 @@ public class Constants {
         public static final String REGISTER_PATH = "/api/v1/register";
         public static final String RESET_PASSWORD_PATH = "/api/v1/resetPassword";
         public static final String RESOURCE_PATH = "/api/v1/static/**";
-
-
+        public static final String SMS_PATH = "/api/v1/sendSms";
+        public static final String CHECK_CODE = "/api/v1/checkCode";
         public static final Map<String,String> pathMatchFilterMap = new HashMap<String,String>();
 
         static {
@@ -41,5 +41,7 @@ public class Constants {
                 pathMatchFilterMap.put(REGISTER_PATH,REGISTER_PATH);
                 pathMatchFilterMap.put(RESET_PASSWORD_PATH,RESET_PASSWORD_PATH);
                 pathMatchFilterMap.put(RESOURCE_PATH,RESOURCE_PATH);
+                pathMatchFilterMap.put(SMS_PATH,SMS_PATH);
+                pathMatchFilterMap.put(CHECK_CODE,CHECK_CODE);
         }
 }

@@ -1,6 +1,8 @@
 package com.fic.service.service.impl;
 
 import com.fic.service.Vo.InvestInfoVo;
+import com.fic.service.Vo.InvestRecordInfoVo;
+import com.fic.service.Vo.InvestRecordItemInfoVo;
 import com.fic.service.controller.api.ApiInvestController;
 import com.fic.service.entity.Invest;
 import com.fic.service.entity.InvestDetail;
@@ -9,6 +11,7 @@ import com.fic.service.mapper.InvestDetailMapper;
 import com.fic.service.mapper.InvestMapper;
 import com.fic.service.mapper.MovieMapper;
 import com.fic.service.service.InvestService;
+import com.fic.service.utils.DateUtil;
 import com.fic.service.utils.SerialNumGenerateUtil;
 import org.omg.SendingContext.RunTime;
 import org.slf4j.Logger;
@@ -20,7 +23,9 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 /**
  *   @Author Xie
@@ -44,13 +49,17 @@ public class InvestServiceImpl implements InvestService {
     public Boolean invest(Invest invest, InvestInfoVo investInfoVo, BigDecimal investBalance) {
 
         Movie movie = movieMapper.selectByPrimaryKey(investInfoVo.getMoveId());
-        if(null == movie)movie = new Movie();
-        movie.setMovieId(investInfoVo.getMoveId());
-        movie.setMovieName(investInfoVo.getMoveName());
-        movie.setCreatedTime(new Date());
+        boolean insert = false;
+        if(null == movie){
+            movie = new Movie();
+            movie.setMovieId(investInfoVo.getMoveId());
+            movie.setMovieName(investInfoVo.getMoveName());
+            movie.setCreatedTime(new Date());
+            insert = true;
+        }
         movie.setUpdatedTime(new Date());
         int movieResult = 0;
-        if(null == movie.getMovieId()){
+        if(insert){
             movieResult = movieMapper.insert(movie);
         }else{
             movieResult = movieMapper.updateByPrimaryKey(movie);
@@ -87,5 +96,35 @@ public class InvestServiceImpl implements InvestService {
         }
 
         return true;
+    }
+
+    @Override
+    public InvestRecordInfoVo getInvestDetail(Integer userId) {
+        InvestRecordInfoVo recordInfoVo = new InvestRecordInfoVo();
+        List<InvestRecordItemInfoVo> list = new ArrayList<>();
+        List<InvestDetail> details = investDetailMapper.findByUserId(userId);
+        if(details.size() <= 0){
+            return recordInfoVo;
+        }
+
+        Integer investId = 0;
+        for(InvestDetail detail: details){
+            investId = detail.getInvestId();
+            Movie movie = movieMapper.selectByPrimaryKey(detail.getMovieId());
+            if(null == movie)continue;
+            InvestRecordItemInfoVo item = new InvestRecordItemInfoVo();
+            item.setAmount(detail.getAmount());
+            item.setCode(detail.getInvestDetailCode());
+            item.setInTime(DateUtil.formatSec(detail.getInTime()));
+            item.setMovieName(movie.getMovieName());
+            item.setInvestDetailId(detail.getInvestDetailId());
+            list.add(item);
+        }
+
+        recordInfoVo.setInvestId(investId);
+        recordInfoVo.setUserId(userId);
+        recordInfoVo.setItems(list);
+
+        return recordInfoVo;
     }
 }

@@ -39,10 +39,9 @@ public class ApiExchangeRateController {
     @ApiOperation("Api-获取FIC换算RMB费率")
     @ApiResponses({
             @ApiResponse(code = 200, message = "SUCCESS",response = ExchangeRateVo.class)
-
     })
     public ResponseEntity getFICRate() throws InvocationTargetException, IllegalAccessException {
-        log.debug(" do invest action !!");
+        log.debug(" do get fic rate action !!");
         ExchangeRate rate = exchangeRateMapper.findFicExchangeCny();
         if(null == rate)return ResponseEntity.ok(new ResponseVo(ErrorCodeEnum.EXCHANGE_RATE_MISSED,null));
         ExchangeRateVo rateVo = new ExchangeRateVo();

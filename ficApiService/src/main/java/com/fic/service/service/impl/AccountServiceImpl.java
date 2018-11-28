@@ -5,8 +5,10 @@ import com.fic.service.Vo.RegisterUserInfoVo;
 import com.fic.service.Vo.ResetPasswordInfo;
 import com.fic.service.constants.Constants;
 import com.fic.service.controller.HomeController;
+import com.fic.service.entity.Invest;
 import com.fic.service.entity.TokenBase;
 import com.fic.service.entity.User;
+import com.fic.service.mapper.InvestMapper;
 import com.fic.service.mapper.TokenBaseMapper;
 import com.fic.service.mapper.UserMapper;
 import com.fic.service.service.AccountService;
@@ -22,6 +24,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletRequest;
+import java.math.BigDecimal;
 import java.security.SecureRandom;
 import java.time.LocalDate;
 import java.util.Date;
@@ -42,6 +45,8 @@ public class AccountServiceImpl implements AccountService {
     TokenBaseMapper tokenBaseMapper;
     @Autowired
     UserMapper userMapper;
+    @Autowired
+    InvestMapper investMapper;
 
     @Override
     @Transactional(isolation= Isolation.READ_COMMITTED,propagation= Propagation.REQUIRED,rollbackFor = Exception.class)
@@ -70,7 +75,22 @@ public class AccountServiceImpl implements AccountService {
         user.setCreatedTime(new Date());
         user.setUpdatedTime(new Date());
         int result = userMapper.insert(user);
+
         if(result  <= 0){
+            return null;
+        }
+
+        /**
+         * 生成默认资产记录
+         */
+        Invest invest = new Invest();
+        invest.setBalance(BigDecimal.ZERO);
+        invest.setQty(0);
+        invest.setUserId(user.getId());
+        invest.setUpdatedTime(new Date());
+        invest.setCreatedTime(new Date());
+        int investResult = investMapper.insert(invest);
+        if(investResult <=0){
             return null;
         }
         return user;

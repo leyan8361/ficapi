@@ -9,11 +9,15 @@ import org.springframework.web.bind.annotation.RestController;
  * @Description: common
  **/
 @RestController
-public class TestController {
+public class IndexController {
 
     @RequestMapping("/")
     public void index(){
         System.out.println("index !!!!!");
     }
 
+    @RequestMapping("/csrf")
+    public void csrf(){
+        System.out.println("index !!!!!");
+    }
 }

@@ -13,9 +13,9 @@ import java.math.BigDecimal;
 @ApiModel
 public class InvestInfoVo {
 
-    @ApiModelProperty(value = "用户ID", required = true)
+    @ApiModelProperty(value = "用户ID", required = true, example = "0")
     private Integer userId;
-    @ApiModelProperty(value = "电影ID", required = true)
+    @ApiModelProperty(value = "电影ID", required = true, example = "0")
     private Integer moveId;
     @ApiModelProperty(value = "电影名", required = true)
     private String moveName;
