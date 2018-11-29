@@ -1,8 +1,10 @@
 package com.fic.service.service.impl;
 
+import com.fic.service.Enum.ErrorCodeEnum;
 import com.fic.service.Vo.LoginUserInfoVo;
 import com.fic.service.Vo.RegisterUserInfoVo;
 import com.fic.service.Vo.ResetPasswordInfo;
+import com.fic.service.Vo.ResponseVo;
 import com.fic.service.constants.Constants;
 import com.fic.service.controller.HomeController;
 import com.fic.service.entity.Invest;
@@ -13,15 +15,18 @@ import com.fic.service.mapper.TokenBaseMapper;
 import com.fic.service.mapper.UserMapper;
 import com.fic.service.service.AccountService;
 import com.fic.service.utils.InviteCodeUtil;
+import com.fic.service.utils.RegexUtil;
 import com.fic.service.utils.Sha1Util;
 import org.apache.shiro.codec.Base64;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
@@ -120,6 +125,18 @@ public class AccountServiceImpl implements AccountService {
             return true;
         }
         return false;
+    }
+
+
+    @Override
+    public ResponseVo updateHeadPic(MultipartFile file,Integer userId) {
+        String fileType = "";
+        String fileName = file.getOriginalFilename();
+        if(!RegexUtil.isPic(fileName)){
+            return new ResponseVo(ErrorCodeEnum.USER_HEAD_PIC_ERROR,null);
+        }
+
+        return null;
     }
 
     private String generateTokenData() {

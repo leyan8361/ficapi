@@ -21,4 +21,13 @@ public class RegexUtil {
             return isMatch;
         }
     }
+
+    public static boolean isPic(String fileName){
+        Pattern pattern = Pattern.compile(".*(.png|.jpg|.bmp.|jpeg)$",Pattern.CASE_INSENSITIVE);
+        Matcher matcher = pattern.matcher(fileName);
+        if(matcher.matches()){
+            return true;
+        }
+        return false;
+    }
 }

@@ -2,8 +2,10 @@ package com.fic.service.service;
 
 import com.fic.service.Vo.LoginUserInfoVo;
 import com.fic.service.Vo.RegisterUserInfoVo;
+import com.fic.service.Vo.ResponseVo;
 import com.fic.service.entity.TokenBase;
 import com.fic.service.entity.User;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -42,4 +44,6 @@ public interface AccountService {
     Boolean updatePassword(String newPassword,User user);
 
     Boolean logout(String token);
+
+    ResponseVo updateHeadPic(MultipartFile file,Integer userId);
 }

@@ -177,4 +177,7 @@
   <select id="findByUserId" resultMap="BaseResultMap">
     select * from invest_detail where user_id = #{userId} group by created_time asc;
   </select>
+  <select id="countInvestPeople" resultType="int">
+    select DISTINCT user_id from invest_detail where movie_id=#{movieId} group by user_id;
+  </select>
 </mapper>

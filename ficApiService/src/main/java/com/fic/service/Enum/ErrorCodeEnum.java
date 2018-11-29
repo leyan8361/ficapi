@@ -42,6 +42,7 @@ public enum ErrorCodeEnum {
 //    SMS_SEND_1H_LIMIT(1018,"单个手机号 1 小时内下发短信条数超过设定的上限"),
 //    SMS_SEND_1DAY_LIMIT(1019,"单个手机号日下发短信条数超过设定的上限"),
     SMS_SEND_REST_ERROR(1017,"其余错误"),
+    USER_HEAD_PIC_ERROR(1018,"ERROR PIC TYPE (png|jpg|bmp|jpeg)"),
     /**
      * 投资相关
      */

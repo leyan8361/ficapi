@@ -10,6 +10,7 @@ import com.fic.service.controller.HomeController;
 import com.fic.service.entity.User;
 import com.fic.service.mapper.UserMapper;
 import com.fic.service.service.AccountService;
+import com.fic.service.utils.RegexUtil;
 import io.swagger.annotations.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,6 +18,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.web.multipart.MultipartFile;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -150,6 +153,26 @@ public class ApiAccountController {
         boolean result = accountService.logout(token);
         if(result)return ResponseEntity.ok(new ResponseVo(ErrorCodeEnum.SUCCESS,null));
         return ResponseEntity.ok(new ResponseVo(ErrorCodeEnum.SYSTEM_EXCEPTION,null));
+    }
+
+    @PostMapping("/updateHeadPic")
+    @ApiOperation("Api-更新头像")
+    @ApiImplicitParams({
+            @ApiImplicitParam(dataType = "file", name = "file", value = "头像", required = true),
+            @ApiImplicitParam(dataType = "int", name = "userId", value = "用户ID", required = true)
+    })
+    @ApiResponses({
+            @ApiResponse(code = 400, message = "Parameter Missed"),
+            @ApiResponse(code = 500, message = "System ERROR")
+    })
+    public ResponseEntity updateHeadPic(@RequestBody MultipartFile file){
+        log.debug(" update Head Pic !!!");
+
+
+
+
+
+        return ResponseEntity.ok(new ResponseVo(ErrorCodeEnum.SUCCESS,null));
     }
 
 

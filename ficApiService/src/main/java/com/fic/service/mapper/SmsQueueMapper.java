@@ -4,8 +4,6 @@ import com.fic.service.entity.SmsQueue;
 import org.apache.ibatis.annotations.Mapper;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
-
 @Mapper
 @Repository
 public interface SmsQueueMapper {

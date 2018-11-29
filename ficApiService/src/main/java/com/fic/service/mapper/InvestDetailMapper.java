@@ -23,4 +23,6 @@ public interface InvestDetailMapper {
     int updateByPrimaryKey(InvestDetail record);
 
     List<InvestDetail> findByUserId(Integer userId);
+
+    List<Integer> countInvestPeople(Integer movieId);
 }

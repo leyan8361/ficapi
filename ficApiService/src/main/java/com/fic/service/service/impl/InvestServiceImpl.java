@@ -46,7 +46,7 @@ public class InvestServiceImpl implements InvestService {
 
     @Override
     @Transactional(isolation= Isolation.READ_COMMITTED,propagation= Propagation.REQUIRED,rollbackFor = Exception.class)
-    public Boolean invest(Invest invest, InvestInfoVo investInfoVo, BigDecimal investBalance) {
+    public int invest(Invest invest, InvestInfoVo investInfoVo, BigDecimal investBalance) {
 
         Movie movie = movieMapper.selectByPrimaryKey(investInfoVo.getMoveId());
         boolean insert = false;
@@ -95,7 +95,9 @@ public class InvestServiceImpl implements InvestService {
             throw new RuntimeException();
         }
 
-        return true;
+        List<Integer> countInvestNum = investDetailMapper.countInvestPeople(movie.getMovieId());
+
+        return countInvestNum.size();
     }
 
     @Override

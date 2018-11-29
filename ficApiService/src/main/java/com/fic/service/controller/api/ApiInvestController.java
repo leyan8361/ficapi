@@ -51,10 +51,10 @@ public class ApiInvestController {
         BigDecimal investBalance = invest.getBalance().subtract(investInfoVo.getAmount()).setScale(Constants.KEEP_SCALE);
         if(BigDecimal.ZERO.compareTo(investBalance) >= 1)return ResponseEntity.ok(new ResponseVo(ErrorCodeEnum.INVEST_BALANCE_NOT_ENOUGH,null));
 
-        boolean result = investService.invest(invest,investInfoVo,investBalance);
-        if(!result)return ResponseEntity.ok(new ResponseVo(ErrorCodeEnum.SYSTEM_EXCEPTION,null));
+        int result = investService.invest(invest,investInfoVo,investBalance);
+        if(result==0)return ResponseEntity.ok(new ResponseVo(ErrorCodeEnum.SYSTEM_EXCEPTION,null));
 
-        return ResponseEntity.ok(new ResponseVo(ErrorCodeEnum.SUCCESS,null));
+        return ResponseEntity.ok(new ResponseVo(ErrorCodeEnum.SUCCESS,result));
     }
 
     @GetMapping("/getInvestBalance")
