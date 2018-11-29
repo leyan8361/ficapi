@@ -6,6 +6,7 @@
     <result column="user_name" property="userName" />
     <result column="nick_name" property="nickName" />
     <result column="password" property="password" />
+    <result column="pay_password" property="payPassword" />
     <result column="himage_url" property="himageUrl" />
     <result column="user_invite_code" property="userInviteCode" />
     <result column="t_user_invite_code" property="tUserInviteCode" />
@@ -113,7 +114,7 @@
     </trim>
   </sql>
   <sql id="columnList">
-    id, user_name, nick_name, password, himage_url, user_invite_code, t_user_invite_code, 
+    id, user_name, nick_name, password, pay_password,himage_url, user_invite_code, t_user_invite_code,
     t_user_id, mobile, phone, zip, email, remark, updated_time, created_time, created_by, 
     updated_by, user_re_1, user_re_2, user_re_3, user_re_4, user_re_5, user_re_6, user_re_7, 
     user_re_8, user_re_9, user_re_10
@@ -302,6 +303,9 @@
       </if>
       <if test="user.password != null">
         password = #{user.password},
+      </if>
+      <if test="user.payPassword != null">
+        pay_password = #{user.payPassword},
       </if>
       <if test="user.himageUrl != null">
         himage_url = #{user.himageUrl},

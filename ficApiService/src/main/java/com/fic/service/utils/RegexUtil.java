@@ -1,5 +1,6 @@
 package com.fic.service.utils;
 
+import java.text.ParseException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -29,5 +30,30 @@ public class RegexUtil {
             return true;
         }
         return false;
+    }
+
+    public static int isVersion(String version){
+        Pattern pattern = Pattern.compile("^[v][0-99]{1,2}[\\.][0-99]{1,2}[\\.][0-99]{1,2}",Pattern.CASE_INSENSITIVE);
+        Matcher matcher = pattern.matcher(version);
+        if(!matcher.matches())return 0;
+
+        Pattern cutter = Pattern.compile("[^\\d]");
+        Matcher cutterMatch = cutter.matcher(version);
+        String versionCut = cutterMatch.replaceAll("");
+        int versionCode = 0;
+
+        try{
+            versionCode = Integer.valueOf(versionCut);
+            return versionCode;
+        }catch (Exception e){
+            e.printStackTrace();
+            return versionCode;
+        }
+
+    }
+
+    public static void main(String args[]){
+        String version = "b1.12.1";
+        System.out.println(RegexUtil.isVersion(version));
     }
 }

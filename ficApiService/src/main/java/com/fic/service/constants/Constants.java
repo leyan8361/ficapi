@@ -21,6 +21,12 @@ public class Constants {
         public static final int KEEP_SCALE = 8;
 
         /**
+         * 文件类型
+         */
+        public static final String MEDIA_PREFIX="media/";
+        public static final String HEAD_CUT_PATH="user/";
+
+        /**
          * 币种
          */
         public static final String FIC = "FIC";
@@ -33,7 +39,8 @@ public class Constants {
         public static final String RESET_PASSWORD_PATH = "/api/v1/resetPassword";
         public static final String RESOURCE_PATH = "/api/v1/static/**";
         public static final String SMS_PATH = "/api/v1/sendSms";
-        public static final String CHECK_CODE = "/api/v1/checkCode";
+        public static final String CHECK_CODE_PATH = "/api/v1/checkCode";//验证码
+        public static final String VERSION_CHECK_PATH = "/api/v1/checkVersion";//版本号
         public static final Map<String,String> pathMatchFilterMap = new HashMap<String,String>();
 
         static {
@@ -42,6 +49,7 @@ public class Constants {
                 pathMatchFilterMap.put(RESET_PASSWORD_PATH,RESET_PASSWORD_PATH);
                 pathMatchFilterMap.put(RESOURCE_PATH,RESOURCE_PATH);
                 pathMatchFilterMap.put(SMS_PATH,SMS_PATH);
-                pathMatchFilterMap.put(CHECK_CODE,CHECK_CODE);
+                pathMatchFilterMap.put(CHECK_CODE_PATH,CHECK_CODE_PATH);
+                pathMatchFilterMap.put(VERSION_CHECK_PATH,VERSION_CHECK_PATH);
         }
 }

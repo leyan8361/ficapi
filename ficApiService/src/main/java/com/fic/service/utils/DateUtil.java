@@ -46,5 +46,12 @@ public class DateUtil {
         return date;
     }
 
+    public static String getTimeStamp(){
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMddHHmmss");
+        Date now = new Date();
+        String dateString = formatter.format(now);
+        return dateString;
+    }
+
 
 }

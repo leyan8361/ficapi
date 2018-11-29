@@ -2,6 +2,7 @@ package com.fic.service.service;
 
 import com.fic.service.Vo.InvestInfoVo;
 import com.fic.service.Vo.InvestRecordInfoVo;
+import com.fic.service.Vo.InvestSuccessInfoVo;
 import com.fic.service.entity.Invest;
 import org.springframework.stereotype.Service;
 
@@ -15,7 +16,7 @@ import java.util.List;
 **/
 public interface InvestService {
 
-       int invest(Invest invest, InvestInfoVo investInfoVo, BigDecimal investBalance);
+       InvestSuccessInfoVo invest(Invest invest, InvestInfoVo investInfoVo, BigDecimal investBalance);
 
        InvestRecordInfoVo getInvestDetail(Integer userId);
 }

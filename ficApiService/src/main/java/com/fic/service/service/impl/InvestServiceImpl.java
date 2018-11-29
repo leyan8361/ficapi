@@ -3,6 +3,7 @@ package com.fic.service.service.impl;
 import com.fic.service.Vo.InvestInfoVo;
 import com.fic.service.Vo.InvestRecordInfoVo;
 import com.fic.service.Vo.InvestRecordItemInfoVo;
+import com.fic.service.Vo.InvestSuccessInfoVo;
 import com.fic.service.controller.api.ApiInvestController;
 import com.fic.service.entity.Invest;
 import com.fic.service.entity.InvestDetail;
@@ -46,7 +47,7 @@ public class InvestServiceImpl implements InvestService {
 
     @Override
     @Transactional(isolation= Isolation.READ_COMMITTED,propagation= Propagation.REQUIRED,rollbackFor = Exception.class)
-    public int invest(Invest invest, InvestInfoVo investInfoVo, BigDecimal investBalance) {
+    public InvestSuccessInfoVo invest(Invest invest, InvestInfoVo investInfoVo, BigDecimal investBalance) {
 
         Movie movie = movieMapper.selectByPrimaryKey(investInfoVo.getMoveId());
         boolean insert = false;
@@ -96,8 +97,9 @@ public class InvestServiceImpl implements InvestService {
         }
 
         List<Integer> countInvestNum = investDetailMapper.countInvestPeople(movie.getMovieId());
-
-        return countInvestNum.size();
+        InvestSuccessInfoVo result = new InvestSuccessInfoVo();
+        result.setRankingOfInvest(countInvestNum.size());
+        return result;
     }
 
     @Override

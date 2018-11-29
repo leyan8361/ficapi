@@ -1,11 +1,9 @@
 package com.fic.service.service.impl;
 
 import com.fic.service.Enum.ErrorCodeEnum;
-import com.fic.service.Vo.LoginUserInfoVo;
-import com.fic.service.Vo.RegisterUserInfoVo;
-import com.fic.service.Vo.ResetPasswordInfo;
-import com.fic.service.Vo.ResponseVo;
+import com.fic.service.Vo.*;
 import com.fic.service.constants.Constants;
+import com.fic.service.constants.UploadProperties;
 import com.fic.service.controller.HomeController;
 import com.fic.service.entity.Invest;
 import com.fic.service.entity.TokenBase;
@@ -14,14 +12,12 @@ import com.fic.service.mapper.InvestMapper;
 import com.fic.service.mapper.TokenBaseMapper;
 import com.fic.service.mapper.UserMapper;
 import com.fic.service.service.AccountService;
-import com.fic.service.utils.InviteCodeUtil;
-import com.fic.service.utils.RegexUtil;
-import com.fic.service.utils.Sha1Util;
+import com.fic.service.utils.FileUtil;
+import com.fic.service.utils.*;
 import org.apache.shiro.codec.Base64;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
@@ -31,7 +27,6 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
 import java.security.SecureRandom;
-import java.time.LocalDate;
 import java.util.Date;
 
 /**
@@ -52,6 +47,10 @@ public class AccountServiceImpl implements AccountService {
     UserMapper userMapper;
     @Autowired
     InvestMapper investMapper;
+    @Autowired
+    FileUtil fileUtil;
+    @Autowired
+    UploadProperties uploadProperties;
 
     @Override
     @Transactional(isolation= Isolation.READ_COMMITTED,propagation= Propagation.REQUIRED,rollbackFor = Exception.class)
@@ -129,14 +128,25 @@ public class AccountServiceImpl implements AccountService {
 
 
     @Override
-    public ResponseVo updateHeadPic(MultipartFile file,Integer userId) {
+    public ResponseVo updateHeadPic(MultipartFile uploadFile,Integer userId){
         String fileType = "";
-        String fileName = file.getOriginalFilename();
+        String fileName = uploadFile.getOriginalFilename();
         if(!RegexUtil.isPic(fileName)){
             return new ResponseVo(ErrorCodeEnum.USER_HEAD_PIC_ERROR,null);
         }
+        fileType = fileName.substring(fileName.lastIndexOf(".")+1,fileName.length());
+        String newName = DateUtil.getTimeStamp()+"."+fileType;
+        String newDir = Constants.HEAD_CUT_PATH+userId+"/";
+        String newPath = newDir+newName;
+        ErrorCodeEnum saveCode = fileUtil.saveFile(uploadFile,newDir,newName);
+        if(!saveCode.equals(ErrorCodeEnum.SUCCESS))return new ResponseVo(saveCode,null);
 
-        return null;
+        User user = userMapper.get(userId);
+        user.setHimageUrl(newPath);
+        int userResult = userMapper.updateByPrimaryKey(user);
+        if(userResult <=0)return new ResponseVo(ErrorCodeEnum.SYSTEM_EXCEPTION,null);
+        String url = uploadProperties.getUrl(newPath);
+        return new ResponseVo(ErrorCodeEnum.SUCCESS,new UploadHeadImageInfoVo(url));
     }
 
     private String generateTokenData() {

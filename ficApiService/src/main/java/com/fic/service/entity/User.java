@@ -30,6 +30,11 @@ public class User implements Serializable {
     private String password;
 
     /**
+     * 支付密码
+     */
+    private String payPassword;
+
+    /**
      * 用户头像
      */
     private String himageUrl;
@@ -540,5 +545,13 @@ public class User implements Serializable {
      */
     public void setUserRe10(String userRe10) {
         this.userRe10 = userRe10;
+    }
+
+    public String getPayPassword() {
+        return payPassword;
+    }
+
+    public void setPayPassword(String payPassword) {
+        this.payPassword = payPassword;
     }
 }

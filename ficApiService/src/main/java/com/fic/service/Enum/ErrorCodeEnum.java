@@ -43,6 +43,9 @@ public enum ErrorCodeEnum {
 //    SMS_SEND_1DAY_LIMIT(1019,"单个手机号日下发短信条数超过设定的上限"),
     SMS_SEND_REST_ERROR(1017,"其余错误"),
     USER_HEAD_PIC_ERROR(1018,"ERROR PIC TYPE (png|jpg|bmp|jpeg)"),
+    USER_HEAD_PIC_UPLOAD_FAILED(1019,"UPLOAD FAILED,SYSTEM_ERROR"),
+    USER_PAY_PASSWORD_NOT_SET(1020,"USER_PAY_PASSWORD_NOT_SET"),
+    USER_PAY_PASSWORD_NOT_MATCH(1021,"USER_PAY_PASSWORD_NOT_MATCH"),
     /**
      * 投资相关
      */
@@ -54,6 +57,12 @@ public enum ErrorCodeEnum {
      * 常量费率相关
      */
     EXCHANGE_RATE_MISSED(3000,"EXCHANGE_RATE_MISSED"),
+
+
+    /**
+     * 版本，更新相关
+     */
+    VERSION_ILLEGAL(3200,"VERSION ILLEGAL OR UNSUPPORTED DEVICE"),
 
     /**
      * System Error

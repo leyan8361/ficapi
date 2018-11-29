@@ -1,6 +1,8 @@
 package com.fic.service;
 
+import com.fic.service.constants.ServetProperties;
 import com.fic.service.constants.SmsProperties;
+import com.fic.service.constants.UploadProperties;
 import org.mybatis.spring.annotation.MapperScan;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,7 +17,7 @@ import java.net.UnknownHostException;
 
 @SpringBootApplication
 @MapperScan("com.fic.service.mapper")
-@EnableConfigurationProperties({SmsProperties.class})
+@EnableConfigurationProperties({SmsProperties.class, UploadProperties.class, ServetProperties.class})
 @EnableScheduling
 public class FicApiServiceApplication {
 

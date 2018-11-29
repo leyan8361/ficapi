@@ -1,10 +1,7 @@
 package com.fic.service.controller.api;
 
 import com.fic.service.Enum.ErrorCodeEnum;
-import com.fic.service.Vo.InvestBalanceInfoVo;
-import com.fic.service.Vo.InvestInfoVo;
-import com.fic.service.Vo.InvestRecordInfoVo;
-import com.fic.service.Vo.ResponseVo;
+import com.fic.service.Vo.*;
 import com.fic.service.constants.Constants;
 import com.fic.service.entity.Invest;
 import com.fic.service.mapper.InvestMapper;
@@ -41,7 +38,7 @@ public class ApiInvestController {
             @ApiResponse(code = 2000, message = "INVEST NOT EXIST"),
             @ApiResponse(code = 2001, message = "INVEST_BALANCE_NOT_ENOUGH"),
             @ApiResponse(code = 500, message = "System ERROR"),
-            @ApiResponse(code = 200, message = "SUCCESS")
+            @ApiResponse(code = 200, message = "SUCCESS",response = InvestSuccessInfoVo.class)
     })
     public ResponseEntity invest(@RequestBody InvestInfoVo investInfoVo) {
         log.debug(" do invest action !!");
@@ -51,8 +48,7 @@ public class ApiInvestController {
         BigDecimal investBalance = invest.getBalance().subtract(investInfoVo.getAmount()).setScale(Constants.KEEP_SCALE);
         if(BigDecimal.ZERO.compareTo(investBalance) >= 1)return ResponseEntity.ok(new ResponseVo(ErrorCodeEnum.INVEST_BALANCE_NOT_ENOUGH,null));
 
-        int result = investService.invest(invest,investInfoVo,investBalance);
-        if(result==0)return ResponseEntity.ok(new ResponseVo(ErrorCodeEnum.SYSTEM_EXCEPTION,null));
+        InvestSuccessInfoVo result = investService.invest(invest,investInfoVo,investBalance);
 
         return ResponseEntity.ok(new ResponseVo(ErrorCodeEnum.SUCCESS,result));
     }
