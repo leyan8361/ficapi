@@ -7,6 +7,7 @@ import com.fic.service.controller.HomeController;
 import com.fic.service.entity.User;
 import com.fic.service.mapper.UserMapper;
 import com.fic.service.service.AccountService;
+import com.fic.service.utils.RegexUtil;
 import io.swagger.annotations.*;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -215,30 +216,39 @@ public class ApiAccountController {
     }
 
 
-//    @GetMapping(value = "/updateUserInfo")
-//    @ApiOperation("Api-修改用户信息")
-//    @ApiImplicitParams({
-//            @ApiImplicitParam(dataType = "int", name = "userId", value = "用户ID", required = true),
-//            @ApiImplicitParam(dataType = "string", name = "telephone", value = "手机号", required = false),
-//            @ApiImplicitParam(dataType = "string", name = "nickName", value = "昵称", required = false),
-//    })
-//    @ApiResponses({
-//            @ApiResponse(code = 1020, message = "USER_PAY_PASSWORD_NOT_SET"),
-//            @ApiResponse(code = 1020, message = "USER_PAY_PASSWORD_NOT_MATCH"),
-//            @ApiResponse(code = 200, message = "SUCCESS")
-//    })
-//    public ResponseEntity checkPayPassword(@RequestParam Integer userId,@RequestParam String payPassword){
-//        log.debug(" do checkPayPassword Action !!!");
-//        User user = userMapper.get(userId);
+    @PostMapping(value = "/updateUserInfo")
+    @ApiOperation("Api-修改用户信息")
+    @ApiResponses({
+            @ApiResponse(code = 1020, message = "USER_PAY_PASSWORD_NOT_SET"),
+            @ApiResponse(code = 1020, message = "USER_PAY_PASSWORD_NOT_MATCH"),
+            @ApiResponse(code = 200, message = "SUCCESS",response = UpdateUserInfoVo.class)
+    })
+    public ResponseEntity updateUserInfo(@RequestBody UpdateUserInfoVo userInfoVo){
+        log.debug(" do updateUserInfo Action !!!");
+        User user = userMapper.get(userInfoVo.getUserId());
+        if(null == user){
+            return ResponseEntity.ok(new ResponseVo(ErrorCodeEnum.USER_NOT_EXIST,null));
+        }
+        if(StringUtils.isNotEmpty(userInfoVo.getNickName())){
+            user.setNickName(userInfoVo.getNickName());
+        }
+        if(StringUtils.isNotEmpty(userInfoVo.getEmail())){
+            user.setEmail(userInfoVo.getEmail());
+        }
+        if(null != userInfoVo.getZip()){
+            user.setZip(userInfoVo.getZip());
+        }
+        if(StringUtils.isNotEmpty(userInfoVo.getTelephone())){
+            if(!RegexUtil.isPhone(userInfoVo.getTelephone())){
+                return ResponseEntity.ok(new ResponseVo(ErrorCodeEnum.NOT_A_TELEPHONE,null));
+            }
+            user.setUserName(userInfoVo.getTelephone());
+        }
+        int saveResult = userMapper.updateByPrimaryKey(user);
+        if(saveResult <=0)return ResponseEntity.ok(new ResponseVo(ErrorCodeEnum.SYSTEM_EXCEPTION,null));
 
-//        if(StringUtils.isEmpty(user.getPayPassword())){
-//            return ResponseEntity.ok(new ResponseVo(ErrorCodeEnum.USER_PAY_PASSWORD_NOT_SET,null));
-//        }
-//        if(!payPassword.equals(user.getPayPassword())){
-//            return ResponseEntity.ok(new ResponseVo(ErrorCodeEnum.USER_PAY_PASSWORD_NOT_MATCH,null));
-//        }
-//        return ResponseEntity.ok(new ResponseVo(ErrorCodeEnum.SUCCESS,null));
-//    }
+        return ResponseEntity.ok(new ResponseVo(ErrorCodeEnum.SUCCESS,userInfoVo));
+    }
 
 
 
