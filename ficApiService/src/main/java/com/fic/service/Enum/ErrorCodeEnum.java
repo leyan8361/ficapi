@@ -64,6 +64,12 @@ public enum ErrorCodeEnum {
      */
     VERSION_ILLEGAL(3200,"VERSION ILLEGAL OR UNSUPPORTED DEVICE"),
 
+
+    /**
+     * 电影相关
+     */
+    MOVIE_NOT_FOUND(4000,"MOVIE NOT FOUND"),
+
     /**
      * System Error
      */

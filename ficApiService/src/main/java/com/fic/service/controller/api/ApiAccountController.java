@@ -215,4 +215,31 @@ public class ApiAccountController {
     }
 
 
+//    @GetMapping(value = "/updateUserInfo")
+//    @ApiOperation("Api-修改用户信息")
+//    @ApiImplicitParams({
+//            @ApiImplicitParam(dataType = "int", name = "userId", value = "用户ID", required = true),
+//            @ApiImplicitParam(dataType = "string", name = "telephone", value = "手机号", required = false),
+//            @ApiImplicitParam(dataType = "string", name = "nickName", value = "昵称", required = false),
+//    })
+//    @ApiResponses({
+//            @ApiResponse(code = 1020, message = "USER_PAY_PASSWORD_NOT_SET"),
+//            @ApiResponse(code = 1020, message = "USER_PAY_PASSWORD_NOT_MATCH"),
+//            @ApiResponse(code = 200, message = "SUCCESS")
+//    })
+//    public ResponseEntity checkPayPassword(@RequestParam Integer userId,@RequestParam String payPassword){
+//        log.debug(" do checkPayPassword Action !!!");
+//        User user = userMapper.get(userId);
+
+//        if(StringUtils.isEmpty(user.getPayPassword())){
+//            return ResponseEntity.ok(new ResponseVo(ErrorCodeEnum.USER_PAY_PASSWORD_NOT_SET,null));
+//        }
+//        if(!payPassword.equals(user.getPayPassword())){
+//            return ResponseEntity.ok(new ResponseVo(ErrorCodeEnum.USER_PAY_PASSWORD_NOT_MATCH,null));
+//        }
+//        return ResponseEntity.ok(new ResponseVo(ErrorCodeEnum.SUCCESS,null));
+//    }
+
+
+
 }

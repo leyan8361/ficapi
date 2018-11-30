@@ -142,4 +142,7 @@
       updated_by = #{updatedBy,jdbcType=INTEGER}
     where movie_id = #{movieId,jdbcType=INTEGER}
   </update>
+  <select id="findAll" resultMap="BaseResultMap">
+    select * from movie where 1=1;
+  </select>
 </mapper>

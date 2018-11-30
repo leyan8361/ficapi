@@ -2,8 +2,10 @@ package com.fic.service.mapper;
 
 import com.fic.service.entity.MovieMedia;
 import org.apache.ibatis.annotations.Mapper;
+import org.springframework.stereotype.Repository;
 
 @Mapper
+@Repository
 public interface MovieMediaMapper {
 
     int deleteByPrimaryKey(Integer movieMediaId);
@@ -17,4 +19,6 @@ public interface MovieMediaMapper {
     int updateByPrimaryKeySelective(MovieMedia record);
 
     int updateByPrimaryKey(MovieMedia record);
+
+    MovieMedia findByMovieId(int movieId);
 }

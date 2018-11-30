@@ -180,4 +180,7 @@
   <select id="countInvestPeople" resultType="int">
     select DISTINCT user_id from invest_detail where movie_id=#{movieId} group by user_id;
   </select>
+  <select id="sumTotalInvestByMovieId" resultType="java.math.BigDecimal">
+    select sum(amount) from invest_detail where movie_id = #{movieId}
+  </select>
 </mapper>

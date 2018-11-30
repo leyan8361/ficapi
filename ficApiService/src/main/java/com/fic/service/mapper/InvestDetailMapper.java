@@ -4,6 +4,7 @@ import com.fic.service.entity.InvestDetail;
 import org.apache.ibatis.annotations.Mapper;
 import org.springframework.stereotype.Repository;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Mapper
@@ -25,4 +26,7 @@ public interface InvestDetailMapper {
     List<InvestDetail> findByUserId(Integer userId);
 
     List<Integer> countInvestPeople(Integer movieId);
+
+    BigDecimal sumTotalInvestByMovieId(Integer movieId);
+
 }

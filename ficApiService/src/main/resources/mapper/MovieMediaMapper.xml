@@ -114,4 +114,7 @@
       updated_by = #{updatedBy,jdbcType=INTEGER}
     where movie_media_id = #{movieMediaId,jdbcType=INTEGER}
   </update>
+  <select id="findByMovieId" resultMap="BaseResultMap">
+    select * from movie_media where movie_id = #{movieId} limit 0,1;
+  </select>
 </mapper>
