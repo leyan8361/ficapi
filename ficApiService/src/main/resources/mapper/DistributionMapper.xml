@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fic.service.mapper.DistributionMapper">
+  <resultMap id="BaseResultMap" type="com.fic.service.entity.Distribution">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="user_id" jdbcType="INTEGER" property="userId" />
+    <result column="created_time" jdbcType="TIMESTAMP" property="createdTime" />
+    <result column="invite_reward_one" jdbcType="DECIMAL" property="inviteRewardOne" />
+    <result column="invest_reward_one" jdbcType="DECIMAL" property="investRewardOne" />
+    <result column="invite_reward_two" jdbcType="DECIMAL" property="inviteRewardTwo" />
+    <result column="invest_reward_two" jdbcType="DECIMAL" property="investRewardTwo" />
+    <result column="dis_level_one_user_id" jdbcType="INTEGER" property="disLevelOneUserId" />
+    <result column="dis_level_two_user_id" jdbcType="INTEGER" property="disLevelTwoUserId" />
+    <result column="status" jdbcType="TINYINT" property="status" />
+    <result column="updated_time" jdbcType="DATE" property="updatedTime" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, user_id, created_time, invite_reward_one, invest_reward_one, invite_reward_two, 
+    invest_reward_two, dis_level_one_user_id, dis_level_two_user_id, status, updated_time
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from distribution
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from distribution
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.fic.service.entity.Distribution">
+    insert into distribution (id, user_id, created_time, 
+      invite_reward_one, invest_reward_one, invite_reward_two, 
+      invest_reward_two, dis_level_one_user_id, dis_level_two_user_id, 
+      status, updated_time)
+    values (#{id,jdbcType=INTEGER}, #{userId,jdbcType=INTEGER}, #{createdTime,jdbcType=TIMESTAMP}, 
+      #{inviteRewardOne,jdbcType=DECIMAL}, #{investRewardOne,jdbcType=DECIMAL}, #{inviteRewardTwo,jdbcType=DECIMAL}, 
+      #{investRewardTwo,jdbcType=DECIMAL}, #{disLevelOneUserId,jdbcType=INTEGER}, #{disLevelTwoUserId,jdbcType=INTEGER}, 
+      #{status,jdbcType=TINYINT}, #{updatedTime,jdbcType=DATE})
+  </insert>
+  <insert id="insertSelective" parameterType="com.fic.service.entity.Distribution">
+    insert into distribution
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="userId != null">
+        user_id,
+      </if>
+      <if test="createdTime != null">
+        created_time,
+      </if>
+      <if test="inviteRewardOne != null">
+        invite_reward_one,
+      </if>
+      <if test="investRewardOne != null">
+        invest_reward_one,
+      </if>
+      <if test="inviteRewardTwo != null">
+        invite_reward_two,
+      </if>
+      <if test="investRewardTwo != null">
+        invest_reward_two,
+      </if>
+      <if test="disLevelOneUserId != null">
+        dis_level_one_user_id,
+      </if>
+      <if test="disLevelTwoUserId != null">
+        dis_level_two_user_id,
+      </if>
+      <if test="status != null">
+        status,
+      </if>
+      <if test="updatedTime != null">
+        updated_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="userId != null">
+        #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="createdTime != null">
+        #{createdTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="inviteRewardOne != null">
+        #{inviteRewardOne,jdbcType=DECIMAL},
+      </if>
+      <if test="investRewardOne != null">
+        #{investRewardOne,jdbcType=DECIMAL},
+      </if>
+      <if test="inviteRewardTwo != null">
+        #{inviteRewardTwo,jdbcType=DECIMAL},
+      </if>
+      <if test="investRewardTwo != null">
+        #{investRewardTwo,jdbcType=DECIMAL},
+      </if>
+      <if test="disLevelOneUserId != null">
+        #{disLevelOneUserId,jdbcType=INTEGER},
+      </if>
+      <if test="disLevelTwoUserId != null">
+        #{disLevelTwoUserId,jdbcType=INTEGER},
+      </if>
+      <if test="status != null">
+        #{status,jdbcType=TINYINT},
+      </if>
+      <if test="updatedTime != null">
+        #{updatedTime,jdbcType=DATE},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.fic.service.entity.Distribution">
+    update distribution
+    <set>
+      <if test="userId != null">
+        user_id = #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="createdTime != null">
+        created_time = #{createdTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="inviteRewardOne != null">
+        invite_reward_one = #{inviteRewardOne,jdbcType=DECIMAL},
+      </if>
+      <if test="investRewardOne != null">
+        invest_reward_one = #{investRewardOne,jdbcType=DECIMAL},
+      </if>
+      <if test="inviteRewardTwo != null">
+        invite_reward_two = #{inviteRewardTwo,jdbcType=DECIMAL},
+      </if>
+      <if test="investRewardTwo != null">
+        invest_reward_two = #{investRewardTwo,jdbcType=DECIMAL},
+      </if>
+      <if test="disLevelOneUserId != null">
+        dis_level_one_user_id = #{disLevelOneUserId,jdbcType=INTEGER},
+      </if>
+      <if test="disLevelTwoUserId != null">
+        dis_level_two_user_id = #{disLevelTwoUserId,jdbcType=INTEGER},
+      </if>
+      <if test="status != null">
+        status = #{status,jdbcType=TINYINT},
+      </if>
+      <if test="updatedTime != null">
+        updated_time = #{updatedTime,jdbcType=DATE},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.fic.service.entity.Distribution">
+    update distribution
+    set user_id = #{userId,jdbcType=INTEGER},
+      created_time = #{createdTime,jdbcType=TIMESTAMP},
+      invite_reward_one = #{inviteRewardOne,jdbcType=DECIMAL},
+      invest_reward_one = #{investRewardOne,jdbcType=DECIMAL},
+      invite_reward_two = #{inviteRewardTwo,jdbcType=DECIMAL},
+      invest_reward_two = #{investRewardTwo,jdbcType=DECIMAL},
+      dis_level_one_user_id = #{disLevelOneUserId,jdbcType=INTEGER},
+      dis_level_two_user_id = #{disLevelTwoUserId,jdbcType=INTEGER},
+      status = #{status,jdbcType=TINYINT},
+      updated_time = #{updatedTime,jdbcType=DATE}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <select id="findByUserId" resultMap="BaseResultMap">
+    SELECT
+	d.*
+    FROM
+        distribution d
+    where d.user_id = #{userId} and (status = 0 or status = 1)
+  </select>
+</mapper>

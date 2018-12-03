@@ -397,4 +397,7 @@
   <select id="checkExistByInviteCode" resultType="java.lang.Integer">
     select id from user where user_invite_code = #{inviteCode};
   </select>
+  <select id="findByInviteCode" resultMap="resultMap">
+    select * from user where user_invite_code = #{inviteCode};
+  </select>
 </mapper>

@@ -20,6 +20,8 @@ public class Invest {
 
     private Integer updatedBy;
 
+    private BigDecimal rewardBalance;
+
     public Integer getInvestId() {
         return investId;
     }
@@ -82,5 +84,13 @@ public class Invest {
 
     public void setUpdatedBy(Integer updatedBy) {
         this.updatedBy = updatedBy;
+    }
+
+    public BigDecimal getRewardBalance() {
+        return rewardBalance;
+    }
+
+    public void setRewardBalance(BigDecimal rewardBalance) {
+        this.rewardBalance = rewardBalance;
     }
 }

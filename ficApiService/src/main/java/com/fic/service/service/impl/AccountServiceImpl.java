@@ -5,13 +5,10 @@ import com.fic.service.Vo.*;
 import com.fic.service.constants.Constants;
 import com.fic.service.constants.UploadProperties;
 import com.fic.service.controller.HomeController;
-import com.fic.service.entity.Invest;
-import com.fic.service.entity.TokenBase;
-import com.fic.service.entity.User;
-import com.fic.service.mapper.InvestMapper;
-import com.fic.service.mapper.TokenBaseMapper;
-import com.fic.service.mapper.UserMapper;
+import com.fic.service.entity.*;
+import com.fic.service.mapper.*;
 import com.fic.service.service.AccountService;
+import com.fic.service.service.RewardService;
 import com.fic.service.utils.FileUtil;
 import com.fic.service.utils.*;
 import org.apache.shiro.codec.Base64;
@@ -51,6 +48,10 @@ public class AccountServiceImpl implements AccountService {
     FileUtil fileUtil;
     @Autowired
     UploadProperties uploadProperties;
+    @Autowired
+    RewardMapper rewardMapper;
+    @Autowired
+    RewardService rewardService;
 
     @Override
     @Transactional(isolation= Isolation.READ_COMMITTED,propagation= Propagation.REQUIRED,rollbackFor = Exception.class)
@@ -78,17 +79,36 @@ public class AccountServiceImpl implements AccountService {
         user.setUserInviteCode(InviteCodeUtil.toSerialCode(userMapper.getLastInsertID()));
         user.setCreatedTime(new Date());
         user.setUpdatedTime(new Date());
+
+        /**
+         * 分销记录
+         */
+        User inviteByWho = userMapper.findByInviteCode(userInfoVo.getInviteCode());
+        if(null == inviteByWho){
+            log.error(" 注册用户 ---> 邀请码不存在 : {}",userInfoVo.getInviteCode());
+            throw new RuntimeException();
+        }
+
         int result = userMapper.insert(user);
 
         if(result  <= 0){
             return null;
         }
 
+        boolean distributionResult = rewardService.distributionRewardByAction(user,inviteByWho,true);
+
+        if(!distributionResult){
+            log.error(" AcctionServiceImpl ：分销失败");
+            throw new RuntimeException();
+        }
+
+        Reward reward = rewardMapper.selectRulesByCurrentUserCount();
+
         /**
          * 生成默认资产记录
          */
         Invest invest = new Invest();
-        invest.setBalance(BigDecimal.ZERO);
+        invest.setBalance(BigDecimal.ZERO.add(reward.getRegisterSelf()));
         invest.setQty(0);
         invest.setUserId(user.getId());
         invest.setUpdatedTime(new Date());

@@ -5,6 +5,7 @@
     <id column="invest_id" jdbcType="INTEGER" property="investId" />
     <result column="user_id" jdbcType="INTEGER" property="userId" />
     <result column="balance" jdbcType="DECIMAL" property="balance" />
+    <result column="reward_balance" jdbcType="DECIMAL" property="rewardBalance" />
     <result column="qty" jdbcType="TINYINT" property="qty" />
     <result column="created_time" jdbcType="TIMESTAMP" property="createdTime" />
     <result column="created_by" jdbcType="INTEGER" property="createdBy" />
@@ -12,7 +13,7 @@
     <result column="updated_by" jdbcType="INTEGER" property="updatedBy" />
   </resultMap>
   <sql id="Base_Column_List">
-    invest_id, user_id, balance, qty, created_time, created_by, updated_time, updated_by
+    invest_id, user_id, balance, reward_balance,qty, created_time, created_by, updated_time, updated_by
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
     select 
@@ -25,10 +26,10 @@
     where invest_id = #{investId,jdbcType=INTEGER}
   </delete>
   <insert id="insert" parameterType="com.fic.service.entity.Invest">
-    insert into invest (invest_id, user_id, balance, 
+    insert into invest (invest_id, user_id, balance, reward_balance,
       qty, created_time, created_by, 
       updated_time, updated_by)
-    values (#{investId,jdbcType=INTEGER}, #{userId,jdbcType=INTEGER}, #{balance,jdbcType=DECIMAL}, 
+    values (#{investId,jdbcType=INTEGER}, #{userId,jdbcType=INTEGER}, #{balance,jdbcType=DECIMAL}, #{reward_balance,jdbcType=DECIMAL},
       #{qty,jdbcType=TINYINT}, #{createdTime,jdbcType=TIMESTAMP}, #{createdBy,jdbcType=INTEGER}, 
       #{updatedTime,jdbcType=TIMESTAMP}, #{updatedBy,jdbcType=INTEGER})
   </insert>
@@ -43,6 +44,9 @@
       </if>
       <if test="balance != null">
         balance,
+      </if>
+      <if test="reward_balance != null">
+        reward_balance,
       </if>
       <if test="qty != null">
         qty,
@@ -70,6 +74,9 @@
       <if test="balance != null">
         #{balance,jdbcType=DECIMAL},
       </if>
+      <if test="rewardBalance != null">
+        #{reward_balance,jdbcType=DECIMAL},
+      </if>
       <if test="qty != null">
         #{qty,jdbcType=TINYINT},
       </if>
@@ -96,6 +103,9 @@
       <if test="balance != null">
         balance = #{balance,jdbcType=DECIMAL},
       </if>
+      <if test="rewardBalance != null">
+        reward_balance = #{rewardBalance,jdbcType=DECIMAL},
+      </if>
       <if test="qty != null">
         qty = #{qty,jdbcType=TINYINT},
       </if>
@@ -119,6 +129,7 @@
     update invest
     set user_id = #{userId,jdbcType=INTEGER},
       balance = #{balance,jdbcType=DECIMAL},
+      reward_balance = #{rewardBalance,jdbcType=DECIMAL},
       qty = #{qty,jdbcType=TINYINT},
       created_time = #{createdTime,jdbcType=TIMESTAMP},
       created_by = #{createdBy,jdbcType=INTEGER},

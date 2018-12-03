@@ -44,4 +44,6 @@ public interface UserMapper {
     Integer getLastInsertID();
 
     Integer checkExistByInviteCode(@Param("inviteCode") String inviteCode);
+
+    User findByInviteCode(@Param("inviteCode") String inviteCode);
 }

@@ -13,7 +13,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -37,6 +36,8 @@ public class ApiAccountController {
     UserMapper userMapper;
     @Autowired
     AccountService accountService;
+    @Autowired
+    DistributionRecordMapper distributionRecordMapper;
 
     @GetMapping("/login")
     @ApiOperation("Api-登录")
@@ -74,8 +75,8 @@ public class ApiAccountController {
         User checkUser = userMapper.findByUsername(userInfoVo.getUsername());
         if(null != checkUser)return ResponseEntity.ok(new ResponseVo(ErrorCodeEnum.USERNAME_EXIST,null));
         if(StringUtils.isNotEmpty(userInfoVo.getInviteCode())){
-            Integer checkInviteUserExist = userMapper.checkExistByInviteCode(userInfoVo.getInviteCode());
-            if(null == checkInviteUserExist || 0 == checkInviteUserExist)return ResponseEntity.ok(new ResponseVo(ErrorCodeEnum.INVITE_CODE_NOT_EXIST,null));
+            User checkInviteUserExist = userMapper.findByInviteCode(userInfoVo.getInviteCode());
+            if(null == checkInviteUserExist)return ResponseEntity.ok(new ResponseVo(ErrorCodeEnum.INVITE_CODE_NOT_EXIST,null));
         }
         User user = accountService.register(userInfoVo);
         if(null == user)return ResponseEntity.ok(new ResponseVo(ErrorCodeEnum.SYSTEM_EXCEPTION,null));

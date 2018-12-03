@@ -126,4 +126,19 @@
       invest_reward_second = #{investRewardSecond,jdbcType=DECIMAL}
     where id = #{id,jdbcType=INTEGER}
   </update>
+  <select id="selectRulesByCurrentUserCount" resultMap="BaseResultMap">
+    SELECT
+      id,
+      user_less,
+      user_greater,
+      register_self,
+      invite_reward_first,
+      invite_reward_second,
+      invest_reward_first,
+      invest_reward_second
+    FROM
+        reward
+    WHERE
+     (select count(*) from user) BETWEEN user_less and user_greater limit 0,1
+  </select>
 </mapper>

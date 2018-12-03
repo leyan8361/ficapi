@@ -19,4 +19,6 @@ public interface RewardMapper {
     int updateByPrimaryKeySelective(Reward record);
 
     int updateByPrimaryKey(Reward record);
+
+    Reward selectRulesByCurrentUserCount();
 }
