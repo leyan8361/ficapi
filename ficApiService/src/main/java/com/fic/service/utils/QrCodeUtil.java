@@ -14,10 +14,13 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.OutputStream;
 import java.util.Hashtable;
-import java.util.Random;
 
-
-public class QrCodeUtils {
+/**
+ *   @Author Xie
+ *   @Date 2018/12/3
+ *   @Discription:
+**/
+public class QrCodeUtil {
 
     private static final String CHARSET = "utf-8";
     private static final String FORMAT = "JPG";
@@ -47,7 +50,7 @@ public class QrCodeUtils {
             return image;
         }
         // 插入图片  
-        QrCodeUtils.insertImage(image, logoPath, needCompress);
+        QrCodeUtil.insertImage(image, logoPath, needCompress);
         return image;
     }
 
@@ -108,7 +111,7 @@ public class QrCodeUtils {
      * @throws Exception
      */
     public static String encode(String content, String logoPath,boolean needCompress) throws Exception {
-        BufferedImage image = QrCodeUtils.createImage(content, logoPath, needCompress);
+        BufferedImage image = QrCodeUtil.createImage(content, logoPath, needCompress);
 //        mkdirs(destPath);
 //        String fileName = new Random().nextInt(99999999) + "." + FORMAT.toLowerCase();
 //        ImageIO.write(image, FORMAT, new File(destPath + "/" + fileName));
@@ -118,7 +121,7 @@ public class QrCodeUtils {
         BASE64Encoder encoder = new BASE64Encoder();
         String imageString = encoder.encode(imageBytes);
         bos.close();
-        return imageString;
+        return "data:image/png;base64,"+imageString;
     }
 
     /**
@@ -138,7 +141,7 @@ public class QrCodeUtils {
      * @throws Exception
      */
     public static String encode(String content, String logoPath, String destPath, String fileName, boolean needCompress) throws Exception {
-        BufferedImage image = QrCodeUtils.createImage(content, logoPath, needCompress);
+        BufferedImage image = QrCodeUtil.createImage(content, logoPath, needCompress);
         mkdirs(destPath);
         fileName = fileName.substring(0, fileName.indexOf(".")>0?fileName.indexOf("."):fileName.length())
                 + "." + FORMAT.toLowerCase();
@@ -175,7 +178,7 @@ public class QrCodeUtils {
      */
     public static void encode(String content, String logoPath, OutputStream output, boolean needCompress)
             throws Exception {
-        BufferedImage image = QrCodeUtils.createImage(content, logoPath, needCompress);
+        BufferedImage image = QrCodeUtil.createImage(content, logoPath, needCompress);
         ImageIO.write(image, FORMAT, output);
     }
 
@@ -189,7 +192,7 @@ public class QrCodeUtils {
      * @throws Exception
      */
     public static void encode(String content, OutputStream output) throws Exception {
-        QrCodeUtils.encode(content, null, output, false);
+        QrCodeUtil.encode(content, null, output, false);
     }
 
     /**
@@ -225,15 +228,15 @@ public class QrCodeUtils {
      * @throws Exception
      */
     public static String decode(String path) throws Exception {
-        return QrCodeUtils.decode(new File(path));
+        return QrCodeUtil.decode(new File(path));
     }
 
     public static void main(String[] args) throws Exception {
         String text = "http://www.baidu.com";
-        System.out.println(QrCodeUtils.encode(text, "classpath:/static/imgs/logo.jpg",  true));
+        System.out.println(QrCodeUtil.encode(text, "E://logo.jpg",  true));
         //含Logo，不指定二维码图片名  
-//        QrCodeUtils.encode(text, "/static/imgs/logo.jpg", "/Users/ianly/Documents/picture/", true);
+//        QrCodeUtil.encode(text, "/static/imgs/logo.jpg", "/Users/ianly/Documents/picture/", true);
         //含Logo，指定二维码图片名  
-//        QrCodeUtils.encode(text, "/Users/ianly/Documents/picture/google-icon.jpg", "/Users/ianly/Documents/picture", "qrcode", true);
+//        QrCodeUtil.encode(text, "/Users/ianly/Documents/picture/google-icon.jpg", "/Users/ianly/Documents/picture", "qrcode", true);
     }
 }

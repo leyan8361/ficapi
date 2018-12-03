@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fic.service.mapper.RewardMapper">
+  <resultMap id="BaseResultMap" type="com.fic.service.entity.Reward">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="user_less" jdbcType="INTEGER" property="userLess" />
+    <result column="user_greater" jdbcType="INTEGER" property="userGreater" />
+    <result column="register_self" jdbcType="DECIMAL" property="registerSelf" />
+    <result column="invite_reward_first" jdbcType="DECIMAL" property="inviteRewardFirst" />
+    <result column="invite_reward_second" jdbcType="DECIMAL" property="inviteRewardSecond" />
+    <result column="invest_reward_first" jdbcType="DECIMAL" property="investRewardFirst" />
+    <result column="invest_reward_second" jdbcType="DECIMAL" property="investRewardSecond" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, user_less, user_greater, register_self, invite_reward_first, invite_reward_second, 
+    invest_reward_first, invest_reward_second
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from reward
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from reward
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.fic.service.entity.Reward">
+    insert into reward (id, user_less, user_greater, 
+      register_self, invite_reward_first, invite_reward_second, 
+      invest_reward_first, invest_reward_second)
+    values (#{id,jdbcType=INTEGER}, #{userLess,jdbcType=INTEGER}, #{userGreater,jdbcType=INTEGER}, 
+      #{registerSelf,jdbcType=DECIMAL}, #{inviteRewardFirst,jdbcType=DECIMAL}, #{inviteRewardSecond,jdbcType=DECIMAL}, 
+      #{investRewardFirst,jdbcType=DECIMAL}, #{investRewardSecond,jdbcType=DECIMAL})
+  </insert>
+  <insert id="insertSelective" parameterType="com.fic.service.entity.Reward">
+    insert into reward
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="userLess != null">
+        user_less,
+      </if>
+      <if test="userGreater != null">
+        user_greater,
+      </if>
+      <if test="registerSelf != null">
+        register_self,
+      </if>
+      <if test="inviteRewardFirst != null">
+        invite_reward_first,
+      </if>
+      <if test="inviteRewardSecond != null">
+        invite_reward_second,
+      </if>
+      <if test="investRewardFirst != null">
+        invest_reward_first,
+      </if>
+      <if test="investRewardSecond != null">
+        invest_reward_second,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="userLess != null">
+        #{userLess,jdbcType=INTEGER},
+      </if>
+      <if test="userGreater != null">
+        #{userGreater,jdbcType=INTEGER},
+      </if>
+      <if test="registerSelf != null">
+        #{registerSelf,jdbcType=DECIMAL},
+      </if>
+      <if test="inviteRewardFirst != null">
+        #{inviteRewardFirst,jdbcType=DECIMAL},
+      </if>
+      <if test="inviteRewardSecond != null">
+        #{inviteRewardSecond,jdbcType=DECIMAL},
+      </if>
+      <if test="investRewardFirst != null">
+        #{investRewardFirst,jdbcType=DECIMAL},
+      </if>
+      <if test="investRewardSecond != null">
+        #{investRewardSecond,jdbcType=DECIMAL},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.fic.service.entity.Reward">
+    update reward
+    <set>
+      <if test="userLess != null">
+        user_less = #{userLess,jdbcType=INTEGER},
+      </if>
+      <if test="userGreater != null">
+        user_greater = #{userGreater,jdbcType=INTEGER},
+      </if>
+      <if test="registerSelf != null">
+        register_self = #{registerSelf,jdbcType=DECIMAL},
+      </if>
+      <if test="inviteRewardFirst != null">
+        invite_reward_first = #{inviteRewardFirst,jdbcType=DECIMAL},
+      </if>
+      <if test="inviteRewardSecond != null">
+        invite_reward_second = #{inviteRewardSecond,jdbcType=DECIMAL},
+      </if>
+      <if test="investRewardFirst != null">
+        invest_reward_first = #{investRewardFirst,jdbcType=DECIMAL},
+      </if>
+      <if test="investRewardSecond != null">
+        invest_reward_second = #{investRewardSecond,jdbcType=DECIMAL},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.fic.service.entity.Reward">
+    update reward
+    set user_less = #{userLess,jdbcType=INTEGER},
+      user_greater = #{userGreater,jdbcType=INTEGER},
+      register_self = #{registerSelf,jdbcType=DECIMAL},
+      invite_reward_first = #{inviteRewardFirst,jdbcType=DECIMAL},
+      invite_reward_second = #{inviteRewardSecond,jdbcType=DECIMAL},
+      invest_reward_first = #{investRewardFirst,jdbcType=DECIMAL},
+      invest_reward_second = #{investRewardSecond,jdbcType=DECIMAL}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>
