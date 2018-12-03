@@ -4,11 +4,13 @@ import com.google.zxing.client.j2se.BufferedImageLuminanceSource;
 import com.google.zxing.common.BitMatrix;
 import com.google.zxing.common.HybridBinarizer;
 import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
+import sun.misc.BASE64Encoder;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.geom.RoundRectangle2D;
 import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.OutputStream;
 import java.util.Hashtable;
@@ -100,19 +102,23 @@ public class QrCodeUtils {
      * @param content
      *            内容 
      * @param logoPath
-     *            LOGO地址 
-     * @param destPath
-     *            存放目录 
+     *            LOGO地址
      * @param needCompress
      *            是否压缩LOGO 
      * @throws Exception
      */
-    public static String encode(String content, String logoPath, String destPath, boolean needCompress) throws Exception {
+    public static String encode(String content, String logoPath,boolean needCompress) throws Exception {
         BufferedImage image = QrCodeUtils.createImage(content, logoPath, needCompress);
-        mkdirs(destPath);
-        String fileName = new Random().nextInt(99999999) + "." + FORMAT.toLowerCase();
-        ImageIO.write(image, FORMAT, new File(destPath + "/" + fileName));
-        return fileName;
+//        mkdirs(destPath);
+//        String fileName = new Random().nextInt(99999999) + "." + FORMAT.toLowerCase();
+//        ImageIO.write(image, FORMAT, new File(destPath + "/" + fileName));
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        ImageIO.write(image, "png", bos);
+        byte[] imageBytes = bos.toByteArray();
+        BASE64Encoder encoder = new BASE64Encoder();
+        String imageString = encoder.encode(imageBytes);
+        bos.close();
+        return imageString;
     }
 
     /**
@@ -153,48 +159,6 @@ public class QrCodeUtils {
         }
     }
 
-    /**
-     * 生成二维码(内嵌LOGO) 
-     *
-     * @param content
-     *            内容 
-     * @param logoPath
-     *            LOGO地址 
-     * @param destPath
-     *            存储地址 
-     * @throws Exception
-     */
-    public static String encode(String content, String logoPath, String destPath) throws Exception {
-        return QrCodeUtils.encode(content, logoPath, destPath, false);
-    }
-
-    /**
-     * 生成二维码 
-     *
-     * @param content
-     *            内容 
-     * @param destPath
-     *            存储地址 
-     * @param needCompress
-     *            是否压缩LOGO 
-     * @throws Exception
-     */
-    public static String encode(String content, String destPath, boolean needCompress) throws Exception {
-        return QrCodeUtils.encode(content, null, destPath, needCompress);
-    }
-
-    /**
-     * 生成二维码 
-     *
-     * @param content
-     *            内容 
-     * @param destPath
-     *            存储地址 
-     * @throws Exception
-     */
-    public static String encode(String content, String destPath) throws Exception {
-        return QrCodeUtils.encode(content, null, destPath, false);
-    }
 
     /**
      * 生成二维码(内嵌LOGO) 
@@ -266,10 +230,9 @@ public class QrCodeUtils {
 
     public static void main(String[] args) throws Exception {
         String text = "http://www.baidu.com";
-        //不含Logo  
-        //QrCodeUtils.encode(text, null, "/Users/ianly/Documents/picture", true);
+        System.out.println(QrCodeUtils.encode(text, "classpath:/static/imgs/logo.jpg",  true));
         //含Logo，不指定二维码图片名  
-        QrCodeUtils.encode(text, "/Users/ianly/Documents/picture/google-icon.jpg", "/Users/ianly/Documents/picture/", true);
+//        QrCodeUtils.encode(text, "/static/imgs/logo.jpg", "/Users/ianly/Documents/picture/", true);
         //含Logo，指定二维码图片名  
 //        QrCodeUtils.encode(text, "/Users/ianly/Documents/picture/google-icon.jpg", "/Users/ianly/Documents/picture", "qrcode", true);
     }
