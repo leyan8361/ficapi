@@ -16,7 +16,7 @@ import java.util.List;
 **/
 public interface InvestService {
 
-       InvestSuccessInfoVo invest(Invest invest, InvestInfoVo investInfoVo, BigDecimal investBalance);
+       InvestSuccessInfoVo invest(Invest invest, InvestInfoVo investInfoVo);
 
        InvestRecordInfoVo getInvestDetail(Integer userId);
 }

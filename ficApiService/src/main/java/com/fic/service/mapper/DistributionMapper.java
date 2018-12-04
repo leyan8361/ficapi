@@ -4,6 +4,8 @@ import com.fic.service.entity.Distribution;
 import org.apache.ibatis.annotations.Mapper;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Mapper
 @Repository
 public interface DistributionMapper {
@@ -19,5 +21,21 @@ public interface DistributionMapper {
 
     int updateByPrimaryKey(Distribution record);
 
-    Distribution findByUserId(Integer userId);
+    /**
+     * 查询二级分销记录
+     * @param userId
+     * @return
+     */
+    Distribution findByUserId(Integer userId,boolean queryType);
+
+    /**
+     * 查询父级分销记录
+     * @param userId
+     * @param fatherUserId
+     * @param queryType true 查询注册分销，false查询投资分销
+     * @return
+     */
+    Distribution findByFatherUserId(Integer userId,Integer fatherUserId,boolean queryType);
+
+    List<Distribution> findAllByUserId(Integer userId);
 }

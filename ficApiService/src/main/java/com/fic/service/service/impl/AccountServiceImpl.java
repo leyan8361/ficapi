@@ -95,27 +95,10 @@ public class AccountServiceImpl implements AccountService {
             return null;
         }
 
-        boolean distributionResult = rewardService.distributionRewardByAction(user,inviteByWho,true);
-
-        if(!distributionResult){
-            log.error(" AcctionServiceImpl ：分销失败");
+        boolean disResult = rewardService.distributionRewardByAction(user,inviteByWho,true);
+        if(!disResult){
+            log.error(" 注册失败 --- > ");
             throw new RuntimeException();
-        }
-
-        Reward reward = rewardMapper.selectRulesByCurrentUserCount();
-
-        /**
-         * 生成默认资产记录
-         */
-        Invest invest = new Invest();
-        invest.setBalance(BigDecimal.ZERO.add(reward.getRegisterSelf()));
-        invest.setQty(0);
-        invest.setUserId(user.getId());
-        invest.setUpdatedTime(new Date());
-        invest.setCreatedTime(new Date());
-        int investResult = investMapper.insert(invest);
-        if(investResult <=0){
-            return null;
         }
         return user;
     }

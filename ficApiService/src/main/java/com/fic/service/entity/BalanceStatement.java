@@ -10,9 +10,9 @@ public class BalanceStatement {
 
     private BigDecimal amount;
 
-    private Byte type;
+    private Integer type;
 
-    private Byte way;
+    private Integer way;
 
     private Date createdTime;
 
@@ -44,19 +44,20 @@ public class BalanceStatement {
         this.amount = amount;
     }
 
-    public Byte getType() {
+
+    public Integer getType() {
         return type;
     }
 
-    public void setType(Byte type) {
+    public void setType(Integer type) {
         this.type = type;
     }
 
-    public Byte getWay() {
+    public Integer getWay() {
         return way;
     }
 
-    public void setWay(Byte way) {
+    public void setWay(Integer way) {
         this.way = way;
     }
 

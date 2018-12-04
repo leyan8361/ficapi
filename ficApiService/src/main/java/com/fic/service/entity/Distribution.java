@@ -24,6 +24,8 @@ public class Distribution {
 
     private Integer status;
 
+    private Integer investStatus;
+
     private Date updatedTime;
 
     public Integer getId() {
@@ -112,5 +114,13 @@ public class Distribution {
 
     public void setUpdatedTime(Date updatedTime) {
         this.updatedTime = updatedTime;
+    }
+
+    public Integer getInvestStatus() {
+        return investStatus;
+    }
+
+    public void setInvestStatus(Integer investStatus) {
+        this.investStatus = investStatus;
     }
 }

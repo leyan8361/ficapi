@@ -45,10 +45,10 @@ public class ApiInvestController {
         Invest invest = investMapper.findByUserId(investInfoVo.getUserId());
         if(null == invest)return ResponseEntity.ok(new ResponseVo(ErrorCodeEnum.INVEST_NOT_EXIST,null));
 
-        BigDecimal investBalance = invest.getBalance().subtract(investInfoVo.getAmount()).setScale(Constants.KEEP_SCALE);
+        BigDecimal investBalance = invest.getBalance().add(invest.getRewardBalance()).subtract(investInfoVo.getAmount()).setScale(Constants.KEEP_SCALE);
         if(BigDecimal.ZERO.compareTo(investBalance) >= 1)return ResponseEntity.ok(new ResponseVo(ErrorCodeEnum.INVEST_BALANCE_NOT_ENOUGH,null));
 
-        InvestSuccessInfoVo result = investService.invest(invest,investInfoVo,investBalance);
+        InvestSuccessInfoVo result = investService.invest(invest,investInfoVo);
 
         return ResponseEntity.ok(new ResponseVo(ErrorCodeEnum.SUCCESS,result));
     }

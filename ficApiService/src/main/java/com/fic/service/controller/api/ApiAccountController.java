@@ -9,10 +9,12 @@ import com.fic.service.mapper.UserMapper;
 import com.fic.service.service.AccountService;
 import com.fic.service.utils.RegexUtil;
 import io.swagger.annotations.*;
+import net.bytebuddy.asm.Advice;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -36,8 +38,6 @@ public class ApiAccountController {
     UserMapper userMapper;
     @Autowired
     AccountService accountService;
-    @Autowired
-    DistributionRecordMapper distributionRecordMapper;
 
     @GetMapping("/login")
     @ApiOperation("Api-登录")
@@ -154,32 +154,32 @@ public class ApiAccountController {
         return ResponseEntity.ok(new ResponseVo(ErrorCodeEnum.SYSTEM_EXCEPTION,null));
     }
 
-//    @PostMapping(value = "/updateHeadPic",consumes = MediaType.MULTIPART_FORM_DATA_VALUE,headers="content-type=multipart/form-data")
-//    @ApiOperation("Api-更新头像")
-//    @ApiImplicitParams({
-//            @ApiImplicitParam(dataType = "int", name = "userId", value = "用户ID", required = true)
-//    })
-//    @ApiResponses({
-//            @ApiResponse(code = 1018, message = "ERROR PIC TYPE (png|jpg|bmp|jpeg)"),
-//            @ApiResponse(code = 1019, message = "UPLOAD FAILED,SYSTEM_ERROR"),
-//            @ApiResponse(code = 200, message = "SUCCESS",response = UploadHeadImageInfoVo.class)
-//    })
+    @PostMapping(value = "/updateHeadPic",consumes = MediaType.MULTIPART_FORM_DATA_VALUE,headers="content-type=multipart/form-data")
+    @ApiOperation("Api-更新头像")
+    @ApiImplicitParams({
+            @ApiImplicitParam(dataType = "int", name = "userId", value = "用户ID", required = true)
+    })
+    @ApiResponses({
+            @ApiResponse(code = 1018, message = "ERROR PIC TYPE (png|jpg|bmp|jpeg)"),
+            @ApiResponse(code = 1019, message = "UPLOAD FAILED,SYSTEM_ERROR"),
+            @ApiResponse(code = 200, message = "SUCCESS",response = UploadHeadImageInfoVo.class)
+    })
     public ResponseEntity updateHeadPic(@RequestParam Integer userId,@ApiParam(value = "头像",required = true) MultipartFile file){
         log.debug(" update Head Pic !!!");
         ResponseVo response = accountService.updateHeadPic(file,userId);
         return ResponseEntity.ok(response);
     }
 
-//    @GetMapping(value = "/setPayPassword")
-//    @ApiOperation("Api-设置或更新支付密码")
-//    @ApiImplicitParams({
-//            @ApiImplicitParam(dataType = "int", name = "userId", value = "用户ID", required = true),
-//            @ApiImplicitParam(dataType = "string", name = "payPassword", value = "支付密码MD5结果", required = true)
-//    })
-//    @ApiResponses({
-//            @ApiResponse(code = 500, message = "System ERROR"),
-//            @ApiResponse(code = 200, message = "SUCCESS")
-//    })
+    @GetMapping(value = "/setPayPassword")
+    @ApiOperation("Api-设置或更新支付密码")
+    @ApiImplicitParams({
+            @ApiImplicitParam(dataType = "int", name = "userId", value = "用户ID", required = true),
+            @ApiImplicitParam(dataType = "string", name = "payPassword", value = "支付密码MD5结果", required = true)
+    })
+    @ApiResponses({
+            @ApiResponse(code = 500, message = "System ERROR"),
+            @ApiResponse(code = 200, message = "SUCCESS")
+    })
     public ResponseEntity resetPayPassword(@RequestParam Integer userId,@RequestParam String payPassword){
         log.debug(" do setPayPassword Action !!!");
         User user = userMapper.get(userId);
@@ -192,17 +192,17 @@ public class ApiAccountController {
     }
 
 
-//    @GetMapping(value = "/checkPayPassword")
-//    @ApiOperation("Api-校对支付密码")
-//    @ApiImplicitParams({
-//            @ApiImplicitParam(dataType = "int", name = "userId", value = "用户ID", required = true),
-//            @ApiImplicitParam(dataType = "string", name = "payPassword", value = "支付密码MD5结果", required = true)
-//    })
-//    @ApiResponses({
-//            @ApiResponse(code = 1020, message = "USER_PAY_PASSWORD_NOT_SET"),
-//            @ApiResponse(code = 1020, message = "USER_PAY_PASSWORD_NOT_MATCH"),
-//            @ApiResponse(code = 200, message = "SUCCESS")
-//    })
+    @GetMapping(value = "/checkPayPassword")
+    @ApiOperation("Api-校对支付密码")
+    @ApiImplicitParams({
+            @ApiImplicitParam(dataType = "int", name = "userId", value = "用户ID", required = true),
+            @ApiImplicitParam(dataType = "string", name = "payPassword", value = "支付密码MD5结果", required = true)
+    })
+    @ApiResponses({
+            @ApiResponse(code = 1020, message = "USER_PAY_PASSWORD_NOT_SET"),
+            @ApiResponse(code = 1020, message = "USER_PAY_PASSWORD_NOT_MATCH"),
+            @ApiResponse(code = 200, message = "SUCCESS")
+    })
     public ResponseEntity checkPayPassword(@RequestParam Integer userId,@RequestParam String payPassword){
         log.debug(" do checkPayPassword Action !!!");
         User user = userMapper.get(userId);
@@ -251,6 +251,23 @@ public class ApiAccountController {
         return ResponseEntity.ok(new ResponseVo(ErrorCodeEnum.SUCCESS,userInfoVo));
     }
 
+
+    @GetMapping(value = "/getInviteGroup")
+//    @ApiOperation("Api-邀请记录")
+//    @ApiImplicitParams({
+//            @ApiImplicitParam(dataType = "int", name = "userId", value = "用户ID", required = true)
+//    })
+//    @ApiResponses({
+//            @ApiResponse(code = 200, message = "SUCCESS")
+//    })
+    public ResponseEntity getInviteGroup(@RequestParam Integer userId){
+        log.debug(" do getInviteGroup Action !!!");
+        User user = userMapper.get(userId);
+
+
+
+        return ResponseEntity.ok(new ResponseVo(ErrorCodeEnum.SUCCESS,null));
+    }
 
 
 }

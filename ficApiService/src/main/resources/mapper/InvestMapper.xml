@@ -29,7 +29,7 @@
     insert into invest (invest_id, user_id, balance, reward_balance,
       qty, created_time, created_by, 
       updated_time, updated_by)
-    values (#{investId,jdbcType=INTEGER}, #{userId,jdbcType=INTEGER}, #{balance,jdbcType=DECIMAL}, #{reward_balance,jdbcType=DECIMAL},
+    values (#{investId,jdbcType=INTEGER}, #{userId,jdbcType=INTEGER}, #{balance,jdbcType=DECIMAL}, #{rewardBalance,jdbcType=DECIMAL},
       #{qty,jdbcType=TINYINT}, #{createdTime,jdbcType=TIMESTAMP}, #{createdBy,jdbcType=INTEGER}, 
       #{updatedTime,jdbcType=TIMESTAMP}, #{updatedBy,jdbcType=INTEGER})
   </insert>
@@ -45,7 +45,7 @@
       <if test="balance != null">
         balance,
       </if>
-      <if test="reward_balance != null">
+      <if test="rewardBalance != null">
         reward_balance,
       </if>
       <if test="qty != null">
@@ -140,4 +140,10 @@
   <select id="findByUserId" resultMap="BaseResultMap">
     select * from invest where user_id= #{userId};
   </select>
+  <update id="updateBalance">
+    update invest set balance = #{balance} where user_id = #{userId}
+  </update>
+  <update id="updateRewardBalance">
+    update invest set reward_balance = #{balance} where user_id = #{userId}
+  </update>
 </mapper>

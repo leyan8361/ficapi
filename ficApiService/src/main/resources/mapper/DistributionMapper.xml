@@ -12,11 +12,12 @@
     <result column="dis_level_one_user_id" jdbcType="INTEGER" property="disLevelOneUserId" />
     <result column="dis_level_two_user_id" jdbcType="INTEGER" property="disLevelTwoUserId" />
     <result column="status" jdbcType="TINYINT" property="status" />
-    <result column="updated_time" jdbcType="DATE" property="updatedTime" />
+    <result column="invest_status" jdbcType="TINYINT" property="investStatus" />
+    <result column="updated_time" jdbcType="TIMESTAMP" property="updatedTime" />
   </resultMap>
   <sql id="Base_Column_List">
     id, user_id, created_time, invite_reward_one, invest_reward_one, invite_reward_two, 
-    invest_reward_two, dis_level_one_user_id, dis_level_two_user_id, status, updated_time
+    invest_reward_two, dis_level_one_user_id, dis_level_two_user_id, status, invest_status,updated_time
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
     select 
@@ -28,15 +29,15 @@
     delete from distribution
     where id = #{id,jdbcType=INTEGER}
   </delete>
-  <insert id="insert" parameterType="com.fic.service.entity.Distribution">
+  <insert id="insert" parameterType="com.fic.service.entity.Distribution" useGeneratedKeys="true" keyProperty="id">
     insert into distribution (id, user_id, created_time, 
       invite_reward_one, invest_reward_one, invite_reward_two, 
       invest_reward_two, dis_level_one_user_id, dis_level_two_user_id, 
-      status, updated_time)
+      status, invest_status,updated_time)
     values (#{id,jdbcType=INTEGER}, #{userId,jdbcType=INTEGER}, #{createdTime,jdbcType=TIMESTAMP}, 
       #{inviteRewardOne,jdbcType=DECIMAL}, #{investRewardOne,jdbcType=DECIMAL}, #{inviteRewardTwo,jdbcType=DECIMAL}, 
       #{investRewardTwo,jdbcType=DECIMAL}, #{disLevelOneUserId,jdbcType=INTEGER}, #{disLevelTwoUserId,jdbcType=INTEGER}, 
-      #{status,jdbcType=TINYINT}, #{updatedTime,jdbcType=DATE})
+      #{status,jdbcType=TINYINT}, #{investStatus,jdbcType=TINYINT},#{updatedTime,jdbcType=TIMESTAMP})
   </insert>
   <insert id="insertSelective" parameterType="com.fic.service.entity.Distribution">
     insert into distribution
@@ -70,6 +71,9 @@
       </if>
       <if test="status != null">
         status,
+      </if>
+      <if test="investStatus != null">
+        invest_status,
       </if>
       <if test="updatedTime != null">
         updated_time,
@@ -106,8 +110,11 @@
       <if test="status != null">
         #{status,jdbcType=TINYINT},
       </if>
+      <if test="investStatus != null">
+        #{investStatus,jdbcType=TINYINT},
+      </if>
       <if test="updatedTime != null">
-        #{updatedTime,jdbcType=DATE},
+        #{updatedTime,jdbcType=TIMESTAMP},
       </if>
     </trim>
   </insert>
@@ -141,8 +148,11 @@
       <if test="status != null">
         status = #{status,jdbcType=TINYINT},
       </if>
+      <if test="investStatus != null">
+        invest_status = #{investStatus,jdbcType=TINYINT},
+      </if>
       <if test="updatedTime != null">
-        updated_time = #{updatedTime,jdbcType=DATE},
+        updated_time = #{updatedTime,jdbcType=TIMESTAMP},
       </if>
     </set>
     where id = #{id,jdbcType=INTEGER}
@@ -158,7 +168,8 @@
       dis_level_one_user_id = #{disLevelOneUserId,jdbcType=INTEGER},
       dis_level_two_user_id = #{disLevelTwoUserId,jdbcType=INTEGER},
       status = #{status,jdbcType=TINYINT},
-      updated_time = #{updatedTime,jdbcType=DATE}
+      invest_status = #{investStatus,jdbcType=TINYINT},
+      updated_time = #{updatedTime,jdbcType=TIMESTAMP}
     where id = #{id,jdbcType=INTEGER}
   </update>
   <select id="findByUserId" resultMap="BaseResultMap">
@@ -166,6 +177,23 @@
 	d.*
     FROM
         distribution d
-    where d.user_id = #{userId} and (status = 0 or status = 1)
+    where d.user_id = #{userId}
+    <if test="queryType">
+    and invite_reward_one is null and dis_level_one_user_id is null
+    </if>
+    <if test="!queryType">
+      and invest_reward_one is null
+    </if>
+    limit 0,1
+  </select>
+  <select id="findByFatherUserId" resultMap="BaseResultMap">
+    SELECT
+	d.*
+    FROM
+        distribution d
+    where d.user_id = #{userId} and dis_level_one_user_id = #{fatherUserId}
+  </select>
+  <select id="findAllByUserId" resultMap="BaseResultMap">
+    select * from distribution where user_id = #{userId};
   </select>
 </mapper>

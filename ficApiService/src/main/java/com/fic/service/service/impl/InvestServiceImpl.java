@@ -8,12 +8,16 @@ import com.fic.service.controller.api.ApiInvestController;
 import com.fic.service.entity.Invest;
 import com.fic.service.entity.InvestDetail;
 import com.fic.service.entity.Movie;
+import com.fic.service.entity.User;
 import com.fic.service.mapper.InvestDetailMapper;
 import com.fic.service.mapper.InvestMapper;
 import com.fic.service.mapper.MovieMapper;
+import com.fic.service.mapper.UserMapper;
 import com.fic.service.service.InvestService;
+import com.fic.service.service.RewardService;
 import com.fic.service.utils.DateUtil;
 import com.fic.service.utils.SerialNumGenerateUtil;
+import net.bytebuddy.asm.Advice;
 import org.omg.SendingContext.RunTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,10 +48,14 @@ public class InvestServiceImpl implements InvestService {
     InvestDetailMapper investDetailMapper;
     @Autowired
     InvestMapper investMapper;
+    @Autowired
+    RewardService rewardService;
+    @Autowired
+    UserMapper userMapper;
 
     @Override
     @Transactional(isolation= Isolation.READ_COMMITTED,propagation= Propagation.REQUIRED,rollbackFor = Exception.class)
-    public InvestSuccessInfoVo invest(Invest invest, InvestInfoVo investInfoVo, BigDecimal investBalance) {
+    public InvestSuccessInfoVo invest(Invest invest, InvestInfoVo investInfoVo) {
 
         Movie movie = movieMapper.selectByPrimaryKey(investInfoVo.getMoveId());
         boolean insert = false;
@@ -87,7 +95,21 @@ public class InvestServiceImpl implements InvestService {
         }
 
         invest.setQty(invest.getQty() + 1);
-        invest.setBalance(investBalance);
+
+        /**
+         * 判断投资金额是否大于奖励金，若是则奖励金清零，启用余额减去投资剩余
+         */
+        BigDecimal balance = invest.getBalance().add(invest.getRewardBalance());
+        if(investInfoVo.getAmount().compareTo(invest.getRewardBalance()) >= 0){
+            balance = balance.subtract(invest.getRewardBalance());
+            invest.setRewardBalance(BigDecimal.ZERO);
+            balance = balance.subtract(investInfoVo.getAmount());
+            invest.setBalance(balance);
+        }else{
+            balance = invest.getRewardBalance().subtract(investInfoVo.getAmount());
+            invest.setRewardBalance(balance);
+        }
+
         invest.setUpdatedTime(new Date());
 
         int updateInvest = investMapper.updateByPrimaryKey(invest);
@@ -99,6 +121,18 @@ public class InvestServiceImpl implements InvestService {
         List<Integer> countInvestNum = investDetailMapper.countInvestPeople(movie.getMovieId());
         InvestSuccessInfoVo result = new InvestSuccessInfoVo();
         result.setRankingOfInvest(countInvestNum.size());
+
+        /**
+         * 分销
+         */
+        User user = userMapper.get(invest.getUserId());
+        User inviteUser = userMapper.findByInviteCode(user.getTuserInviteCode());
+        boolean disResult = rewardService.distributionRewardByAction(user,inviteUser,false);
+        if(!disResult){
+            log.error("分销失败，投资人ID:{}, 上级分销ID:{}",user.getId(),inviteUser.getId());
+            throw new RuntimeException();
+        }
+
         return result;
     }
 
