@@ -87,6 +87,7 @@ public class Invest {
     }
 
     public BigDecimal getRewardBalance() {
+        if(null == this.rewardBalance)return BigDecimal.ZERO;
         return rewardBalance;
     }
 
