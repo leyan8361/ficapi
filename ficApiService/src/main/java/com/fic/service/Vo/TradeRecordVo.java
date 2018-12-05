@@ -4,6 +4,7 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
 import java.math.BigDecimal;
+import java.util.Date;
 
 /**
  * @Author Xie
@@ -25,6 +26,8 @@ public class TradeRecordVo {
     private Integer way;
     @ApiModelProperty(value = "金额")
     private BigDecimal amount;
+    @ApiModelProperty(value = "创建时间")
+    private Date createdTime;
 
     public Integer getUserId() {
         return userId;
@@ -72,5 +75,13 @@ public class TradeRecordVo {
 
     public void setAmount(BigDecimal amount) {
         this.amount = amount;
+    }
+
+    public Date getCreatedTime() {
+        return createdTime;
+    }
+
+    public void setCreatedTime(Date createdTime) {
+        this.createdTime = createdTime;
     }
 }

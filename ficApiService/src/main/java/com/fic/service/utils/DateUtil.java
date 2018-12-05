@@ -53,5 +53,15 @@ public class DateUtil {
         return dateString;
     }
 
+    public static boolean isToday(Date date){
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMdd");
+        Date today = new Date();
+        String todayStr = formatter.format(today);
+        String dateStr = formatter.format(date);
+        if(todayStr.equals(dateStr)){
+            return true;
+        }
+        return false;
+    }
 
 }

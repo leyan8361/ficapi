@@ -2,10 +2,12 @@ package com.fic.service.service.impl;
 
 import com.fic.service.Enum.BalanceStatementTypeEnum;
 import com.fic.service.Enum.FinanceWayEnum;
+import com.fic.service.Vo.TradeRecordInfoVo;
 import com.fic.service.Vo.TradeRecordVo;
 import com.fic.service.entity.*;
 import com.fic.service.mapper.*;
 import com.fic.service.service.BalanceService;
+import com.fic.service.utils.DateUtil;
 import com.fic.service.utils.RegexUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -13,6 +15,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,14 +41,14 @@ public class BalanceServiceImpl implements BalanceService {
     UserMapper userMapper;
 
     @Override
-    public List<TradeRecordVo> getTradeRecord(Integer userId) {
+    public TradeRecordInfoVo getTradeRecord(Integer userId) {
+        log.debug(" getTradeRecord 获取 交易明细");
+        TradeRecordInfoVo result = new TradeRecordInfoVo();
         List<TradeRecordVo> tradeRecordVoList = new ArrayList<>();
-        List<TradeRecordVo> inviteRecordList = new ArrayList<>();
-        List<TradeRecordVo> investRecordList = new ArrayList<>();
-        List<TradeRecordVo> investMoveRecordList = new ArrayList<>();
+        BigDecimal totalReceive = BigDecimal.ZERO;
+        BigDecimal totalPay = BigDecimal.ZERO;
         List<BalanceStatement> statementList = balanceStatementMapper.findAllByUserId(userId);
-        if(statementList.size() <= 0)return tradeRecordVoList;
-
+        if(statementList.size() <= 0)return result;
         for(BalanceStatement statement: statementList){
             if(BalanceStatementTypeEnum.REWARD.getCode().equals(statement.getType())){
                 String userPhone = userMapper.getUserNameByUserId(statement.getUserId());
@@ -57,23 +60,33 @@ public class BalanceServiceImpl implements BalanceService {
                 tradeRecordVo.setWay(statement.getWay());
                 tradeRecordVo.setAmount(statement.getAmount());
                 tradeRecordVo.setType(statement.getType());
+                tradeRecordVo.setCreatedTime(statement.getCreatedTime());
+                if(DateUtil.isToday(statement.getCreatedTime())){
+                    if(statement.getWay().equals(FinanceWayEnum.IN)){
+                        totalReceive = totalReceive.add(statement.getAmount());
+                    }
+                    if(statement.getWay().equals(FinanceWayEnum.OUT)){
+                        totalPay = totalPay.add(statement.getAmount());
+                    }
+                }
                 /**投资电影*/
                 if(BalanceStatementTypeEnum.INVEST.getCode().equals(statement.getType())){
                     String moveName = investDetailMapper.findMoveNameByDetailId(statement.getInvestDetailId());
                     tradeRecordVo.setMoveName(moveName);
                 }
-                /**分销*/
-                if(BalanceStatementTypeEnum.REWARD.getCode().equals(statement.getType())){
-                    Distribution distribution = distributionMapper.selectByPrimaryKey(statement.getDistributionId());
-                    if(null != distribution){
-                        //TODO 无法判断间接 直接，注册投资，细分 5 奖励
-                    }
-                }
+                /**分销 TODO 不需要处理 */
+//                if(BalanceStatementTypeEnum.REWARD.getCode().equals(statement.getType())){
+//                    Distribution distribution = distributionMapper.selectByPrimaryKey(statement.getDistributionId());
+//                }
+                tradeRecordVoList.add(tradeRecordVo);
             }
         }
 
+        result.setRecords(tradeRecordVoList);
+        result.setTotalPay(totalPay);
+        result.setTotalReceive(totalReceive);
 
-        return null;
+        return result;
     }
 
 

@@ -1,5 +1,6 @@
 package com.fic.service.service;
 
+import com.fic.service.Vo.TradeRecordInfoVo;
 import com.fic.service.Vo.TradeRecordVo;
 
 import java.util.List;
@@ -11,6 +12,6 @@ import java.util.List;
 **/
 public interface BalanceService {
 
-     List<TradeRecordVo> getTradeRecord(Integer userId);
+     TradeRecordInfoVo getTradeRecord(Integer userId);
 
 }
