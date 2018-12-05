@@ -7,6 +7,7 @@ import com.fic.service.controller.HomeController;
 import com.fic.service.entity.User;
 import com.fic.service.mapper.UserMapper;
 import com.fic.service.service.AccountService;
+import com.fic.service.service.DistributionService;
 import com.fic.service.utils.RegexUtil;
 import io.swagger.annotations.*;
 import net.bytebuddy.asm.Advice;
@@ -21,6 +22,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.List;
 
 /**
  * @Author Xie
@@ -38,6 +40,8 @@ public class ApiAccountController {
     UserMapper userMapper;
     @Autowired
     AccountService accountService;
+    @Autowired
+    DistributionService distributionService;
 
     @GetMapping("/login")
     @ApiOperation("Api-登录")
@@ -262,9 +266,8 @@ public class ApiAccountController {
     })
     public ResponseEntity getInviteGroup(@RequestParam Integer userId){
         log.debug(" do getInviteGroup Action !!!");
-        User user = userMapper.get(userId);
-
-        return ResponseEntity.ok(new ResponseVo(ErrorCodeEnum.SUCCESS,null));
+        List<DistributionVo> resultList = distributionService.getMyDistributionRecord(userId);
+        return ResponseEntity.ok(new ResponseVo(ErrorCodeEnum.SUCCESS,resultList));
     }
 
 

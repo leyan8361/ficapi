@@ -24,52 +24,75 @@ public class DistributionServiceImpl implements DistributionService {
     @Override
     public List<DistributionVo> getMyDistributionRecord(Integer userId) {
         List<Distribution> distributionList = distributionMapper.findAllByUserId(userId);
-        List<DistributionVo> distributionVoList = new ArrayList<DistributionVo>();
-//        for(Distribution distribution: distributionList){
-//
-//            boolean noNeedToPlay = true;
-//            if(null != distribution.getDisLevelOneUserId()){
-//                DistributionVo distributionVo = new DistributionVo();
-//                User userInviteOne = userMapper.get(distribution.getDisLevelOneUserId());
-//                if(null != userInviteOne){
-//                    distributionVo.setUserId(userInviteOne.getId());
-//                    distributionVo.setTelephone(this.replaceTelephone(userInviteOne.getUserName()));
-//                }else{
-//                    continue;
-//                }
-//                if(null != distribution.getInviteRewardOne()){
-//                    noNeedToPlay = false;
-//                    distributionVo.setAmount(distribution.getInviteRewardOne());
-//                    distributionVo.setLevel(DistributionTypeEnum.LEVEL_ONE.getCode());
-//                    distributionVo.setType(DistributionTypeEnum.TYPE_REGISTER.getCode());
-//                }
-//
-//                if(null != distribution.getInvestRewardOne()){
-//                    noNeedToPlay = false
-//                    distributionVo.setAmount(distribution.getInvestRewardOne());
-//                    distributionVo.setLevel(DistributionTypeEnum.LEVEL_ONE.getCode());
-//                    distributionVo.setType(DistributionTypeEnum.TYPE_INVEST.getCode());
-//                }
-//            }
-//
-//            if(null != distribution.getDisLevelTwoUserId()){
-//                DistributionVo distributionVo = new DistributionVo();
-//                User userInviteTwo = userMapper.get(distribution.getDisLevelTwoUserId());
-//                if(null != userInviteTwo){
-//                    distributionVo.setUserId(userInviteTwo.getId());
-//                    distributionVo.setTelephone(this.replaceTelephone(userInviteTwo.getUserName()));
-//                }else{
-//                    continue;
-//                }
-//                if(null != distribution.getInviteRewardTwo()){
-//                    noNeedToPlay = false
-//                    distributionVo.setAmount(distribution.getInviteRewardTwo());
-//                    distributionVo.setLevel(DistributionTypeEnum.LEVEL_TWO.getCode());
-//                    distributionVo.setType(DistributionTypeEnum.TYPE_REGISTER.getCode());
-//                }
-//            }
+        List<DistributionVo> disResultList = new ArrayList<DistributionVo>();
+        for(Distribution distribution: distributionList){
 
-//        }
+            boolean noNeedToPlay = true;
+            /**
+             * 根据1级分销人ID组织
+             */
+            if(null != distribution.getDisLevelOneUserId()){
+
+                User levelOneUser = userMapper.get(distribution.getDisLevelOneUserId());
+                if(null == levelOneUser){
+                    continue;
+                }
+                /**1级注册*/
+                if(null != distribution.getInviteRewardOne()){
+                    DistributionVo disRegisterOne = new DistributionVo();
+                    disRegisterOne.setUserId(levelOneUser.getId());
+                    disRegisterOne.setTelephone(this.replaceTelephone(levelOneUser.getUserName()));
+                    disRegisterOne.setAmount(distribution.getInviteRewardOne());
+                    disRegisterOne.setLevel(DistributionTypeEnum.LEVEL_ONE.getCode());
+                    disRegisterOne.setType(DistributionTypeEnum.TYPE_REGISTER.getCode());
+                    disResultList.add(disRegisterOne);
+                }
+
+                /**1级投资*/
+                if(null != distribution.getInvestRewardOne()){
+                    DistributionVo disInvestOne = new DistributionVo();
+                    disInvestOne.setUserId(levelOneUser.getId());
+                    disInvestOne.setTelephone(this.replaceTelephone(levelOneUser.getUserName()));
+                    disInvestOne.setAmount(distribution.getInvestRewardOne());
+                    disInvestOne.setLevel(DistributionTypeEnum.LEVEL_ONE.getCode());
+                    disInvestOne.setType(DistributionTypeEnum.TYPE_INVEST.getCode());
+                    disResultList.add(disInvestOne);
+                }
+            }
+
+
+            /**
+             * 根据父级分销人ID组织
+             */
+            if(null != distribution.getDisLevelTwoUserId()){
+
+                User userInviteTwo = userMapper.get(distribution.getDisLevelTwoUserId());
+                if(null == userInviteTwo){
+                    continue;
+                }
+                /**2级注册*/
+                if(null != distribution.getInviteRewardTwo()){
+                    DistributionVo disInviteTwo = new DistributionVo();
+                    disInviteTwo.setUserId(userInviteTwo.getId());
+                    disInviteTwo.setTelephone(this.replaceTelephone(userInviteTwo.getUserName()));
+                    disInviteTwo.setAmount(distribution.getInviteRewardTwo());
+                    disInviteTwo.setLevel(DistributionTypeEnum.LEVEL_TWO.getCode());
+                    disInviteTwo.setType(DistributionTypeEnum.TYPE_REGISTER.getCode());
+                    disResultList.add(disInviteTwo);
+                }
+                /**2级投资*/
+                if(null != distribution.getInvestRewardTwo()){
+                    DistributionVo disInvestTwo = new DistributionVo();
+                    disInvestTwo.setUserId(userInviteTwo.getId());
+                    disInvestTwo.setTelephone(this.replaceTelephone(userInviteTwo.getUserName()));
+                    disInvestTwo.setAmount(distribution.getInviteRewardTwo());
+                    disInvestTwo.setLevel(DistributionTypeEnum.LEVEL_TWO.getCode());
+                    disInvestTwo.setType(DistributionTypeEnum.TYPE_INVEST.getCode());
+                    disResultList.add(disInvestTwo);
+                }
+            }
+
+        }
         return null;
     }
 
