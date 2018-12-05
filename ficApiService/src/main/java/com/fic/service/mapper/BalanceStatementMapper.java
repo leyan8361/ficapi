@@ -4,6 +4,8 @@ import com.fic.service.entity.BalanceStatement;
 import org.apache.ibatis.annotations.Mapper;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Mapper
 @Repository
 public interface BalanceStatementMapper {
@@ -18,4 +20,6 @@ public interface BalanceStatementMapper {
     int updateByPrimaryKeySelective(BalanceStatement record);
 
     int updateByPrimaryKey(BalanceStatement record);
+
+    List<BalanceStatement> findAllByUserId(Integer userId);
 }

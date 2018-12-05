@@ -90,18 +90,6 @@ public class ApiInvestController {
         return ResponseEntity.ok(new ResponseVo(ErrorCodeEnum.SUCCESS,result));
     }
 
-    @GetMapping(value = "/getInviteGroup")
-    @ApiOperation("Api-邀请记录")
-    @ApiImplicitParams({
-            @ApiImplicitParam(dataType = "int", name = "userId", value = "用户ID", required = true)
-    })
-    @ApiResponses({
-            @ApiResponse(code = 200, message = "SUCCESS",response = DistributionVo.class)
-    })
-    public ResponseEntity getInviteGroup(@RequestParam Integer userId){
-        log.debug(" do getInviteGroup Action !!!");
-        List<DistributionVo> resultList = distributionService.getMyDistributionRecord(userId);
-        return ResponseEntity.ok(new ResponseVo(ErrorCodeEnum.SUCCESS,resultList));
-    }
+
 
 }

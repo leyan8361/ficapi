@@ -18,6 +18,8 @@ public class BalanceStatement {
 
     private Integer distributionId;
 
+    private Integer investDetailId;
+
     private BigDecimal balance;
 
     public Integer getId() {
@@ -83,5 +85,13 @@ public class BalanceStatement {
 
     public void setBalance(BigDecimal balance) {
         this.balance = balance;
+    }
+
+    public Integer getInvestDetailId() {
+        return investDetailId;
+    }
+
+    public void setInvestDetailId(Integer investDetailId) {
+        this.investDetailId = investDetailId;
     }
 }

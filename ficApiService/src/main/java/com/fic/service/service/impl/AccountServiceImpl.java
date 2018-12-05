@@ -1,5 +1,6 @@
 package com.fic.service.service.impl;
 
+import com.fic.service.Enum.BalanceStatementTypeEnum;
 import com.fic.service.Enum.DistributionStatusEnum;
 import com.fic.service.Enum.DistributionTypeEnum;
 import com.fic.service.Enum.ErrorCodeEnum;
@@ -148,7 +149,7 @@ public class AccountServiceImpl implements AccountService {
            BalanceStatement statement = new BalanceStatement();
            statement.setAmount(reward.getRegisterSelf());
            statement.setUserId(user.getId());
-           statement.setWay(DistributionTypeEnum.TYPE_REGISTER.getCode());
+           statement.setWay(BalanceStatementTypeEnum.REWARD.getCode());
            statement.setType(DistributionTypeEnum.LEVEL_ONE.getCode());
            statement.setCreatedTime(new Date());
            statement.setDistributionId(distribution.getId());

@@ -1,25 +1,18 @@
 package com.fic.service.service.impl;
 
+import com.fic.service.Enum.BalanceStatementTypeEnum;
+import com.fic.service.Enum.FinanceWayEnum;
 import com.fic.service.Vo.InvestInfoVo;
 import com.fic.service.Vo.InvestRecordInfoVo;
 import com.fic.service.Vo.InvestRecordItemInfoVo;
 import com.fic.service.Vo.InvestSuccessInfoVo;
-import com.fic.service.controller.api.ApiInvestController;
-import com.fic.service.entity.Invest;
-import com.fic.service.entity.InvestDetail;
-import com.fic.service.entity.Movie;
-import com.fic.service.entity.User;
-import com.fic.service.mapper.InvestDetailMapper;
-import com.fic.service.mapper.InvestMapper;
-import com.fic.service.mapper.MovieMapper;
-import com.fic.service.mapper.UserMapper;
+import com.fic.service.entity.*;
+import com.fic.service.mapper.*;
 import com.fic.service.service.InvestService;
 import com.fic.service.service.RewardService;
 import com.fic.service.utils.DateUtil;
 import com.fic.service.utils.SerialNumGenerateUtil;
-import net.bytebuddy.asm.Advice;
 import org.apache.commons.lang3.StringUtils;
-import org.omg.SendingContext.RunTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,6 +46,8 @@ public class InvestServiceImpl implements InvestService {
     RewardService rewardService;
     @Autowired
     UserMapper userMapper;
+    @Autowired
+    BalanceStatementMapper balanceStatementMapper;
 
     @Override
     @Transactional(isolation= Isolation.READ_COMMITTED,propagation= Propagation.REQUIRED,rollbackFor = Exception.class)
@@ -134,6 +129,15 @@ public class InvestServiceImpl implements InvestService {
                 log.error("分销失败，投资人ID:{}, 上级分销ID:{}",user.getId(),inviteUser.getId());
                 throw new RuntimeException();
             }
+        }else{
+            BalanceStatement balanceStatement = new BalanceStatement();
+            balanceStatement.setUserId(user.getId());
+            balanceStatement.setCreatedTime(new Date());
+            balanceStatement.setType(BalanceStatementTypeEnum.INVEST.getCode());
+            balanceStatement.setWay(FinanceWayEnum.OUT.getCode());
+            balanceStatement.setInvestDetailId(investDetail.getInvestDetailId());
+            int saveBalanceResult = balanceStatementMapper.insertSelective(balanceStatement);
+            if(saveBalanceResult <=0)throw new RuntimeException("修改投资余额失败");
         }
 
         return result;

@@ -7,6 +7,7 @@ import com.fic.service.entity.User;
 import com.fic.service.mapper.DistributionMapper;
 import com.fic.service.mapper.UserMapper;
 import com.fic.service.service.DistributionService;
+import com.fic.service.utils.RegexUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -27,7 +28,6 @@ public class DistributionServiceImpl implements DistributionService {
         List<DistributionVo> disResultList = new ArrayList<DistributionVo>();
         for(Distribution distribution: distributionList){
 
-            boolean noNeedToPlay = true;
             /**
              * 根据1级分销人ID组织
              */
@@ -41,7 +41,7 @@ public class DistributionServiceImpl implements DistributionService {
                 if(null != distribution.getInviteRewardOne()){
                     DistributionVo disRegisterOne = new DistributionVo();
                     disRegisterOne.setUserId(levelOneUser.getId());
-                    disRegisterOne.setTelephone(this.replaceTelephone(levelOneUser.getUserName()));
+                    disRegisterOne.setTelephone(RegexUtil.replaceTelephone(levelOneUser.getUserName()));
                     disRegisterOne.setAmount(distribution.getInviteRewardOne());
                     disRegisterOne.setLevel(DistributionTypeEnum.LEVEL_ONE.getCode());
                     disRegisterOne.setType(DistributionTypeEnum.TYPE_REGISTER.getCode());
@@ -52,7 +52,7 @@ public class DistributionServiceImpl implements DistributionService {
                 if(null != distribution.getInvestRewardOne()){
                     DistributionVo disInvestOne = new DistributionVo();
                     disInvestOne.setUserId(levelOneUser.getId());
-                    disInvestOne.setTelephone(this.replaceTelephone(levelOneUser.getUserName()));
+                    disInvestOne.setTelephone(RegexUtil.replaceTelephone(levelOneUser.getUserName()));
                     disInvestOne.setAmount(distribution.getInvestRewardOne());
                     disInvestOne.setLevel(DistributionTypeEnum.LEVEL_ONE.getCode());
                     disInvestOne.setType(DistributionTypeEnum.TYPE_INVEST.getCode());
@@ -74,7 +74,7 @@ public class DistributionServiceImpl implements DistributionService {
                 if(null != distribution.getInviteRewardTwo()){
                     DistributionVo disInviteTwo = new DistributionVo();
                     disInviteTwo.setUserId(userInviteTwo.getId());
-                    disInviteTwo.setTelephone(this.replaceTelephone(userInviteTwo.getUserName()));
+                    disInviteTwo.setTelephone(RegexUtil.replaceTelephone(userInviteTwo.getUserName()));
                     disInviteTwo.setAmount(distribution.getInviteRewardTwo());
                     disInviteTwo.setLevel(DistributionTypeEnum.LEVEL_TWO.getCode());
                     disInviteTwo.setType(DistributionTypeEnum.TYPE_REGISTER.getCode());
@@ -84,7 +84,7 @@ public class DistributionServiceImpl implements DistributionService {
                 if(null != distribution.getInvestRewardTwo()){
                     DistributionVo disInvestTwo = new DistributionVo();
                     disInvestTwo.setUserId(userInviteTwo.getId());
-                    disInvestTwo.setTelephone(this.replaceTelephone(userInviteTwo.getUserName()));
+                    disInvestTwo.setTelephone(RegexUtil.replaceTelephone(userInviteTwo.getUserName()));
                     disInvestTwo.setAmount(distribution.getInviteRewardTwo());
                     disInvestTwo.setLevel(DistributionTypeEnum.LEVEL_TWO.getCode());
                     disInvestTwo.setType(DistributionTypeEnum.TYPE_INVEST.getCode());
@@ -95,10 +95,5 @@ public class DistributionServiceImpl implements DistributionService {
         }
         return disResultList;
     }
-
-    public String replaceTelephone(String telephone){
-        telephone = telephone.replaceAll("(\\d{3})\\d{4}(\\d{4})", "$1****$2");
-        return telephone;
-    };
 
 }

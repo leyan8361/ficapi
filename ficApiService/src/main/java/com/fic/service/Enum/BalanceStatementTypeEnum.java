@@ -5,7 +5,7 @@ package com.fic.service.Enum;
  *   @Date 2018/12/4
  *   @Discription: balance_statement type
 **/
-public enum FinanceTypeEnum {
+public enum BalanceStatementTypeEnum {
 
     RECHARGE(0,"充值"),
     INCOME(1,"收益"),
@@ -34,7 +34,7 @@ public enum FinanceTypeEnum {
         this.remark = remark;
     }
 
-    FinanceTypeEnum(Integer code, String remark) {
+    BalanceStatementTypeEnum(Integer code, String remark) {
         this.code = code;
         this.remark = remark;
     }

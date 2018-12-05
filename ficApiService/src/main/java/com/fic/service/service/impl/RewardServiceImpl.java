@@ -1,7 +1,7 @@
 package com.fic.service.service.impl;
 
 import com.fic.service.Enum.DistributionStatusEnum;
-import com.fic.service.Enum.FinanceTypeEnum;
+import com.fic.service.Enum.BalanceStatementTypeEnum;
 import com.fic.service.Enum.FinanceWayEnum;
 import com.fic.service.entity.*;
 import com.fic.service.mapper.*;
@@ -135,7 +135,7 @@ public class RewardServiceImpl implements RewardService {
             balanceStatementInviteUser.setDistributionId(distribution.getId());
             balanceStatementInviteUser.setBalance(calBalanceInviteUser);
             balanceStatementInviteUser.setCreatedTime(new Date());
-            balanceStatementInviteUser.setType(FinanceTypeEnum.REWARD.getCode());
+            balanceStatementInviteUser.setType(BalanceStatementTypeEnum.REWARD.getCode());
             balanceStatementInviteUser.setWay(FinanceWayEnum.IN.getCode());
 
             int saveBalanceResult = balanceStatementMapper.insert(balanceStatementInviteUser);
@@ -224,7 +224,7 @@ public class RewardServiceImpl implements RewardService {
                     balanceStatement.setDistributionId(distributionTwo.getId());
                     balanceStatement.setBalance(calBalance);
                     balanceStatement.setCreatedTime(new Date());
-                    balanceStatement.setType(FinanceTypeEnum.REWARD.getCode());
+                    balanceStatement.setType(BalanceStatementTypeEnum.REWARD.getCode());
                     balanceStatement.setWay(FinanceWayEnum.IN.getCode());
 
                     int saveFatherBalanceResult = balanceStatementMapper.insert(balanceStatement);

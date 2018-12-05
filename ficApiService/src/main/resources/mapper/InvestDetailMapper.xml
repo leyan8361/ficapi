@@ -29,7 +29,7 @@
     delete from invest_detail
     where invest_detail_id = #{investDetailId,jdbcType=INTEGER}
   </delete>
-  <insert id="insert" parameterType="com.fic.service.entity.InvestDetail">
+  <insert id="insert" parameterType="com.fic.service.entity.InvestDetail" useGeneratedKeys="true" keyProperty="investDetailId">
     insert into invest_detail (invest_detail_id, invest_id, user_id, 
       movie_id, amount, ob_time, 
       in_time, invest_detail_code, created_time, 
@@ -41,7 +41,7 @@
       #{createdBy,jdbcType=INTEGER}, #{updatedTime,jdbcType=TIMESTAMP}, #{updatedBy,jdbcType=INTEGER}
       )
   </insert>
-  <insert id="insertSelective" parameterType="com.fic.service.entity.InvestDetail">
+  <insert id="insertSelective" parameterType="com.fic.service.entity.InvestDetail" useGeneratedKeys="true" keyProperty="investDetailId">
     insert into invest_detail
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="investDetailId != null">
@@ -182,5 +182,10 @@
   </select>
   <select id="sumTotalInvestByMovieId" resultType="java.math.BigDecimal">
     select sum(amount) from invest_detail where movie_id = #{movieId}
+  </select>
+  <select id="findMoveNameByDetailId" resultType="string">
+    select m.movie_name from movie m
+    left join invest_detail d on d.movie_id = m.movie_id
+    where d.invest_detail_id = #{investDetailID}
   </select>
 </mapper>

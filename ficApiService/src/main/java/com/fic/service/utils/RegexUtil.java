@@ -52,6 +52,11 @@ public class RegexUtil {
 
     }
 
+    public static String replaceTelephone(String telephone){
+        telephone = telephone.replaceAll("(\\d{3})\\d{4}(\\d{4})", "$1****$2");
+        return telephone;
+    };
+
     public static void main(String args[]){
         String version = "b1.12.1";
         System.out.println(RegexUtil.isVersion(version));

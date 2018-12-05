@@ -29,4 +29,6 @@ public interface InvestDetailMapper {
 
     BigDecimal sumTotalInvestByMovieId(Integer movieId);
 
+    String findMoveNameByDetailId(Integer investDetailID);
+
 }

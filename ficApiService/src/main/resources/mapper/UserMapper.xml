@@ -400,4 +400,7 @@
   <select id="findByInviteCode" resultMap="resultMap">
     select * from user where user_invite_code = #{inviteCode};
   </select>
+  <select id="getUserNameByUserId" resultType="string">
+    select user_name from user where id = #{userId}
+  </select>
 </mapper>
