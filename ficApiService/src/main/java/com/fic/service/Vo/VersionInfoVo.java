@@ -36,4 +36,7 @@ public class VersionInfoVo {
         this.lastedVersion = lastedVersion;
         this.isNeedToUpdate = isNeedToUpdate;
     }
+
+    public VersionInfoVo() {
+    }
 }

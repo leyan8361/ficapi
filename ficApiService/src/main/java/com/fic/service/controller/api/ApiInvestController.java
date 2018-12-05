@@ -66,7 +66,10 @@ public class ApiInvestController {
         log.debug(" do get invest balance action !!");
         Invest invest = investMapper.findByUserId(userId);
         if(null == invest)return ResponseEntity.ok(new ResponseVo(ErrorCodeEnum.INVEST_NOT_EXIST,null));
-        return ResponseEntity.ok(new ResponseVo(ErrorCodeEnum.SUCCESS,new InvestBalanceInfoVo(invest.getUserId(),invest.getBalance())));
+        InvestBalanceInfoVo balanceInfoVo = new InvestBalanceInfoVo();
+        balanceInfoVo.setUserId(invest.getUserId());
+        balanceInfoVo.setBalance(invest.getBalance().add(invest.getRewardBalance()));
+        return ResponseEntity.ok(new ResponseVo(ErrorCodeEnum.SUCCESS,balanceInfoVo));
     }
 
     @GetMapping("/getInvestDetail")

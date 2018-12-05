@@ -26,7 +26,7 @@ public interface DistributionMapper {
      * @param userId
      * @return
      */
-    Distribution findByUserId(Integer userId,boolean queryType);
+    Distribution findByUserId(Integer userId,Integer inviteUserId,boolean queryType);
 
     /**
      * 查询父级分销记录

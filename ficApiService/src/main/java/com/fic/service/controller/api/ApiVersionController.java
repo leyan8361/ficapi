@@ -50,11 +50,15 @@
 //        AppVersion appVersion = appVersionMapper.findByDeviceType(deviceType);
 //        if(null == appVersion)return ResponseEntity.ok(new ResponseVo(ErrorCodeEnum.VERSION_ILLEGAL,null));
 //        int lastedVersionCode = RegexUtil.isVersion(appVersion.getVersion());
+//        VersionInfoVo versionInfoVo = new VersionInfoVo();
+//        versionInfoVo.setLastedVersion(version);
 //        if(lastedVersionCode <= versionCode){
+//            versionInfoVo.setNeedToUpdate(false);
 //            log.debug(" the current version is lasted ! version:{}",version);
-//            return ResponseEntity.ok(new ResponseVo(ErrorCodeEnum.SUCCESS,new VersionInfoVo(version,false)));
+//            return ResponseEntity.ok(new ResponseVo(ErrorCodeEnum.SUCCESS,versionInfoVo));
 //        }
-//        return ResponseEntity.ok(new ResponseVo(ErrorCodeEnum.SUCCESS,new VersionInfoVo(version,true)));
+//        versionInfoVo.setNeedToUpdate(true);
+//        return ResponseEntity.ok(new ResponseVo(ErrorCodeEnum.SUCCESS,versionInfoVo));
 //    }
 //
 //}

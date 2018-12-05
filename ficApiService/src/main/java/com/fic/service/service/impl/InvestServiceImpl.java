@@ -18,6 +18,7 @@ import com.fic.service.service.RewardService;
 import com.fic.service.utils.DateUtil;
 import com.fic.service.utils.SerialNumGenerateUtil;
 import net.bytebuddy.asm.Advice;
+import org.apache.commons.lang3.StringUtils;
 import org.omg.SendingContext.RunTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -99,11 +100,11 @@ public class InvestServiceImpl implements InvestService {
         /**
          * 判断投资金额是否大于奖励金，若是则奖励金清零，启用余额减去投资剩余
          */
-        BigDecimal balance = invest.getBalance().add(invest.getRewardBalance());
+        BigDecimal balance = invest.getBalance();
         if(investInfoVo.getAmount().compareTo(invest.getRewardBalance()) >= 0){
-            balance = balance.subtract(invest.getRewardBalance());
+            BigDecimal restAmount = investInfoVo.getAmount().subtract(invest.getRewardBalance());
             invest.setRewardBalance(BigDecimal.ZERO);
-            balance = balance.subtract(investInfoVo.getAmount());
+            balance = balance.subtract(restAmount);
             invest.setBalance(balance);
         }else{
             balance = invest.getRewardBalance().subtract(investInfoVo.getAmount());
@@ -123,14 +124,16 @@ public class InvestServiceImpl implements InvestService {
         result.setRankingOfInvest(countInvestNum.size());
 
         /**
-         * 分销
+         * 判断是否存在分销
          */
         User user = userMapper.get(invest.getUserId());
-        User inviteUser = userMapper.findByInviteCode(user.getTuserInviteCode());
-        boolean disResult = rewardService.distributionRewardByAction(user,inviteUser,false);
-        if(!disResult){
-            log.error("分销失败，投资人ID:{}, 上级分销ID:{}",user.getId(),inviteUser.getId());
-            throw new RuntimeException();
+        if(StringUtils.isNotEmpty(user.getTuserInviteCode())){
+            User inviteUser = userMapper.findByInviteCode(user.getTuserInviteCode());
+            boolean disResult = rewardService.distributionRewardByAction(user,inviteUser,invest,false);
+            if(!disResult){
+                log.error("分销失败，投资人ID:{}, 上级分销ID:{}",user.getId(),inviteUser.getId());
+                throw new RuntimeException();
+            }
         }
 
         return result;

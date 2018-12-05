@@ -1,5 +1,6 @@
 package com.fic.service.service;
 
+import com.fic.service.entity.Invest;
 import com.fic.service.entity.User;
 
 /**
@@ -16,5 +17,5 @@ public interface RewardService {
      * @param action true 注册 false投资
      * @return
      */
-     boolean distributionRewardByAction(User user, User inviteUser,boolean action);
+     boolean distributionRewardByAction(User user, User inviteUser, Invest invest, boolean action);
 }

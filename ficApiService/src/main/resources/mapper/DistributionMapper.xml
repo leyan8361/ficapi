@@ -179,10 +179,10 @@
         distribution d
     where d.user_id = #{userId}
     <if test="queryType">
-    and invite_reward_one is null and dis_level_one_user_id is null
+      and status !=2
     </if>
-    <if test="!queryType">
-      and invest_reward_one is null
+    <if test="queryType">
+      and invest_status !=2
     </if>
     limit 0,1
   </select>
@@ -191,7 +191,7 @@
 	d.*
     FROM
         distribution d
-    where d.user_id = #{userId} and dis_level_one_user_id = #{fatherUserId}
+    where d.user_id = #{userId} and dis_level_one_user_id = #{fatherUserId} limit 0,1
   </select>
   <select id="findAllByUserId" resultMap="BaseResultMap">
     select * from distribution where user_id = #{userId};

@@ -38,4 +38,7 @@ public class InvestBalanceInfoVo {
         this.userId = userId;
         this.balance = balance;
     }
+
+    public InvestBalanceInfoVo() {
+    }
 }

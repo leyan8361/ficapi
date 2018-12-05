@@ -1,5 +1,7 @@
 package com.fic.service.service.impl;
 
+import com.fic.service.Enum.DistributionStatusEnum;
+import com.fic.service.Enum.DistributionTypeEnum;
 import com.fic.service.Enum.ErrorCodeEnum;
 import com.fic.service.Vo.*;
 import com.fic.service.constants.Constants;
@@ -11,6 +13,7 @@ import com.fic.service.service.AccountService;
 import com.fic.service.service.RewardService;
 import com.fic.service.utils.FileUtil;
 import com.fic.service.utils.*;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.codec.Base64;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -52,6 +55,10 @@ public class AccountServiceImpl implements AccountService {
     RewardMapper rewardMapper;
     @Autowired
     RewardService rewardService;
+    @Autowired
+    BalanceStatementMapper balanceStatementMapper;
+    @Autowired
+    DistributionMapper distributionMapper;
 
     @Override
     @Transactional(isolation= Isolation.READ_COMMITTED,propagation= Propagation.REQUIRED,rollbackFor = Exception.class)
@@ -72,6 +79,13 @@ public class AccountServiceImpl implements AccountService {
     @Override
     @Transactional(isolation= Isolation.READ_COMMITTED,propagation= Propagation.REQUIRED,rollbackFor = Exception.class)
     public User register(RegisterUserInfoVo userInfoVo) {
+
+        Reward reward = rewardMapper.selectRulesByCurrentUserCount();
+        if(null == reward){
+            log.error("奖励规则 异常，请补充规则数据 ");
+            throw new RuntimeException();
+        }
+
         User user = new User();
         user.setUserName(userInfoVo.getUsername());
         user.setPassword(userInfoVo.getPassword());
@@ -80,26 +94,72 @@ public class AccountServiceImpl implements AccountService {
         user.setCreatedTime(new Date());
         user.setUpdatedTime(new Date());
 
-        /**
-         * 分销记录
-         */
-        User inviteByWho = userMapper.findByInviteCode(userInfoVo.getInviteCode());
-        if(null == inviteByWho){
-            log.error(" 注册用户 ---> 邀请码不存在 : {}",userInfoVo.getInviteCode());
-            throw new RuntimeException();
-        }
-
         int result = userMapper.insert(user);
 
         if(result  <= 0){
             return null;
         }
 
-        boolean disResult = rewardService.distributionRewardByAction(user,inviteByWho,true);
-        if(!disResult){
-            log.error(" 注册失败 --- > ");
+        Invest invest = new Invest();
+        invest.setBalance(BigDecimal.ZERO);
+        invest.setRewardBalance(BigDecimal.ZERO.add(reward.getRegisterSelf()));
+        invest.setQty(0);
+        invest.setUserId(user.getId());
+        invest.setUpdatedTime(new Date());
+        invest.setCreatedTime(new Date());
+        int investResult = investMapper.insert(invest);
+        if(investResult <=0){
+            log.error("生成Invest 失败 ");
             throw new RuntimeException();
         }
+
+
+
+       if(StringUtils.isNotEmpty(userInfoVo.getInviteCode())){
+           /**
+            * 分销记录
+            */
+           User inviteByWho = userMapper.findByInviteCode(userInfoVo.getInviteCode());
+           if(null == inviteByWho){
+               log.error(" 注册用户 ---> 邀请码不存在 : {}",userInfoVo.getInviteCode());
+               throw new RuntimeException();
+           }
+
+           boolean disResult = rewardService.distributionRewardByAction(user,inviteByWho,invest,true);
+           if(!disResult){
+               log.error(" 注册失败 --- > ");
+               throw new RuntimeException();
+           }
+       }else{
+
+           Distribution distribution = new Distribution();
+           distribution.setUserId(user.getId());
+           distribution.setCreatedTime(new Date());
+           distribution.setUpdatedTime(new Date());
+           distribution.setStatus(DistributionStatusEnum.REGISTER_NO_DISTRBUTE.getCode());
+           distribution.setInvestStatus(DistributionStatusEnum.INVEST_NO_DISTRBUTE.getCode());
+           int saveDisResult = distributionMapper.insert(distribution);
+           if(saveDisResult <=0){
+               log.error("产生默认分销记录失败");
+               throw new RuntimeException();
+           }
+
+           invest.setRewardBalance(reward.getRegisterSelf());
+           BalanceStatement statement = new BalanceStatement();
+           statement.setAmount(reward.getRegisterSelf());
+           statement.setUserId(user.getId());
+           statement.setWay(DistributionTypeEnum.TYPE_REGISTER.getCode());
+           statement.setType(DistributionTypeEnum.LEVEL_ONE.getCode());
+           statement.setCreatedTime(new Date());
+           statement.setDistributionId(distribution.getId());
+           int saveStatementResult = balanceStatementMapper.insert(statement);
+           if(saveStatementResult <=0){
+               log.error("不分销，保存余额变动失败");
+               throw new RuntimeException();
+           }
+       }
+
+
         return user;
     }
 
