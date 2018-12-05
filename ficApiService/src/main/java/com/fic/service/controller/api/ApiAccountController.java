@@ -40,8 +40,7 @@ public class ApiAccountController {
     UserMapper userMapper;
     @Autowired
     AccountService accountService;
-    @Autowired
-    DistributionService distributionService;
+
 
     @GetMapping("/login")
     @ApiOperation("Api-登录")
@@ -253,21 +252,6 @@ public class ApiAccountController {
         if(saveResult <=0)return ResponseEntity.ok(new ResponseVo(ErrorCodeEnum.SYSTEM_EXCEPTION,null));
 
         return ResponseEntity.ok(new ResponseVo(ErrorCodeEnum.SUCCESS,userInfoVo));
-    }
-
-
-    @GetMapping(value = "/getInviteGroup")
-    @ApiOperation("Api-邀请记录")
-    @ApiImplicitParams({
-            @ApiImplicitParam(dataType = "int", name = "userId", value = "用户ID", required = true)
-    })
-    @ApiResponses({
-            @ApiResponse(code = 200, message = "SUCCESS")
-    })
-    public ResponseEntity getInviteGroup(@RequestParam Integer userId){
-        log.debug(" do getInviteGroup Action !!!");
-        List<DistributionVo> resultList = distributionService.getMyDistributionRecord(userId);
-        return ResponseEntity.ok(new ResponseVo(ErrorCodeEnum.SUCCESS,resultList));
     }
 
 

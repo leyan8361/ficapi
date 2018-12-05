@@ -93,7 +93,7 @@ public class DistributionServiceImpl implements DistributionService {
             }
 
         }
-        return null;
+        return disResultList;
     }
 
     public String replaceTelephone(String telephone){

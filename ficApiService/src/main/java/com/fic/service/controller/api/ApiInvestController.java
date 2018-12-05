@@ -5,6 +5,7 @@ import com.fic.service.Vo.*;
 import com.fic.service.constants.Constants;
 import com.fic.service.entity.Invest;
 import com.fic.service.mapper.InvestMapper;
+import com.fic.service.service.DistributionService;
 import com.fic.service.service.InvestService;
 import io.swagger.annotations.*;
 import org.slf4j.Logger;
@@ -14,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 /**
  *   @Author Xie
@@ -31,6 +33,8 @@ public class ApiInvestController {
     InvestMapper investMapper;
     @Autowired
     InvestService investService;
+    @Autowired
+    DistributionService distributionService;
 
     @PostMapping("/invest")
     @ApiOperation("Api-投资")
@@ -84,6 +88,20 @@ public class ApiInvestController {
         log.debug(" do get invest detail action !!");
         InvestRecordInfoVo result = investService.getInvestDetail(userId);
         return ResponseEntity.ok(new ResponseVo(ErrorCodeEnum.SUCCESS,result));
+    }
+
+    @GetMapping(value = "/getInviteGroup")
+    @ApiOperation("Api-邀请记录")
+    @ApiImplicitParams({
+            @ApiImplicitParam(dataType = "int", name = "userId", value = "用户ID", required = true)
+    })
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "SUCCESS",response = DistributionVo.class)
+    })
+    public ResponseEntity getInviteGroup(@RequestParam Integer userId){
+        log.debug(" do getInviteGroup Action !!!");
+        List<DistributionVo> resultList = distributionService.getMyDistributionRecord(userId);
+        return ResponseEntity.ok(new ResponseVo(ErrorCodeEnum.SUCCESS,resultList));
     }
 
 }
