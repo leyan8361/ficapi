@@ -184,6 +184,7 @@
     <if test="queryType">
       and invest_status !=2
     </if>
+    and invite_reward_one !=null
     limit 0,1
   </select>
   <select id="findByFatherUserId" resultMap="BaseResultMap">
