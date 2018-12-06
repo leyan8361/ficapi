@@ -1,9 +1,9 @@
 package com.fic.service.service.impl;
 
-import com.fic.service.Enum.BalanceStatementTypeEnum;
 import com.fic.service.Enum.DistributionStatusEnum;
 import com.fic.service.Enum.DistributionTypeEnum;
 import com.fic.service.Enum.ErrorCodeEnum;
+import com.fic.service.Enum.FinanceTypeEnum;
 import com.fic.service.Vo.*;
 import com.fic.service.constants.Constants;
 import com.fic.service.constants.UploadProperties;
@@ -66,9 +66,10 @@ public class AccountServiceImpl implements AccountService {
     public LoginUserInfoVo login(HttpServletRequest request,User user) {
         LoginUserInfoVo loginUserInfoVo = new LoginUserInfoVo();
         loginUserInfoVo.setUserId(user.getId());
-        loginUserInfoVo.setHimageUrl(uploadProperties.getUrl(user.getHimageUrl()));
+        loginUserInfoVo.setHimageUrl(user.getHimageUrl());//TODO 加前缀
         loginUserInfoVo.setMyInviteCode(user.getUserInviteCode());
         loginUserInfoVo.setUsername(user.getUserName());
+
         String userAgent = request.getHeader("User-Agent");
         String ipAddress = request.getRemoteAddr();
         TokenBase token = this.saveToken(user,userAgent,ipAddress);
@@ -148,8 +149,8 @@ public class AccountServiceImpl implements AccountService {
            BalanceStatement statement = new BalanceStatement();
            statement.setAmount(reward.getRegisterSelf());
            statement.setUserId(user.getId());
-           statement.setWay(BalanceStatementTypeEnum.REWARD.getCode());
-           statement.setType(DistributionTypeEnum.LEVEL_ONE.getCode());
+           statement.setWay(DistributionTypeEnum.TYPE_REGISTER.getCode());
+           statement.setType(FinanceTypeEnum.REWARD.getCode());
            statement.setCreatedTime(new Date());
            statement.setDistributionId(distribution.getId());
            int saveStatementResult = balanceStatementMapper.insert(statement);
@@ -194,9 +195,6 @@ public class AccountServiceImpl implements AccountService {
     public ResponseVo updateHeadPic(MultipartFile uploadFile,Integer userId){
         String fileType = "";
         String fileName = uploadFile.getOriginalFilename();
-        if(null != uploadFile && uploadFile.getSize() > 51200){
-            return new ResponseVo(ErrorCodeEnum.USER_HEAD_PIC_SIZE_LIMIT,null);
-        }
         if(!RegexUtil.isPic(fileName)){
             return new ResponseVo(ErrorCodeEnum.USER_HEAD_PIC_ERROR,null);
         }

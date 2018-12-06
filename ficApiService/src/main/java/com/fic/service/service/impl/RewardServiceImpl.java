@@ -1,7 +1,8 @@
 package com.fic.service.service.impl;
 
 import com.fic.service.Enum.DistributionStatusEnum;
-import com.fic.service.Enum.BalanceStatementTypeEnum;
+import com.fic.service.Enum.DistributionTypeEnum;
+import com.fic.service.Enum.FinanceTypeEnum;
 import com.fic.service.Enum.FinanceWayEnum;
 import com.fic.service.entity.*;
 import com.fic.service.mapper.*;
@@ -48,6 +49,32 @@ public class RewardServiceImpl implements RewardService {
             throw new RuntimeException();
         }
 
+
+        Distribution distributionSelf = new Distribution();
+        distributionSelf.setUserId(user.getId());
+        distributionSelf.setCreatedTime(new Date());
+        distributionSelf.setUpdatedTime(new Date());
+        distributionSelf.setStatus(DistributionStatusEnum.REGISTER_NO_DISTRBUTE.getCode());
+        distributionSelf.setInvestStatus(DistributionStatusEnum.INVEST_NO_DISTRBUTE.getCode());
+        int saveDisResult = distributionMapper.insert(distributionSelf);
+        if(saveDisResult <=0){
+            log.error("产生Self分销记录失败");
+            throw new RuntimeException();
+        }
+
+        invest.setRewardBalance(reward.getRegisterSelf());
+        BalanceStatement statement = new BalanceStatement();
+        statement.setAmount(reward.getRegisterSelf());
+        statement.setUserId(user.getId());
+        statement.setWay(DistributionTypeEnum.TYPE_REGISTER.getCode());
+        statement.setType(FinanceTypeEnum.REWARD.getCode());
+        statement.setCreatedTime(new Date());
+        statement.setDistributionId(distributionSelf.getId());
+        int saveStatementResult = balanceStatementMapper.insert(statement);
+        if(saveStatementResult <=0){
+            log.error("不分销，保存余额变动失败");
+            throw new RuntimeException();
+        }
 
         /**
          * 记录二级
@@ -135,7 +162,7 @@ public class RewardServiceImpl implements RewardService {
             balanceStatementInviteUser.setDistributionId(distribution.getId());
             balanceStatementInviteUser.setBalance(calBalanceInviteUser);
             balanceStatementInviteUser.setCreatedTime(new Date());
-            balanceStatementInviteUser.setType(BalanceStatementTypeEnum.REWARD.getCode());
+            balanceStatementInviteUser.setType(FinanceTypeEnum.REWARD.getCode());
             balanceStatementInviteUser.setWay(FinanceWayEnum.IN.getCode());
 
             int saveBalanceResult = balanceStatementMapper.insert(balanceStatementInviteUser);
@@ -224,7 +251,7 @@ public class RewardServiceImpl implements RewardService {
                     balanceStatement.setDistributionId(distributionTwo.getId());
                     balanceStatement.setBalance(calBalance);
                     balanceStatement.setCreatedTime(new Date());
-                    balanceStatement.setType(BalanceStatementTypeEnum.REWARD.getCode());
+                    balanceStatement.setType(FinanceTypeEnum.REWARD.getCode());
                     balanceStatement.setWay(FinanceWayEnum.IN.getCode());
 
                     int saveFatherBalanceResult = balanceStatementMapper.insert(balanceStatement);
@@ -232,6 +259,56 @@ public class RewardServiceImpl implements RewardService {
                     int updateFatherBalance = investMapper.updateRewardBalance(calBalance,investFather.getUserId());
                     if(saveFatherBalanceResult <=0 || updateFatherBalance <=0)throw new RuntimeException("修改父级余额失败，或生成父级余额变动失败");
                 }
+
+            }else{
+                //产生新三级分销数据
+                /**父级无分销记录*/
+                distributionTwo = new Distribution();
+                distributionTwo.setUserId(fatherUser.getId());
+                distributionTwo.setDisLevelOneUserId(inviteUser.getId());
+                distributionTwo.setDisLevelTwoUserId(user.getId());
+                distributionTwo.setUpdatedTime(new Date());
+                distributionTwo.setCreatedTime(new Date());
+                if(action){
+                    /**注册*/
+                    distributionTwo.setInviteRewardTwo(reward.getInviteRewardSecond());
+                    distributionTwo.setInviteRewardOne(reward.getInviteRewardFirst());
+                    distributionTwo.setStatus(DistributionStatusEnum.REGISTER_SECOND_LEVEL.getCode());
+                }else{
+                    /**投资*/
+                    distributionTwo.setInvestRewardTwo(reward.getInvestRewardSecond());
+                    distributionTwo.setInvestRewardOne(reward.getInvestRewardFirst());
+                    distributionTwo.setInvestStatus(DistributionStatusEnum.INVEST_SECOND_LEVEL.getCode());
+                }
+                saveFatherResult = distributionMapper.insert(distributionTwo);
+                if(saveFatherResult <=0){
+                    log.error(" 记录父级分销 失败");
+                    throw new RuntimeException();
+                }
+                /** 父级余额变动 */
+                BigDecimal calBalance = null;
+                BalanceStatement balanceStatement = new BalanceStatement();
+                if(action){
+                    /**注册*/
+                    calBalance = investFather.getRewardBalance().add(reward.getInviteRewardSecond());
+                    balanceStatement.setAmount(reward.getInviteRewardSecond());
+                }else{
+                    /**投资*/
+                    calBalance = investFather.getRewardBalance().add(reward.getInvestRewardSecond());
+                    balanceStatement.setAmount(reward.getInvestRewardSecond());
+                }
+                balanceStatement.setUserId(fatherUser.getId());
+                balanceStatement.setDistributionId(distributionTwo.getId());
+                balanceStatement.setBalance(calBalance);
+                balanceStatement.setCreatedTime(new Date());
+                balanceStatement.setType(FinanceTypeEnum.REWARD.getCode());
+                balanceStatement.setWay(FinanceWayEnum.IN.getCode());
+
+                int saveFatherBalanceResult = balanceStatementMapper.insert(balanceStatement);
+                investFather.setBalance(calBalance);
+                int updateFatherBalance = investMapper.updateRewardBalance(calBalance,investFather.getUserId());
+                if(saveFatherBalanceResult <=0 || updateFatherBalance <=0)throw new RuntimeException("修改父级余额失败，或生成父级余额变动失败");
+
 
             }
 
