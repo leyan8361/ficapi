@@ -1,6 +1,6 @@
 package com.fic.service.service.impl;
 
-import com.fic.service.Enum.BalanceStatementTypeEnum;
+import com.fic.service.Enum.FinanceTypeEnum;
 import com.fic.service.Enum.FinanceWayEnum;
 import com.fic.service.Vo.TradeRecordInfoVo;
 import com.fic.service.Vo.TradeRecordVo;
@@ -50,7 +50,7 @@ public class BalanceServiceImpl implements BalanceService {
         List<BalanceStatement> statementList = balanceStatementMapper.findAllByUserId(userId);
         if(statementList.size() <= 0)return result;
         for(BalanceStatement statement: statementList){
-            if(BalanceStatementTypeEnum.REWARD.getCode().equals(statement.getType())){
+            if(FinanceTypeEnum.REWARD.getCode().equals(statement.getType())){
                 String userPhone = userMapper.getUserNameByUserId(statement.getUserId());
                 if(StringUtils.isEmpty(userPhone))continue;
 
@@ -70,12 +70,12 @@ public class BalanceServiceImpl implements BalanceService {
                     }
                 }
                 /**投资电影*/
-                if(BalanceStatementTypeEnum.INVEST.getCode().equals(statement.getType())){
+                if(FinanceTypeEnum.INVEST.getCode().equals(statement.getType())){
                     String moveName = investDetailMapper.findMoveNameByDetailId(statement.getInvestDetailId());
                     tradeRecordVo.setMoveName(moveName);
                 }
                 /**分销 TODO 不需要处理 */
-//                if(BalanceStatementTypeEnum.REWARD.getCode().equals(statement.getType())){
+//                if(FinanceTypeEnum.REWARD.getCode().equals(statement.getType())){
 //                    Distribution distribution = distributionMapper.selectByPrimaryKey(statement.getDistributionId());
 //                }
                 tradeRecordVoList.add(tradeRecordVo);

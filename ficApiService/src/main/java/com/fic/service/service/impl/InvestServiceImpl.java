@@ -1,6 +1,6 @@
 package com.fic.service.service.impl;
 
-import com.fic.service.Enum.BalanceStatementTypeEnum;
+import com.fic.service.Enum.FinanceTypeEnum;
 import com.fic.service.Enum.FinanceWayEnum;
 import com.fic.service.Vo.InvestInfoVo;
 import com.fic.service.Vo.InvestRecordInfoVo;
@@ -25,8 +25,6 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.ConcurrentSkipListSet;
 
 /**
  *   @Author Xie
@@ -135,7 +133,7 @@ public class InvestServiceImpl implements InvestService {
             BalanceStatement balanceStatement = new BalanceStatement();
             balanceStatement.setUserId(user.getId());
             balanceStatement.setCreatedTime(new Date());
-            balanceStatement.setType(BalanceStatementTypeEnum.INVEST.getCode());
+            balanceStatement.setType(FinanceTypeEnum.INVEST.getCode());
             balanceStatement.setWay(FinanceWayEnum.OUT.getCode());
             balanceStatement.setInvestDetailId(investDetail.getInvestDetailId());
             int saveBalanceResult = balanceStatementMapper.insertSelective(balanceStatement);
