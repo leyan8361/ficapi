@@ -240,26 +240,20 @@ public class RewardServiceImpl implements RewardService {
                 distributionTwo.setUserId(fatherUser.getId());
                 distributionTwo.setDisLevelOneUserId(inviteUser.getId());
                 distributionTwo.setDisLevelTwoUserId(user.getId());
+                distributionTwo.setUpdatedTime(new Date());
+                distributionTwo.setCreatedTime(new Date());
                 if(action){
                     /**注册*/
-                    if(null != distributionTwo.getInviteRewardOne()){
-                        distributionTwo.setStatus(DistributionStatusEnum.REGISTER_SECOND_LEVEL.getCode());
-                    }else{
-                        distributionTwo.setStatus(DistributionStatusEnum.REGISTER_FIRST_LEVEL.getCode());
-                    }
                     distributionTwo.setInviteRewardTwo(reward.getInviteRewardSecond());
+                    distributionTwo.setInviteRewardOne(reward.getInviteRewardFirst());
+                    distributionTwo.setStatus(DistributionStatusEnum.REGISTER_SECOND_LEVEL.getCode());
                 }else{
                     /**投资*/
-                    if(null != distributionTwo.getInvestRewardOne()){
-                        distributionTwo.setInvestStatus(DistributionStatusEnum.INVEST_SECOND_LEVEL.getCode());
-                    }else{
-                        distributionTwo.setInvestStatus(DistributionStatusEnum.INVEST_FIRST_LEVEL.getCode());
-                    }
                     distributionTwo.setInvestRewardTwo(reward.getInvestRewardSecond());
+                    distributionTwo.setInvestRewardOne(reward.getInvestRewardFirst());
+                    distributionTwo.setInvestStatus(DistributionStatusEnum.INVEST_SECOND_LEVEL.getCode());
                 }
-                    distributionTwo.setUpdatedTime(new Date());
-                    distributionTwo.setCreatedTime(new Date());
-                    saveFatherResult = distributionMapper.insert(distributionTwo);
+                saveFatherResult = distributionMapper.insert(distributionTwo);
                 if(saveFatherResult <=0){
                     log.error(" 记录父级分销 失败");
                     throw new RuntimeException();
