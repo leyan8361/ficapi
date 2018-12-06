@@ -60,7 +60,7 @@ public class BalanceServiceImpl implements BalanceService {
                 tradeRecordVo.setWay(statement.getWay());
                 tradeRecordVo.setAmount(statement.getAmount());
                 tradeRecordVo.setType(statement.getType());
-                tradeRecordVo.setCreatedTime(statement.getCreatedTime());
+                tradeRecordVo.setCreatedTime(DateUtil.formatMin(statement.getCreatedTime()));
                 if(DateUtil.isToday(statement.getCreatedTime())){
                     if(statement.getWay().equals(FinanceWayEnum.IN)){
                         totalReceive = totalReceive.add(statement.getAmount());
@@ -89,66 +89,4 @@ public class BalanceServiceImpl implements BalanceService {
         return result;
     }
 
-
-
-
-
-    /**
-     * 处理佣金
-//     */
-//            if(BalanceStatementTypeEnum.REWARD.getCode().equals(statement.getType())){
-//        List<Distribution> distributionList = distributionMapper.findAllByUserId(statement.getUserId());
-//        if(distributionList.size() > 0){
-//            for(Distribution distribution : distributionList){
-//                /**一级分销*/
-//                String levelOneUserPhone = userMapper.getUserNameByUserId(distribution.getDisLevelOneUserId());
-//                if(StringUtils.isNotEmpty(levelOneUserPhone)){
-//                    /**注册*/
-//                    if(null != distribution.getInviteRewardOne()){
-//                        TradeRecordVo inviteOneRecord = new TradeRecordVo();
-//                        inviteOneRecord.setType(BalanceStatementTypeEnum.REWARD.getCode());
-//                        inviteOneRecord.setAmount(distribution.getInviteRewardOne());
-//                        inviteOneRecord.setWay(FinanceWayEnum.IN.getCode());
-//                        inviteOneRecord.setTelephone(RegexUtil.replaceTelephone(levelOneUserPhone));
-//                        inviteOneRecord.setUserId(distribution.getUserId());
-//                        inviteRecordList.add(inviteOneRecord);
-//                    }
-//                    /**投资*/
-//                    if(null != distribution.getInvestRewardOne()){
-//                        TradeRecordVo investOneRecord = new TradeRecordVo();
-//                        investOneRecord.setType(BalanceStatementTypeEnum.REWARD.getCode());
-//                        investOneRecord.setAmount(distribution.getInvestRewardOne());
-//                        investOneRecord.setWay(FinanceWayEnum.IN.getCode());
-//                        investOneRecord.setTelephone(RegexUtil.replaceTelephone(levelOneUserPhone));
-//                        investOneRecord.setUserId(distribution.getUserId());
-//                        investRecordList.add(investOneRecord);
-//                    }
-//                }
-//                /**二级分销*/
-//                String levelTwoUserPhone = userMapper.getUserNameByUserId(distribution.getDisLevelTwoUserId());
-//                if(StringUtils.isNotEmpty(levelTwoUserPhone)){
-//                    /**注册*/
-//                    if(null != distribution.getInviteRewardTwo()){
-//                        TradeRecordVo inviteTwoRecord = new TradeRecordVo();
-//                        inviteTwoRecord.setType(BalanceStatementTypeEnum.REWARD.getCode());
-//                        inviteTwoRecord.setAmount(distribution.getInviteRewardTwo());
-//                        inviteTwoRecord.setWay(FinanceWayEnum.IN.getCode());
-//                        inviteTwoRecord.setTelephone(RegexUtil.replaceTelephone(levelTwoUserPhone));
-//                        inviteTwoRecord.setUserId(distribution.getUserId());
-//                        inviteRecordList.add(inviteTwoRecord);
-//                    }
-//                    /**投资*/
-//                    if(null != distribution.getInvestRewardTwo()){
-//                        TradeRecordVo investTwoRecord = new TradeRecordVo();
-//                        investTwoRecord.setType(BalanceStatementTypeEnum.REWARD.getCode());
-//                        investTwoRecord.setAmount(distribution.getInvestRewardTwo());
-//                        investTwoRecord.setWay(FinanceWayEnum.IN.getCode());
-//                        investTwoRecord.setTelephone(RegexUtil.replaceTelephone(levelTwoUserPhone));
-//                        investTwoRecord.setUserId(distribution.getUserId());
-//                        investRecordList.add(investTwoRecord);
-//                    }
-//                }
-//            }
-//        }
-//    }
 }

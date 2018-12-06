@@ -25,6 +25,8 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.ConcurrentSkipListSet;
 
 /**
  *   @Author Xie
@@ -169,6 +171,7 @@ public class InvestServiceImpl implements InvestService {
         recordInfoVo.setInvestId(investId);
         recordInfoVo.setUserId(userId);
         recordInfoVo.setItems(list);
+
 
         return recordInfoVo;
     }

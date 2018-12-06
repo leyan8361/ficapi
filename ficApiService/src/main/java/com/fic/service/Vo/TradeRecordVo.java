@@ -27,7 +27,7 @@ public class TradeRecordVo {
     @ApiModelProperty(value = "金额")
     private BigDecimal amount;
     @ApiModelProperty(value = "创建时间")
-    private Date createdTime;
+    private String createdTime;
 
     public Integer getUserId() {
         return userId;
@@ -77,11 +77,11 @@ public class TradeRecordVo {
         this.amount = amount;
     }
 
-    public Date getCreatedTime() {
+    public String getCreatedTime() {
         return createdTime;
     }
 
-    public void setCreatedTime(Date createdTime) {
+    public void setCreatedTime(String createdTime) {
         this.createdTime = createdTime;
     }
 }

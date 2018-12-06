@@ -38,6 +38,12 @@ public class DateUtil {
         return dateString;
     }
 
+    public static String formatMin(Date date) {
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+        String dateString = formatter.format(date);
+        return dateString;
+    }
+
     public static Date plusMin(Date date, int min) {
         Calendar calendar = new GregorianCalendar();
         calendar.setTime(date);
