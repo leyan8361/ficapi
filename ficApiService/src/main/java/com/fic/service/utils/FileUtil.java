@@ -33,10 +33,12 @@ public class FileUtil {
      */
     public ErrorCodeEnum saveFile(MultipartFile uploadFile,String path,String name){
         try{
+
             File file = new File(uploadProperties.getCurrentUploadPath()+path);
-            if(!file.exists()){
-                file.mkdirs();
-            }
+            //删除所有旧文件
+            this.deleteAll(file);
+            file.mkdirs();
+
             file = new File(uploadProperties.getCurrentUploadPath()+path+name);
             uploadFile.transferTo(file);
             return ErrorCodeEnum.SUCCESS;
@@ -47,5 +49,16 @@ public class FileUtil {
         }
     }
 
+    public void deleteAll(File f){
+        File [] b = f.listFiles();
+        for(int i =0;i<b.length;i++){
+            if(b[i].isFile()){
+                b[i].delete();
+            }else{
+                deleteAll(b[i]);
+            }
+        }
+        f.delete();
+    }
 
 }

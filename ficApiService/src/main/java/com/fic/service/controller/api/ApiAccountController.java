@@ -166,6 +166,7 @@ public class ApiAccountController {
     @ApiResponses({
             @ApiResponse(code = 1018, message = "ERROR PIC TYPE (png|jpg|bmp|jpeg)"),
             @ApiResponse(code = 1019, message = "UPLOAD FAILED,SYSTEM_ERROR"),
+            @ApiResponse(code = 1024, message = "5120KB LIMIT"),
             @ApiResponse(code = 200, message = "SUCCESS",response = UploadHeadImageInfoVo.class)
     })
     public ResponseEntity updateHeadPic(@RequestParam Integer userId,@ApiParam(value = "头像",required = true) MultipartFile file){

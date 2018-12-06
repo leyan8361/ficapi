@@ -195,6 +195,9 @@ public class AccountServiceImpl implements AccountService {
     public ResponseVo updateHeadPic(MultipartFile uploadFile,Integer userId){
         String fileType = "";
         String fileName = uploadFile.getOriginalFilename();
+        if(null != uploadFile && uploadFile.getSize() > 51200){
+            return new ResponseVo(ErrorCodeEnum.USER_HEAD_PIC_SIZE_LIMIT,null);
+        }
         if(!RegexUtil.isPic(fileName)){
             return new ResponseVo(ErrorCodeEnum.USER_HEAD_PIC_ERROR,null);
         }
