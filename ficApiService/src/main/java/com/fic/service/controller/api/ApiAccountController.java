@@ -74,15 +74,6 @@ public class ApiAccountController {
     })
     public ResponseEntity register(HttpServletRequest request, HttpServletResponse response, @RequestBody RegisterUserInfoVo userInfoVo) {
         log.debug(" Api register Action !!!");
-
-        String deviceCode = userInfoVo.getDeviceCode();
-        if(StringUtils.isEmpty(deviceCode)){
-            return ResponseEntity.ok(new ResponseVo(ErrorCodeEnum.SYSTEM_EXCEPTION,null));
-        }
-
-        //TODO check exist device code
-
-
         if(StringUtils.isEmpty(userInfoVo.getUsername()))return ResponseEntity.ok(new ResponseVo(ErrorCodeEnum.PARAMETER_MISSED,null));
         User checkUser = userMapper.findByUsername(userInfoVo.getUsername());
         if(null != checkUser)return ResponseEntity.ok(new ResponseVo(ErrorCodeEnum.USERNAME_EXIST,null));
