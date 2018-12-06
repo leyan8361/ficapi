@@ -44,9 +44,10 @@ public class UploadProperties {
         return linux;
     }
 
+
     public String getUrl(String path){
         if(StringUtils.isEmpty(path))return null;
-        return servetProperties.getPrefix()+servetProperties.getPort()+"/"+path;
+        return servetProperties.getPrefix()+"/"+path;
     }
 
 

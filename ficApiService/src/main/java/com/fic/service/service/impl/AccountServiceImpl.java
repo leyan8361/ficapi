@@ -66,7 +66,7 @@ public class AccountServiceImpl implements AccountService {
     public LoginUserInfoVo login(HttpServletRequest request,User user) {
         LoginUserInfoVo loginUserInfoVo = new LoginUserInfoVo();
         loginUserInfoVo.setUserId(user.getId());
-        loginUserInfoVo.setHimageUrl(user.getHimageUrl());//TODO 加前缀
+        loginUserInfoVo.setHimageUrl(uploadProperties.getUrl(user.getHimageUrl()));
         loginUserInfoVo.setMyInviteCode(user.getUserInviteCode());
         loginUserInfoVo.setUsername(user.getUserName());
 

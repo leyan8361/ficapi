@@ -17,6 +17,9 @@ public class RegisterUserInfoVo {
     private String password;
     @ApiModelProperty(value = "邀请码")
     private String inviteCode;
+    @ApiModelProperty(value = "fic_设备号 MD5结果")
+    private String deviceCode;
+
 
     public String getUsername() {
         return username;
@@ -40,5 +43,13 @@ public class RegisterUserInfoVo {
 
     public void setInviteCode(String inviteCode) {
         this.inviteCode = inviteCode;
+    }
+
+    public String getDeviceCode() {
+        return deviceCode;
+    }
+
+    public void setDeviceCode(String deviceCode) {
+        this.deviceCode = deviceCode;
     }
 }

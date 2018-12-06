@@ -10,7 +10,6 @@ import com.fic.service.service.AccountService;
 import com.fic.service.service.DistributionService;
 import com.fic.service.utils.RegexUtil;
 import io.swagger.annotations.*;
-import net.bytebuddy.asm.Advice;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -75,6 +74,14 @@ public class ApiAccountController {
     })
     public ResponseEntity register(HttpServletRequest request, HttpServletResponse response, @RequestBody RegisterUserInfoVo userInfoVo) {
         log.debug(" Api register Action !!!");
+
+        String deviceCode = userInfoVo.getDeviceCode();
+        if(StringUtils.isEmpty(deviceCode)){
+            return ResponseEntity.ok(new ResponseVo(ErrorCodeEnum.SYSTEM_EXCEPTION,null));
+        }
+
+        //TODO check exist device code
+
         if(StringUtils.isEmpty(userInfoVo.getUsername()))return ResponseEntity.ok(new ResponseVo(ErrorCodeEnum.PARAMETER_MISSED,null));
         User checkUser = userMapper.findByUsername(userInfoVo.getUsername());
         if(null != checkUser)return ResponseEntity.ok(new ResponseVo(ErrorCodeEnum.USERNAME_EXIST,null));

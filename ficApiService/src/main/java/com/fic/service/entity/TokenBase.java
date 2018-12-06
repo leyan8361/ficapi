@@ -18,6 +18,8 @@ public class TokenBase {
 
     private String userAgent;
 
+    private String deviceCode;
+
     public Integer getUserId() {
         return userId;
     }
@@ -56,6 +58,23 @@ public class TokenBase {
 
     public void setUserAgent(String userAgent) {
         this.userAgent = userAgent;
+    }
+
+    public String getDeviceCode() {
+        return deviceCode;
+    }
+
+    public void setDeviceCode(String deviceCode) {
+        this.deviceCode = deviceCode;
+    }
+
+    public TokenBase(Integer userId, String tokenValue, Date tokenDate, String ipAddress, String userAgent, String deviceCode) {
+        this.userId = userId;
+        this.tokenValue = tokenValue;
+        this.tokenDate = tokenDate;
+        this.ipAddress = ipAddress;
+        this.userAgent = userAgent;
+        this.deviceCode = deviceCode;
     }
 
     public TokenBase(Integer userId, String tokenValue, Date tokenDate, String ipAddress, String userAgent) {

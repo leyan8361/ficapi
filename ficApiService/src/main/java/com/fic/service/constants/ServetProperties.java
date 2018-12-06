@@ -13,8 +13,6 @@ public class ServetProperties {
 
     @Value("${resource.view.url.prefix}")
     String prefix;
-    @Value("${server.port}")
-    String port;
 
     public String getPrefix() {
         return prefix;
@@ -24,11 +22,4 @@ public class ServetProperties {
         this.prefix = prefix;
     }
 
-    public String getPort() {
-        return port;
-    }
-
-    public void setPort(String port) {
-        this.port = port;
-    }
 }
