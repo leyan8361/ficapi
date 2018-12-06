@@ -1,6 +1,7 @@
 package com.fic.service.service.impl;
 
 import com.fic.service.Enum.DistributionStatusEnum;
+import com.fic.service.Enum.DistributionTypeEnum;
 import com.fic.service.Enum.FinanceTypeEnum;
 import com.fic.service.Enum.FinanceWayEnum;
 import com.fic.service.entity.*;
@@ -48,6 +49,32 @@ public class RewardServiceImpl implements RewardService {
             throw new RuntimeException();
         }
 
+
+        Distribution distributionSelf = new Distribution();
+        distributionSelf.setUserId(user.getId());
+        distributionSelf.setCreatedTime(new Date());
+        distributionSelf.setUpdatedTime(new Date());
+        distributionSelf.setStatus(DistributionStatusEnum.REGISTER_NO_DISTRBUTE.getCode());
+        distributionSelf.setInvestStatus(DistributionStatusEnum.INVEST_NO_DISTRBUTE.getCode());
+        int saveDisResult = distributionMapper.insert(distributionSelf);
+        if(saveDisResult <=0){
+            log.error("产生Self分销记录失败");
+            throw new RuntimeException();
+        }
+
+        invest.setRewardBalance(reward.getRegisterSelf());
+        BalanceStatement statement = new BalanceStatement();
+        statement.setAmount(reward.getRegisterSelf());
+        statement.setUserId(user.getId());
+        statement.setWay(DistributionTypeEnum.TYPE_REGISTER.getCode());
+        statement.setType(FinanceTypeEnum.REWARD.getCode());
+        statement.setCreatedTime(new Date());
+        statement.setDistributionId(distributionSelf.getId());
+        int saveStatementResult = balanceStatementMapper.insert(statement);
+        if(saveStatementResult <=0){
+            log.error("不分销，保存余额变动失败");
+            throw new RuntimeException();
+        }
 
         /**
          * 记录二级
