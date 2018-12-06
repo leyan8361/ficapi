@@ -26,13 +26,22 @@ public interface AccountService {
     LoginUserInfoVo login(HttpServletRequest request,User user);
 
     /**
+     * 登录
+     * @param request
+     * @param user
+     * @param deviceCode
+     * @return
+     */
+    LoginUserInfoVo login(HttpServletRequest request,User user,String deviceCode);
+
+    /**
      * 生成Token
      * @param user
      * @param userAgent
      * @param ipAddress
      * @return
      */
-    TokenBase saveToken(User user,String userAgent, String ipAddress);
+    TokenBase saveToken(User user,String userAgent, String ipAddress,String deviceCode);
 
     /**
      * 注册并登录

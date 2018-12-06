@@ -70,9 +70,29 @@ public class AccountServiceImpl implements AccountService {
         loginUserInfoVo.setMyInviteCode(user.getUserInviteCode());
         loginUserInfoVo.setUsername(user.getUserName());
 
+        /**
+         * 重登陆 只需要更新 token value & time
+         */
+        TokenBase token = tokenBaseMapper.selectByPrimaryKey(user.getId());
+        token.setTokenValue(generateTokenData());
+        token.setTokenDate(new Date());
+        tokenBaseMapper.updateByPrimaryKeySelective(token);
+
+        loginUserInfoVo.setTokenValue(token.getTokenValue());
+        return loginUserInfoVo;
+    }
+
+    @Override
+    @Transactional(isolation= Isolation.READ_COMMITTED,propagation= Propagation.REQUIRED,rollbackFor = Exception.class)
+    public LoginUserInfoVo login(HttpServletRequest request,User user,String deviceCode) {
+        LoginUserInfoVo loginUserInfoVo = new LoginUserInfoVo();
+        loginUserInfoVo.setUserId(user.getId());
+        loginUserInfoVo.setHimageUrl(uploadProperties.getUrl(user.getHimageUrl()));
+        loginUserInfoVo.setMyInviteCode(user.getUserInviteCode());
+        loginUserInfoVo.setUsername(user.getUserName());
         String userAgent = request.getHeader("User-Agent");
         String ipAddress = request.getRemoteAddr();
-        TokenBase token = this.saveToken(user,userAgent,ipAddress);
+        TokenBase token = this.saveToken(user,userAgent,ipAddress,deviceCode);
         loginUserInfoVo.setTokenValue(token.getTokenValue());
         return loginUserInfoVo;
     }
@@ -174,8 +194,8 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public TokenBase saveToken(User user,String userAgent, String ipAddress) {
-        TokenBase tokenBase = new TokenBase(user.getId(),generateTokenData(), new Date(),ipAddress,userAgent);
+    public TokenBase saveToken(User user,String userAgent, String ipAddress,String deviceCode) {
+        TokenBase tokenBase = new TokenBase(user.getId(),generateTokenData(), new Date(),ipAddress,userAgent,deviceCode);
         tokenBaseMapper.deleteByPrimaryKey(user.getId());
         tokenBaseMapper.insert(tokenBase);
         return tokenBase;

@@ -82,6 +82,7 @@ public class ApiAccountController {
 
         //TODO check exist device code
 
+
         if(StringUtils.isEmpty(userInfoVo.getUsername()))return ResponseEntity.ok(new ResponseVo(ErrorCodeEnum.PARAMETER_MISSED,null));
         User checkUser = userMapper.findByUsername(userInfoVo.getUsername());
         if(null != checkUser)return ResponseEntity.ok(new ResponseVo(ErrorCodeEnum.USERNAME_EXIST,null));
