@@ -1,7 +1,7 @@
 package com.fic.service.service;
 
-import com.fic.service.Vo.TradeRecordInfoVo;
-import com.fic.service.Vo.TradeRecordVo;
+import com.fic.service.Vo.*;
+import com.fic.service.entity.BalanceStatement;
 
 import java.util.List;
 
@@ -13,5 +13,9 @@ import java.util.List;
 public interface BalanceService {
 
      TradeRecordInfoVo getTradeRecord(Integer userId);
+
+     ResponseVo reward(RewardInfoVo rewardInfoVo);
+
+     List<RewardRecordInfoVo> getReward(Integer userId);
 
 }

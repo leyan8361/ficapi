@@ -13,7 +13,7 @@ public class VersionInfoVo {
 
     @ApiModelProperty(value = "版本号")
     private String lastedVersion;
-    @ApiModelProperty(value = "版本号")
+    @ApiModelProperty(value = "是否需要更新")
     private boolean isNeedToUpdate;
 
     public String getLastedVersion() {
