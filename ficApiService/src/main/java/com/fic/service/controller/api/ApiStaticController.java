@@ -39,4 +39,10 @@ public class ApiStaticController {
         return "privacy_policy";
     }
 
+    @GetMapping(value = "/replacement_protocol")
+    @ApiOperation("Api-置换协议")
+    public String replacement() {
+        return "replacement_protocol";
+    }
+
 }
