@@ -12,6 +12,7 @@ import com.fic.service.entity.*;
 import com.fic.service.mapper.*;
 import com.fic.service.service.AccountService;
 import com.fic.service.service.RewardService;
+import com.fic.service.service.WalletService;
 import com.fic.service.utils.FileUtil;
 import com.fic.service.utils.*;
 import org.apache.commons.lang3.StringUtils;
@@ -60,6 +61,8 @@ public class AccountServiceImpl implements AccountService {
     BalanceStatementMapper balanceStatementMapper;
     @Autowired
     DistributionMapper distributionMapper;
+    @Autowired
+    WalletService walletService;
 
     @Override
     @Transactional(isolation= Isolation.READ_COMMITTED,propagation= Propagation.REQUIRED,rollbackFor = Exception.class)
@@ -87,14 +90,17 @@ public class AccountServiceImpl implements AccountService {
             throw new RuntimeException();
         }
 
+        Integer lastInsertId = userMapper.getLastInsertID();
         User user = new User();
         user.setUserName(userInfoVo.getUsername());
         user.setPassword(userInfoVo.getPassword());
         user.setTuserInviteCode(userInfoVo.getInviteCode());
-        user.setUserInviteCode(InviteCodeUtil.toSerialCode(userMapper.getLastInsertID()));
+        user.setUserInviteCode(InviteCodeUtil.toSerialCode(lastInsertId));
         user.setCreatedTime(new Date());
         user.setUpdatedTime(new Date());
 
+        String walletAddress = walletService.generateWalletAddress(lastInsertId,userInfoVo.getPassword());
+        user.setWalletAddress(walletAddress);
         int result = userMapper.insert(user);
 
         if(result  <= 0){
