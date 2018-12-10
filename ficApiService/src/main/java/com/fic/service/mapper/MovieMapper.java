@@ -25,4 +25,6 @@ public interface MovieMapper {
     int updateByPrimaryKey(Movie record);
 
     List<Movie> findAll();
+
+    Integer checkIfExistById(Integer movieId);
 }

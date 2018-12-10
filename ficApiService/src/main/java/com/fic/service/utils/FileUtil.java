@@ -36,7 +36,9 @@ public class FileUtil {
 
             File file = new File(uploadProperties.getCurrentUploadPath()+path);
             //删除所有旧文件
-            this.deleteAll(file);
+            if(file.exists()){
+                this.deleteAll(file);
+            }
             file.mkdirs();
 
             file = new File(uploadProperties.getCurrentUploadPath()+path+name);

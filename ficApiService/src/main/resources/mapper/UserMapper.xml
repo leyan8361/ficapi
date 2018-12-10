@@ -403,4 +403,7 @@
   <select id="getUserNameByUserId" resultType="string">
     select user_name from user where id = #{userId}
   </select>
+  <select id="checkIfExistByUserId" resultType="int">
+    select id from user where id = #{userId}
+  </select>
 </mapper>

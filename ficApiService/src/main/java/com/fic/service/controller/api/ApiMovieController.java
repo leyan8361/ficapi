@@ -8,10 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  *   @Author Xie
@@ -37,6 +34,37 @@ public class ApiMovieController {
     public ResponseEntity getMovieInfo() {
         log.debug(" Api get Movie Info !!!");
         ResponseVo result = movieService.getMovieInfo();
+        return ResponseEntity.ok(result);
+    }
+
+    @GetMapping("/doLikeMovie")
+    @ApiOperation("Api-点赞电影")
+    @ApiImplicitParams({
+            @ApiImplicitParam(dataType = "int", name = "userId", value = "用户ID", required = true),
+            @ApiImplicitParam(dataType = "int", name = "movieId", value = "电影ID", required = true)
+    })
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "SUCCESS",response = MovieInfoVo.class)
+    })
+    public ResponseEntity likeMovie(@RequestParam int userId, @RequestParam int movieId) {
+        log.debug(" Api do like moive !!!");
+        ResponseVo result = movieService.doLikeMovie(userId,movieId);
+        return ResponseEntity.ok(result);
+    }
+
+
+    @GetMapping("/doFavMovie")
+    @ApiOperation("Api-收藏电影")
+    @ApiImplicitParams({
+            @ApiImplicitParam(dataType = "int", name = "userId", value = "用户ID", required = true),
+            @ApiImplicitParam(dataType = "int", name = "movieId", value = "电影ID", required = true)
+    })
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "SUCCESS",response = MovieInfoVo.class)
+    })
+    public ResponseEntity favMovie(@RequestParam int userId, @RequestParam int movieId) {
+        log.debug(" Api do Fav moive !!!");
+        ResponseVo result = movieService.doFavMovie(userId,movieId);
         return ResponseEntity.ok(result);
     }
 

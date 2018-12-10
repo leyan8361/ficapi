@@ -145,4 +145,7 @@
   <select id="findAll" resultMap="BaseResultMap">
     select * from movie where 1=1;
   </select>
+  <select id="checkIfExistById" resultType="int">
+    select movie_id from moive where movie_id = #{movidId};
+  </select>
 </mapper>

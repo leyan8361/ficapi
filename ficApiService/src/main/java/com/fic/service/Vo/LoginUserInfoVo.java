@@ -21,7 +21,26 @@ public class LoginUserInfoVo {
     private String himageUrl;
     @ApiModelProperty(value = "邀请码")
     private String myInviteCode;
+    @ApiModelProperty(value = "昵称")
+    private String nickName;
+    @ApiModelProperty(value = "邮箱")
+    private String email;
 
+    public String getNickName() {
+        return nickName;
+    }
+
+    public void setNickName(String nickName) {
+        this.nickName = nickName;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
 
     public String getUsername() {
         return username;

@@ -48,4 +48,6 @@ public interface UserMapper {
     User findByInviteCode(@Param("inviteCode") String inviteCode);
 
     String getUserNameByUserId(@Param("userId") Integer userId);
+
+    Integer checkIfExistByUserId(@Param("userId") Integer userId);
 }

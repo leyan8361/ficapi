@@ -5,14 +5,17 @@ import com.fic.service.Vo.MovieInfoVo;
 import com.fic.service.Vo.ResponseVo;
 import com.fic.service.entity.Movie;
 import com.fic.service.entity.MovieMedia;
-import com.fic.service.mapper.InvestDetailMapper;
-import com.fic.service.mapper.MovieMapper;
-import com.fic.service.mapper.MovieMediaMapper;
+import com.fic.service.entity.MovieUserInfo;
+import com.fic.service.entity.User;
+import com.fic.service.mapper.*;
 import com.fic.service.service.MovieService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -29,6 +32,10 @@ public class MovieServiceImpl implements MovieService {
     MovieMediaMapper movieMediaMapper;
     @Autowired
     InvestDetailMapper investDetailMapper;
+    @Autowired
+    MovieUserInfoMapper movieUserInfoMapper;
+    @Autowired
+    UserMapper userMapper;
 
     @Override
     public ResponseVo getMovieInfo() {
@@ -51,5 +58,72 @@ public class MovieServiceImpl implements MovieService {
             resultList.add(result);
         }
         return new ResponseVo(ErrorCodeEnum.SUCCESS,resultList);
+    }
+
+
+    @Override
+    @Transactional(isolation= Isolation.READ_COMMITTED,propagation= Propagation.REQUIRED,rollbackFor = Exception.class)
+    public ResponseVo doLikeMovie(Integer userId, Integer movieId) {
+        Integer existUserId = userMapper.checkIfExistByUserId(userId);
+        if(null == existUserId || existUserId == 0){
+            log.error("用户不存在，Like Movie User ID : {}",userId);
+            throw new RuntimeException();
+        }
+        Integer existMovieid = movieMapper.checkIfExistById(movieId);
+        if(null == existMovieid || existMovieid ==0 ){
+            log.error("电影不存在，like Movie Movie ID : {}", movieId);
+        }
+        MovieUserInfo movieUserInfo = movieUserInfoMapper.findByUserIdAndMovieId(userId,movieId);
+        if(null == movieUserInfo){
+            movieUserInfo = new MovieUserInfo();
+            movieUserInfo.setFav((byte)0);
+        }
+        movieUserInfo.setLikz((byte)1);
+        movieUserInfo.setUserId(userId);
+        movieUserInfo.setMovieId(movieId);
+        int saveOrUpdateResult = 0;
+        if(null != movieUserInfo.getId()){
+            saveOrUpdateResult = movieUserInfoMapper.updateByPrimaryKey(movieUserInfo);
+        }else{
+            saveOrUpdateResult = movieUserInfoMapper.insertSelective(movieUserInfo);
+        }
+        if(saveOrUpdateResult <=0){
+            log.error("更新保存 Movie Like失败 , MovieServiceImpl : 80 row , userID :{}, movieId:{}",userId,movieUserInfo);
+            throw new RuntimeException();
+        }
+        return new ResponseVo(ErrorCodeEnum.SUCCESS,null);
+    }
+
+    @Override
+    @Transactional(isolation= Isolation.READ_COMMITTED,propagation= Propagation.REQUIRED,rollbackFor = Exception.class)
+    public ResponseVo doFavMovie(Integer userId, Integer movieId) {
+        Integer existUserId = userMapper.checkIfExistByUserId(userId);
+        if(null == existUserId || existUserId == 0){
+            log.error("用户不存在，Fav Movie User ID : {}",userId);
+            throw new RuntimeException();
+        }
+        Integer existMovieid = movieMapper.checkIfExistById(movieId);
+        if(null == existMovieid || existMovieid ==0 ){
+            log.error("电影不存在，Fav Movie Movie ID : {}", movieId);
+        }
+        MovieUserInfo movieUserInfo = movieUserInfoMapper.findByUserIdAndMovieId(userId,movieId);
+        if(null == movieUserInfo){
+            movieUserInfo = new MovieUserInfo();
+            movieUserInfo.setLikz((byte)0);
+        }
+        movieUserInfo.setFav((byte)1);
+        movieUserInfo.setUserId(userId);
+        movieUserInfo.setMovieId(movieId);
+        int saveOrUpdateResult = 0;
+        if(null != movieUserInfo.getId()){
+            saveOrUpdateResult = movieUserInfoMapper.updateByPrimaryKey(movieUserInfo);
+        }else{
+            saveOrUpdateResult = movieUserInfoMapper.insertSelective(movieUserInfo);
+        }
+        if(saveOrUpdateResult <=0){
+            log.error("更新保存 Movie Fav失败 , MovieServiceImpl : 80 row , userID :{}, movieId:{}",userId,movieUserInfo);
+            throw new RuntimeException();
+        }
+        return new ResponseVo(ErrorCodeEnum.SUCCESS,null);
     }
 }
