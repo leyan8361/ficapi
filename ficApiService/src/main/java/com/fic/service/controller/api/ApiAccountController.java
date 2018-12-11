@@ -122,8 +122,7 @@ public class ApiAccountController {
     @ApiOperation("Api-重置密码,将刷新Token")
     @ApiImplicitParams({
             @ApiImplicitParam(dataType = "String", name = "username", value = "用户名", required = true),
-            @ApiImplicitParam(dataType = "String", name = "newpassword", value = "新密码MD5结果", required = true),
-            @ApiImplicitParam(dataType = "String", name = "validateCode", value = "短信验证码", required = false)
+            @ApiImplicitParam(dataType = "String", name = "newpassword", value = "新密码MD5结果", required = true)
     })
     @ApiResponses({
             @ApiResponse(code = 400, message = "Parameter Missed"),
@@ -131,12 +130,11 @@ public class ApiAccountController {
             @ApiResponse(code = 500, message = "System ERROR"),
             @ApiResponse(code = 200, message = "SUCCESS",response = LoginUserInfoVo.class)
     })
-    public ResponseEntity resetPassword(HttpServletRequest request,@RequestParam String username,@RequestParam String newpassword,@RequestParam String validateCode){
+    public ResponseEntity resetPassword(HttpServletRequest request,@RequestParam String username,@RequestParam String newpassword){
         log.debug(" Api Reset Password Action !!!");
         if(StringUtils.isEmpty(username))return ResponseEntity.ok(new ResponseVo(ErrorCodeEnum.PARAMETER_MISSED,null));
         User checkUser = userMapper.findByUsername(username);
         if(null == checkUser)return ResponseEntity.ok(new ResponseVo(ErrorCodeEnum.USER_NOT_EXIST,null));
-        //TODO Check validate
         boolean result = accountService.updatePassword(newpassword,checkUser);
         LoginUserInfoVo refreshUser = null;
         if(result){
