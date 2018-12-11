@@ -11,7 +11,7 @@ import io.swagger.annotations.ApiModelProperty;
 @ApiModel
 public class UpdateUserInfoVo {
 
-    @ApiModelProperty(value = "用户ID")
+    @ApiModelProperty(value = "用户ID",required = true)
     private Integer userId;
     @ApiModelProperty(value = "手机号")
     private String telephone;

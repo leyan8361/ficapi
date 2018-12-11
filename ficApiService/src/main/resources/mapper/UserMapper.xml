@@ -419,4 +419,7 @@
   <select id="findMissingAddress" resultMap="resultMap">
 
   </select>
+  <select id="checkIfExistByUserId" resultType="int">
+    select id from user where id = #{userId}
+  </select>
 </mapper>

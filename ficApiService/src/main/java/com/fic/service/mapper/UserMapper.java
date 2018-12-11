@@ -49,5 +49,7 @@ public interface UserMapper {
 
     String getUserNameByUserId(@Param("userId") Integer userId);
 
+    Integer checkIfExistByUserId(@Param("userId") Integer userId);
+
     List<User> findMissingAddress();
 }

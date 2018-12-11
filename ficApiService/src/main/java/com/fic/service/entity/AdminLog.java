@@ -1,5 +1,7 @@
 package com.fic.service.entity;
 
+import com.fic.service.utils.DateUtil;
+
 import java.util.Date;
 
 public class AdminLog {
@@ -31,5 +33,19 @@ public class AdminLog {
 
     public void setOperationTime(Date operationTime) {
         this.operationTime = operationTime;
+    }
+
+    public AdminLog(String event, Date operationTime) {
+        this.event = event;
+        this.operationTime = operationTime;
+    }
+
+    @Override
+    public String toString() {
+        return "AdminLog{" +
+                "adminId=" + adminId +
+                ", event='" + event + '\'' +
+                ", operationTime=" + DateUtil.formatSec(operationTime) +
+                '}';
     }
 }
