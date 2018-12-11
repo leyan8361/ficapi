@@ -39,7 +39,6 @@ public class ApiSmsController {
             @ApiImplicitParam(dataType = "string", name = "telephone", value = "手机号", required = true)
     })
     @ApiResponses({
-            @ApiResponse(code = 1001, message = "USER_NOT_EXIST"),
             @ApiResponse(code = 1012, message = "INVALID TELEPHONE"),
             @ApiResponse(code = 1017, message = "REST ERROR"),
             @ApiResponse(code = 1016, message = "SMS_SEND_COUNT_LIMIT"),
@@ -50,8 +49,6 @@ public class ApiSmsController {
         log.debug(" do sendSms action !!");
         boolean isPhone = RegexUtil.isPhone(telephone);
         if(!isPhone)return ResponseEntity.ok(new ResponseVo(ErrorCodeEnum.INVALID_TELEPHONE,null));
-        User user = userMapper.findByUsername(telephone);
-        if(null == user)return ResponseEntity.ok(new ResponseVo(ErrorCodeEnum.USER_NOT_EXIST,null));
         ErrorCodeEnum result = smsService.send(telephone);
         return ResponseEntity.ok(new ResponseVo(result,null));
     }
