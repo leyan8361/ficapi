@@ -9,6 +9,7 @@ import com.fic.service.mapper.UserMapper;
 import com.fic.service.service.SmsService;
 import com.fic.service.service.WalletService;
 import io.swagger.annotations.*;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,12 +41,13 @@ public class HomeController {
     UserMapper userMapper;
     @Autowired
     ServerProperties serverProperties;
+    @Autowired
+
 
     @GetMapping("/home")
     @ApiOperation("获取首页数据")
 //    @RequiresAuthentication
     public ResponseEntity home() {
-        smsService.send("13713706248");
         System.out.println("index !!!!!");
         log.debug(" Home Page !!!");
         return ResponseEntity.ok().body("success");
@@ -65,23 +67,26 @@ public class HomeController {
         return ResponseEntity.ok().body("success");
     }
 
-    @GetMapping(value = "/doMissingAddressMakeUp")
-    @ApiOperation("补充钱包地址，对象为注册无钱包地址的用户")
-    @ApiResponses({
-            @ApiResponse(code = 200, message = "SUCCESS")
-    })
-    public ResponseEntity doMissingAddressMakeUp(){
-        log.debug(" do doMissingAddressMakeUp Action !!!");
-        List<User> userList = userMapper.findMissingAddress();
-        String path = serverProperties.getStoreLocation();
-        if(userList.size() > 0){
-            for(User user : userList){
-                //TODO address make up
-            }
-        }
-
-        return ResponseEntity.ok().build();
-
-    }
+//    @GetMapping(value = "/doMissingAddressMakeUp")
+//    @ApiOperation("补充钱包地址，对象为注册无钱包地址的用户")
+//    @ApiResponses({
+//            @ApiResponse(code = 200, message = "SUCCESS")
+//    })
+//    public ResponseEntity doMissingAddressMakeUp(){
+//        log.debug(" do doMissingAddressMakeUp Action !!!");
+//        List<User> userList = userMapper.findMissingAddress();
+//        String path = serverProperties.getStoreLocation();
+//        if(userList.size() > 0){
+//            for(User user : userList){
+//                //TODO address make up
+//                if(StringUtils.isEmpty(user.getWalletAddress())){
+//                    String address = we
+//                }
+//            }
+//        }
+//
+//        return ResponseEntity.ok().build();
+//
+//    }
 
 }

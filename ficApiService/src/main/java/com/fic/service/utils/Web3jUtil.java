@@ -4,7 +4,9 @@ import com.fic.service.constants.ServerProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.DependsOn;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import org.web3j.crypto.Credentials;
 import org.web3j.crypto.WalletUtils;
 import org.web3j.protocol.Web3j;
@@ -14,6 +16,8 @@ import org.web3j.protocol.core.DefaultBlockParameterNumber;
 import org.web3j.protocol.core.methods.response.EthGetBalance;
 import org.web3j.protocol.http.HttpService;
 
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 import java.io.File;
 import java.io.IOException;
 import java.math.BigInteger;
@@ -35,30 +39,36 @@ public class Web3jUtil {
     private volatile Web3j web3j;
     private volatile Admin admin;
 
-    public Web3jUtil(){
-        try{
-            if(web3j==null){
-                synchronized (Web3jUtil.class){
-                    if(web3j==null){
-                        web3j = Web3j.build(new HttpService(serverProperties.getWalletUrl()));
-                        web3j.web3ClientVersion().send();
-                        log.debug(" Wallet Servet Connected!");
-                    }
-                }
-            }
-            if(admin==null){
-                synchronized (Web3jUtil.class){
-                    if(admin==null){
-                        admin = Admin.build(new HttpService(serverProperties.getWalletUrl()));
-                        admin.web3ClientVersion().send();
-                        log.debug(" Wallet Server Admin Connected!");
-                    }
-                }
-            }
-        }catch(IOException e){
-            log.error(" Wallet Servet Connected Failed !");
-            e.printStackTrace();
-        }
+    @PostConstruct
+    public void init(){
+//        try{
+//            if(web3j==null){
+//                synchronized (Web3jUtil.class){
+//                    if(web3j==null){
+//                        web3j = Web3j.build(new HttpService(serverProperties.getWalletUrl()));
+//                        web3j.web3ClientVersion().send();
+//                        log.debug(" Wallet Servet Connected!");
+//                    }
+//                }
+//            }
+//            if(admin==null){
+//                synchronized (Web3jUtil.class){
+//                    if(admin==null){
+//                        admin = Admin.build(new HttpService(serverProperties.getWalletUrl()));
+//                        admin.web3ClientVersion().send();
+//                        log.debug(" Wallet Server Admin Connected!");
+//                    }
+//                }
+//            }
+//        }catch(IOException e){
+//            log.error(" Wallet Servet Connected Failed !");
+//            e.printStackTrace();
+//        }
+    }
+
+    @PreDestroy
+    public void  dostory(){
+        System.out.println("I'm  destory method ");
     }
 
     public List<String> getAccountlist(){
