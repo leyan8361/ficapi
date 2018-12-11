@@ -100,8 +100,8 @@ public class AccountServiceImpl implements AccountService {
         user.setCreatedTime(new Date());
         user.setUpdatedTime(new Date());
 
-        String walletAddress = walletService.generateWalletAddress(lastInsertId,userInfoVo.getPassword());
-        user.setWalletAddress(walletAddress);
+//        String walletAddress = walletService.generateWalletAddress(lastInsertId,userInfoVo.getPassword());
+//        user.setWalletAddress(walletAddress);
         int result = userMapper.insert(user);
 
         if(result  <= 0){
