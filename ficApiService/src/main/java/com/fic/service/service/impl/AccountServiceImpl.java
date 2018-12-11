@@ -63,6 +63,8 @@ public class AccountServiceImpl implements AccountService {
     DistributionMapper distributionMapper;
     @Autowired
     WalletService walletService;
+    @Autowired
+    DeviceMapper deviceMapper;
 
     @Override
     @Transactional(isolation= Isolation.READ_COMMITTED,propagation= Propagation.REQUIRED,rollbackFor = Exception.class)
@@ -121,6 +123,20 @@ public class AccountServiceImpl implements AccountService {
             throw new RuntimeException();
         }
 
+
+        /**
+         * 设备
+         */
+        Device device = new Device();
+        device.setDeviceCode(userInfoVo.getDeviceCode());
+        device.setCreatedTime(new Date());
+        device.setLastedLoginTime(new Date());
+        device.setLoginCount(0);
+        int deviceSaveResult = deviceMapper.insertSelective(device);
+        if(deviceSaveResult <=0){
+            log.error("保存设备编号失败 : {} ",device.getDeviceCode());
+            throw new RuntimeException();
+        }
 
 
        if(StringUtils.isNotEmpty(userInfoVo.getInviteCode())){
