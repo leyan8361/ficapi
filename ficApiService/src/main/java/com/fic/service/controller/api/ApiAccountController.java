@@ -71,6 +71,7 @@ public class ApiAccountController {
     @PostMapping("/register")
     @ApiOperation("Api-注册")
     @ApiResponses({
+            @ApiResponse(code = 1023,message = "DEVICE_EXCEPTION"),
             @ApiResponse(code = 400, message = "Parameter Missed"),
             @ApiResponse(code = 1007,message = "USER EXIST"),
             @ApiResponse(code = 500, message = "System ERROR"),
