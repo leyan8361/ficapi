@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
-    <!--<include resource="org/springframework/boot/logging/logback/defaults.xml"/>-->
-
+    <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
+    <property name="LOG_FILE" value="${logging.file}"/>
 
     <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
@@ -10,17 +10,33 @@
         </encoder>
     </appender>
 
-    <!--<logger name="com.fic.service" level="INFO"/>-->
-    <!--<logger name="org.springframework" level="DEBUG"/>-->
-    <!--<logger name="com.fic.service" level="DEBUG"/>-->
-    <!--<logger name="io.swagger.models.parameters.AbstractSerializableParameter" level="ERROR"/>-->
+    <appender name="ROLLING-FILE"
+              class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{35} - %msg %n</pattern>
+            <charset>UTF-8</charset>
+        </encoder>
+        <file>${LOG_FILE}</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_FILE}.%d{yyyy-MM-dd}.%i.gz</fileNamePattern>
+            <timeBasedFileNamingAndTriggeringPolicy
+                    class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <maxFileSize>10MB</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+        </rollingPolicy>
+    </appender>
+
+    <logger name="com.fic.service" level="DEBUG"/>
+    <logger name="org.springframework" level="ERROR"/>
+    <logger name="io.swagger.models.parameters.AbstractSerializableParameter" level="ERROR"/>
 
     <springProfile name="dev">
-        <!--<include resource="org/springframework/boot/logging/logback/console-appender.xml"/>-->
-        <root level="INFO">
+        <include resource="org/springframework/boot/logging/logback/console-appender.xml"/>
+        <root level="ERROR">
             <appender-ref ref="CONSOLE" />
         </root>
     </springProfile>
+
 
     <!--<springProfile name="prod">
         <appender name="ROLLING-FILE"
