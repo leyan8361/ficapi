@@ -50,6 +50,9 @@ public class HomeController {
     public ResponseEntity home() {
         System.out.println("index !!!!!");
         log.debug(" Home Page !!!");
+//        if(1 ==1 ){
+//            throw new RuntimeException();
+//        }
         return ResponseEntity.ok().body("success");
     }
 
