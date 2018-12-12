@@ -52,7 +52,7 @@
     <springProfile name="prod">
         <include resource="org/springframework/boot/logging/logback/console-appender.xml"/>
         <root level="ERROR">
-            <!--<appender-ref ref="CONSOLE" />-->
+            <appender-ref ref="CONSOLE" />
             <appender-ref ref="PROD-ROLLING-FILE" />
             <appender-ref ref="PROD-DEBUG-ROLLING-FILE" />
         </root>

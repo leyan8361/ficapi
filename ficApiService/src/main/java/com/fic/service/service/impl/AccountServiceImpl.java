@@ -150,7 +150,7 @@ public class AccountServiceImpl implements AccountService {
                throw new RuntimeException();
            }
 
-           boolean disResult = rewardService.distributionRewardByAction(user,inviteByWho,invest,true);
+           boolean disResult = rewardService.distributionRewardByAction(user,inviteByWho,invest,true,null);
            if(!disResult){
                log.error(" 注册失败 --- > ");
                throw new RuntimeException();

@@ -124,7 +124,7 @@ public class InvestServiceImpl implements InvestService {
         User user = userMapper.get(invest.getUserId());
         if(StringUtils.isNotEmpty(user.getTuserInviteCode())){
             User inviteUser = userMapper.findByInviteCode(user.getTuserInviteCode());
-            boolean disResult = rewardService.distributionRewardByAction(user,inviteUser,invest,false);
+            boolean disResult = rewardService.distributionRewardByAction(user,inviteUser,invest,false,investDetail.getInvestDetailId());
             if(!disResult){
                 log.error("分销失败，投资人ID:{}, 上级分销ID:{}",user.getId(),inviteUser.getId());
                 throw new RuntimeException();
