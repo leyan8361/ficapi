@@ -5,6 +5,8 @@ import com.fic.service.Vo.*;
 import com.fic.service.constants.Constants;
 import com.fic.service.controller.HomeController;
 import com.fic.service.entity.User;
+import com.fic.service.mapper.DeviceMapper;
+import com.fic.service.mapper.TokenBaseMapper;
 import com.fic.service.mapper.UserMapper;
 import com.fic.service.service.AccountService;
 import com.fic.service.service.DistributionService;
@@ -41,6 +43,8 @@ public class ApiAccountController {
     AccountService accountService;
     @Autowired
     DistributionService distributionService;
+    @Autowired
+    DeviceMapper deviceMapper;
 
     @GetMapping("/login")
     @ApiOperation("Api-登录")
@@ -67,6 +71,7 @@ public class ApiAccountController {
     @PostMapping("/register")
     @ApiOperation("Api-注册")
     @ApiResponses({
+            @ApiResponse(code = 1023,message = "DEVICE_EXCEPTION"),
             @ApiResponse(code = 400, message = "Parameter Missed"),
             @ApiResponse(code = 1007,message = "USER EXIST"),
             @ApiResponse(code = 500, message = "System ERROR"),
@@ -75,6 +80,8 @@ public class ApiAccountController {
     public ResponseEntity register(HttpServletRequest request, HttpServletResponse response, @RequestBody RegisterUserInfoVo userInfoVo) {
         log.debug(" Api register Action !!!");
         if(StringUtils.isEmpty(userInfoVo.getUsername()))return ResponseEntity.ok(new ResponseVo(ErrorCodeEnum.PARAMETER_MISSED,null));
+        int existRegisterDevice = deviceMapper.checkSameDevice(userInfoVo.getDeviceCode());
+        if(existRegisterDevice >0)return ResponseEntity.ok(new ResponseVo(ErrorCodeEnum.DEVICE_EXCEPTION,null));
         User checkUser = userMapper.findByUsername(userInfoVo.getUsername());
         if(null != checkUser)return ResponseEntity.ok(new ResponseVo(ErrorCodeEnum.USERNAME_EXIST,null));
         if(StringUtils.isNotEmpty(userInfoVo.getInviteCode())){
@@ -88,7 +95,7 @@ public class ApiAccountController {
     }
 
     @PostMapping("/updatePassword")
-    @ApiOperation("Api-修改密码,将刷新Token")
+    @ApiOperation("Api-修改密码")
     @ApiResponses({
             @ApiResponse(code = 400, message = "Parameter Missed"),
             @ApiResponse(code = 1001, message = "User Not Exist"),
@@ -96,7 +103,7 @@ public class ApiAccountController {
             @ApiResponse(code = 1009,message = "NEW PASSWORD NOT MATCH WITH RE"),
             @ApiResponse(code = 200, message = "SUCCESS",response = LoginUserInfoVo.class)
     })
-    public ResponseEntity updatePassword(HttpServletRequest request, HttpServletResponse response, @RequestBody ResetPasswordInfo userInfoVo){
+    public ResponseEntity updatePassword(@RequestBody ResetPasswordInfo userInfoVo){
         log.debug(" Api Update Password Action !!!");
         if(StringUtils.isEmpty(userInfoVo.getUsername()))return ResponseEntity.ok(new ResponseVo(ErrorCodeEnum.PARAMETER_MISSED,null));
         User checkUser = userMapper.findByUsername(userInfoVo.getUsername());
@@ -106,18 +113,17 @@ public class ApiAccountController {
         boolean result = accountService.updatePassword(userInfoVo.getNewPassword(),checkUser);
         LoginUserInfoVo refreshUser = null;
         if(result){
-            refreshUser = accountService.login(request,checkUser);
-            return ResponseEntity.ok(new ResponseVo(ErrorCodeEnum.SUCCESS,refreshUser));
+//            refreshUser = accountService.login(request,checkUser);
+            return ResponseEntity.ok(new ResponseVo(ErrorCodeEnum.SUCCESS,null));
         }
         return ResponseEntity.ok(new ResponseVo(ErrorCodeEnum.SYSTEM_EXCEPTION,null));
     }
 
     @GetMapping("/resetPassword")
-    @ApiOperation("Api-重置密码,将刷新Token")
+    @ApiOperation("Api-重置密码")
     @ApiImplicitParams({
             @ApiImplicitParam(dataType = "String", name = "username", value = "用户名", required = true),
-            @ApiImplicitParam(dataType = "String", name = "newpassword", value = "新密码MD5结果", required = true),
-            @ApiImplicitParam(dataType = "String", name = "validateCode", value = "短信验证码", required = false)
+            @ApiImplicitParam(dataType = "String", name = "newpassword", value = "新密码MD5结果", required = true)
     })
     @ApiResponses({
             @ApiResponse(code = 400, message = "Parameter Missed"),
@@ -125,17 +131,16 @@ public class ApiAccountController {
             @ApiResponse(code = 500, message = "System ERROR"),
             @ApiResponse(code = 200, message = "SUCCESS",response = LoginUserInfoVo.class)
     })
-    public ResponseEntity resetPassword(HttpServletRequest request,@RequestParam String username,@RequestParam String newpassword,@RequestParam String validateCode){
+    public ResponseEntity resetPassword(HttpServletRequest request,@RequestParam String username,@RequestParam String newpassword){
         log.debug(" Api Reset Password Action !!!");
         if(StringUtils.isEmpty(username))return ResponseEntity.ok(new ResponseVo(ErrorCodeEnum.PARAMETER_MISSED,null));
         User checkUser = userMapper.findByUsername(username);
         if(null == checkUser)return ResponseEntity.ok(new ResponseVo(ErrorCodeEnum.USER_NOT_EXIST,null));
-        //TODO Check validate
         boolean result = accountService.updatePassword(newpassword,checkUser);
         LoginUserInfoVo refreshUser = null;
         if(result){
-            refreshUser = accountService.login(request,checkUser);
-            return ResponseEntity.ok(new ResponseVo(ErrorCodeEnum.SUCCESS,refreshUser));
+//            refreshUser = accountService.login(request,checkUser);
+            return ResponseEntity.ok(new ResponseVo(ErrorCodeEnum.SUCCESS,null));
         }
         return ResponseEntity.ok(new ResponseVo(ErrorCodeEnum.SYSTEM_EXCEPTION,null));
     }

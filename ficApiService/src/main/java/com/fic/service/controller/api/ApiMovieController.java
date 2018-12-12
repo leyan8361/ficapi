@@ -1,5 +1,6 @@
 package com.fic.service.controller.api;
 
+import com.fic.service.Vo.MovieDetailInfoVo;
 import com.fic.service.Vo.MovieInfoVo;
 import com.fic.service.Vo.ResponseVo;
 import com.fic.service.service.MovieService;
@@ -28,12 +29,27 @@ public class ApiMovieController {
     @GetMapping("/getMovies")
     @ApiOperation("Api-获取电影列表")
     @ApiResponses({
-            @ApiResponse(code = 404, message = "MOVIE NOT FOUND"),
+            @ApiResponse(code = 4000, message = "MOVIE NOT FOUND"),
             @ApiResponse(code = 200, message = "SUCCESS",response = MovieInfoVo.class)
     })
-    public ResponseEntity getMovieInfo() {
-        log.debug(" Api get Movie Info !!!");
-        ResponseVo result = movieService.getMovieInfo();
+    public ResponseEntity getMovies() {
+        log.debug(" Api get Movie List !!!");
+        ResponseVo result = movieService.getMovies();
+        return ResponseEntity.ok(result);
+    }
+
+    @GetMapping("/getMovieDetail")
+    @ApiOperation("Api-获取电影详情")
+    @ApiImplicitParams({
+            @ApiImplicitParam(dataType = "int", name = "userId", value = "用户ID", required = true),
+            @ApiImplicitParam(dataType = "int", name = "movieId", value = "电影ID", required = true)
+    })
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "SUCCESS",response = MovieDetailInfoVo.class)
+    })
+    public ResponseEntity getMovieInfo(@RequestParam int userId, @RequestParam int movieId) {
+        log.debug(" Api get Movie Details !!!");
+        ResponseVo result = movieService.getMovieInfo(userId,movieId);
         return ResponseEntity.ok(result);
     }
 
@@ -44,7 +60,7 @@ public class ApiMovieController {
             @ApiImplicitParam(dataType = "int", name = "movieId", value = "电影ID", required = true)
     })
     @ApiResponses({
-            @ApiResponse(code = 200, message = "SUCCESS",response = MovieInfoVo.class)
+            @ApiResponse(code = 200, message = "SUCCESS")
     })
     public ResponseEntity likeMovie(@RequestParam int userId, @RequestParam int movieId) {
         log.debug(" Api do like moive !!!");
@@ -60,7 +76,7 @@ public class ApiMovieController {
             @ApiImplicitParam(dataType = "int", name = "movieId", value = "电影ID", required = true)
     })
     @ApiResponses({
-            @ApiResponse(code = 200, message = "SUCCESS",response = MovieInfoVo.class)
+            @ApiResponse(code = 200, message = "SUCCESS")
     })
     public ResponseEntity favMovie(@RequestParam int userId, @RequestParam int movieId) {
         log.debug(" Api do Fav moive !!!");

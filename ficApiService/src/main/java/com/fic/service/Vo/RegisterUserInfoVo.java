@@ -11,13 +11,13 @@ import io.swagger.annotations.ApiModelProperty;
 @ApiModel
 public class RegisterUserInfoVo {
 
-    @ApiModelProperty(value = "用户名")
+    @ApiModelProperty(value = "用户名",required = true)
     private String username;
-    @ApiModelProperty(value = "密码")
+    @ApiModelProperty(value = "密码",required = true)
     private String password;
     @ApiModelProperty(value = "邀请码")
     private String inviteCode;
-    @ApiModelProperty(value = "fic_设备号 MD5结果")
+    @ApiModelProperty(value = "fic_设备号 MD5结果",required = true)
     private String deviceCode;
 
 
