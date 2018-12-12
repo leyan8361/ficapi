@@ -25,7 +25,7 @@ import java.util.List;
 **/
 @Configuration
 @EnableSwagger2
-@Profile("dev")
+//@Profile("dev")
 public class Swagger2 {
 
     @Bean

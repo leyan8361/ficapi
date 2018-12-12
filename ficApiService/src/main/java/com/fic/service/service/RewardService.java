@@ -17,5 +17,5 @@ public interface RewardService {
      * @param action true 注册 false投资
      * @return
      */
-     boolean distributionRewardByAction(User user, User inviteUser, Invest invest, boolean action);
+     boolean distributionRewardByAction(User user, User inviteUser, Invest invest, boolean action,Integer investDetailId);
 }

@@ -41,8 +41,6 @@ public class HomeController {
     UserMapper userMapper;
     @Autowired
     ServerProperties serverProperties;
-    @Autowired
-
 
     @GetMapping("/home")
     @ApiOperation("获取首页数据")
@@ -50,6 +48,9 @@ public class HomeController {
     public ResponseEntity home() {
         System.out.println("index !!!!!");
         log.debug(" Home Page !!!");
+//        if(1 ==1 ){
+//            throw new RuntimeException();
+//        }
         return ResponseEntity.ok().body("success");
     }
 

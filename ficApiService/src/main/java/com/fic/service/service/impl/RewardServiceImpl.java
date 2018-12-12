@@ -41,7 +41,7 @@ public class RewardServiceImpl implements RewardService {
 
     @Override
     @Transactional(isolation= Isolation.READ_COMMITTED,propagation= Propagation.REQUIRED,rollbackFor = Exception.class)
-    public boolean distributionRewardByAction(User user, User inviteUser,Invest invest,boolean action) {
+    public boolean distributionRewardByAction(User user, User inviteUser,Invest invest,boolean action,Integer investDetailId) {
 
         Reward reward = rewardMapper.selectRulesByCurrentUserCount();
         if(null == reward){
@@ -49,32 +49,33 @@ public class RewardServiceImpl implements RewardService {
             throw new RuntimeException();
         }
 
-
-        Distribution distributionSelf = new Distribution();
-        distributionSelf.setUserId(user.getId());
-        distributionSelf.setCreatedTime(new Date());
-        distributionSelf.setUpdatedTime(new Date());
-        distributionSelf.setStatus(DistributionStatusEnum.REGISTER_NO_DISTRBUTE.getCode());
-        distributionSelf.setInvestStatus(DistributionStatusEnum.INVEST_NO_DISTRBUTE.getCode());
-        int saveDisResult = distributionMapper.insert(distributionSelf);
-        if(saveDisResult <=0){
-            log.error("产生Self分销记录失败");
-            throw new RuntimeException();
+        if(action){
+            Distribution distributionSelf = new Distribution();
+            distributionSelf.setUserId(user.getId());
+            distributionSelf.setCreatedTime(new Date());
+            distributionSelf.setUpdatedTime(new Date());
+            distributionSelf.setStatus(DistributionStatusEnum.REGISTER_NO_DISTRBUTE.getCode());
+            distributionSelf.setInvestStatus(DistributionStatusEnum.INVEST_NO_DISTRBUTE.getCode());
+            int saveDisResult = distributionMapper.insert(distributionSelf);
+            if(saveDisResult <=0){
+                log.error("产生Self分销记录失败");
+                throw new RuntimeException();
+            }
+            invest.setRewardBalance(reward.getRegisterSelf());
+            BalanceStatement statement = new BalanceStatement();
+            statement.setAmount(reward.getRegisterSelf());
+            statement.setUserId(user.getId());
+            statement.setWay(DistributionTypeEnum.TYPE_REGISTER.getCode());
+            statement.setType(FinanceTypeEnum.REWARD.getCode());
+            statement.setCreatedTime(new Date());
+            statement.setDistributionId(distributionSelf.getId());
+            int saveStatementResult = balanceStatementMapper.insert(statement);
+            if(saveStatementResult <=0){
+                log.error("不分销，保存余额变动失败");
+                throw new RuntimeException();
+            }
         }
 
-        invest.setRewardBalance(reward.getRegisterSelf());
-        BalanceStatement statement = new BalanceStatement();
-        statement.setAmount(reward.getRegisterSelf());
-        statement.setUserId(user.getId());
-        statement.setWay(DistributionTypeEnum.TYPE_REGISTER.getCode());
-        statement.setType(FinanceTypeEnum.REWARD.getCode());
-        statement.setCreatedTime(new Date());
-        statement.setDistributionId(distributionSelf.getId());
-        int saveStatementResult = balanceStatementMapper.insert(statement);
-        if(saveStatementResult <=0){
-            log.error("不分销，保存余额变动失败");
-            throw new RuntimeException();
-        }
 
         /**
          * 记录二级
@@ -157,6 +158,7 @@ public class RewardServiceImpl implements RewardService {
                 /**投资*/
                 calBalanceInviteUser = investInviteUser.getRewardBalance().add(reward.getInvestRewardFirst());
                 balanceStatementInviteUser.setAmount(reward.getInvestRewardFirst());
+                balanceStatementInviteUser.setInvestDetailId(investDetailId);
             }
             balanceStatementInviteUser.setUserId(inviteUser.getId());
             balanceStatementInviteUser.setDistributionId(distribution.getId());
@@ -164,7 +166,6 @@ public class RewardServiceImpl implements RewardService {
             balanceStatementInviteUser.setCreatedTime(new Date());
             balanceStatementInviteUser.setType(FinanceTypeEnum.REWARD.getCode());
             balanceStatementInviteUser.setWay(FinanceWayEnum.IN.getCode());
-
             int saveBalanceResult = balanceStatementMapper.insert(balanceStatementInviteUser);
             int updateBalance = investMapper.updateRewardBalance(calBalanceInviteUser,inviteUser.getId());
             if(saveBalanceResult <=0 || updateBalance <=0)throw new RuntimeException("修改二级余额失败，或生成二级余额变动失败");
@@ -246,6 +247,7 @@ public class RewardServiceImpl implements RewardService {
                         /**投资*/
                         calBalance = investFather.getRewardBalance().add(reward.getInvestRewardSecond());
                         balanceStatement.setAmount(reward.getInvestRewardSecond());
+                        balanceStatement.setInvestDetailId(investDetailId);
                     }
                     balanceStatement.setUserId(fatherUser.getId());
                     balanceStatement.setDistributionId(distributionTwo.getId());
@@ -296,6 +298,7 @@ public class RewardServiceImpl implements RewardService {
                     /**投资*/
                     calBalance = investFather.getRewardBalance().add(reward.getInvestRewardSecond());
                     balanceStatement.setAmount(reward.getInvestRewardSecond());
+                    balanceStatement.setInvestDetailId(investDetailId);
                 }
                 balanceStatement.setUserId(fatherUser.getId());
                 balanceStatement.setDistributionId(distributionTwo.getId());
