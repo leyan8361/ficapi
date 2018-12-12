@@ -41,8 +41,6 @@ public class HomeController {
     UserMapper userMapper;
     @Autowired
     ServerProperties serverProperties;
-    @Autowired
-
 
     @GetMapping("/home")
     @ApiOperation("获取首页数据")
