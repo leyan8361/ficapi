@@ -6,6 +6,7 @@ import com.fic.service.Vo.ResponseVo;
 import com.fic.service.constants.ServerProperties;
 import com.fic.service.entity.User;
 import com.fic.service.mapper.UserMapper;
+import com.fic.service.service.MaoYanService;
 import com.fic.service.service.SmsService;
 import com.fic.service.service.WalletService;
 import io.swagger.annotations.*;
@@ -41,6 +42,8 @@ public class HomeController {
     UserMapper userMapper;
     @Autowired
     ServerProperties serverProperties;
+    @Autowired
+    MaoYanService maoYanService;
 
     @GetMapping("/home")
     @ApiOperation("获取首页数据")
@@ -48,9 +51,7 @@ public class HomeController {
     public ResponseEntity home() {
         System.out.println("index !!!!!");
         log.debug(" Home Page !!!");
-//        if(1 ==1 ){
-//            throw new RuntimeException();
-//        }
+        maoYanService.getNewestData();
         return ResponseEntity.ok().body("success");
     }
 

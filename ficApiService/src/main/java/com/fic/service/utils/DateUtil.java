@@ -3,10 +3,8 @@ package com.fic.service.utils;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.Instant;
-import java.time.LocalDate;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
+import java.time.*;
+import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -43,6 +41,22 @@ public class DateUtil {
         String dateString = formatter.format(date);
         return dateString;
     }
+
+    public static String getYesterdayAndFormatDay() {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
+        LocalDate localDate = LocalDate.now();
+        localDate = localDate.minusDays(1);
+        String dateString = localDate.format(formatter);
+        return dateString;
+    }
+
+    public static void main (String args[]){
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
+        LocalDate localDate = LocalDate.now();
+        localDate = localDate.minusDays(1);
+        String dateString = localDate.format(formatter);
+    }
+
 
     public static Date plusMin(Date date, int min) {
         Calendar calendar = new GregorianCalendar();

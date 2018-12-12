@@ -17,6 +17,16 @@ public class ServerProperties {
     String walletUrl;
     @Value("${server.wallet.userpaper}")
     String storeLocation;
+    @Value("${server.mao.yan.url}")
+    String maoYanUrl;
+
+    public String getMaoYanUrl() {
+        return maoYanUrl;
+    }
+
+    public void setMaoYanUrl(String maoYanUrl) {
+        this.maoYanUrl = maoYanUrl;
+    }
 
     public String getWalletUrl() {
         return walletUrl;
