@@ -23,6 +23,9 @@ public class Constants {
         /**默认nick name*/
         public static final String NICK_NAME = "新手报道";
 
+        /**默认头像*/
+        public static final String DEFAULT_HEAD_PATH = "/user/default.png";
+
         /**
          * 文件类型
          */
