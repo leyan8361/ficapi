@@ -94,7 +94,7 @@ public class ApiAccountController {
     }
 
     @PostMapping("/updatePassword")
-    @ApiOperation("Api-修改密码,将刷新Token")
+    @ApiOperation("Api-修改密码")
     @ApiResponses({
             @ApiResponse(code = 400, message = "Parameter Missed"),
             @ApiResponse(code = 1001, message = "User Not Exist"),
@@ -102,7 +102,7 @@ public class ApiAccountController {
             @ApiResponse(code = 1009,message = "NEW PASSWORD NOT MATCH WITH RE"),
             @ApiResponse(code = 200, message = "SUCCESS",response = LoginUserInfoVo.class)
     })
-    public ResponseEntity updatePassword(HttpServletRequest request, HttpServletResponse response, @RequestBody ResetPasswordInfo userInfoVo){
+    public ResponseEntity updatePassword(@RequestBody ResetPasswordInfo userInfoVo){
         log.debug(" Api Update Password Action !!!");
         if(StringUtils.isEmpty(userInfoVo.getUsername()))return ResponseEntity.ok(new ResponseVo(ErrorCodeEnum.PARAMETER_MISSED,null));
         User checkUser = userMapper.findByUsername(userInfoVo.getUsername());
@@ -112,14 +112,14 @@ public class ApiAccountController {
         boolean result = accountService.updatePassword(userInfoVo.getNewPassword(),checkUser);
         LoginUserInfoVo refreshUser = null;
         if(result){
-            refreshUser = accountService.login(request,checkUser);
-            return ResponseEntity.ok(new ResponseVo(ErrorCodeEnum.SUCCESS,refreshUser));
+//            refreshUser = accountService.login(request,checkUser);
+            return ResponseEntity.ok(new ResponseVo(ErrorCodeEnum.SUCCESS,null));
         }
         return ResponseEntity.ok(new ResponseVo(ErrorCodeEnum.SYSTEM_EXCEPTION,null));
     }
 
     @GetMapping("/resetPassword")
-    @ApiOperation("Api-重置密码,将刷新Token")
+    @ApiOperation("Api-重置密码")
     @ApiImplicitParams({
             @ApiImplicitParam(dataType = "String", name = "username", value = "用户名", required = true),
             @ApiImplicitParam(dataType = "String", name = "newpassword", value = "新密码MD5结果", required = true)
@@ -138,8 +138,8 @@ public class ApiAccountController {
         boolean result = accountService.updatePassword(newpassword,checkUser);
         LoginUserInfoVo refreshUser = null;
         if(result){
-            refreshUser = accountService.login(request,checkUser);
-            return ResponseEntity.ok(new ResponseVo(ErrorCodeEnum.SUCCESS,refreshUser));
+//            refreshUser = accountService.login(request,checkUser);
+            return ResponseEntity.ok(new ResponseVo(ErrorCodeEnum.SUCCESS,null));
         }
         return ResponseEntity.ok(new ResponseVo(ErrorCodeEnum.SYSTEM_EXCEPTION,null));
     }

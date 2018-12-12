@@ -93,4 +93,10 @@
   <select id="findByUserIdAndMovieId" resultMap="BaseResultMap">
     select * from movie_user_info where user_id = #{userId} and movie_id = #{movieId}
   </select>
+  <select id="countAlike" resultType="int">
+    select count(*) from movie_user_info where movie_id = #{movieId} and (likz is not null or likz = 1);
+  </select>
+  <select id="countCollect" resultType="int">
+    select count(*) from movie_user_info where movie_id = #{movieId} and (fav is not null or fav = 1);
+  </select>
 </mapper>

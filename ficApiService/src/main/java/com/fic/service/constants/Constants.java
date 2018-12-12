@@ -20,6 +20,9 @@ public class Constants {
 
         public static final int KEEP_SCALE = 8;
 
+        /**默认nick name*/
+        public static final String NICK_NAME = "新手报道";
+
         /**
          * 文件类型
          */

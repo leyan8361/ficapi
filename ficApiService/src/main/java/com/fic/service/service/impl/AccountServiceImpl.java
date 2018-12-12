@@ -101,7 +101,7 @@ public class AccountServiceImpl implements AccountService {
         user.setUserInviteCode(InviteCodeUtil.toSerialCode(lastInsertId));
         user.setCreatedTime(new Date());
         user.setUpdatedTime(new Date());
-
+        user.setNickName(Constants.NICK_NAME);
 //        String walletAddress = walletService.generateWalletAddress(lastInsertId,userInfoVo.getPassword());
 //        user.setWalletAddress(walletAddress);
         int result = userMapper.insert(user);
