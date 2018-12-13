@@ -30,7 +30,7 @@ public class MaoYanServiceImpl implements MaoYanService {
 
     @Override
     public void getNewestData() {
-        JSONObject result = okHttpUtil.get(serverProperties.getMaoYanUrl()+"??beginDate="+ DateUtil.getYesterdayAndFormatDay());
+        JSONObject result = okHttpUtil.get(serverProperties.getMaoYanUrl()+"?beginDate="+ DateUtil.getYesterdayAndFormatDay());
         if(null == result){
             log.error(" 抓取猫眼数据 失败 时间 :{}",new Date());
         }
