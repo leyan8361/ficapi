@@ -22,6 +22,8 @@ public class Invest {
 
     private BigDecimal rewardBalance;
 
+    private byte status;
+
     public Integer getInvestId() {
         return investId;
     }
@@ -84,6 +86,14 @@ public class Invest {
 
     public void setUpdatedBy(Integer updatedBy) {
         this.updatedBy = updatedBy;
+    }
+
+    public byte getStatus() {
+        return status;
+    }
+
+    public void setStatus(byte status) {
+        this.status = status;
     }
 
     public BigDecimal getRewardBalance() {
