@@ -46,7 +46,7 @@ public class UploadProperties {
 
     public String getUrl(String path){
         if(StringUtils.isEmpty(path))return null;
-        return servetProperties.getPrefix()+path;
+        return servetProperties.getPrefix()+"/"+path;
     }
 
 
