@@ -20,7 +20,7 @@
         </filter>
         <file>${logging.file}fic_prod.log</file>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <fileNamePattern>fic_prod.log.%d{yyyy-MM-dd}.%i.gz</fileNamePattern>
+            <fileNamePattern>${logging.file}fic_prod.log.%d{yyyy-MM-dd}.%i.gz</fileNamePattern>
             <timeBasedFileNamingAndTriggeringPolicy
                     class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
                 <maxFileSize>10MB</maxFileSize>
@@ -41,7 +41,7 @@
         </filter>
         <file>${logging.file}fic_prod_debug.log</file>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <fileNamePattern>fic_prod_debug.log.%d{yyyy-MM-dd}.%i.gz</fileNamePattern>
+            <fileNamePattern>${logging.file}fic_prod_debug.log.%d{yyyy-MM-dd}.%i.gz</fileNamePattern>
             <timeBasedFileNamingAndTriggeringPolicy
                     class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
                 <maxFileSize>10MB</maxFileSize>
