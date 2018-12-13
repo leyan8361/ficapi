@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.Date;
 
 /**
@@ -41,15 +42,19 @@ public class MaoYanServiceImpl implements MaoYanService {
         for(Object s: list){
             JSONObject item = (JSONObject)s;
             //电影名
-            String movieName = item.getString("movieName");
+            String movieNameStr = item.getString("movieName");
             //今日票房
-            String boxOffice = item.getString("boxInfo");
-            //上映天数
-            String releaseDay = item.getString("releaseInfo");
-           //总票房
-            String sumBoxInfo = item.getString("sumBoxInfo");
+            String boxOfficeStr = item.getString("boxInfo");
 
-            System.out.println("电影名 ( " + movieName + " )  ----->  今日票房("+ boxOffice + "万)  ------> 天数 : " + releaseDay + "  ------->  总票房(" + sumBoxInfo +")");
+//            BigDecimal boxOffice = new BigDecimal(boxOfficeStr).rou;
+
+
+            //上映天数
+            String releaseDayStr = item.getString("releaseInfo");
+           //总票房
+            String sumBoxInfoStr = item.getString("sumBoxInfo");
+
+            System.out.println("电影名 ( " + movieNameStr + " )  ----->  今日票房("+ boxOfficeStr + "万)  ------> 天数 : " + releaseDayStr + "  ------->  总票房(" + sumBoxInfoStr +")");
         }
 
     }
