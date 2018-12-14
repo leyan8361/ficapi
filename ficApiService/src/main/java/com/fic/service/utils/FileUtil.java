@@ -51,6 +51,11 @@ public class FileUtil {
         }
     }
 
+    public void deleteByPath(String path){
+        File toDelete = new File(uploadProperties.getCurrentUploadPath()+path);
+        toDelete.deleteOnExit();
+    }
+
     public void deleteAll(File f){
         File [] b = f.listFiles();
         for(int i =0;i<b.length;i++){
