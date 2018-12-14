@@ -27,4 +27,8 @@ public interface MovieMapper {
     List<Movie> findAll();
 
     Integer checkIfExistById(Integer movieId);
+
+    int updateMovieCover(String movieCoverUrl, Integer movieId);
+
+    int updateStatus(int status, Integer movieId);
 }

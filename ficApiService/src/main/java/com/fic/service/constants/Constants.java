@@ -1,5 +1,9 @@
 package com.fic.service.constants;
 
+import org.apache.commons.beanutils.ConvertUtils;
+import org.apache.commons.beanutils.converters.BigDecimalConverter;
+
+import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -29,7 +33,8 @@ public class Constants {
         /**
          * 文件类型
          */
-        public static final String MEDIA_PREFIX="media/";
+        public static final String MEDIA_PREFIX="movie/media/";
+        public static final String MOVIE_COVER="movie/cover/";
         public static final String HEAD_CUT_PATH="user/";
         public static final String BANNER_URL_PATH ="banner/";
 
@@ -60,5 +65,10 @@ public class Constants {
                 pathMatchFilterMap.put(CHECK_CODE_PATH,CHECK_CODE_PATH);
                 pathMatchFilterMap.put(VERSION_CHECK_PATH,VERSION_CHECK_PATH);
                 pathMatchFilterMap.put(BANNER_PATH,BANNER_PATH);
+        }
+
+        static {
+                BigDecimalConverter bd = new BigDecimalConverter(BigDecimal.ZERO);
+                ConvertUtils.register(bd, java.math.BigDecimal.class);
         }
 }
