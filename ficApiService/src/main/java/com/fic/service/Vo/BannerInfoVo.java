@@ -2,9 +2,6 @@ package com.fic.service.Vo;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import org.springframework.web.multipart.MultipartFile;
-
-import java.util.Date;
 
 /**
  *   @Author Xie
@@ -14,17 +11,14 @@ import java.util.Date;
 @ApiModel
 public class BannerInfoVo {
 
-    @ApiModelProperty(value = "bannerId")
+    @ApiModelProperty(value = "BannerID")
     private Integer id;
 
     @ApiModelProperty(value = "链接URL")
     private String bannerUrl;
 
-    @ApiModelProperty(value = "Banner文件, 新增或修改，此荐为必须")
-    private MultipartFile bannerFile;
-
     @ApiModelProperty(value = "顺序,int")
-    private Integer order;
+    private Integer inOrder;
 
     @ApiModelProperty(value = "android 跳转URL")
     private String jumpUrlAndroid;
@@ -51,12 +45,12 @@ public class BannerInfoVo {
         this.bannerUrl = bannerUrl;
     }
 
-    public Integer getOrder() {
-        return order;
+    public Integer getInOrder() {
+        return inOrder;
     }
 
-    public void setOrder(Integer order) {
-        this.order = order;
+    public void setInOrder(Integer inOrder) {
+        this.inOrder = inOrder;
     }
 
     public String getJumpUrlAndroid() {
@@ -81,13 +75,5 @@ public class BannerInfoVo {
 
     public void setStatus(Byte status) {
         this.status = status;
-    }
-
-    public MultipartFile getBannerFile() {
-        return bannerFile;
-    }
-
-    public void setBannerFile(MultipartFile bannerFile) {
-        this.bannerFile = bannerFile;
     }
 }

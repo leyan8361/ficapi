@@ -4,14 +4,14 @@
   <resultMap id="BaseResultMap" type="com.fic.service.entity.BannerInfo">
     <id column="id" jdbcType="INTEGER" property="id" />
     <result column="banner_url" jdbcType="VARCHAR" property="bannerUrl" />
-    <result column="order" jdbcType="INTEGER" property="order" />
+    <result column="in_order" jdbcType="INTEGER" property="inOrder" />
     <result column="jump_url_android" jdbcType="VARCHAR" property="jumpUrlAndroid" />
     <result column="jump_url_ios" jdbcType="VARCHAR" property="jumpUrlIos" />
     <result column="created_time" jdbcType="TIMESTAMP" property="createdTime" />
     <result column="status" jdbcType="TINYINT" property="status" />
   </resultMap>
   <sql id="Base_Column_List">
-    id, banner_url, order, jump_url_android, jump_url_ios, created_time, status
+    id, banner_url, in_order, jump_url_android, jump_url_ios, created_time, status
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
     select 
@@ -23,15 +23,15 @@
     delete from banner_info
     where id = #{id,jdbcType=INTEGER}
   </delete>
-  <insert id="insert" parameterType="com.fic.service.entity.BannerInfo">
-    insert into banner_info (id, banner_url, order, 
+  <insert id="insert" parameterType="com.fic.service.entity.BannerInfo" useGeneratedKeys="true" keyProperty="id">
+    insert into banner_info (id, banner_url, in_order,
       jump_url_android, jump_url_ios, created_time, 
       status)
-    values (#{id,jdbcType=INTEGER}, #{bannerUrl,jdbcType=VARCHAR}, #{order,jdbcType=INTEGER}, 
+    values (#{id,jdbcType=INTEGER}, #{bannerUrl,jdbcType=VARCHAR}, #{inOrder,jdbcType=INTEGER},
       #{jumpUrlAndroid,jdbcType=VARCHAR}, #{jumpUrlIos,jdbcType=VARCHAR}, #{createdTime,jdbcType=TIMESTAMP}, 
       #{status,jdbcType=TINYINT})
   </insert>
-  <insert id="insertSelective" parameterType="com.fic.service.entity.BannerInfo">
+  <insert id="insertSelective" parameterType="com.fic.service.entity.BannerInfo" useGeneratedKeys="true" keyProperty="id">
     insert into banner_info
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="id != null">
@@ -40,8 +40,8 @@
       <if test="bannerUrl != null">
         banner_url,
       </if>
-      <if test="order != null">
-        order,
+      <if test="inOrder != null">
+        in_order,
       </if>
       <if test="jumpUrlAndroid != null">
         jump_url_android,
@@ -63,8 +63,8 @@
       <if test="bannerUrl != null">
         #{bannerUrl,jdbcType=VARCHAR},
       </if>
-      <if test="order != null">
-        #{order,jdbcType=INTEGER},
+      <if test="inOrder != null">
+        #{inOrder,jdbcType=INTEGER},
       </if>
       <if test="jumpUrlAndroid != null">
         #{jumpUrlAndroid,jdbcType=VARCHAR},
@@ -86,8 +86,8 @@
       <if test="bannerUrl != null">
         banner_url = #{bannerUrl,jdbcType=VARCHAR},
       </if>
-      <if test="order != null">
-        order = #{order,jdbcType=INTEGER},
+      <if test="inOrder != null">
+        in_order = #{inOrder,jdbcType=INTEGER},
       </if>
       <if test="jumpUrlAndroid != null">
         jump_url_android = #{jumpUrlAndroid,jdbcType=VARCHAR},
@@ -107,17 +107,14 @@
   <update id="updateByPrimaryKey" parameterType="com.fic.service.entity.BannerInfo">
     update banner_info
     set banner_url = #{bannerUrl,jdbcType=VARCHAR},
-      order = #{order,jdbcType=INTEGER},
+      in_order = #{inOrder,jdbcType=INTEGER},
       jump_url_android = #{jumpUrlAndroid,jdbcType=VARCHAR},
       jump_url_ios = #{jumpUrlIos,jdbcType=VARCHAR},
       created_time = #{createdTime,jdbcType=TIMESTAMP},
       status = #{status,jdbcType=TINYINT}
     where id = #{id,jdbcType=INTEGER}
   </update>
-  <select id="getLastInsertID" resultType="java.lang.Integer">
-    SELECT LAST_INSERT_ID()
-  </select>
-  <update id="updateBannerUrl" parameterType="string">
+  <update id="updateBannerUrl">
     update banner_info set banner_url = #{bannerUrl,jdbcType=VARCHAR} where id = #{id}
   </update>
   <select id="getAll" resultMap="BaseResultMap">

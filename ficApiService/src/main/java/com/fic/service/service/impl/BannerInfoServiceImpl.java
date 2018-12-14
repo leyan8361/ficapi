@@ -45,40 +45,45 @@ public class BannerInfoServiceImpl implements BannerInfoService {
 
     @Override
     @Transactional(isolation= Isolation.READ_COMMITTED,propagation= Propagation.REQUIRED,rollbackFor = Exception.class)
-    public ResponseVo add(BannerInfoVo bannerInfoVo) {
-        if(null == bannerInfoVo || null == bannerInfoVo.getBannerFile()  ||  bannerInfoVo.getBannerFile().isEmpty()){
+    public ResponseVo add(BannerInfoVo bannerInfoVo,MultipartFile bannerFile) {
+        if(null == bannerInfoVo || null == bannerFile  ||  bannerFile.isEmpty()){
             log.error(" Banner 保存失败  :  文件为空");
-            throw new RuntimeException();
-        }
-        MultipartFile banner = bannerInfoVo.getBannerFile();
-        int id = bannerInfoMapper.getLastInsertID();
-        String fileType = "";
-        String fileName = banner.getOriginalFilename();
-        if(!RegexUtil.isPic(fileName)){
-            return new ResponseVo(ErrorCodeEnum.USER_HEAD_PIC_ERROR,null);
-        }
-        fileType = fileName.substring(fileName.lastIndexOf(".")+1,fileName.length());
-        String newName = DateUtil.getTimeStamp()+"."+fileType;
-        String newDir = Constants.BANNER_URL_PATH +"/" + id;
-        String newPath = newDir+newName;
-        ErrorCodeEnum saveCode = fileUtil.saveFile(banner,newDir,newName);
-        if(!saveCode.equals(ErrorCodeEnum.SUCCESS)){
-            log.error(" add banner 失败 保存文件");
             throw new RuntimeException();
         }
 
         BannerInfo bannerInfo = new BannerInfo();
         bannerInfo.setJumpUrlAndroid(bannerInfoVo.getJumpUrlAndroid());
         bannerInfo.setJumpUrlIos(bannerInfoVo.getJumpUrlIos());
-        bannerInfo.setOrder(bannerInfoVo.getOrder());
+        bannerInfo.setInOrder(bannerInfoVo.getInOrder());
         bannerInfo.setStatus(bannerInfoVo.getStatus());
         bannerInfo.setCreatedTime(new Date());
-        bannerInfo.setBannerUrl(newPath);
 
         int saveResult = bannerInfoMapper.insertSelective(bannerInfo);
         if(saveResult <=0){
             log.error("保存Banner失败 ", bannerInfo.toString());
         }
+
+        String fileType = "";
+        String fileName = bannerFile.getOriginalFilename();
+        if(!RegexUtil.isPic(fileName)){
+            return new ResponseVo(ErrorCodeEnum.USER_HEAD_PIC_ERROR,null);
+        }
+        fileType = fileName.substring(fileName.lastIndexOf(".")+1,fileName.length());
+        String newName = DateUtil.getTimeStamp()+"."+fileType;
+        String newDir = Constants.BANNER_URL_PATH + bannerInfo.getId()+"/";
+        String newPath = newDir+newName;
+        ErrorCodeEnum saveCode = fileUtil.saveFile(bannerFile,newDir,newName);
+        if(!saveCode.equals(ErrorCodeEnum.SUCCESS)){
+            log.error(" add banner 失败 保存文件");
+            throw new RuntimeException();
+        }
+
+        int updateBannerUrl = bannerInfoMapper.updateBannerUrl(newPath,bannerInfo.getId());
+        if(updateBannerUrl <=0){
+            log.error(" 新增 banner  更新url  失败 : {}" + newPath);
+            throw new RuntimeException();
+        }
+
         return new ResponseVo(ErrorCodeEnum.SUCCESS,null);
     }
 
@@ -98,15 +103,21 @@ public class BannerInfoServiceImpl implements BannerInfoService {
 
     @Override
     @Transactional(isolation= Isolation.READ_COMMITTED,propagation= Propagation.REQUIRED,rollbackFor = Exception.class)
-    public ResponseVo update(BannerInfoVo bannerInfoVo) {
+    public ResponseVo update(BannerInfoVo bannerInfoVo,MultipartFile bannerFile) {
         if(null == bannerInfoVo || null == bannerInfoVo.getId()){
             log.error(" 无法删除 Banner ，ID 为空");
             throw new RuntimeException();
         }
 
         BannerInfo bannerInfo = bannerInfoMapper.selectByPrimaryKey(bannerInfoVo.getId());
+
+        if(null == bannerInfo){
+            log.error(" 无法删除 Banner ，Banner不存在 ID :{}",bannerInfoVo.getId());
+            throw new RuntimeException();
+        }
+
         bannerInfo.setStatus(bannerInfoVo.getStatus());
-        bannerInfo.setOrder(bannerInfoVo.getOrder());
+        bannerInfo.setInOrder(bannerInfoVo.getInOrder());
         bannerInfo.setJumpUrlIos(bannerInfoVo.getJumpUrlIos());
         bannerInfo.setJumpUrlAndroid(bannerInfoVo.getJumpUrlAndroid());
         int updateResult = bannerInfoMapper.updateByPrimaryKey(bannerInfo);
@@ -115,29 +126,29 @@ public class BannerInfoServiceImpl implements BannerInfoService {
             throw new RuntimeException();
         }
 
-        if(null != bannerInfoVo.getBannerFile() && bannerInfoVo.getBannerFile().isEmpty()){
-            MultipartFile banner = bannerInfoVo.getBannerFile();
+        if(null != bannerFile && !bannerFile.isEmpty()){
             String fileType = "";
-            String fileName = banner.getOriginalFilename();
+            String fileName = bannerFile.getOriginalFilename();
             if(!RegexUtil.isPic(fileName)){
                 return new ResponseVo(ErrorCodeEnum.USER_HEAD_PIC_ERROR,null);
             }
             fileType = fileName.substring(fileName.lastIndexOf(".")+1,fileName.length());
             String newName = DateUtil.getTimeStamp()+"."+fileType;
-            String newDir = Constants.BANNER_URL_PATH +"/"+bannerInfoVo.getId();
+            String newDir = Constants.BANNER_URL_PATH +bannerInfoVo.getId()+"/";
             String newPath = newDir+newName;
-            ErrorCodeEnum saveCode = fileUtil.saveFile(banner,newDir,newName);
+            ErrorCodeEnum saveCode = fileUtil.saveFile(bannerFile,newDir,newName);
             if(!saveCode.equals(ErrorCodeEnum.SUCCESS)){
                 log.error(" update banner 失败 保存文件");
                 throw new RuntimeException();
             }
             bannerInfo.setBannerUrl(newPath);
+            int updateBannerUrl = bannerInfoMapper.updateBannerUrl(bannerInfo.getBannerUrl(),bannerInfo.getId());
+            if(updateBannerUrl <=0){
+                log.error(" 新增 banner  更新url  失败 : {}" + bannerInfo.getBannerUrl());
+                throw new RuntimeException();
+            }
         }
-        int updateBannerUrl = bannerInfoMapper.updateBannerUrl(bannerInfo.getBannerUrl(),bannerInfo.getId());
 
-        if(updateBannerUrl <=0){
-            new ResponseVo(ErrorCodeEnum.SYSTEM_EXCEPTION,null);
-        }
         return new ResponseVo(ErrorCodeEnum.SUCCESS,null);
     }
 
@@ -150,6 +161,7 @@ public class BannerInfoServiceImpl implements BannerInfoService {
                 for(BannerInfo bannerInfo : bannerInfos){
                     BannerInfoVo result = new BannerInfoVo();
                     BeanUtils.copyProperties(result,bannerInfo);
+                    result.setBannerUrl(uploadProperties.getUrl(result.getBannerUrl()));
                     resultList.add(result);
                 }
             }catch (IllegalAccessException e) {

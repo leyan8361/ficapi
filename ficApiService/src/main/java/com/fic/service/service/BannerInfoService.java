@@ -14,11 +14,11 @@ import java.util.List;
 **/
 public interface BannerInfoService {
 
-    ResponseVo add(BannerInfoVo bannerInfoVo);
+    ResponseVo add(BannerInfoVo bannerInfoVo,MultipartFile bannerFile);
 
     ResponseVo delete(int id);
 
-    ResponseVo update(BannerInfoVo bannerInfoVo);
+    ResponseVo update(BannerInfoVo bannerInfoVo,MultipartFile bannerFile);
 
     List<BannerInfoVo> getAll();
 }

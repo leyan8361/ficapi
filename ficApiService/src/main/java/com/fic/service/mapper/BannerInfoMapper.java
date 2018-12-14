@@ -21,8 +21,6 @@ public interface BannerInfoMapper {
 
     int updateByPrimaryKey(BannerInfo record);
 
-    int getLastInsertID();
-
     int updateBannerUrl(String bannerUrl,int id);
 
     List<BannerInfo> getAll();

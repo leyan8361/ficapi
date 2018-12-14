@@ -7,7 +7,7 @@ public class BannerInfo {
 
     private String bannerUrl;
 
-    private Integer order;
+    private Integer inOrder;
 
     private String jumpUrlAndroid;
 
@@ -33,12 +33,12 @@ public class BannerInfo {
         this.bannerUrl = bannerUrl;
     }
 
-    public Integer getOrder() {
-        return order;
+    public Integer getInOrder() {
+        return inOrder;
     }
 
-    public void setOrder(Integer order) {
-        this.order = order;
+    public void setInOrder(Integer inOrder) {
+        this.inOrder = inOrder;
     }
 
     public String getJumpUrlAndroid() {
@@ -78,7 +78,7 @@ public class BannerInfo {
         return "BannerInfo{" +
                 "id=" + id +
                 ", bannerUrl='" + bannerUrl + '\'' +
-                ", order=" + order +
+                ", inOrder=" + inOrder +
                 ", jumpUrlAndroid='" + jumpUrlAndroid + '\'' +
                 ", jumpUrlIos='" + jumpUrlIos + '\'' +
                 ", createdTime=" + createdTime +
