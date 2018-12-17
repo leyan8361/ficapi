@@ -66,9 +66,4 @@ public class Constants {
                 pathMatchFilterMap.put(VERSION_CHECK_PATH,VERSION_CHECK_PATH);
                 pathMatchFilterMap.put(BANNER_PATH,BANNER_PATH);
         }
-
-        static {
-                BigDecimalConverter bd = new BigDecimalConverter(BigDecimal.ZERO);
-                ConvertUtils.register(bd, java.math.BigDecimal.class);
-        }
 }

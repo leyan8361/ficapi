@@ -82,7 +82,7 @@ public class MovieController {
     @ApiOperation("修改")
     @ApiImplicitParams({
             @ApiImplicitParam(dataType = "int", name = "id", value = "电影ID", required = true),
-//            @ApiImplicitParam(dataType = "string", name = "movieName", value = "电影名", required = true),
+            @ApiImplicitParam(dataType = "string", name = "movieName", value = "电影名", required = true),
 //            @ApiImplicitParam(dataType = "BigDecimal", name = "budget", value = "总预算", required = true),
 //            @ApiImplicitParam(dataType = "BigDecimal", name = "quota", value = "开放额度", required = true),
 //            @ApiImplicitParam(dataType = "string", name = "showPlace", value = "上映地点", required = true),
@@ -95,7 +95,7 @@ public class MovieController {
     })
     public ResponseEntity update(@RequestParam(value = "movieCoverFile",required = false) MultipartFile movieCoverFile,
                                  @RequestParam(value = "id") int id,
-//                                 @RequestParam(value = "movieName") String movieName,
+                                 @RequestParam(value = "movieName") String movieName,
 //                                 @RequestParam(value = "budget") BigDecimal budget,
 //                                 @RequestParam(value = "quota") BigDecimal quota,
 //                                 @RequestParam(value = "showPlace") String showPlace,
@@ -103,7 +103,7 @@ public class MovieController {
                                  @RequestParam(value = "status") int status) {
         log.debug(" movie update Action !!!");
         Movie movie = new Movie();
-//        movie.setMovieName(movieName);
+        movie.setMovieName(movieName);
 //        movie.setBudget(budget);
 //        movie.setQuota(quota);
 //        movie.setShowPlace(showPlace);

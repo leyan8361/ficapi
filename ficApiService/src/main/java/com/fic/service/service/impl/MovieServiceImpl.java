@@ -40,10 +40,6 @@ public class MovieServiceImpl implements MovieService {
 
     private final Logger log = LoggerFactory.getLogger(MovieServiceImpl.class);
 
-    public MovieServiceImpl() {
-
-    }
-
     @Autowired
     MovieMapper movieMapper;
     @Autowired
