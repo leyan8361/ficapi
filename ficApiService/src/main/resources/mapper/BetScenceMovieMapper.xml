@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fic.service.mapper.BetScenceMovieMapper">
+  <resultMap id="BaseResultMap" type="com.fic.service.entity.BetScenceMovie">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="bet_movie_id" jdbcType="INTEGER" property="betMovieId" />
+    <result column="bet_scence_id" jdbcType="INTEGER" property="betScenceId" />
+    <result column="status" jdbcType="TINYINT" property="status" />
+    <result column="start_day" jdbcType="TIMESTAMP" property="startDay" />
+    <result column="end_day" jdbcType="TIMESTAMP" property="endDay" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, bet_movie_id, bet_scence_id, status, start_day, end_day
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from bet_scence_movie
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from bet_scence_movie
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.fic.service.entity.BetScenceMovie">
+    insert into bet_scence_movie (id, bet_movie_id, bet_scence_id,
+      status, start_day, end_day
+      )
+    values (#{id,jdbcType=INTEGER}, #{betMovieId,jdbcType=INTEGER}, #{betScenceId,jdbcType=INTEGER},
+      #{status,jdbcType=TINYINT}, #{startDay,jdbcType=TIMESTAMP}, #{endDay,jdbcType=TIMESTAMP}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.fic.service.entity.BetScenceMovie">
+    insert into bet_scence_movie
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="betMovieId != null">
+        bet_movie_id,
+      </if>
+      <if test="betScenceId != null">
+        bet_scence_id,
+      </if>
+      <if test="status != null">
+        status,
+      </if>
+      <if test="startDay != null">
+        start_day,
+      </if>
+      <if test="endDay != null">
+        end_day,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="betMovieId != null">
+        #{betMovieId,jdbcType=INTEGER},
+      </if>
+      <if test="betScenceId != null">
+        #{betScenceId,jdbcType=INTEGER},
+      </if>
+      <if test="status != null">
+        #{status,jdbcType=TINYINT},
+      </if>
+      <if test="startDay != null">
+        #{startDay,jdbcType=TIMESTAMP},
+      </if>
+      <if test="endDay != null">
+        #{endDay,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.fic.service.entity.BetScenceMovie">
+    update bet_scence_movie
+    <set>
+      <if test="betMovieId != null">
+        bet_movie_id = #{betMovieId,jdbcType=INTEGER},
+      </if>
+      <if test="betScenceId != null">
+        bet_scence_id = #{betScenceId,jdbcType=INTEGER},
+      </if>
+      <if test="status != null">
+        status = #{status,jdbcType=TINYINT},
+      </if>
+      <if test="startDay != null">
+        start_day = #{startDay,jdbcType=TIMESTAMP},
+      </if>
+      <if test="endDay != null">
+        end_day = #{endDay,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.fic.service.entity.BetScenceMovie">
+    update bet_scence_movie
+    set bet_movie_id = #{betMovieId,jdbcType=INTEGER},
+      bet_scence_id = #{betScenceId,jdbcType=INTEGER},
+      status = #{status,jdbcType=TINYINT},
+      start_day = #{startDay,jdbcType=TIMESTAMP},
+      end_day = #{endDay,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <select id="findByScenceIdAndMovieId" resultMap="BaseResultMap">
+    select sb.* from bet_scence_movie sb
+    left join bet_scence b on b.id = sb.bet_scence_id
+    left join bet_movie m on m.id = sb.bet_movie_id
+    where sb.status = 0
+  </select>
+</mapper>

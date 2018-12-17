@@ -1,0 +1,244 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fic.service.mapper.BetUserMapper">
+  <resultMap id="BaseResultMap" type="com.fic.service.entity.BetUser">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="user_id" jdbcType="INTEGER" property="userId" />
+    <result column="bet_scence_movie_id" jdbcType="INTEGER" property="betScenceMovieId" />
+    <result column="bet_which" jdbcType="VARCHAR" property="betWhich" />
+    <result column="bingo" jdbcType="TINYINT" property="bingo" />
+    <result column="bingo_price" jdbcType="DECIMAL" property="bingoPrice" />
+    <result column="close_with_returning" jdbcType="DECIMAL" property="closeWithReturning" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, user_id, bet_scence_id, bet_which, bingo, bingo_price, close_with_returning
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from bet_user
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from bet_user
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.fic.service.entity.BetUser">
+    insert into bet_user (id, user_id, bet_scence_movie_id,
+      bet_which, bingo, bingo_price, 
+      close_with_returning)
+    values (#{id,jdbcType=INTEGER}, #{userId,jdbcType=INTEGER}, #{betScenceMovieId,jdbcType=INTEGER},
+      #{betWhich,jdbcType=VARCHAR}, #{bingo,jdbcType=TINYINT}, #{bingoPrice,jdbcType=DECIMAL},
+      #{closeWithReturning,jdbcType=DECIMAL})
+  </insert>
+  <insert id="insertSelective" parameterType="com.fic.service.entity.BetUser">
+    insert into bet_user
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="userId != null">
+        user_id,
+      </if>
+      <if test="betScenceMovieId != null">
+        bet_scence_movie_id,
+      </if>
+      <if test="betWhich != null">
+        bet_which,
+      </if>
+      <if test="bingo != null">
+        bingo,
+      </if>
+      <if test="bingoPrice != null">
+        bingo_price,
+      </if>
+      <if test="closeWithReturning != null">
+        close_with_returning,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="userId != null">
+        #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="betScenceMovieId != null">
+        #{betScenceMovieId,jdbcType=INTEGER},
+      </if>
+      <if test="betWhich != null">
+        #{betWhich,jdbcType=VARCHAR},
+      </if>
+      <if test="bingo != null">
+        #{bingo,jdbcType=TINYINT},
+      </if>
+      <if test="bingoPrice != null">
+        #{bingoPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="closeWithReturning != null">
+        #{closeWithReturning,jdbcType=DECIMAL},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.fic.service.entity.BetUser">
+    update bet_user
+    <set>
+      <if test="userId != null">
+        user_id = #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="betScenceMovieId != null">
+        bet_scence_movie_id = #{betScenceMovieId,jdbcType=INTEGER},
+      </if>
+      <if test="betWhich != null">
+        bet_which = #{betWhich,jdbcType=VARCHAR},
+      </if>
+      <if test="bingo != null">
+        bingo = #{bingo,jdbcType=TINYINT},
+      </if>
+      <if test="bingoPrice != null">
+        bingo_price = #{bingoPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="closeWithReturning != null">
+        close_with_returning = #{closeWithReturning,jdbcType=DECIMAL},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.fic.service.entity.BetUser">
+    update bet_user
+    set user_id = #{userId,jdbcType=INTEGER},
+      bet_scence_movie_id = #{betScenceMovieId,jdbcType=INTEGER},
+      bet_which = #{betWhich,jdbcType=VARCHAR},
+      bingo = #{bingo,jdbcType=TINYINT},
+      bingo_price = #{bingoPrice,jdbcType=DECIMAL},
+      close_with_returning = #{closeWithReturning,jdbcType=DECIMAL}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+
+  <resultMap id="oddEvenMap" type="com.fic.service.Vo.BetOddEvenVo">
+    <result column="oddCount" jdbcType="INTEGER" property="oddCount" />
+    <result column="evenCount" jdbcType="INTEGER" property="oddCount" />
+  </resultMap>
+
+  <select id="countOddEven" resultMap="oddEvenMap">
+    SELECT
+      sum(
+          CASE
+          WHEN u.bet_which = 0 THEN
+              1
+          ELSE
+              0
+          END
+      ) oddCount,
+      sum(
+          CASE
+          WHEN u.bet_which = 1 THEN
+              1
+          ELSE
+              0
+          END
+      ) evenCount
+    FROM
+        bet_user u
+    INNER JOIN bet_scence_movie sb ON sb.id = u.bet_scence_movie_id
+    LEFT JOIN bet_scence b ON b.id = sb.bet_scence_id
+    LEFT JOIN bet_movie m ON m.id = sb.bet_movie_id
+    WHERE
+        sb.bet_scence_id = #{scenceId} and sb.bet_movie_id = #{movieId}
+    AND sb.status = 0
+  </select>
+
+  <resultMap id="guessMap" type="com.fic.service.Vo.BetGuessOverVo">
+    <result column="canCount" jdbcType="INTEGER" property="oddCount" />
+    <result column="couldntCount" jdbcType="INTEGER" property="oddCount" />
+  </resultMap>
+
+  <select id="countOddEven" resultType="com.fic.service.Vo.BetGuessOverVo">
+    SELECT
+      sum(
+          CASE
+          WHEN u.bet_which = 2 THEN
+              1
+          ELSE
+              0
+          END
+      ) canCount,
+      sum(
+          CASE
+          WHEN u.bet_which = 3 THEN
+              1
+          ELSE
+              0
+          END
+      ) couldntCount
+    FROM
+        bet_user u
+    INNER JOIN bet_scence_movie sb ON sb.id = u.bet_scence_movie_id
+    LEFT JOIN bet_scence b ON b.id = sb.bet_scence_id
+    LEFT JOIN bet_movie m ON m.id = sb.bet_movie_id
+    WHERE
+        sb.bet_scence_id = #{scenceId} and sb.bet_movie_id = #{movieId}
+    AND sb.status = 0
+  </select>
+
+  <!--<resultMap id="guessMap" type="com.fic.service.Vo.BetGuessOverVo">-->
+    <!--<result column="canCount" jdbcType="INTEGER" property="oddCount" />-->
+    <!--<result column="couldntCount" jdbcType="INTEGER" property="oddCount" />-->
+  <!--</resultMap>-->
+
+  <select id="countGuessOverEven" resultType="com.fic.service.Vo.BetGuessOverVo">
+    SELECT
+      sum(
+          CASE
+          WHEN u.bet_which = 2 THEN
+              1
+          ELSE
+              0
+          END
+      ) canCount,
+      sum(
+          CASE
+          WHEN u.bet_which = 3 THEN
+              1
+          ELSE
+              0
+          END
+      ) couldntCount
+    FROM
+        bet_user u
+    INNER JOIN bet_scence_movie sb ON sb.id = u.bet_scence_movie_id
+    LEFT JOIN bet_scence b ON b.id = sb.bet_scence_id
+    LEFT JOIN bet_movie m ON m.id = sb.bet_movie_id
+    WHERE
+        sb.bet_scence_id = #{scenceId} and sb.bet_movie_id = #{movieId}
+    AND sb.status = 0
+  </select>
+
+  <!--<resultMap id="guessMap" type="com.fic.service.Vo.BetChoiceVo">-->
+    <!--<result column="aChoice" jdbcType="INTEGER" property="aChoice" />-->
+    <!--<result column="bChoice" jdbcType="INTEGER" property="bChoice" />-->
+    <!--<result column="cChoice" jdbcType="INTEGER" property="cChoice" />-->
+    <!--<result column="dChoice" jdbcType="INTEGER" property="dChoice" />-->
+  <!--</resultMap>-->
+
+  <select id="countChooice" resultType="com.fic.service.Vo.BetChoiceVo">
+    SELECT
+      sum( CASE WHEN u.bet_which = 4 THEN 1 ELSE 0 END ) aChoice,
+      sum( CASE WHEN u.bet_which = 5 THEN 1 ELSE 0 END ) bChoice,
+      sum( CASE WHEN u.bet_which = 6 THEN 1 ELSE 0 END ) cChoice,
+      sum( CASE WHEN u.bet_which = 7 THEN 1 ELSE 0 END ) dChoice FROM bet_user u
+    INNER JOIN bet_scence_movie sb ON sb.id = u.bet_scence_movie_id
+    LEFT JOIN bet_scence b ON b.id = sb.bet_scence_id
+    LEFT JOIN bet_movie m ON m.id = sb.bet_movie_id WHERE sb.bet_scence_id = #{scenceId} and sb.bet_movie_id = #{movieId}
+    AND sb.status = 0
+  </select>
+
+  <select id="countGuessTotalBox" resultType="int">
+    SELECT
+    sum( CASE WHEN u.bet_which > 100 THEN 1 ELSE 0 END ) FROM bet_user u
+    INNER JOIN bet_scence_movie sb ON sb.id = u.bet_scence_movie_id
+    LEFT JOIN bet_scence b ON b.id = sb.bet_scence_id
+    LEFT JOIN bet_movie m ON m.id = sb.bet_movie_id WHERE sb.bet_scence_id = #{scenceId} and sb.bet_movie_id = #{movieId}
+    AND sb.status = 0
+  </select>
+</mapper>

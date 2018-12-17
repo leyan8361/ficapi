@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fic.service.mapper.BoxOfficeMapper">
+  <resultMap id="BaseResultMap" type="com.fic.service.entity.BoxOffice">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="movie_id" jdbcType="INTEGER" property="movieId" />
+    <result column="movie_name" jdbcType="VARCHAR" property="movieName" />
+    <result column="box_info" jdbcType="DECIMAL" property="boxInfo" />
+    <result column="release_day" jdbcType="VARCHAR" property="releaseDay" />
+    <result column="sum_box_info" jdbcType="DECIMAL" property="sumBoxInfo" />
+    <result column="sum_day" jdbcType="DATE" property="sumDay" />
+    <result column="sum_box_info_unit" jdbcType="VARCHAR" property="sumBoxInfoUnit" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, movie_id, movie_name, box_info, release_day, sum_box_info, sum_day, sum_box_info_unit
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from box_office
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from box_office
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.fic.service.entity.BoxOffice">
+    insert into box_office (id, movie_id, movie_name, 
+      box_info, release_day, sum_box_info, 
+      sum_day, sum_box_info_unit)
+    values (#{id,jdbcType=INTEGER}, #{movieId,jdbcType=INTEGER}, #{movieName,jdbcType=VARCHAR}, 
+      #{boxInfo,jdbcType=DECIMAL}, #{releaseDay,jdbcType=VARCHAR}, #{sumBoxInfo,jdbcType=DECIMAL}, 
+      #{sumDay,jdbcType=DATE}, #{sumBoxInfoUnit,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.fic.service.entity.BoxOffice">
+    insert into box_office
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="movieId != null">
+        movie_id,
+      </if>
+      <if test="movieName != null">
+        movie_name,
+      </if>
+      <if test="boxInfo != null">
+        box_info,
+      </if>
+      <if test="releaseDay != null">
+        release_day,
+      </if>
+      <if test="sumBoxInfo != null">
+        sum_box_info,
+      </if>
+      <if test="sumDay != null">
+        sum_day,
+      </if>
+      <if test="sumBoxInfoUnit != null">
+        sum_box_info_unit,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="movieId != null">
+        #{movieId,jdbcType=INTEGER},
+      </if>
+      <if test="movieName != null">
+        #{movieName,jdbcType=VARCHAR},
+      </if>
+      <if test="boxInfo != null">
+        #{boxInfo,jdbcType=DECIMAL},
+      </if>
+      <if test="releaseDay != null">
+        #{releaseDay,jdbcType=VARCHAR},
+      </if>
+      <if test="sumBoxInfo != null">
+        #{sumBoxInfo,jdbcType=DECIMAL},
+      </if>
+      <if test="sumDay != null">
+        #{sumDay,jdbcType=DATE},
+      </if>
+      <if test="sumBoxInfoUnit != null">
+        #{sumBoxInfoUnit,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.fic.service.entity.BoxOffice">
+    update box_office
+    <set>
+      <if test="movieId != null">
+        movie_id = #{movieId,jdbcType=INTEGER},
+      </if>
+      <if test="movieName != null">
+        movie_name = #{movieName,jdbcType=VARCHAR},
+      </if>
+      <if test="boxInfo != null">
+        box_info = #{boxInfo,jdbcType=DECIMAL},
+      </if>
+      <if test="releaseDay != null">
+        release_day = #{releaseDay,jdbcType=VARCHAR},
+      </if>
+      <if test="sumBoxInfo != null">
+        sum_box_info = #{sumBoxInfo,jdbcType=DECIMAL},
+      </if>
+      <if test="sumDay != null">
+        sum_day = #{sumDay,jdbcType=DATE},
+      </if>
+      <if test="sumBoxInfoUnit != null">
+        sum_box_info_unit = #{sumBoxInfoUnit,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.fic.service.entity.BoxOffice">
+    update box_office
+    set movie_id = #{movieId,jdbcType=INTEGER},
+      movie_name = #{movieName,jdbcType=VARCHAR},
+      box_info = #{boxInfo,jdbcType=DECIMAL},
+      release_day = #{releaseDay,jdbcType=VARCHAR},
+      sum_box_info = #{sumBoxInfo,jdbcType=DECIMAL},
+      sum_day = #{sumDay,jdbcType=DATE},
+      sum_box_info_unit = #{sumBoxInfoUnit,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <select id="findByDay" resultMap="BaseResultMap">
+    select * from box_office where sum_day = #{sumDay} where movie_id = #{movieId};
+  </select>
+  
+  <select id="findAllByDay" resultMap="BaseResultMap">
+    select * from box_office where sum_day = #{sumDay};
+  </select>
+  
+</mapper>

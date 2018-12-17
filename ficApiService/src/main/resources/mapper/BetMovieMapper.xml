@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fic.service.mapper.BetMovieMapper">
+  <resultMap id="BaseResultMap" type="com.fic.service.entity.BetMovie">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="bet_movie_name" jdbcType="VARCHAR" property="betMovieName" />
+    <result column="bet_movie_cover_url" jdbcType="VARCHAR" property="betMovieCoverUrl" />
+    <result column="activity_time" jdbcType="TIMESTAMP" property="activityTime" />
+    <result column="disabled_time" jdbcType="TIMESTAMP" property="disabledTime" />
+    <result column="status" jdbcType="TINYINT" property="status" />
+    <result column="created_time" jdbcType="TIMESTAMP" property="createdTime" />
+    <result column="movie_type" jdbcType="VARCHAR" property="movieType" />
+    <result column="movie_director" jdbcType="VARCHAR" property="movieDirector" />
+    <result column="show_time" jdbcType="TIMESTAMP" property="showTime" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, bet_movie_name, bet_movie_cover_url, activity_time, disabled_time, status, created_time, 
+    movie_type, movie_director, show_time
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from bet_movie
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from bet_movie
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.fic.service.entity.BetMovie">
+    insert into bet_movie (id, bet_movie_name, bet_movie_cover_url, 
+      activity_time, disabled_time, status, 
+      created_time, movie_type, movie_director, 
+      show_time)
+    values (#{id,jdbcType=INTEGER}, #{betMovieName,jdbcType=VARCHAR}, #{betMovieCoverUrl,jdbcType=VARCHAR}, 
+      #{activityTime,jdbcType=TIMESTAMP}, #{disabledTime,jdbcType=TIMESTAMP}, #{status,jdbcType=TINYINT}, 
+      #{createdTime,jdbcType=TIMESTAMP}, #{movieType,jdbcType=VARCHAR}, #{movieDirector,jdbcType=VARCHAR}, 
+      #{showTime,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.fic.service.entity.BetMovie" useGeneratedKeys="true" keyProperty="id">
+    insert into bet_movie
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="betMovieName != null">
+        bet_movie_name,
+      </if>
+      <if test="betMovieCoverUrl != null">
+        bet_movie_cover_url,
+      </if>
+      <if test="activityTime != null">
+        activity_time,
+      </if>
+      <if test="disabledTime != null">
+        disabled_time,
+      </if>
+      <if test="status != null">
+        status,
+      </if>
+      <if test="createdTime != null">
+        created_time,
+      </if>
+      <if test="movieType != null">
+        movie_type,
+      </if>
+      <if test="movieDirector != null">
+        movie_director,
+      </if>
+      <if test="showTime != null">
+        show_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="betMovieName != null">
+        #{betMovieName,jdbcType=VARCHAR},
+      </if>
+      <if test="betMovieCoverUrl != null">
+        #{betMovieCoverUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="activityTime != null">
+        #{activityTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="disabledTime != null">
+        #{disabledTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="status != null">
+        #{status,jdbcType=TINYINT},
+      </if>
+      <if test="createdTime != null">
+        #{createdTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="movieType != null">
+        #{movieType,jdbcType=VARCHAR},
+      </if>
+      <if test="movieDirector != null">
+        #{movieDirector,jdbcType=VARCHAR},
+      </if>
+      <if test="showTime != null">
+        #{showTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.fic.service.entity.BetMovie">
+    update bet_movie
+    <set>
+      <if test="betMovieName != null">
+        bet_movie_name = #{betMovieName,jdbcType=VARCHAR},
+      </if>
+      <if test="betMovieCoverUrl != null">
+        bet_movie_cover_url = #{betMovieCoverUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="activityTime != null">
+        activity_time = #{activityTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="disabledTime != null">
+        disabled_time = #{disabledTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="status != null">
+        status = #{status,jdbcType=TINYINT},
+      </if>
+      <if test="createdTime != null">
+        created_time = #{createdTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="movieType != null">
+        movie_type = #{movieType,jdbcType=VARCHAR},
+      </if>
+      <if test="movieDirector != null">
+        movie_director = #{movieDirector,jdbcType=VARCHAR},
+      </if>
+      <if test="showTime != null">
+        show_time = #{showTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.fic.service.entity.BetMovie">
+    update bet_movie
+    set bet_movie_name = #{betMovieName,jdbcType=VARCHAR},
+      bet_movie_cover_url = #{betMovieCoverUrl,jdbcType=VARCHAR},
+      activity_time = #{activityTime,jdbcType=TIMESTAMP},
+      disabled_time = #{disabledTime,jdbcType=TIMESTAMP},
+      status = #{status,jdbcType=TINYINT},
+      created_time = #{createdTime,jdbcType=TIMESTAMP},
+      movie_type = #{movieType,jdbcType=VARCHAR},
+      movie_director = #{movieDirector,jdbcType=VARCHAR},
+      show_time = #{showTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <select id="checkExistMovieName" parameterType="string">
+    select coun(*) from bet_movie where bet_movie_name = #{betMovieName,jdbcType=VARCHAR};
+  </select>
+
+  <update id="updateMovieCoverURL">
+    update bet_movie set bet_movie_cover_url = #{betMovieCoverUrl,jdbcType=VARCHAR} where id = #{id,jdbcType=INTEGER}
+  </update>
+
+  <update id="updateStatus">
+    update bet_movie set status =  #{status,jdbcType=TINYINT} where id =  = #{id,jdbcType=INTEGER}
+  </update>
+  
+  <select id="findAll" resultMap="BaseResultMap">
+    select * from bet_movie where status = 1;
+  </select>
+  
+  <select id="getById" resultMap="BaseResultMap">
+    select * from bet_movie where id = #{id} and status = 1;
+  </select>
+  
+  <select id="findAllOnByScenceId">
+    select m.* from bet_movie m
+    left join bet_scence_movie sb on sb.bet_movie_id = m.id
+    left join bet_scence b on sb.bet_scence_id = b.id
+    where sb.status = 0 and b.id = #{scenceId} order by m.created_time desc
+  </select>
+
+  <select id="findAllOffByScenceId">
+    select m.* from bet_movie m
+    left join bet_scence_movie sb on sb.bet_movie_id = m.id
+    left join bet_scence b on sb.bet_scence_id = b.id
+    where sb.status = 1 and b.id = #{scenceId} order by m.created_time desc
+  </select>
+</mapper>
