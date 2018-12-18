@@ -9,12 +9,15 @@
     <result column="bingo" jdbcType="TINYINT" property="bingo" />
     <result column="bingo_price" jdbcType="DECIMAL" property="bingoPrice" />
     <result column="close_with_returning" jdbcType="DECIMAL" property="closeWithReturning" />
+    <result column="trade_fee" jdbcType="DECIMAL" property="tradeFee" />
+    <result column="reward_pool" jdbcType="DECIMAL" property="rewardPool" />
   </resultMap>
   <sql id="Base_Column_List">
-    id, user_id, bet_scence_id, bet_which, bingo, bingo_price, close_with_returning
+    id, user_id, bet_scence_movie_id, bet_which, bingo, bingo_price, close_with_returning,
+    trade_fee, reward_pool
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
-    select 
+    select
     <include refid="Base_Column_List" />
     from bet_user
     where id = #{id,jdbcType=INTEGER}
@@ -25,11 +28,13 @@
   </delete>
   <insert id="insert" parameterType="com.fic.service.entity.BetUser">
     insert into bet_user (id, user_id, bet_scence_movie_id,
-      bet_which, bingo, bingo_price, 
-      close_with_returning)
+      bet_which, bingo, bingo_price,
+      close_with_returning, trade_fee, reward_pool
+      )
     values (#{id,jdbcType=INTEGER}, #{userId,jdbcType=INTEGER}, #{betScenceMovieId,jdbcType=INTEGER},
       #{betWhich,jdbcType=VARCHAR}, #{bingo,jdbcType=TINYINT}, #{bingoPrice,jdbcType=DECIMAL},
-      #{closeWithReturning,jdbcType=DECIMAL})
+      #{closeWithReturning,jdbcType=DECIMAL}, #{tradeFee,jdbcType=DECIMAL}, #{rewardPool,jdbcType=DECIMAL}
+      )
   </insert>
   <insert id="insertSelective" parameterType="com.fic.service.entity.BetUser">
     insert into bet_user
@@ -55,6 +60,12 @@
       <if test="closeWithReturning != null">
         close_with_returning,
       </if>
+      <if test="tradeFee != null">
+        trade_fee,
+      </if>
+      <if test="rewardPool != null">
+        reward_pool,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="id != null">
@@ -77,6 +88,12 @@
       </if>
       <if test="closeWithReturning != null">
         #{closeWithReturning,jdbcType=DECIMAL},
+      </if>
+      <if test="tradeFee != null">
+        #{tradeFee,jdbcType=DECIMAL},
+      </if>
+      <if test="rewardPool != null">
+        #{rewardPool,jdbcType=DECIMAL},
       </if>
     </trim>
   </insert>
@@ -101,6 +118,12 @@
       <if test="closeWithReturning != null">
         close_with_returning = #{closeWithReturning,jdbcType=DECIMAL},
       </if>
+      <if test="tradeFee != null">
+        trade_fee = #{tradeFee,jdbcType=DECIMAL},
+      </if>
+      <if test="rewardPool != null">
+        reward_pool = #{rewardPool,jdbcType=DECIMAL},
+      </if>
     </set>
     where id = #{id,jdbcType=INTEGER}
   </update>
@@ -111,16 +134,18 @@
       bet_which = #{betWhich,jdbcType=VARCHAR},
       bingo = #{bingo,jdbcType=TINYINT},
       bingo_price = #{bingoPrice,jdbcType=DECIMAL},
-      close_with_returning = #{closeWithReturning,jdbcType=DECIMAL}
+      close_with_returning = #{closeWithReturning,jdbcType=DECIMAL},
+      trade_fee = #{tradeFee,jdbcType=DECIMAL},
+      reward_pool = #{rewardPool,jdbcType=DECIMAL}
     where id = #{id,jdbcType=INTEGER}
   </update>
 
-  <resultMap id="oddEvenMap" type="com.fic.service.Vo.BetOddEvenVo">
-    <result column="oddCount" jdbcType="INTEGER" property="oddCount" />
-    <result column="evenCount" jdbcType="INTEGER" property="oddCount" />
-  </resultMap>
+  <!--<resultMap id="oddEvenMap" type="com.fic.service.Vo.BetOddEvenVo">-->
+    <!--<result column="oddCount" jdbcType="INTEGER" property="oddCount" />-->
+    <!--<result column="evenCount" jdbcType="INTEGER" property="oddCount" />-->
+  <!--</resultMap>-->
 
-  <select id="countOddEven" resultMap="oddEvenMap">
+  <select id="countOddEven" resultType="com.fic.service.Vo.BetOddEvenVo">
     SELECT
       sum(
           CASE
@@ -138,39 +163,6 @@
               0
           END
       ) evenCount
-    FROM
-        bet_user u
-    INNER JOIN bet_scence_movie sb ON sb.id = u.bet_scence_movie_id
-    LEFT JOIN bet_scence b ON b.id = sb.bet_scence_id
-    LEFT JOIN bet_movie m ON m.id = sb.bet_movie_id
-    WHERE
-        sb.bet_scence_id = #{scenceId} and sb.bet_movie_id = #{movieId}
-    AND sb.status = 0
-  </select>
-
-  <resultMap id="guessMap" type="com.fic.service.Vo.BetGuessOverVo">
-    <result column="canCount" jdbcType="INTEGER" property="oddCount" />
-    <result column="couldntCount" jdbcType="INTEGER" property="oddCount" />
-  </resultMap>
-
-  <select id="countOddEven" resultType="com.fic.service.Vo.BetGuessOverVo">
-    SELECT
-      sum(
-          CASE
-          WHEN u.bet_which = 2 THEN
-              1
-          ELSE
-              0
-          END
-      ) canCount,
-      sum(
-          CASE
-          WHEN u.bet_which = 3 THEN
-              1
-          ELSE
-              0
-          END
-      ) couldntCount
     FROM
         bet_user u
     INNER JOIN bet_scence_movie sb ON sb.id = u.bet_scence_movie_id
@@ -240,5 +232,13 @@
     LEFT JOIN bet_scence b ON b.id = sb.bet_scence_id
     LEFT JOIN bet_movie m ON m.id = sb.bet_movie_id WHERE sb.bet_scence_id = #{scenceId} and sb.bet_movie_id = #{movieId}
     AND sb.status = 0
+  </select>
+
+  <select id="checkAlreadyBetUser" resultType="int">
+    select count(*) from bet_user where bet_scence_movie_id = #{scenceMovieId} and bingo !=0;
+  </select>
+  
+  <select id="findByScenceMovieId" resultMap="BaseResultMap">
+    select * from bet_user where bet_scence_movie_id = #{scenceMovieId} and bingo = 0;
   </select>
 </mapper>

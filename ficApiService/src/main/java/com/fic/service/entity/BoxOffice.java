@@ -12,6 +12,8 @@ public class BoxOffice {
 
     private BigDecimal boxInfo;
 
+    private String boxInfoUnit;
+
     private String releaseDay;
 
     private BigDecimal sumBoxInfo;
@@ -82,5 +84,28 @@ public class BoxOffice {
 
     public void setSumBoxInfoUnit(String sumBoxInfoUnit) {
         this.sumBoxInfoUnit = sumBoxInfoUnit;
+    }
+
+    public String getBoxInfoUnit() {
+        return boxInfoUnit;
+    }
+
+    public void setBoxInfoUnit(String boxInfoUnit) {
+        this.boxInfoUnit = boxInfoUnit;
+    }
+
+    @Override
+    public String toString() {
+        return "BoxOffice{" +
+                "id=" + id +
+                ", movieId=" + movieId +
+                ", movieName='" + movieName + '\'' +
+                ", boxInfo=" + boxInfo +
+                ", boxInfoUnit='" + boxInfoUnit + '\'' +
+                ", releaseDay='" + releaseDay + '\'' +
+                ", sumBoxInfo=" + sumBoxInfo +
+                ", sumDay=" + sumDay +
+                ", sumBoxInfoUnit='" + sumBoxInfoUnit + '\'' +
+                '}';
     }
 }

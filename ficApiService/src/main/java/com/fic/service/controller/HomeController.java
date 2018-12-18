@@ -6,9 +6,11 @@ import com.fic.service.Vo.ResponseVo;
 import com.fic.service.constants.ServerProperties;
 import com.fic.service.entity.User;
 import com.fic.service.mapper.UserMapper;
+import com.fic.service.scheduled.BetScheduledService;
 import com.fic.service.service.MaoYanService;
 import com.fic.service.service.SmsService;
 import com.fic.service.service.WalletService;
+import com.fic.service.utils.DateUtil;
 import io.swagger.annotations.*;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -44,6 +46,8 @@ public class HomeController {
     ServerProperties serverProperties;
     @Autowired
     MaoYanService maoYanService;
+    @Autowired
+    BetScheduledService betScheduledService;
 
     @GetMapping("/home")
     @ApiOperation("获取首页数据")
@@ -51,14 +55,15 @@ public class HomeController {
     public ResponseEntity home() {
         System.out.println("index !!!!!");
         log.debug(" Home Page !!!");
-        maoYanService.getNewestData();
+//        maoYanService.getDataByDate(DateUtil.getYesterdayAndFormatDay());
+        betScheduledService.doBoxPull();
         return ResponseEntity.ok().body("success");
     }
-
     @GetMapping("/user")
     @ApiOperation("测试普通用户权限")
     public ResponseEntity user() {
         log.debug(" User Page !!!");
+
         return ResponseEntity.ok().body("success");
     }
 

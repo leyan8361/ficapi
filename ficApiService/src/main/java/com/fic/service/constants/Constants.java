@@ -31,7 +31,7 @@ public class Constants {
          */
         public static final String MEDIA_PREFIX="media/";
         public static final String HEAD_CUT_PATH="user/";
-        public static final String BET_MOVIE_COVER_PATH="bet/movie/";
+        public static final String BET_MOVIE_COVER_PATH="/bet/movie/";
         /**
          * 币种
          */

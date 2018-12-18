@@ -31,4 +31,8 @@ public interface BetUserMapper {
     BetChoiceVo countChooice(int scenceId,int movieId);
 
     Integer countGuessTotalBox(int scenceId,int movieId);
+
+    int checkAlreadyBetUser(int scenceMovieId);
+
+    List<BetUser> findByScenceMovieId(int scenceMovieId);
 }

@@ -1,6 +1,5 @@
 package com.fic.service.service.impl;
 
-import com.fic.service.Enum.BetTypeEnum;
 import com.fic.service.Enum.BingoStatusEnum;
 import com.fic.service.Enum.ErrorCodeEnum;
 import com.fic.service.Enum.ShelfStatusEnum;
@@ -11,8 +10,6 @@ import com.fic.service.mapper.*;
 import com.fic.service.service.BetScenceService;
 import com.fic.service.utils.BeanUtil;
 import com.fic.service.utils.DateUtil;
-import com.fic.service.utils.FileUtil;
-import net.bytebuddy.asm.Advice;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,12 +18,10 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 /**
  * @Author Xie
@@ -62,6 +57,7 @@ public class BetScenceServiceImpl implements BetScenceService {
         }
         BetScence betScence = new BetScence();
         BeanUtil.copy(betScence,betScenceVo);
+        betScence.setCreatedTime(new Date());
         int addResult = betScenceMapper.insertSelective(betScence);
         if(addResult <=0){
             log.error(" add bet Scence 失败 ");
@@ -70,27 +66,7 @@ public class BetScenceServiceImpl implements BetScenceService {
         return new ResponseVo(ErrorCodeEnum.SUCCESS,null);
     }
 
-    @Override
-    @Transactional(isolation= Isolation.READ_COMMITTED,propagation= Propagation.REQUIRED,rollbackFor = Exception.class)
-    public ResponseVo addMovie(int id, int movieId) {
-        BetScence scence = betScenceMapper.selectByPrimaryKey(id);
-        if(null == scence){
-            return new ResponseVo(ErrorCodeEnum.NO_AVALIBLE_SCENCE,null);
-        }
-        BetMovie movie = betMovieMapper.getById(movieId);
-        if(null == movie){
-            return new ResponseVo(ErrorCodeEnum.BET_ADD_MOVIE_NOT_FOUND,null);
-        }
-        BetScenceMovie scenceMovie = new BetScenceMovie();
-        scenceMovie.setBetScenceId(id);
-        scenceMovie.setBetMovieId(movieId);
-        int saveResult = betScenceMovieMapper.insertSelective(scenceMovie);
-        if(saveResult <=0){
-            log.error(" 为scence 新增movie 失败 ");
-            throw new RuntimeException();
-        }
-        return new ResponseVo(ErrorCodeEnum.SUCCESS,null);
-    }
+
 
     @Override
     @Transactional(isolation= Isolation.READ_COMMITTED,propagation= Propagation.REQUIRED,rollbackFor = Exception.class)
@@ -141,7 +117,7 @@ public class BetScenceServiceImpl implements BetScenceService {
         BetUser betUser = new BetUser();
         betUser.setBetScenceMovieId(scenceMovie.getId());
         betUser.setBetWhich(betWhich);
-        betUser.setBingo(BingoStatusEnum.WAIT_BINGO.getCode());
+        betUser.setBingo(BingoStatusEnum.WAIT_BINGO.getCode().byteValue());
         betUser.setBingoPrice(amount);
         betUser.setUserId(userId);
 
@@ -217,24 +193,23 @@ public class BetScenceServiceImpl implements BetScenceService {
             /** 开奖了的 */
             List<BetMovieDrawVo> drawMovieItem = new ArrayList<BetMovieDrawVo>();
             List<BetMovie> drawMovies = betMovieMapper.findAllOffByScenceId(betScence.getId());
-            if(drawMovies.size() == 0){
-                continue;
-            }
-            for(BetMovie betMovie: drawMovies){
-                BetMovieDrawVo drawMovieResult = new BetMovieDrawVo();
-                BeanUtil.copy(drawMovieResult,betMovie);
-                drawMovieResult.setBetMovieCoverUrl(uploadProperties.getUrl(betMovie.getBetMovieCoverUrl()));
-                /**统计票房*/
-                BoxOffice boxOffice = boxOfficeMapper.findByDay(DateUtil.getYesterdayAndFormatDay(),betMovie.getId());
-                if(null == boxOffice){
-                    continue;
+            if(drawMovies.size() != 0){
+                for(BetMovie betMovie: drawMovies){
+                    BetMovieDrawVo drawMovieResult = new BetMovieDrawVo();
+                    BeanUtil.copy(drawMovieResult,betMovie);
+                    drawMovieResult.setBetMovieCoverUrl(uploadProperties.getUrl(betMovie.getBetMovieCoverUrl()));
+                    /**统计票房*/
+                    BoxOffice boxOffice = boxOfficeMapper.findByDay(DateUtil.getYesterdayAndFormatDay(),betMovie.getId());
+                    if(null == boxOffice){
+                        continue;
+                    }
+                    drawMovieResult.setBoxInfo(boxOffice.getBoxInfo());
+                    drawMovieResult.setSumBoxInfo(boxOffice.getSumBoxInfo() + boxOffice.getSumBoxInfoUnit());
+                    drawMovieResult.setSumDay(boxOffice.getSumDay());
+                    drawMovieItem.add(drawMovieResult);
                 }
-                drawMovieResult.setBoxInfo(boxOffice.getBoxInfo());
-                drawMovieResult.setSumBoxInfo(boxOffice.getSumBoxInfo() + boxOffice.getSumBoxInfoUnit());
-                drawMovieResult.setSumDay(boxOffice.getSumDay());
-                drawMovieItem.add(drawMovieResult);
+                result.setDrawMovieItem(drawMovieItem);
             }
-            result.setDrawMovieItem(drawMovieItem);
 
             resultList.add(result);
         }

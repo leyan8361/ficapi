@@ -1,6 +1,5 @@
 package com.fic.service.Vo;
 
-import com.fic.service.entity.BetMovie;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
@@ -11,7 +10,7 @@ import java.util.List;
 /**
  *   @Author Xie
  *   @Date 2018/12/17
- *   @Discription: app request -- > scence(项目) ===> movie(竞猜电影) ====> box(票房，奖池，投注信息)
+ *   @Discription: app request -- > scence(项目) ===> movie(电影) ====> scence_movie(竞猜场次) =====> box(票房，奖池，投注信息)
 **/
 @ApiModel
 public class BetInfoVo {
@@ -37,23 +36,23 @@ public class BetInfoVo {
     @ApiModelProperty(value = "(0，下架)(1,上架)，默认下架")
     private Byte status;
 
-    @ApiModelProperty(value = "是否有奖池(0,无奖励)(1,有奖池)")
-    private Byte hasJasckpot;
-
-    @ApiModelProperty(value = "奖池(竞猜手续费抽取)，投注百分比")
-    private BigDecimal jasckpotFee;
-
-    @ApiModelProperty(value = "奖池总计")
-    private BigDecimal totalJasckpot;
-
-    @ApiModelProperty(value = "是否有备用金(0,无)(1,有)")
-    private Byte hasReservation;
-
-    @ApiModelProperty(value = "备用金(竞猜手续费抽取)，投注百分比",example = "2")
-    private BigDecimal reservationFee;
-
-    @ApiModelProperty(value = "总计备用金")
-    private BigDecimal totalReservation;
+//    @ApiModelProperty(value = "是否有奖池(0,无奖励)(1,有奖池)")
+//    private Byte hasJasckpot;
+//
+//    @ApiModelProperty(value = "奖池(竞猜手续费抽取)，投注百分比")
+//    private BigDecimal jasckpotFee;
+//
+//    @ApiModelProperty(value = "奖池总计")
+//    private BigDecimal totalJasckpot;
+//
+//    @ApiModelProperty(value = "是否有备用金(0,无)(1,有)")
+//    private Byte hasReservation;
+//
+//    @ApiModelProperty(value = "备用金(竞猜手续费抽取)，投注百分比",example = "2")
+//    private BigDecimal reservationFee;
+//
+//    @ApiModelProperty(value = "总计备用金")
+//    private BigDecimal totalReservation;
 
     @ApiModelProperty(value = "竞猜电影列表(未开奖的)")
     private List<BetMovieInfoVo> movieItem;
@@ -132,51 +131,51 @@ public class BetInfoVo {
     public void setStatus(Byte status) {
         this.status = status;
     }
-    public Byte getHasJasckpot() {
-        return hasJasckpot;
-    }
-
-    public void setHasJasckpot(Byte hasJasckpot) {
-        this.hasJasckpot = hasJasckpot;
-    }
-
-    public BigDecimal getJasckpotFee() {
-        return jasckpotFee;
-    }
-
-    public void setJasckpotFee(BigDecimal jasckpotFee) {
-        this.jasckpotFee = jasckpotFee;
-    }
-
-    public BigDecimal getTotalJasckpot() {
-        return totalJasckpot;
-    }
-
-    public void setTotalJasckpot(BigDecimal totalJasckpot) {
-        this.totalJasckpot = totalJasckpot;
-    }
-
-    public Byte getHasReservation() {
-        return hasReservation;
-    }
-
-    public void setHasReservation(Byte hasReservation) {
-        this.hasReservation = hasReservation;
-    }
-
-    public BigDecimal getReservationFee() {
-        return reservationFee;
-    }
-
-    public void setReservationFee(BigDecimal reservationFee) {
-        this.reservationFee = reservationFee;
-    }
-
-    public BigDecimal getTotalReservation() {
-        return totalReservation;
-    }
-
-    public void setTotalReservation(BigDecimal totalReservation) {
-        this.totalReservation = totalReservation;
-    }
+//    public Byte getHasJasckpot() {
+//        return hasJasckpot;
+//    }
+//
+//    public void setHasJasckpot(Byte hasJasckpot) {
+//        this.hasJasckpot = hasJasckpot;
+//    }
+//
+//    public BigDecimal getJasckpotFee() {
+//        return jasckpotFee;
+//    }
+//
+//    public void setJasckpotFee(BigDecimal jasckpotFee) {
+//        this.jasckpotFee = jasckpotFee;
+//    }
+//
+//    public BigDecimal getTotalJasckpot() {
+//        return totalJasckpot;
+//    }
+//
+//    public void setTotalJasckpot(BigDecimal totalJasckpot) {
+//        this.totalJasckpot = totalJasckpot;
+//    }
+//
+//    public Byte getHasReservation() {
+//        return hasReservation;
+//    }
+//
+//    public void setHasReservation(Byte hasReservation) {
+//        this.hasReservation = hasReservation;
+//    }
+//
+//    public BigDecimal getReservationFee() {
+//        return reservationFee;
+//    }
+//
+//    public void setReservationFee(BigDecimal reservationFee) {
+//        this.reservationFee = reservationFee;
+//    }
+//
+//    public BigDecimal getTotalReservation() {
+//        return totalReservation;
+//    }
+//
+//    public void setTotalReservation(BigDecimal totalReservation) {
+//        this.totalReservation = totalReservation;
+//    }
 }

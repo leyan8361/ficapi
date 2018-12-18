@@ -150,12 +150,12 @@
       show_time = #{showTime,jdbcType=TIMESTAMP}
     where id = #{id,jdbcType=INTEGER}
   </update>
-  <select id="checkExistMovieName" parameterType="string">
-    select coun(*) from bet_movie where bet_movie_name = #{betMovieName,jdbcType=VARCHAR};
+  <select id="checkExistMovieName" parameterType="string" resultType="int">
+    select count(id) from bet_movie where bet_movie_name = #{betMovieName,jdbcType=VARCHAR};
   </select>
 
   <update id="updateMovieCoverURL">
-    update bet_movie set bet_movie_cover_url = #{betMovieCoverUrl,jdbcType=VARCHAR} where id = #{id,jdbcType=INTEGER}
+    update bet_movie set bet_movie_cover_url = #{movieCoverURL,jdbcType=VARCHAR} where id = #{id,jdbcType=INTEGER}
   </update>
 
   <update id="updateStatus">
@@ -170,17 +170,24 @@
     select * from bet_movie where id = #{id} and status = 1;
   </select>
   
-  <select id="findAllOnByScenceId">
+  <select id="findAllOnByScenceId" resultMap="BaseResultMap">
     select m.* from bet_movie m
     left join bet_scence_movie sb on sb.bet_movie_id = m.id
     left join bet_scence b on sb.bet_scence_id = b.id
     where sb.status = 0 and b.id = #{scenceId} order by m.created_time desc
   </select>
 
-  <select id="findAllOffByScenceId">
+  <select id="findAllOffByScenceId"  resultMap="BaseResultMap">
     select m.* from bet_movie m
     left join bet_scence_movie sb on sb.bet_movie_id = m.id
     left join bet_scence b on sb.bet_scence_id = b.id
     where sb.status = 1 and b.id = #{scenceId} order by m.created_time desc
+  </select>
+
+  <select id="checkMovieNameExistAndStatus" resultType="int">
+    select count(m.id) from bet_movie m
+    left join bet_scence_movie sb on sb.bet_movie_id = m.id
+    left join bet_scence b on sb.bet_scence_id = b.id
+    where sb.status = 0 and m.bet_movie_name = #{movieName}
   </select>
 </mapper>

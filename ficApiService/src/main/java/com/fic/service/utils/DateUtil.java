@@ -1,5 +1,7 @@
 package com.fic.service.utils;
 
+import org.apache.commons.lang3.StringUtils;
+
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -50,13 +52,12 @@ public class DateUtil {
         return dateString;
     }
 
-    public static void main (String args[]){
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
-        LocalDate localDate = LocalDate.now();
+    public static Date minDateOneDay(Date date) {
+        LocalDate localDate = DateUtil.dateToLocalDate(date);
         localDate = localDate.minusDays(1);
-        String dateString = localDate.format(formatter);
+        date = DateUtil.LocalDateToDate(localDate);
+        return date;
     }
-
 
     public static Date plusMin(Date date, int min) {
         Calendar calendar = new GregorianCalendar();
@@ -71,6 +72,48 @@ public class DateUtil {
         Date now = new Date();
         String dateString = formatter.format(now);
         return dateString;
+    }
+
+    public static Date toDayFormatDay(String dateStr){
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+        Date result = null;
+        try{
+            if(StringUtils.isNotEmpty(dateStr)){
+                result = formatter.parse(dateStr);
+                return result;
+            }
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public static Date toDayFormatDay_1(String dateStr){
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMdd");
+        Date result = null;
+        try{
+            if(StringUtils.isNotEmpty(dateStr)){
+                result = formatter.parse(dateStr);
+                return result;
+            }
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public static Date toMinFormatDay(String dateStr){
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+        Date result = null;
+        try{
+            if(StringUtils.isNotEmpty(dateStr)){
+                result = formatter.parse(dateStr);
+                return result;
+            }
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     public static boolean isToday(Date date){

@@ -1,44 +1,54 @@
-package com.fic.service.entity;
+package com.fic.service.Vo;
+
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 
 import java.math.BigDecimal;
 import java.util.Date;
 
-public class BetScenceMovie {
+/**
+ * @Author Xie
+ * @Date $date$
+ * @Description: common
+ **/
+@ApiModel
+public class BetScenceMovieResponseVo {
+
+    @ApiModelProperty(value = "场次ID")
     private Integer id;
 
+    @ApiModelProperty(value = "竞猜电影ID")
     private Integer betMovieId;
 
+    @ApiModelProperty(value = "竞猜项目ID")
     private Integer betScenceId;
 
-    private Byte status;
-
+    @ApiModelProperty(value = "开始时间")
     private Date startDay;
 
+    @ApiModelProperty(value = "结束时间")
     private Date endDay;
 
+    @ApiModelProperty(value = "开奖结果 见PriceEnum")
     private String drawResult;
 
+    @ApiModelProperty(value = "是否有奖池(0，无)(1，有)",required = true)
     private Byte hasJasckpot;
 
+    @ApiModelProperty( value = "竞猜抽取手续费-->奖池(%)")
     private BigDecimal jasckpotFee;
 
+    @ApiModelProperty(value = "奖池累计")
     private BigDecimal totalJasckpot;
 
+    @ApiModelProperty(value = "是否有备用金(0，无)(1，有)",required = true)
     private Byte hasReservation;
 
+    @ApiModelProperty(value = "竞猜抽取手续费-->备用金(%)")
     private BigDecimal reservationFee;
 
+    @ApiModelProperty(value = "备用金累计")
     private BigDecimal totalReservation;
-
-    private BigDecimal betFee;
-
-    private String bingoResult;
-
-    private String guessOverUnit;
-
-    private String choiceInput;
-
-    private String sumBoxInput;
 
     public Integer getId() {
         return id;
@@ -62,14 +72,6 @@ public class BetScenceMovie {
 
     public void setBetScenceId(Integer betScenceId) {
         this.betScenceId = betScenceId;
-    }
-
-    public Byte getStatus() {
-        return status;
-    }
-
-    public void setStatus(Byte status) {
-        this.status = status;
     }
 
     public Date getStartDay() {
@@ -142,69 +144,5 @@ public class BetScenceMovie {
 
     public void setTotalReservation(BigDecimal totalReservation) {
         this.totalReservation = totalReservation;
-    }
-
-    public BigDecimal getBetFee() {
-        return betFee;
-    }
-
-    public void setBetFee(BigDecimal betFee) {
-        this.betFee = betFee;
-    }
-
-    public String getBingoResult() {
-        return bingoResult;
-    }
-
-    public void setBingoResult(String bingoResult) {
-        this.bingoResult = bingoResult;
-    }
-
-    public String getGuessOverUnit() {
-        return guessOverUnit;
-    }
-
-    public void setGuessOverUnit(String guessOverUnit) {
-        this.guessOverUnit = guessOverUnit;
-    }
-
-    public String getChoiceInput() {
-        return choiceInput;
-    }
-
-    public void setChoiceInput(String choiceInput) {
-        this.choiceInput = choiceInput;
-    }
-
-    public String getSumBoxInput() {
-        return sumBoxInput;
-    }
-
-    public void setSumBoxInput(String sumBoxInput) {
-        this.sumBoxInput = sumBoxInput;
-    }
-
-    @Override
-    public String toString() {
-        return "BetScenceMovie{" +
-                "id=" + id +
-                ", betMovieId=" + betMovieId +
-                ", betScenceId=" + betScenceId +
-                ", status=" + status +
-                ", startDay=" + startDay +
-                ", endDay=" + endDay +
-                ", drawResult='" + drawResult + '\'' +
-                ", hasJasckpot=" + hasJasckpot +
-                ", jasckpotFee=" + jasckpotFee +
-                ", totalJasckpot=" + totalJasckpot +
-                ", hasReservation=" + hasReservation +
-                ", reservationFee=" + reservationFee +
-                ", totalReservation=" + totalReservation +
-                ", betFee=" + betFee +
-                ", bingoResult='" + bingoResult + '\'' +
-                ", guessOverUnit='" + guessOverUnit + '\'' +
-                ", choiceInput='" + choiceInput + '\'' +
-                ", sumBoxInput='" + sumBoxInput + '\'' +
-                '}';
     }
 }

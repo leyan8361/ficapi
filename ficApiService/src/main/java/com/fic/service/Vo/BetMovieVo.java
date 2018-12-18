@@ -23,10 +23,10 @@ public class BetMovieVo {
     @ApiModelProperty(value = "竞猜电影封面URL")
     private String betMovieCoverUrl;
 
-    @ApiModelProperty(value = "上架时间",required = true)
+    @ApiModelProperty(value = "上架时间",required = true,example = "2018-12-18")
     private Date activityTime;
 
-    @ApiModelProperty(value = "下架时间",required = true)
+    @ApiModelProperty(value = "下架时间",required = true,example = "2018-12-18")
     private Date disabledTime;
 
     @ApiModelProperty(value = "电影类型",example = "动作、冒险",required = true)
@@ -44,7 +44,7 @@ public class BetMovieVo {
     @ApiModelProperty(value = "总票房 包含单位")
     private String sumBoxInfo;
 
-    @ApiModelProperty(value = "票房统计日期")
+    @ApiModelProperty(value = "票房统计日期",example = "2018-12-14")
     private Date sumDay;
 
     public BigDecimal getBoxInfo() {

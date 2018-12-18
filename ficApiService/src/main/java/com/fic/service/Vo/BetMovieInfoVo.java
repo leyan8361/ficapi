@@ -1,5 +1,6 @@
 package com.fic.service.Vo;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
@@ -19,6 +20,9 @@ public class BetMovieInfoVo {
     @ApiModelProperty(value = "竞猜电影ID")
     private Integer id;
 
+    @ApiModelProperty(value = "场次ID")
+    private Integer scenceMovieId;
+
     @ApiModelProperty(value = "竞猜电影名称",required = true)
     private String betMovieName;
 
@@ -26,9 +30,11 @@ public class BetMovieInfoVo {
     private String betMovieCoverUrl;
 
     @ApiModelProperty(value = "上架时间",required = true)
+    @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
     private Date activityTime;
 
     @ApiModelProperty(value = "下架时间",required = true)
+    @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
     private Date disabledTime;
 
     @ApiModelProperty(value = "电影类型",example = "动作、冒险",required = true)
@@ -38,6 +44,7 @@ public class BetMovieInfoVo {
     private String movieDirector;
 
     @ApiModelProperty(value = "上映日期",example = "2018-12-14",required = true)
+    @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd")
     private Date showTime;
 
     @ApiModelProperty(value = "按SumDay统计票房 单位万")
@@ -47,6 +54,7 @@ public class BetMovieInfoVo {
     private String sumBoxInfo;
 
     @ApiModelProperty(value = "票房统计日期")
+    @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd")
     private Date sumDay;
 
     @ApiModelProperty(value = "投注人数, 以scence项目类型(0,单双）(1,能不能)(2, ABCD)(3,总票房)区分解析vo, BetOddEvenVo,BetGuessOverVo,BetChoiceVo")
@@ -146,5 +154,13 @@ public class BetMovieInfoVo {
 
     public void setSumDay(Date sumDay) {
         this.sumDay = sumDay;
+    }
+
+    public Integer getScenceMovieId() {
+        return scenceMovieId;
+    }
+
+    public void setScenceMovieId(Integer scenceMovieId) {
+        this.scenceMovieId = scenceMovieId;
     }
 }

@@ -17,5 +17,27 @@ public class BetOddEvenVo {
     @ApiModelProperty(value = "当猜单双时,此荐为选双人数")
     private Integer evenCount;
 
+    public Integer getOddCount() {
+        return oddCount;
+    }
 
+    public void setOddCount(Integer oddCount) {
+        this.oddCount = oddCount;
+    }
+
+    public Integer getEvenCount() {
+        return evenCount;
+    }
+
+    public void setEvenCount(Integer evenCount) {
+        this.evenCount = evenCount;
+    }
+
+    @Override
+    public String toString() {
+        return "BetOddEvenVo{" +
+                "oddCount=" + oddCount +
+                ", evenCount=" + evenCount +
+                '}';
+    }
 }

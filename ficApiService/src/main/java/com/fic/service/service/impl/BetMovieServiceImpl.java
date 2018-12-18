@@ -129,6 +129,7 @@ public class BetMovieServiceImpl implements BetMovieService {
             }
         }
         betMovie.setCreatedTime(new Date());
+        betMovie.setStatus(ShelfStatusEnum.ON_SHELF.getCode().byteValue());
         int saveBetMovieResult = betMovieMapper.insertSelective(betMovie);
         if( saveBetMovieResult <=0){
             log.error(" add bet movie failed ");

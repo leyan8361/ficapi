@@ -16,4 +16,20 @@ public class BetGuessOverVo {
 
     @ApiModelProperty(value = "当初级场时,此项为选不人数")
     private Integer couldntCount;
+
+    public Integer getCanCount() {
+        return canCount;
+    }
+
+    public void setCanCount(Integer canCount) {
+        this.canCount = canCount;
+    }
+
+    public Integer getCouldntCount() {
+        return couldntCount;
+    }
+
+    public void setCouldntCount(Integer couldntCount) {
+        this.couldntCount = couldntCount;
+    }
 }

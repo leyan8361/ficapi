@@ -3,6 +3,7 @@ package com.fic.service.controller;
 import com.fic.service.Vo.BetScenceVo;
 import com.fic.service.Vo.ResponseVo;
 import com.fic.service.entity.BetScence;
+import com.fic.service.entity.BetScenceMovie;
 import com.fic.service.service.BetScenceService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -13,6 +14,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Date;
 
 /**
  *   @Author Xie
@@ -29,7 +32,7 @@ public class BetScenceController {
     @Autowired
     BetScenceService betScenceService;
 
-    @GetMapping("/add")
+    @PostMapping("/add")
     @ApiOperation("新增项目 项目类型(0,单双）(1,能不能)(2, ABCD)(3,总票房) ")
     public ResponseEntity add(@RequestBody BetScenceVo betScenceVo) {
         log.debug(" bet add !!!");
@@ -37,17 +40,6 @@ public class BetScenceController {
         return ResponseEntity.ok(result);
     }
 
-    @GetMapping("/addBetMovie")
-    @ApiImplicitParams({
-            @ApiImplicitParam(dataType = "int", name = "id", value = "项目ID"),
-            @ApiImplicitParam(dataType = "int", name = "moveId", value = "竞猜电影ID"),
-    })
-    @ApiOperation("为项目添加电影")
-    public ResponseEntity addMoive(@RequestParam("id") int id,@RequestParam("moveId") int moveId) {
-        log.debug(" add movie for scence !!!");
-        ResponseVo result = betScenceService.addMovie(id,moveId);
-        return ResponseEntity.ok(result);
-    }
 
 
     @GetMapping("/onShelf")

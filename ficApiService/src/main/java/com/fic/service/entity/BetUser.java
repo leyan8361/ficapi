@@ -11,11 +11,15 @@ public class BetUser {
 
     private String betWhich;
 
-    private Integer bingo;
+    private Byte bingo;
 
     private BigDecimal bingoPrice;
 
     private BigDecimal closeWithReturning;
+
+    private BigDecimal tradeFee;
+
+    private BigDecimal rewardPool;
 
     public Integer getId() {
         return id;
@@ -49,6 +53,14 @@ public class BetUser {
         this.betWhich = betWhich;
     }
 
+    public Byte getBingo() {
+        return bingo;
+    }
+
+    public void setBingo(Byte bingo) {
+        this.bingo = bingo;
+    }
+
     public BigDecimal getBingoPrice() {
         return bingoPrice;
     }
@@ -65,11 +77,19 @@ public class BetUser {
         this.closeWithReturning = closeWithReturning;
     }
 
-    public Integer getBingo() {
-        return bingo;
+    public BigDecimal getTradeFee() {
+        return tradeFee;
     }
 
-    public void setBingo(Integer bingo) {
-        this.bingo = bingo;
+    public void setTradeFee(BigDecimal tradeFee) {
+        this.tradeFee = tradeFee;
+    }
+
+    public BigDecimal getRewardPool() {
+        return rewardPool;
+    }
+
+    public void setRewardPool(BigDecimal rewardPool) {
+        this.rewardPool = rewardPool;
     }
 }

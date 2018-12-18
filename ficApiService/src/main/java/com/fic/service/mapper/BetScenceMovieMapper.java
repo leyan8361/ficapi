@@ -4,6 +4,8 @@ import com.fic.service.entity.BetScenceMovie;
 import org.apache.ibatis.annotations.Mapper;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Mapper
 @Repository
 public interface BetScenceMovieMapper {
@@ -20,4 +22,6 @@ public interface BetScenceMovieMapper {
     int updateByPrimaryKey(BetScenceMovie record);
 
     BetScenceMovie findByScenceIdAndMovieId(int scenceId,int movieId);
+
+    List<BetScenceMovie> findByDate(String yestoday);
 }

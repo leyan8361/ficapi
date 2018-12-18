@@ -34,4 +34,6 @@ public interface BetMovieMapper {
     List<BetMovie> findAllOnByScenceId(int scenceId);
 
     List<BetMovie> findAllOffByScenceId(int scenceId);
+
+    int checkMovieNameExistAndStatus(String movieName);
 }

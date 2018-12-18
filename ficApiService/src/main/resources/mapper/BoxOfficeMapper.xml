@@ -10,12 +10,14 @@
     <result column="sum_box_info" jdbcType="DECIMAL" property="sumBoxInfo" />
     <result column="sum_day" jdbcType="DATE" property="sumDay" />
     <result column="sum_box_info_unit" jdbcType="VARCHAR" property="sumBoxInfoUnit" />
+    <result column="box_info_unit" jdbcType="VARCHAR" property="boxInfoUnit" />
   </resultMap>
   <sql id="Base_Column_List">
-    id, movie_id, movie_name, box_info, release_day, sum_box_info, sum_day, sum_box_info_unit
+    id, movie_id, movie_name, box_info, release_day, sum_box_info, sum_day, sum_box_info_unit,
+    box_info_unit
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
-    select 
+    select
     <include refid="Base_Column_List" />
     from box_office
     where id = #{id,jdbcType=INTEGER}
@@ -25,12 +27,14 @@
     where id = #{id,jdbcType=INTEGER}
   </delete>
   <insert id="insert" parameterType="com.fic.service.entity.BoxOffice">
-    insert into box_office (id, movie_id, movie_name, 
-      box_info, release_day, sum_box_info, 
-      sum_day, sum_box_info_unit)
-    values (#{id,jdbcType=INTEGER}, #{movieId,jdbcType=INTEGER}, #{movieName,jdbcType=VARCHAR}, 
-      #{boxInfo,jdbcType=DECIMAL}, #{releaseDay,jdbcType=VARCHAR}, #{sumBoxInfo,jdbcType=DECIMAL}, 
-      #{sumDay,jdbcType=DATE}, #{sumBoxInfoUnit,jdbcType=VARCHAR})
+    insert into box_office (id, movie_id, movie_name,
+      box_info, release_day, sum_box_info,
+      sum_day, sum_box_info_unit, box_info_unit
+      )
+    values (#{id,jdbcType=INTEGER}, #{movieId,jdbcType=INTEGER}, #{movieName,jdbcType=VARCHAR},
+      #{boxInfo,jdbcType=DECIMAL}, #{releaseDay,jdbcType=VARCHAR}, #{sumBoxInfo,jdbcType=DECIMAL},
+      #{sumDay,jdbcType=DATE}, #{sumBoxInfoUnit,jdbcType=VARCHAR}, #{boxInfoUnit,jdbcType=VARCHAR}
+      )
   </insert>
   <insert id="insertSelective" parameterType="com.fic.service.entity.BoxOffice">
     insert into box_office
@@ -59,6 +63,9 @@
       <if test="sumBoxInfoUnit != null">
         sum_box_info_unit,
       </if>
+      <if test="boxInfoUnit != null">
+        box_info_unit,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="id != null">
@@ -84,6 +91,9 @@
       </if>
       <if test="sumBoxInfoUnit != null">
         #{sumBoxInfoUnit,jdbcType=VARCHAR},
+      </if>
+      <if test="boxInfoUnit != null">
+        #{boxInfoUnit,jdbcType=VARCHAR},
       </if>
     </trim>
   </insert>
@@ -111,6 +121,9 @@
       <if test="sumBoxInfoUnit != null">
         sum_box_info_unit = #{sumBoxInfoUnit,jdbcType=VARCHAR},
       </if>
+      <if test="boxInfoUnit != null">
+        box_info_unit = #{boxInfoUnit,jdbcType=VARCHAR},
+      </if>
     </set>
     where id = #{id,jdbcType=INTEGER}
   </update>
@@ -122,15 +135,16 @@
       release_day = #{releaseDay,jdbcType=VARCHAR},
       sum_box_info = #{sumBoxInfo,jdbcType=DECIMAL},
       sum_day = #{sumDay,jdbcType=DATE},
-      sum_box_info_unit = #{sumBoxInfoUnit,jdbcType=VARCHAR}
+      sum_box_info_unit = #{sumBoxInfoUnit,jdbcType=VARCHAR},
+      box_info_unit = #{boxInfoUnit,jdbcType=VARCHAR}
     where id = #{id,jdbcType=INTEGER}
   </update>
   <select id="findByDay" resultMap="BaseResultMap">
-    select * from box_office where sum_day = #{sumDay} where movie_id = #{movieId};
+    select * from box_office where sum_day = #{sumDay} and movie_id = #{movieId};
   </select>
   
   <select id="findAllByDay" resultMap="BaseResultMap">
     select * from box_office where sum_day = #{sumDay};
   </select>
-  
+
 </mapper>

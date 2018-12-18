@@ -2,7 +2,7 @@ package com.fic.service.service;
 
 import com.fic.service.Vo.BetScenceVo;
 import com.fic.service.Vo.ResponseVo;
-import com.fic.service.entity.BetScence;
+import com.fic.service.entity.BetScenceMovie;
 
 import java.math.BigDecimal;
 
@@ -16,8 +16,6 @@ public interface BetScenceService {
     ResponseVo getScence(int betType);
 
     ResponseVo add(BetScenceVo betScenceVo);
-
-    ResponseVo addMovie(int id,int movieId);
 
     ResponseVo bet(int userId, int scenceId, int movieId, BigDecimal amount,String betWhich);
 
