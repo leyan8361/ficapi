@@ -24,4 +24,6 @@ public interface BetScenceMovieMapper {
     BetScenceMovie findByScenceIdAndMovieId(int scenceId,int movieId);
 
     List<BetScenceMovie> findByDate(String yestoday);
+
+//    List<BetScenceMovie> findHighLevelByMovieName(String startDay,String endDay);
 }

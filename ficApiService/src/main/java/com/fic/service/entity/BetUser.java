@@ -11,6 +11,8 @@ public class BetUser {
 
     private String betWhich;
 
+    private BigDecimal betAmount;
+
     private Byte bingo;
 
     private BigDecimal bingoPrice;
@@ -20,6 +22,8 @@ public class BetUser {
     private BigDecimal tradeFee;
 
     private BigDecimal rewardPool;
+
+    private BigDecimal betWeekTotalBox;
 
     public Integer getId() {
         return id;
@@ -91,5 +95,21 @@ public class BetUser {
 
     public void setRewardPool(BigDecimal rewardPool) {
         this.rewardPool = rewardPool;
+    }
+
+    public BigDecimal getBetAmount() {
+        return betAmount;
+    }
+
+    public void setBetAmount(BigDecimal betAmount) {
+        this.betAmount = betAmount;
+    }
+
+    public BigDecimal getBetWeekTotalBox() {
+        return betWeekTotalBox;
+    }
+
+    public void setBetWeekTotalBox(BigDecimal betWeekTotalBox) {
+        this.betWeekTotalBox = betWeekTotalBox;
     }
 }

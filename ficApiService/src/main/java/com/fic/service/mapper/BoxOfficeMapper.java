@@ -25,4 +25,6 @@ public interface BoxOfficeMapper {
     BoxOffice findByDay(String sumDay, int movieId);
 
     List<BoxOffice> findAllByDay(String sumDay);
+
+    List<BoxOffice> countBoxByMovieNameBetween(String startDay,String endDay,int movieId);
 }

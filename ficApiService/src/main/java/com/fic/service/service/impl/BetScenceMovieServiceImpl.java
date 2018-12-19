@@ -1,5 +1,6 @@
 package com.fic.service.service.impl;
 
+import com.fic.service.Enum.BetScenceMovieStatusEnum;
 import com.fic.service.Enum.BingoStatusEnum;
 import com.fic.service.Enum.ErrorCodeEnum;
 import com.fic.service.Vo.ResponseVo;
@@ -59,7 +60,7 @@ public class BetScenceMovieServiceImpl implements BetScenceMovieService {
         if(null == movie){
             return new ResponseVo(ErrorCodeEnum.BET_ADD_MOVIE_NOT_FOUND,null);
         }
-        scenceMovie.setStatus(BingoStatusEnum.WAIT_BINGO.getCode().byteValue());
+        scenceMovie.setStatus(BetScenceMovieStatusEnum.WAIT.getCode().byteValue());
         int saveResult = betScenceMovieMapper.insertSelective(scenceMovie);
         if(saveResult <=0){
             log.error(" 为scence 新增movie 失败 ");

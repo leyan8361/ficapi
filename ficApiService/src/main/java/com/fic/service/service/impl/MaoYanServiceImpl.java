@@ -10,6 +10,7 @@ import com.fic.service.service.MaoYanService;
 import com.fic.service.utils.DateUtil;
 import com.fic.service.utils.OkHttpUtil;
 import com.fic.service.utils.RegexUtil;
+import org.apache.commons.lang3.StringUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.slf4j.Logger;
@@ -72,7 +73,7 @@ public class MaoYanServiceImpl implements MaoYanService {
                 //rid总票房单位
                 String sumBoxInfoCut= RegexUtil.ridChiese(sumBoxInfoStr);
                 BigDecimal sumBox = new BigDecimal(sumBoxInfoCut);
-                boxOffice.setBoxInfoUnit(boxInfoUnit);
+                boxOffice.setBoxInfoUnit(StringUtils.isEmpty(boxInfoUnit)?"万":boxInfoUnit);
                 boxOffice.setReleaseDay(releaseDayStr);
                 boxOffice.setSumBoxInfo(sumBox);
                 boxOffice.setSumBoxInfoUnit(sumBoxInfoUnit);

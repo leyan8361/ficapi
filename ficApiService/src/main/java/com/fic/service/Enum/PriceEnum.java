@@ -14,8 +14,8 @@ public enum PriceEnum {
     A_CHOICE(4,"选择题A"),
     B_CHOICE(5,"选择题B"),
     C_CHOICE(6,"选择题C"),
-    D_CHOICE(7,"选择题D");
-
+    D_CHOICE(7,"选择题D"),
+    GUESS_WEEK_BOX(8,"猜累计票房");
 
     private Integer code;
     private String remark;

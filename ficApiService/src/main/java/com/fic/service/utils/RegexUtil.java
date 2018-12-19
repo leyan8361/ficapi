@@ -1,5 +1,7 @@
 package com.fic.service.utils;
 
+import com.fic.service.Enum.PriceEnum;
+
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.text.ParseException;
@@ -15,15 +17,15 @@ import java.util.regex.Pattern;
  **/
 public class RegexUtil {
 
-    private static Map<String, BigInteger> regexUnitMap;
+    private static Map<String, BigDecimal> regexUnitMap;
 
     static{
         regexUnitMap = new HashMap<>();
-        regexUnitMap.put("万",new BigInteger("10000"));
-        regexUnitMap.put("十万",new BigInteger("100000"));
-        regexUnitMap.put("百万",new BigInteger("1000000"));
-        regexUnitMap.put("千万",new BigInteger("10000000"));
-        regexUnitMap.put("亿",new BigInteger("100000000"));
+        regexUnitMap.put("万",new BigDecimal("10000"));
+        regexUnitMap.put("十万",new BigDecimal("100000"));
+        regexUnitMap.put("百万",new BigDecimal("1000000"));
+        regexUnitMap.put("千万",new BigDecimal("10000000"));
+        regexUnitMap.put("亿",new BigDecimal("100000000"));
     }
 
     public static boolean isPhone(String phone) {
@@ -89,14 +91,15 @@ public class RegexUtil {
 
     /**
      *
-     * @param unit 万，十万，百分，千万，亿
+     * @param unit 万，十万，百万，千万，亿
      * @param box 票房
      * @return
      */
     public static boolean checkIfOverChieseUnit(String unit, BigDecimal box){
         if(regexUnitMap.containsKey(unit)){
-            BigInteger amountForTheUnit = regexUnitMap.get(unit);
-            if(amountForTheUnit.compareTo(box.toBigInteger()) >= 0){
+            BigDecimal amountForTheUnit = regexUnitMap.get(unit);
+            box = box.multiply(new BigDecimal("10000"));
+            if(box.compareTo(amountForTheUnit) > 0){
                 return true;
             }
         }
@@ -105,9 +108,31 @@ public class RegexUtil {
 
     public static int matchOption(String choiceInput,BigDecimal box){
         String [] options = choiceInput.split(",");
-//        for(String op: options){
-//            BigDecimal
-//        }
+        int result = 0;
+        try{
+            BigDecimal fiOp = new BigDecimal(options[0]);
+            BigDecimal seOp = new BigDecimal(options[1]);
+            BigDecimal thOp = new BigDecimal(options[2]);
+            /** A 选项 box < fiOp */
+            if(fiOp.compareTo(box) < 0){
+                return PriceEnum.A_CHOICE.getCode();
+            }
+            /** B选项 fiOp <= box < seOp */
+            if(fiOp.compareTo(box) >= 0 && seOp.compareTo(box) < 0){
+                return PriceEnum.B_CHOICE.getCode();
+            }
+            /** C选项 seOp <= box < thOp */
+            if(seOp.compareTo(box) >=0 && thOp.compareTo(box) < 0){
+                return PriceEnum.C_CHOICE.getCode();
+            }
+            /** D选项 box > thOp */
+            if(thOp.compareTo(box) >0 ){
+                return PriceEnum.D_CHOICE.getCode();
+            }
+        }catch (Exception e){
+            System.out.println(" 转换 中级场 选项 错误  e : "+e);
+            return 0;
+        }
         return 0;
     }
 

@@ -11,10 +11,12 @@
     <result column="close_with_returning" jdbcType="DECIMAL" property="closeWithReturning" />
     <result column="trade_fee" jdbcType="DECIMAL" property="tradeFee" />
     <result column="reward_pool" jdbcType="DECIMAL" property="rewardPool" />
+    <result column="bet_amount" jdbcType="DECIMAL" property="betAmount" />
+    <result column="bet_week_total_box" jdbcType="DECIMAL" property="betWeekTotalBox" />
   </resultMap>
   <sql id="Base_Column_List">
     id, user_id, bet_scence_movie_id, bet_which, bingo, bingo_price, close_with_returning,
-    trade_fee, reward_pool
+    trade_fee, reward_pool, bet_amount, bet_week_total_box
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
     select
@@ -29,12 +31,12 @@
   <insert id="insert" parameterType="com.fic.service.entity.BetUser">
     insert into bet_user (id, user_id, bet_scence_movie_id,
       bet_which, bingo, bingo_price,
-      close_with_returning, trade_fee, reward_pool
-      )
+      close_with_returning, trade_fee, reward_pool,
+      bet_amount, bet_week_total_box)
     values (#{id,jdbcType=INTEGER}, #{userId,jdbcType=INTEGER}, #{betScenceMovieId,jdbcType=INTEGER},
       #{betWhich,jdbcType=VARCHAR}, #{bingo,jdbcType=TINYINT}, #{bingoPrice,jdbcType=DECIMAL},
-      #{closeWithReturning,jdbcType=DECIMAL}, #{tradeFee,jdbcType=DECIMAL}, #{rewardPool,jdbcType=DECIMAL}
-      )
+      #{closeWithReturning,jdbcType=DECIMAL}, #{tradeFee,jdbcType=DECIMAL}, #{rewardPool,jdbcType=DECIMAL},
+      #{betAmount,jdbcType=DECIMAL}, #{betWeekTotalBox,jdbcType=DECIMAL})
   </insert>
   <insert id="insertSelective" parameterType="com.fic.service.entity.BetUser">
     insert into bet_user
@@ -66,6 +68,12 @@
       <if test="rewardPool != null">
         reward_pool,
       </if>
+      <if test="betAmount != null">
+        bet_amount,
+      </if>
+      <if test="betWeekTotalBox != null">
+        bet_week_total_box,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="id != null">
@@ -94,6 +102,12 @@
       </if>
       <if test="rewardPool != null">
         #{rewardPool,jdbcType=DECIMAL},
+      </if>
+      <if test="betAmount != null">
+        #{betAmount,jdbcType=DECIMAL},
+      </if>
+      <if test="betWeekTotalBox != null">
+        #{betWeekTotalBox,jdbcType=DECIMAL},
       </if>
     </trim>
   </insert>
@@ -124,6 +138,12 @@
       <if test="rewardPool != null">
         reward_pool = #{rewardPool,jdbcType=DECIMAL},
       </if>
+      <if test="betAmount != null">
+        bet_amount = #{betAmount,jdbcType=DECIMAL},
+      </if>
+      <if test="betWeekTotalBox != null">
+        bet_week_total_box = #{betWeekTotalBox,jdbcType=DECIMAL},
+      </if>
     </set>
     where id = #{id,jdbcType=INTEGER}
   </update>
@@ -136,14 +156,11 @@
       bingo_price = #{bingoPrice,jdbcType=DECIMAL},
       close_with_returning = #{closeWithReturning,jdbcType=DECIMAL},
       trade_fee = #{tradeFee,jdbcType=DECIMAL},
-      reward_pool = #{rewardPool,jdbcType=DECIMAL}
+      reward_pool = #{rewardPool,jdbcType=DECIMAL},
+      bet_amount = #{betAmount,jdbcType=DECIMAL},
+      bet_week_total_box = #{betWeekTotalBox,jdbcType=DECIMAL}
     where id = #{id,jdbcType=INTEGER}
   </update>
-
-  <!--<resultMap id="oddEvenMap" type="com.fic.service.Vo.BetOddEvenVo">-->
-    <!--<result column="oddCount" jdbcType="INTEGER" property="oddCount" />-->
-    <!--<result column="evenCount" jdbcType="INTEGER" property="oddCount" />-->
-  <!--</resultMap>-->
 
   <select id="countOddEven" resultType="com.fic.service.Vo.BetOddEvenVo">
     SELECT
@@ -173,11 +190,6 @@
     AND sb.status = 0
   </select>
 
-  <!--<resultMap id="guessMap" type="com.fic.service.Vo.BetGuessOverVo">-->
-    <!--<result column="canCount" jdbcType="INTEGER" property="oddCount" />-->
-    <!--<result column="couldntCount" jdbcType="INTEGER" property="oddCount" />-->
-  <!--</resultMap>-->
-
   <select id="countGuessOverEven" resultType="com.fic.service.Vo.BetGuessOverVo">
     SELECT
       sum(
@@ -206,13 +218,6 @@
     AND sb.status = 0
   </select>
 
-  <!--<resultMap id="guessMap" type="com.fic.service.Vo.BetChoiceVo">-->
-    <!--<result column="aChoice" jdbcType="INTEGER" property="aChoice" />-->
-    <!--<result column="bChoice" jdbcType="INTEGER" property="bChoice" />-->
-    <!--<result column="cChoice" jdbcType="INTEGER" property="cChoice" />-->
-    <!--<result column="dChoice" jdbcType="INTEGER" property="dChoice" />-->
-  <!--</resultMap>-->
-
   <select id="countChooice" resultType="com.fic.service.Vo.BetChoiceVo">
     SELECT
       sum( CASE WHEN u.bet_which = 4 THEN 1 ELSE 0 END ) aChoice,
@@ -232,6 +237,105 @@
     LEFT JOIN bet_scence b ON b.id = sb.bet_scence_id
     LEFT JOIN bet_movie m ON m.id = sb.bet_movie_id WHERE sb.bet_scence_id = #{scenceId} and sb.bet_movie_id = #{movieId}
     AND sb.status = 0
+  </select>
+
+  <select id="countOddEvenAmount" resultType="com.fic.service.Vo.BetOddEvenAmountVo">
+    SELECT
+      sum(
+				CASE
+				when u.bet_which = 0
+				then u.bet_amount
+				else 0
+				end
+      ) oddFic,
+      sum(
+          CASE
+          WHEN u.bet_which = 1
+					THEN u.bet_amount
+          ELSE 0
+          END
+      ) evenFic
+    FROM
+        bet_user u
+    INNER JOIN bet_scence_movie sb ON sb.id = u.bet_scence_movie_id
+    WHERE
+        sb.id = #{scenceMovieId}
+    AND sb.status = 0
+  </select>
+
+  <select id="countGuessOverAmount" resultType="com.fic.service.Vo.BetGuessOverAmountVo">
+    SELECT
+      sum(
+				CASE
+				when u.bet_which = 2
+				then u.bet_amount
+				else 0
+				end
+      ) canFic,
+      sum(
+          CASE
+          WHEN u.bet_which = 3
+					THEN u.bet_amount
+          ELSE 0
+          END
+      ) couldntFic
+    FROM
+        bet_user u
+    INNER JOIN bet_scence_movie sb ON sb.id = u.bet_scence_movie_id
+    WHERE
+        sb.id = #{scenceMovieId}
+    AND sb.status = 0
+  </select>
+
+  <select id="countChoiceAmount" resultType="com.fic.service.Vo.BetChoiceAmountVo">
+    SELECT
+      sum(
+				CASE
+				when u.bet_which = 4
+				then u.bet_amount
+				else 0
+				end
+      ) aChoiceAmount,
+      sum(
+          CASE
+          WHEN u.bet_which = 5
+					THEN u.bet_amount
+          ELSE 0
+          END
+      ) bChoiceAmount,
+			sum(
+          CASE
+          WHEN u.bet_which = 6
+					THEN u.bet_amount
+          ELSE 0
+          END
+      ) cChoiceAmount,
+			sum(
+          CASE
+          WHEN u.bet_which = 7
+					THEN u.bet_amount
+          ELSE 0
+          END
+      ) dChoiceAmount
+    FROM
+        bet_user u
+    INNER JOIN bet_scence_movie sb ON sb.id = u.bet_scence_movie_id
+    WHERE
+        sb.id = #{scenceMovieId}
+    AND sb.status = 0
+  </select>
+
+  <select id="countWeekBoxGroupAmount" resultType="com.fic.service.Vo.BetWeekBoxCountVo">
+    SELECT
+         sum(u.bet_amount) as betAmount,
+		 u.bet_week_total_box as weekBoxAmount
+    FROM
+        bet_user u
+    INNER JOIN bet_scence_movie sb ON sb.id = u.bet_scence_movie_id
+    WHERE
+        sb.id = #{scenceMovieId}
+    AND sb.status = 0
+	  group by u.bet_week_total_box;
   </select>
 
   <select id="checkAlreadyBetUser" resultType="int">

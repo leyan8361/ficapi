@@ -40,6 +40,8 @@ public class BetScenceMovie {
 
     private String sumBoxInput;
 
+    private BigDecimal bingoOdds;
+
     public Integer getId() {
         return id;
     }
@@ -184,6 +186,14 @@ public class BetScenceMovie {
         this.sumBoxInput = sumBoxInput;
     }
 
+    public BigDecimal getBingoOdds() {
+        return bingoOdds;
+    }
+
+    public void setBingoOdds(BigDecimal bingoOdds) {
+        this.bingoOdds = bingoOdds;
+    }
+
     @Override
     public String toString() {
         return "BetScenceMovie{" +
@@ -205,6 +215,7 @@ public class BetScenceMovie {
                 ", guessOverUnit='" + guessOverUnit + '\'' +
                 ", choiceInput='" + choiceInput + '\'' +
                 ", sumBoxInput='" + sumBoxInput + '\'' +
+                ", bingoOdds=" + bingoOdds +
                 '}';
     }
 }

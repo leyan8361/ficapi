@@ -3,14 +3,14 @@ package com.fic.service.Enum;
 /**
  *   @Author Xie
  *   @Date 2018/12/19
- *   @Discription: 用户 下注 状态
+ *   @Discription: 竞猜状态
 **/
-public enum  BingoStatusEnum {
+public enum BetScenceMovieStatusEnum {
 
-    WAIT_BINGO(0,"待开奖"),
-    BINGO(1,"已中奖"),
-    UN_BINGO(2,"未中奖"),
-    CLOSE_RETURNING(3,"关闭退回");
+    WAIT(0,"待开奖"),
+    DRAW(1,"已开奖"),
+    CLOSE(2,"已退还关闭");
+
 
     private Integer code;
     private String remark;
@@ -31,10 +31,9 @@ public enum  BingoStatusEnum {
         this.remark = remark;
     }
 
-    BingoStatusEnum(Integer code, String remark) {
+    BetScenceMovieStatusEnum(Integer code, String remark) {
         this.code = code;
         this.remark = remark;
     }
-
 
 }

@@ -59,6 +59,18 @@ public class DateUtil {
         return date;
     }
 
+    public static String minDateNDay(Date date,int day) {
+        LocalDate localDate = DateUtil.dateToLocalDate(date);
+        localDate = localDate.minusDays(day);
+        date = DateUtil.LocalDateToDate(localDate);
+        return DateUtil.dateToStrMatDay(date);
+    }
+
+    public static String dateToStrMatDay(Date date){
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+        return formatter.format(date);
+    }
+
     public static Date plusMin(Date date, int min) {
         Calendar calendar = new GregorianCalendar();
         calendar.setTime(date);

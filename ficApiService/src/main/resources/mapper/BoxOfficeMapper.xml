@@ -147,4 +147,8 @@
     select * from box_office where sum_day = #{sumDay};
   </select>
 
+  <select id="countBoxByMovieNameBetween" resultMap="BaseResultMap">
+    select * from box_office where sum_day between #{startDay} and #{endDay} and movie_id = #{movieId}
+  </select>
+
 </mapper>

@@ -12,7 +12,8 @@ public enum FinanceTypeEnum {
     DIVIDENDS(2,"分红"),
     WITHDRAW(3,"提现"),
     INVEST(4,"投资"),
-    REWARD(5,"奖励")
+    REWARD(5,"奖励"),
+    BET_REWARD(6,"竞猜奖励"),
     ;
 
     private Integer code;
