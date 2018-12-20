@@ -190,4 +190,10 @@
     left join bet_scence b on sb.bet_scence_id = b.id
     where sb.status = 0 and m.bet_movie_name = #{movieName}
   </select>
+
+  <select id="findByScenceMovieId" resultMap="BaseResultMap">
+    select m.* from bet_movie m
+    left join bet_scence_movie sb on sb.bet_movie_id = m.id
+    where sb.id = #{scenceMovieId} limit 0,1
+  </select>
 </mapper>

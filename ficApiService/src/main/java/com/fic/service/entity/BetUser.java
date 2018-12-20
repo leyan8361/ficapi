@@ -1,6 +1,7 @@
 package com.fic.service.entity;
 
 import java.math.BigDecimal;
+import java.util.Date;
 
 public class BetUser {
     private Integer id;
@@ -24,6 +25,8 @@ public class BetUser {
     private BigDecimal reserveFee;
 
     private BigDecimal betWeekTotalBox;
+
+    private Date createdTime;
 
     public Integer getId() {
         return id;
@@ -111,5 +114,13 @@ public class BetUser {
 
     public void setBetWeekTotalBox(BigDecimal betWeekTotalBox) {
         this.betWeekTotalBox = betWeekTotalBox;
+    }
+
+    public Date getCreatedTime() {
+        return createdTime;
+    }
+
+    public void setCreatedTime(Date createdTime) {
+        this.createdTime = createdTime;
     }
 }

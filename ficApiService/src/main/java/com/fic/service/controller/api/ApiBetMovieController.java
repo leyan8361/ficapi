@@ -30,35 +30,35 @@ public class ApiBetMovieController {
     @Autowired
     BetMovieService betMovieService;
 
-    @GetMapping("/getMovieOn")
-    @ApiImplicitParams({
-            @ApiImplicitParam(dataType = "int", name = "betType", value = "项目类型(0,单双）(1,能不能)(2, ABCD)(3,总票房))"),
-    })
-    @ApiResponses({
-            @ApiResponse(code = 5008, message = "THE BET TYPE HAS NO SCENCE"),
-            @ApiResponse(code = 200, message = "SUCCESS",response = BetMovieInfoVo.class)
-    })
-    @ApiOperation("获取竞猜电影列表 (未开奖的)")
-    public ResponseEntity getHistory(@RequestParam("betType")int betType) {
-        log.debug("Api bet get movie on !!!");
-        ResponseVo result = betMovieService.getMovieOn(betType);
-        return ResponseEntity.ok(result);
-    }
-
-    @GetMapping("/getHistory")
-    @ApiImplicitParams({
-            @ApiImplicitParam(dataType = "int", name = "betType", value = "项目类型(0,单双）(1,能不能)(2, ABCD)(3,总票房))"),
-    })
-    @ApiResponses({
-            @ApiResponse(code = 5008, message = "THE BET TYPE HAS NO SCENCE"),
-            @ApiResponse(code = 200, message = "SUCCESS",response = BetMovieDrawVo.class)
-    })
-    @ApiOperation("获取竞猜电影列表 (开奖了的)")
-    public ResponseEntity getAll(@RequestParam("betType")int betType) {
-        log.debug("Api bet getHistory !!!");
-        ResponseVo result = betMovieService.getHistory(betType);
-        return ResponseEntity.ok(result);
-    }
+//    @GetMapping("/getMovieOn")
+//    @ApiImplicitParams({
+//            @ApiImplicitParam(dataType = "int", name = "betType", value = "项目类型(0,单双）(1,能不能)(2, ABCD)(3,总票房))"),
+//    })
+//    @ApiResponses({
+//            @ApiResponse(code = 5008, message = "THE BET TYPE HAS NO SCENCE"),
+//            @ApiResponse(code = 200, message = "SUCCESS",response = BetMovieInfoVo.class)
+//    })
+//    @ApiOperation("获取竞猜电影列表 (未开奖的)")
+//    public ResponseEntity getHistory(@RequestParam("betType")int betType) {
+//        log.debug("Api bet get movie on !!!");
+//        ResponseVo result = betMovieService.getMovieOn(betType);
+//        return ResponseEntity.ok(result);
+//    }
+//
+//    @GetMapping("/getHistory")
+//    @ApiImplicitParams({
+//            @ApiImplicitParam(dataType = "int", name = "betType", value = "项目类型(0,单双）(1,能不能)(2, ABCD)(3,总票房))"),
+//    })
+//    @ApiResponses({
+//            @ApiResponse(code = 5008, message = "THE BET TYPE HAS NO SCENCE"),
+//            @ApiResponse(code = 200, message = "SUCCESS",response = BetMovieDrawVo.class)
+//    })
+//    @ApiOperation("获取竞猜电影列表 (开奖了的)")
+//    public ResponseEntity getAll(@RequestParam("betType")int betType) {
+//        log.debug("Api bet getHistory !!!");
+//        ResponseVo result = betMovieService.getHistory(betType);
+//        return ResponseEntity.ok(result);
+//    }
 
 //    @GetMapping("/getById")
 //    @ApiImplicitParams({

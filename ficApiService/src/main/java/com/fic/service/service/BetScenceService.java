@@ -21,6 +21,8 @@ public interface BetScenceService {
 
     ResponseVo bet(int userId, int scenceMovieId, BigDecimal amount,String betWhich);
 
+    ResponseVo getMyBetRecord(int userId);
+
     ResponseVo onShelf(int id);
 
     ResponseVo shelf(int id);

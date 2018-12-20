@@ -44,4 +44,6 @@ public interface BetUserMapper {
     int checkAlreadyBetUser(int scenceMovieId);
 
     List<BetUser> findByScenceMovieId(int scenceMovieId);
+
+    List<BetUser> findAllByUserId(int userId);
 }

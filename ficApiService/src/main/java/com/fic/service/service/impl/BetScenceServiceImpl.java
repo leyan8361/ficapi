@@ -325,4 +325,35 @@ public class BetScenceServiceImpl implements BetScenceService {
         }
         return new ResponseVo(ErrorCodeEnum.SUCCESS,result);
     }
+
+    @Override
+    public ResponseVo getMyBetRecord(int userId) {
+
+        int checkUserExist = userMapper.checkIfExistByUserId(userId);
+        if(checkUserExist <=0){
+            return new ResponseVo(ErrorCodeEnum.USER_NOT_EXIST,null);
+        }
+
+        List<BetRecordVo> recordVos = new ArrayList<BetRecordVo>();
+
+        List<BetUser> betUsers = betUserMapper.findAllByUserId(userId);
+        if(betUsers.size() ==0){
+            return new ResponseVo(ErrorCodeEnum.NO_BET_RECORD,null);
+        }
+
+        for(BetUser betUser: betUsers){
+            BetRecordVo recordVo = new BetRecordVo();
+            recordVo.setId(betUser.getId());
+            recordVo.setBetAmount(betUser.getBetAmount().setScale(0));
+            BetMovie betMovie = betMovieMapper.findByScenceMovieId(betUser.getBetScenceMovieId());
+            if(null == betMovie){
+                log.error(" 查找竞猜记录，跳过，查无此电影 scence movie id :{}",betUser.getBetScenceMovieId());
+            }
+//            BetScence scence =
+//            recordVo.setBetMovieName(betMovie.getBetMovieName());
+//            recordVo.set
+        }
+
+        return null;
+    }
 }

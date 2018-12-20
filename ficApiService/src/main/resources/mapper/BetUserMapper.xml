@@ -13,10 +13,11 @@
     <result column="reserve_fee" jdbcType="DECIMAL" property="reserveFee" />
     <result column="bet_amount" jdbcType="DECIMAL" property="betAmount" />
     <result column="bet_week_total_box" jdbcType="DECIMAL" property="betWeekTotalBox" />
+    <result column="created_time" jdbcType="TIMESTAMP" property="createdTime" />
   </resultMap>
   <sql id="Base_Column_List">
     id, user_id, bet_scence_movie_id, bet_which, bingo, bingo_price, close_with_returning,
-    bet_fee, reserve_fee, bet_amount, bet_week_total_box
+    bet_fee, reserve_fee, bet_amount, bet_week_total_box, created_time
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
     select
@@ -32,11 +33,13 @@
     insert into bet_user (id, user_id, bet_scence_movie_id,
       bet_which, bingo, bingo_price,
       close_with_returning, bet_fee, reserve_fee,
-      bet_amount, bet_week_total_box)
+      bet_amount, bet_week_total_box, created_time
+      )
     values (#{id,jdbcType=INTEGER}, #{userId,jdbcType=INTEGER}, #{betScenceMovieId,jdbcType=INTEGER},
       #{betWhich,jdbcType=VARCHAR}, #{bingo,jdbcType=TINYINT}, #{bingoPrice,jdbcType=DECIMAL},
       #{closeWithReturning,jdbcType=DECIMAL}, #{betFee,jdbcType=DECIMAL}, #{reserveFee,jdbcType=DECIMAL},
-      #{betAmount,jdbcType=DECIMAL}, #{betWeekTotalBox,jdbcType=DECIMAL})
+      #{betAmount,jdbcType=DECIMAL}, #{betWeekTotalBox,jdbcType=DECIMAL}, #{createdTime,jdbcType=TIMESTAMP}
+      )
   </insert>
   <insert id="insertSelective" parameterType="com.fic.service.entity.BetUser">
     insert into bet_user
@@ -74,6 +77,9 @@
       <if test="betWeekTotalBox != null">
         bet_week_total_box,
       </if>
+      <if test="createdTime != null">
+        created_time,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="id != null">
@@ -108,6 +114,9 @@
       </if>
       <if test="betWeekTotalBox != null">
         #{betWeekTotalBox,jdbcType=DECIMAL},
+      </if>
+      <if test="createdTime != null">
+        #{createdTime,jdbcType=TIMESTAMP},
       </if>
     </trim>
   </insert>
@@ -144,6 +153,9 @@
       <if test="betWeekTotalBox != null">
         bet_week_total_box = #{betWeekTotalBox,jdbcType=DECIMAL},
       </if>
+      <if test="createdTime != null">
+        created_time = #{createdTime,jdbcType=TIMESTAMP},
+      </if>
     </set>
     where id = #{id,jdbcType=INTEGER}
   </update>
@@ -158,7 +170,8 @@
       bet_fee = #{betFee,jdbcType=DECIMAL},
       reserve_fee = #{reserveFee,jdbcType=DECIMAL},
       bet_amount = #{betAmount,jdbcType=DECIMAL},
-      bet_week_total_box = #{betWeekTotalBox,jdbcType=DECIMAL}
+      bet_week_total_box = #{betWeekTotalBox,jdbcType=DECIMAL},
+      created_time = #{createdTime,jdbcType=TIMESTAMP}
     where id = #{id,jdbcType=INTEGER}
   </update>
 
@@ -344,5 +357,9 @@
   
   <select id="findByScenceMovieId" resultMap="BaseResultMap">
     select * from bet_user where bet_scence_movie_id = #{scenceMovieId} and bingo = 0;
+  </select>
+  
+  <select id="findAllByUserId" resultMap="BaseResultMap">
+    select * from bet_user where user_id = #{userId};
   </select>
 </mapper>

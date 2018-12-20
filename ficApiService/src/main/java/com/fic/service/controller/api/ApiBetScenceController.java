@@ -1,5 +1,7 @@
 package com.fic.service.controller.api;
+import com.fic.service.Vo.BetInfoVo;
 import com.fic.service.Vo.BetMovieDrawVo;
+import com.fic.service.Vo.BetMovieInfoVo;
 import com.fic.service.Vo.ResponseVo;
 import com.fic.service.service.BetScenceService;
 import io.swagger.annotations.*;
@@ -28,6 +30,9 @@ public class ApiBetScenceController {
     @ApiImplicitParams({
             @ApiImplicitParam(dataType = "int", name = "betType", value = "项目类型(0,单双）(1,能不能)(2, ABCD)(3,总票房))"),
     })
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "SUCCESS",response = BetInfoVo.class)
+    })
     @ApiOperation("获取竞猜项目列表信息(包含当前项目涵盖的电影信息&票房信息")
     public ResponseEntity getAllByBetType(@RequestParam("betType")int betType) {
         log.debug("Api getScence!!!");
@@ -38,6 +43,9 @@ public class ApiBetScenceController {
     @GetMapping("/scence/getByScenceMovieId")
     @ApiImplicitParams({
             @ApiImplicitParam(dataType = "int", name = "scenceMovieId", value = "场次ID"),
+    })
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "SUCCESS",response = BetMovieInfoVo.class)
     })
     @ApiOperation("获取某个场次信息")
     public ResponseEntity getByScenceMovieId(@RequestParam("scenceMovieId")int scenceMovieId) {
@@ -75,4 +83,26 @@ public class ApiBetScenceController {
         ResponseVo result = betScenceService.bet(userId,scenceMovieId,amount,betWhich);
         return ResponseEntity.ok(result);
     }
+
+//    @GetMapping("/getMyBetRecord")
+//    @ApiImplicitParams({
+//            @ApiImplicitParam(dataType = "int", name = "userId", value = "用户ID",required = true)
+//    })
+//    @ApiResponses({
+//            @ApiResponse(code = 1001, message = "User Not Exist"),
+//            @ApiResponse(code = 2000, message = "INVEST NOT EXIST"),
+//            @ApiResponse(code = 2001, message = "INVEST_BALANCE_NOT_ENOUGH"),
+//            @ApiResponse(code = 5006, message = "SCENCE_MOVIE_NOT_EXIST"),
+//            @ApiResponse(code = 5004, message = "NO_AVALIBLE_SCENCE"),
+//            @ApiResponse(code = 5002, message = "NO COULD USED BET MOVIE"),
+//            @ApiResponse(code = 500, message = "System ERROR"),
+//            @ApiResponse(code = 200, message = "SUCCESS")
+//    })
+//    @ApiOperation("获取我的竞猜记录")
+//    public ResponseEntity getMyBetRecord(@RequestParam("userId")int userId
+//    ) {
+//        log.debug("Api get bet record !!!");
+//        ResponseVo result = betScenceService.bet(userId,scenceMovieId,amount,betWhich);
+//        return ResponseEntity.ok(result);
+//    }
 }
