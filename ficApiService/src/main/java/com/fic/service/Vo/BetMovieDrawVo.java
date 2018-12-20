@@ -1,5 +1,6 @@
 package com.fic.service.Vo;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
@@ -19,15 +20,19 @@ public class BetMovieDrawVo {
     @ApiModelProperty(value = "竞猜电影名称",required = true)
     private String betMovieName;
 
+    @ApiModelProperty(value = "场次ID")
+    private Integer scenceMovieId;
+
     @ApiModelProperty(value = "竞猜电影封面URL")
     private String betMovieCoverUrl;
 
     @ApiModelProperty(value = "按SumDay统计票房 单位万")
-    private BigDecimal boxInfo;
+    private String boxInfo;
 
     @ApiModelProperty(value = "总票房 包含单位")
     private String sumBoxInfo;
 
+    @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd")
     @ApiModelProperty(value = "票房统计日期")
     private Date sumDay;
 
@@ -55,11 +60,11 @@ public class BetMovieDrawVo {
         this.betMovieCoverUrl = betMovieCoverUrl;
     }
 
-    public BigDecimal getBoxInfo() {
+    public String getBoxInfo() {
         return boxInfo;
     }
 
-    public void setBoxInfo(BigDecimal boxInfo) {
+    public void setBoxInfo(String boxInfo) {
         this.boxInfo = boxInfo;
     }
 
@@ -77,5 +82,13 @@ public class BetMovieDrawVo {
 
     public void setSumDay(Date sumDay) {
         this.sumDay = sumDay;
+    }
+
+    public Integer getScenceMovieId() {
+        return scenceMovieId;
+    }
+
+    public void setScenceMovieId(Integer scenceMovieId) {
+        this.scenceMovieId = scenceMovieId;
     }
 }

@@ -20,7 +20,6 @@ public class ApiStaticController {
 
     private final Logger log = LoggerFactory.getLogger(ApiStaticController.class);
 
-
     @GetMapping(value = "/agreement")
     @ApiOperation("Api-淘影APP使用协议")
     public String agreement() {
@@ -43,6 +42,12 @@ public class ApiStaticController {
     @ApiOperation("Api-置换协议")
     public String replacement() {
         return "replacement_protocol";
+    }
+
+    @GetMapping(value = "/bet_rules")
+    @ApiOperation("Api-竞猜规则")
+    public String betRules() {
+        return "bet_rules";
     }
 
 }

@@ -15,7 +15,7 @@
     select
     <include refid="Base_Column_List" />
     from bet_scence
-    where id = #{id,jdbcType=INTEGER}
+    where id = #{id,jdbcType=INTEGER} and status = 1
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
     delete from bet_scence
@@ -92,7 +92,7 @@
   </update>
 
   <select id="getByBetType" resultMap="BaseResultMap">
-    select * from bet_scence where status = 1 and bet_type = #{betType} order by created_time desc;
+    select * from bet_scence where status = 1 and bet_type = #{betType} order by created_time desc limit 0,1;
   </select>
 
   <update id="updateStatus" parameterType="int">

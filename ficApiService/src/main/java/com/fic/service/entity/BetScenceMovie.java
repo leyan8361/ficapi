@@ -30,9 +30,7 @@ public class BetScenceMovie {
 
     private BigDecimal totalReservation;
 
-    private BigDecimal betFee;
-
-    private String bingoResult;
+    private BigDecimal totalReservationReturning;
 
     private String guessOverUnit;
 
@@ -146,22 +144,6 @@ public class BetScenceMovie {
         this.totalReservation = totalReservation;
     }
 
-    public BigDecimal getBetFee() {
-        return betFee;
-    }
-
-    public void setBetFee(BigDecimal betFee) {
-        this.betFee = betFee;
-    }
-
-    public String getBingoResult() {
-        return bingoResult;
-    }
-
-    public void setBingoResult(String bingoResult) {
-        this.bingoResult = bingoResult;
-    }
-
     public String getGuessOverUnit() {
         return guessOverUnit;
     }
@@ -194,6 +176,14 @@ public class BetScenceMovie {
         this.bingoOdds = bingoOdds;
     }
 
+    public BigDecimal getTotalReservationReturning() {
+        return totalReservationReturning;
+    }
+
+    public void setTotalReservationReturning(BigDecimal totalReservationReturning) {
+        this.totalReservationReturning = totalReservationReturning;
+    }
+
     @Override
     public String toString() {
         return "BetScenceMovie{" +
@@ -210,8 +200,7 @@ public class BetScenceMovie {
                 ", hasReservation=" + hasReservation +
                 ", reservationFee=" + reservationFee +
                 ", totalReservation=" + totalReservation +
-                ", betFee=" + betFee +
-                ", bingoResult='" + bingoResult + '\'' +
+                ", totalReservationReturning=" + totalReservationReturning +
                 ", guessOverUnit='" + guessOverUnit + '\'' +
                 ", choiceInput='" + choiceInput + '\'' +
                 ", sumBoxInput='" + sumBoxInput + '\'' +

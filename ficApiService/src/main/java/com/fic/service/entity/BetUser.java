@@ -19,9 +19,9 @@ public class BetUser {
 
     private BigDecimal closeWithReturning;
 
-    private BigDecimal tradeFee;
+    private BigDecimal betFee;
 
-    private BigDecimal rewardPool;
+    private BigDecimal reserveFee;
 
     private BigDecimal betWeekTotalBox;
 
@@ -81,20 +81,20 @@ public class BetUser {
         this.closeWithReturning = closeWithReturning;
     }
 
-    public BigDecimal getTradeFee() {
-        return tradeFee;
+    public BigDecimal getBetFee() {
+        return betFee;
     }
 
-    public void setTradeFee(BigDecimal tradeFee) {
-        this.tradeFee = tradeFee;
+    public void setBetFee(BigDecimal betFee) {
+        this.betFee = betFee;
     }
 
-    public BigDecimal getRewardPool() {
-        return rewardPool;
+    public BigDecimal getReserveFee() {
+        return reserveFee;
     }
 
-    public void setRewardPool(BigDecimal rewardPool) {
-        this.rewardPool = rewardPool;
+    public void setReserveFee(BigDecimal reserveFee) {
+        this.reserveFee = reserveFee;
     }
 
     public BigDecimal getBetAmount() {

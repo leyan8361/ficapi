@@ -39,6 +39,9 @@ public class Invest {
     }
 
     public BigDecimal getBalance() {
+        if(null == balance){
+            return BigDecimal.ZERO;
+        }
         return balance;
     }
 

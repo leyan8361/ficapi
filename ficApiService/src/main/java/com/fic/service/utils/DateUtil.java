@@ -44,12 +44,34 @@ public class DateUtil {
         return dateString;
     }
 
-    public static String getYesterdayAndFormatDay() {
+    public static String getYesTodayAndFormatDay() {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        LocalDate localDate = LocalDate.now();
+        localDate = localDate.minusDays(1);
+        String dateString = localDate.format(formatter);
+        return dateString;
+    }
+
+    public static String getYestodayForMaoYan() {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
         LocalDate localDate = LocalDate.now();
         localDate = localDate.minusDays(1);
         String dateString = localDate.format(formatter);
         return dateString;
+    }
+
+    public static Date plusDateOneDay(Date date,int dayNum) {
+        LocalDate localDate = DateUtil.dateToLocalDate(date);
+        localDate = localDate.plusDays(dayNum);
+        date = DateUtil.LocalDateToDate(localDate);
+        return date;
+    }
+
+    public static void main(String args[]){
+        Date date = new Date();
+        date = DateUtil.plusDateOneDay(date,1);
+        String day = DateUtil.dateToStrMatDay(date);
+        System.out.println(day);
     }
 
     public static Date minDateOneDay(Date date) {
@@ -115,7 +137,7 @@ public class DateUtil {
     }
 
     public static Date toMinFormatDay(String dateStr){
-        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
         Date result = null;
         try{
             if(StringUtils.isNotEmpty(dateStr)){

@@ -42,6 +42,7 @@ public class MaoYanServiceImpl implements MaoYanService {
     public Map<String,BoxOffice> getDataByDate(String date) {
         Map<String,BoxOffice> resultList = new HashMap<String,BoxOffice>();
         JSONObject result = okHttpUtil.get(serverProperties.getMaoYanUrl()+"?beginDate="+ date);
+        System.out.println(serverProperties.getMaoYanUrl()+"?beginDate="+ date);
         if(null == result){
             log.error(" 抓取猫眼数据 失败 时间 :{}",new Date());
         }

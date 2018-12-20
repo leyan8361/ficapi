@@ -23,5 +23,5 @@ public interface BetScenceMapper {
 
     int updateStatus(int status,int id);
 
-    List<BetScence> getByBetType(int betType);
+    BetScence getByBetType(int betType);
 }

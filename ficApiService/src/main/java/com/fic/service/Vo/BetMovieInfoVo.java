@@ -29,13 +29,16 @@ public class BetMovieInfoVo {
     @ApiModelProperty(value = "竞猜电影封面URL")
     private String betMovieCoverUrl;
 
-    @ApiModelProperty(value = "上架时间",required = true)
-    @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
-    private Date activityTime;
-
-    @ApiModelProperty(value = "下架时间",required = true)
-    @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
-    private Date disabledTime;
+//    @ApiModelProperty(value = "上架时间",required = true)
+//    @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
+//    private Date activityTime;
+//
+//    @ApiModelProperty(value = "下架时间",required = true)
+//    @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
+//    private Date disabledTime;
+    @ApiModelProperty(value = "开奖时间",required = true)
+    @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd")
+    private Date openDay;
 
     @ApiModelProperty(value = "电影类型",example = "动作、冒险",required = true)
     private String movieType;
@@ -48,7 +51,7 @@ public class BetMovieInfoVo {
     private Date showTime;
 
     @ApiModelProperty(value = "按SumDay统计票房 单位万")
-    private BigDecimal boxInfo;
+    private String boxInfo;
 
     @ApiModelProperty(value = "总票房 包含单位")
     private String sumBoxInfo;
@@ -91,22 +94,22 @@ public class BetMovieInfoVo {
     public void setBetMovieCoverUrl(String betMovieCoverUrl) {
         this.betMovieCoverUrl = betMovieCoverUrl;
     }
-
-    public Date getActivityTime() {
-        return activityTime;
-    }
-
-    public void setActivityTime(Date activityTime) {
-        this.activityTime = activityTime;
-    }
-
-    public Date getDisabledTime() {
-        return disabledTime;
-    }
-
-    public void setDisabledTime(Date disabledTime) {
-        this.disabledTime = disabledTime;
-    }
+//
+//    public Date getActivityTime() {
+//        return activityTime;
+//    }
+//
+//    public void setActivityTime(Date activityTime) {
+//        this.activityTime = activityTime;
+//    }
+//
+//    public Date getDisabledTime() {
+//        return disabledTime;
+//    }
+//
+//    public void setDisabledTime(Date disabledTime) {
+//        this.disabledTime = disabledTime;
+//    }
 
     public String getMovieType() {
         return movieType;
@@ -132,11 +135,12 @@ public class BetMovieInfoVo {
         this.showTime = showTime;
     }
 
-    public BigDecimal getBoxInfo() {
+
+    public String getBoxInfo() {
         return boxInfo;
     }
 
-    public void setBoxInfo(BigDecimal boxInfo) {
+    public void setBoxInfo(String boxInfo) {
         this.boxInfo = boxInfo;
     }
 
@@ -162,5 +166,13 @@ public class BetMovieInfoVo {
 
     public void setScenceMovieId(Integer scenceMovieId) {
         this.scenceMovieId = scenceMovieId;
+    }
+
+    public Date getOpenDay() {
+        return openDay;
+    }
+
+    public void setOpenDay(Date openDay) {
+        this.openDay = openDay;
     }
 }

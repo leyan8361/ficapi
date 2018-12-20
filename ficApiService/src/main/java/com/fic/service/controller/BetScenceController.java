@@ -42,18 +42,18 @@ public class BetScenceController {
 
 
 
-    @GetMapping("/onShelf")
-    @ApiOperation("上架竞猜项目")
-    public ResponseEntity onShelf() {
-        log.debug(" bet on shelf !!!");
-
-        return ResponseEntity.ok().body("success");
-    }
-
-    @GetMapping("/shelf")
-    @ApiOperation("下架竞猜项目")
-    public ResponseEntity shelf() {
-        log.debug(" bet shelf !!!");
-        return ResponseEntity.ok().body("success");
-    }
+//    @GetMapping("/onShelf")
+//    @ApiOperation("上架竞猜项目")
+//    public ResponseEntity onShelf() {
+//        log.debug(" bet on shelf !!!");
+//
+//        return ResponseEntity.ok().body("success");
+//    }
+//
+//    @GetMapping("/shelf")
+//    @ApiOperation("下架竞猜项目")
+//    public ResponseEntity shelf() {
+//        log.debug(" bet shelf !!!");
+//        return ResponseEntity.ok().body("success");
+//    }
 }

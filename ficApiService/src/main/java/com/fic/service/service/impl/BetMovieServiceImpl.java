@@ -2,21 +2,20 @@ package com.fic.service.service.impl;
 
 import com.fic.service.Enum.ErrorCodeEnum;
 import com.fic.service.Enum.ShelfStatusEnum;
-import com.fic.service.Vo.BetMovieVo;
-import com.fic.service.Vo.ResponseVo;
+import com.fic.service.Vo.*;
 import com.fic.service.constants.Constants;
 import com.fic.service.constants.UploadProperties;
 import com.fic.service.entity.BetMovie;
 import com.fic.service.entity.BetScence;
+import com.fic.service.entity.BetScenceMovie;
 import com.fic.service.entity.BoxOffice;
-import com.fic.service.entity.User;
-import com.fic.service.mapper.BetMovieMapper;
-import com.fic.service.mapper.BoxOfficeMapper;
+import com.fic.service.mapper.*;
 import com.fic.service.service.BetMovieService;
 import com.fic.service.utils.BeanUtil;
 import com.fic.service.utils.DateUtil;
 import com.fic.service.utils.FileUtil;
 import com.fic.service.utils.RegexUtil;
+import net.bytebuddy.asm.Advice;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,7 +23,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -47,54 +45,143 @@ public class BetMovieServiceImpl implements BetMovieService {
     FileUtil fileUtil;
     @Autowired
     UploadProperties uploadProperties;
+    @Autowired
+    BetScenceMapper betScenceMapper;
+    @Autowired
+    BetScenceMovieMapper betScenceMovieMapper;
+    @Autowired
+    BetUserMapper betUserMapper;
 
     @Override
-    public ResponseVo getAll() {
-        List<BetMovieVo> resultList = new ArrayList<>();
-        List<BetMovie> findResult = betMovieMapper.findAll();
-        if(findResult.size() ==0){
-            return new ResponseVo(ErrorCodeEnum.BET_NO_MOVIE,null);
+    public ResponseVo getMovieOn(int betType) {
+        BetScence betScence = betScenceMapper.getByBetType(betType);
+        if(null == betScence){
+            log.error(" getHistory no scence for the betType :{}",betType);
+            throw new RuntimeException();
         }
-        for(BetMovie betMovie: findResult){
-                BetMovieVo result = new BetMovieVo();
-                BeanUtil.copy(result,betMovie);
-                result.setBetMovieCoverUrl(uploadProperties.getUrl(betMovie.getBetMovieCoverUrl()));
 
-                BoxOffice boxOffice = boxOfficeMapper.findByDay(DateUtil.getYesterdayAndFormatDay(),betMovie.getId());
-
-                if(null == boxOffice){
-                    continue;
-                }
-                result.setBoxInfo(boxOffice.getBoxInfo());
-                result.setSumDay(boxOffice.getSumDay());
-                result.setSumBoxInfo(boxOffice.getSumBoxInfo() + boxOffice.getSumBoxInfoUnit());
-
-                resultList.add(result);
+        List<BetMovieInfoVo> movieInfoList = new ArrayList<BetMovieInfoVo>();
+        List<BetMovie> movies = betMovieMapper.findAllOnByScenceId(betScence.getId());
+        if(movies.size() == 0){
+            return new ResponseVo(ErrorCodeEnum.THE_SCENCE_HAS_NO_MOVIE,null);
         }
-        return new ResponseVo(ErrorCodeEnum.SUCCESS,resultList);
+        for(BetMovie movie : movies){
+            BetMovieInfoVo movieResult = new BetMovieInfoVo();
+            BeanUtil.copy(movieResult,movie);
+            movieResult.setOpenDay(DateUtil.plusDateOneDay(new Date(),1));
+            movieResult.setScenceMovieId(betScenceMovieMapper.findIdByScenceAndMovieOn(betScence.getId(),movie.getId()));
+            movieResult.setBetMovieCoverUrl(uploadProperties.getUrl(movie.getBetMovieCoverUrl()));
+            /**统计票房*/
+            BoxOffice boxOffice = boxOfficeMapper.findByDay(DateUtil.getYesTodayAndFormatDay(),movie.getId());
+            if(null == boxOffice){
+                continue;
+            }
+            movieResult.setBoxInfo(boxOffice.getBoxInfo() + boxOffice.getBoxInfoUnit());
+            movieResult.setSumBoxInfo(boxOffice.getSumBoxInfo() + boxOffice.getSumBoxInfoUnit());
+            movieResult.setSumDay(boxOffice.getSumDay());
+            /**
+             * 统计投注人数
+             * betType @Type BetTypeEnum
+             */
+            switch (betType) {
+                case 0:
+                    /** 当猜单双时 */
+                    BetOddEvenVo oddEvenVo = betUserMapper.countOddEven(betScence.getId(),movie.getId());
+                    movieResult.setBetCountVo(oddEvenVo);
+                    break;
+                case 1:
+                    /** 是否能超过竞猜票房 */
+                    BetGuessOverVo guessOverVo = betUserMapper.countGuessOverEven(betScence.getId(),movie.getId());
+                    movieResult.setBetCountVo(guessOverVo);
+                    break;
+                case 2:
+                    /** 选择题 */
+                    BetChoiceVo choiceVo = betUserMapper.countChooice(betScence.getId(),movie.getId());
+                    movieResult.setBetCountVo(choiceVo);
+                    break;
+                case 3:
+                    /** 竞猜总票房 */
+                    Integer guessTotalBox = betUserMapper.countGuessTotalBox(betScence.getId(),movie.getId());
+                    movieResult.setBetCountVo(guessTotalBox);
+                    break;
+                default:
+                    movieResult.setBetCountVo(null);
+                    break;
+            }
+            movieInfoList.add(movieResult);
+        }
+//        List<BetMovieVo> resultList = new ArrayList<>();
+//        List<BetMovie> findResult = betMovieMapper.findAll();
+//        if(findResult.size() ==0){
+//            return new ResponseVo(ErrorCodeEnum.BET_NO_MOVIE,null);
+//        }
+//        for(BetMovie betMovie: findResult){
+//                BetMovieVo result = new BetMovieVo();
+//                BeanUtil.copy(result,betMovie);
+//                result.setBetMovieCoverUrl(uploadProperties.getUrl(betMovie.getBetMovieCoverUrl()));
+//
+//                BoxOffice boxOffice = boxOfficeMapper.findByDay(DateUtil.getYesTodayAndFormatDay(),betMovie.getId());
+//
+//                if(null == boxOffice){
+//                    continue;
+//                }
+//                result.setBoxInfo(boxOffice.getBoxInfo());
+//                result.setSumDay(boxOffice.getSumDay());
+//                result.setSumBoxInfo(boxOffice.getSumBoxInfo() + boxOffice.getSumBoxInfoUnit());
+//
+//                resultList.add(result);
+//        }
+        return new ResponseVo(ErrorCodeEnum.SUCCESS,movieInfoList);
     }
 
     @Override
-    public ResponseVo getHistory() {
-        List<BetMovieVo> resultList = new ArrayList<>();
-        List<BoxOffice> findResult = boxOfficeMapper.findAllByDay(DateUtil.getYesterdayAndFormatDay());
-        if(findResult.isEmpty()){
-            return  new ResponseVo(ErrorCodeEnum.BET_BOX_NOT_FOUND,resultList);
+    public ResponseVo getHistory(int betType) {
+        List<BetMovieDrawVo> drawMovieItem = new ArrayList<BetMovieDrawVo>();
+        BetScence betScence = betScenceMapper.getByBetType(betType);
+        if(null == betScence){
+            log.error(" getHistory no scence for the betType :{}",betType);
+            return new ResponseVo(ErrorCodeEnum.THE_SCENCE_HAS_NO_MOVIE,null);
         }
-        for(BoxOffice boxOffice: findResult){
-            BetMovie betMovie = betMovieMapper.selectByPrimaryKey(boxOffice.getMovieId());
-            if(null == betMovie){
-                continue;
+        List<BetMovie> drawMovies = betMovieMapper.findAllOffByScenceId(betScence.getId());
+        if(drawMovies.size() != 0){
+            for(BetMovie betMovie: drawMovies){
+                BetMovieDrawVo drawMovieResult = new BetMovieDrawVo();
+                BeanUtil.copy(drawMovieResult,betMovie);
+                drawMovieResult.setBetMovieCoverUrl(uploadProperties.getUrl(betMovie.getBetMovieCoverUrl()));
+                /**统计票房*/
+                BoxOffice boxOffice = boxOfficeMapper.findByDay(DateUtil.getYesTodayAndFormatDay(),betMovie.getId());
+                if(null == boxOffice){
+                    continue;
+                }
+                drawMovieResult.setScenceMovieId(betScenceMovieMapper.findIdByScenceAndMovieOff(betScence.getId(),betMovie.getId(),DateUtil.getYesTodayAndFormatDay()));
+                drawMovieResult.setBoxInfo(boxOffice.getBoxInfo() + boxOffice.getBoxInfoUnit());
+                drawMovieResult.setSumBoxInfo(boxOffice.getSumBoxInfo() + boxOffice.getSumBoxInfoUnit());
+                drawMovieResult.setSumDay(boxOffice.getSumDay());
+                drawMovieItem.add(drawMovieResult);
             }
-            BetMovieVo result = new BetMovieVo();
-            BeanUtil.copy(result,betMovie);
-            result.setBetMovieCoverUrl(uploadProperties.getUrl(betMovie.getBetMovieCoverUrl()));
-            result.setBoxInfo(boxOffice.getBoxInfo());
-            result.setSumBoxInfo(boxOffice.getSumBoxInfo() + boxOffice.getSumBoxInfoUnit());
-            result.setSumDay(boxOffice.getSumDay());
-            resultList.add(result);
+        }else{
+            return new ResponseVo(ErrorCodeEnum.NO_AVALIBLE_SCENCE,null);
         }
-        return  new ResponseVo(ErrorCodeEnum.SUCCESS,resultList);
+//
+//        List<BetMovieVo> resultList = new ArrayList<>();
+//        List<BoxOffice> findResult = boxOfficeMapper.findAllByDay(DateUtil.getYesTodayAndFormatDay());
+//        if(findResult.isEmpty()){
+//            return  new ResponseVo(ErrorCodeEnum.BET_BOX_NOT_FOUND,resultList);
+//        }
+//        for(BoxOffice boxOffice: findResult){
+//            BetMovie betMovie = betMovieMapper.selectByPrimaryKey(boxOffice.getMovieId());
+//            if(null == betMovie){
+//                continue;
+//            }
+//            BetMovieVo result = new BetMovieVo();
+//            BeanUtil.copy(result,betMovie);
+//            result.setBetMovieCoverUrl(uploadProperties.getUrl(betMovie.getBetMovieCoverUrl()));
+//            result.setBoxInfo(boxOffice.getBoxInfo());
+//            result.setSumBoxInfo(boxOffice.getSumBoxInfo() + boxOffice.getSumBoxInfoUnit());
+//            result.setSumDay(boxOffice.getSumDay());
+//            resultList.add(result);
+//        }
+        return  new ResponseVo(ErrorCodeEnum.SUCCESS,drawMovieItem);
     }
 
     @Override
@@ -105,7 +192,7 @@ public class BetMovieServiceImpl implements BetMovieService {
             return new ResponseVo(ErrorCodeEnum.BET_NO_MOVIE,null);
         }
         BeanUtil.copy(result,findReuslt);
-        BoxOffice boxOffice = boxOfficeMapper.findByDay(DateUtil.getYesterdayAndFormatDay(),movieId);
+        BoxOffice boxOffice = boxOfficeMapper.findByDay(DateUtil.getYesTodayAndFormatDay(),movieId);
         if(null == boxOffice){
             return new ResponseVo(ErrorCodeEnum.BET_BOX_NOT_FOUND,null);
         }

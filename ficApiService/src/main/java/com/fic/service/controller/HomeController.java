@@ -55,10 +55,21 @@ public class HomeController {
     public ResponseEntity home() {
         System.out.println("index !!!!!");
         log.debug(" Home Page !!!");
-//        maoYanService.getDataByDate(DateUtil.getYesterdayAndFormatDay());
-        betScheduledService.doBoxPull();
+//        maoYanService.getDataByDate(DateUtil.getYesTodayAndFormatDay());
+//        betScheduledService.doBoxPull();//拉数据
+        betScheduledService.openPrice();
         return ResponseEntity.ok().body("success");
     }
+
+    @GetMapping("/pull")
+    @ApiOperation("获取票房数据")
+//    @RequiresAuthentication
+    public ResponseEntity pull() {
+        System.out.println("pull !!!!!");
+        betScheduledService.doBoxPull();//拉数据
+        return ResponseEntity.ok().body("success");
+    }
+
     @GetMapping("/user")
     @ApiOperation("测试普通用户权限")
     public ResponseEntity user() {

@@ -24,14 +24,14 @@ public class BetInfoVo {
     @ApiModelProperty(value = "项目类型(0,单双）(1,能不能)(2, ABCD)(3,总票房)",required = true)
     private Byte betType;
 
-    @ApiModelProperty(value = "手续费 %比",required = true)
-    private BigDecimal betFee;
+//    @ApiModelProperty(value = "手续费 %比",required = true)
+//    private BigDecimal betFee;
+//
+//    @ApiModelProperty(value = "中奖类型，待定")
+//    private Integer bingoType;
 
-    @ApiModelProperty(value = "中奖类型，待定")
-    private Integer bingoType;
-
-    @ApiModelProperty(value = "开奖时间",required = true)
-    private Date bingoTime;
+//    @ApiModelProperty(value = "开奖时间",required = true)
+//    private Date bingoTime;
 
     @ApiModelProperty(value = "(0，下架)(1,上架)，默认下架")
     private Byte status;
@@ -100,29 +100,29 @@ public class BetInfoVo {
         this.betType = betType;
     }
 
-    public BigDecimal getBetFee() {
-        return betFee;
-    }
-
-    public void setBetFee(BigDecimal betFee) {
-        this.betFee = betFee;
-    }
-
-    public Integer getBingoType() {
-        return bingoType;
-    }
-
-    public void setBingoType(Integer bingoType) {
-        this.bingoType = bingoType;
-    }
-
-    public Date getBingoTime() {
-        return bingoTime;
-    }
-
-    public void setBingoTime(Date bingoTime) {
-        this.bingoTime = bingoTime;
-    }
+//    public BigDecimal getBetFee() {
+//        return betFee;
+//    }
+//
+//    public void setBetFee(BigDecimal betFee) {
+//        this.betFee = betFee;
+//    }
+//
+//    public Integer getBingoType() {
+//        return bingoType;
+//    }
+//
+//    public void setBingoType(Integer bingoType) {
+//        this.bingoType = bingoType;
+//    }
+//
+//    public Date getBingoTime() {
+//        return bingoTime;
+//    }
+//
+//    public void setBingoTime(Date bingoTime) {
+//        this.bingoTime = bingoTime;
+//    }
 
     public Byte getStatus() {
         return status;

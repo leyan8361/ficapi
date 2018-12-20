@@ -13,9 +13,9 @@ import org.springframework.web.multipart.MultipartFile;
  **/
 public interface BetMovieService {
 
-    ResponseVo getAll();
+    ResponseVo getMovieOn(int betType);
 
-    ResponseVo getHistory();
+    ResponseVo getHistory(int betType);
 
     ResponseVo getById(int movieId);
 

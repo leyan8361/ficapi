@@ -9,14 +9,14 @@
     <result column="bingo" jdbcType="TINYINT" property="bingo" />
     <result column="bingo_price" jdbcType="DECIMAL" property="bingoPrice" />
     <result column="close_with_returning" jdbcType="DECIMAL" property="closeWithReturning" />
-    <result column="trade_fee" jdbcType="DECIMAL" property="tradeFee" />
-    <result column="reward_pool" jdbcType="DECIMAL" property="rewardPool" />
+    <result column="bet_fee" jdbcType="DECIMAL" property="betFee" />
+    <result column="reserve_fee" jdbcType="DECIMAL" property="reserveFee" />
     <result column="bet_amount" jdbcType="DECIMAL" property="betAmount" />
     <result column="bet_week_total_box" jdbcType="DECIMAL" property="betWeekTotalBox" />
   </resultMap>
   <sql id="Base_Column_List">
     id, user_id, bet_scence_movie_id, bet_which, bingo, bingo_price, close_with_returning,
-    trade_fee, reward_pool, bet_amount, bet_week_total_box
+    bet_fee, reserve_fee, bet_amount, bet_week_total_box
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
     select
@@ -31,11 +31,11 @@
   <insert id="insert" parameterType="com.fic.service.entity.BetUser">
     insert into bet_user (id, user_id, bet_scence_movie_id,
       bet_which, bingo, bingo_price,
-      close_with_returning, trade_fee, reward_pool,
+      close_with_returning, bet_fee, reserve_fee,
       bet_amount, bet_week_total_box)
     values (#{id,jdbcType=INTEGER}, #{userId,jdbcType=INTEGER}, #{betScenceMovieId,jdbcType=INTEGER},
       #{betWhich,jdbcType=VARCHAR}, #{bingo,jdbcType=TINYINT}, #{bingoPrice,jdbcType=DECIMAL},
-      #{closeWithReturning,jdbcType=DECIMAL}, #{tradeFee,jdbcType=DECIMAL}, #{rewardPool,jdbcType=DECIMAL},
+      #{closeWithReturning,jdbcType=DECIMAL}, #{betFee,jdbcType=DECIMAL}, #{reserveFee,jdbcType=DECIMAL},
       #{betAmount,jdbcType=DECIMAL}, #{betWeekTotalBox,jdbcType=DECIMAL})
   </insert>
   <insert id="insertSelective" parameterType="com.fic.service.entity.BetUser">
@@ -62,11 +62,11 @@
       <if test="closeWithReturning != null">
         close_with_returning,
       </if>
-      <if test="tradeFee != null">
-        trade_fee,
+      <if test="betFee != null">
+        bet_fee,
       </if>
-      <if test="rewardPool != null">
-        reward_pool,
+      <if test="reserveFee != null">
+        reserve_fee,
       </if>
       <if test="betAmount != null">
         bet_amount,
@@ -97,11 +97,11 @@
       <if test="closeWithReturning != null">
         #{closeWithReturning,jdbcType=DECIMAL},
       </if>
-      <if test="tradeFee != null">
-        #{tradeFee,jdbcType=DECIMAL},
+      <if test="betFee != null">
+        #{betFee,jdbcType=DECIMAL},
       </if>
-      <if test="rewardPool != null">
-        #{rewardPool,jdbcType=DECIMAL},
+      <if test="reserveFee != null">
+        #{reserveFee,jdbcType=DECIMAL},
       </if>
       <if test="betAmount != null">
         #{betAmount,jdbcType=DECIMAL},
@@ -132,11 +132,11 @@
       <if test="closeWithReturning != null">
         close_with_returning = #{closeWithReturning,jdbcType=DECIMAL},
       </if>
-      <if test="tradeFee != null">
-        trade_fee = #{tradeFee,jdbcType=DECIMAL},
+      <if test="betFee != null">
+        bet_fee = #{betFee,jdbcType=DECIMAL},
       </if>
-      <if test="rewardPool != null">
-        reward_pool = #{rewardPool,jdbcType=DECIMAL},
+      <if test="reserveFee != null">
+        reserve_fee = #{reserveFee,jdbcType=DECIMAL},
       </if>
       <if test="betAmount != null">
         bet_amount = #{betAmount,jdbcType=DECIMAL},
@@ -155,8 +155,8 @@
       bingo = #{bingo,jdbcType=TINYINT},
       bingo_price = #{bingoPrice,jdbcType=DECIMAL},
       close_with_returning = #{closeWithReturning,jdbcType=DECIMAL},
-      trade_fee = #{tradeFee,jdbcType=DECIMAL},
-      reward_pool = #{rewardPool,jdbcType=DECIMAL},
+      bet_fee = #{betFee,jdbcType=DECIMAL},
+      reserve_fee = #{reserveFee,jdbcType=DECIMAL},
       bet_amount = #{betAmount,jdbcType=DECIMAL},
       bet_week_total_box = #{betWeekTotalBox,jdbcType=DECIMAL}
     where id = #{id,jdbcType=INTEGER}

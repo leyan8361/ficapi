@@ -14,6 +14,8 @@ public enum FinanceTypeEnum {
     INVEST(4,"投资"),
     REWARD(5,"奖励"),
     BET_REWARD(6,"竞猜奖励"),
+    BET_RETURNING(7,"竞猜返还"),
+    BET(8,"投注"),
     ;
 
     private Integer code;

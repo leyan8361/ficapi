@@ -12,7 +12,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
@@ -60,7 +59,7 @@ public class BetScheduledService {
             log.debug(" do Box Pull action no bet movie return !");
             return;
         }
-        String sumDay = DateUtil.getYesterdayAndFormatDay();
+        String sumDay = DateUtil.getYestodayForMaoYan();
         Map<String,BoxOffice> boxOfficesFromMaoYan = maoYanService.getDataByDate(sumDay);
         for(BetMovie movie : betMovieList){
             String movieName = movie.getBetMovieName();
@@ -91,7 +90,7 @@ public class BetScheduledService {
 
     @Transactional(isolation= Isolation.READ_COMMITTED,propagation= Propagation.REQUIRED,rollbackFor = Exception.class)
     public void openPrice(){
-        String yestToday = DateUtil.getYesterdayAndFormatDay();
+        String yestToday = DateUtil.getYesTodayAndFormatDay();
         /** 查找 昨天 场次*/
         List<BetScenceMovie> betScenceMovies = betScenceMovieMapper.findByDate(yestToday);
         if(betScenceMovies.size() ==0){
@@ -135,14 +134,53 @@ public class BetScheduledService {
             doChangeScenceMoviceStatus(betScenceMovie, betScence, boxOffice);
             /** 计算 竞猜用户 奖励*/
             if(betScenceMovie.getStatus().equals(BetScenceMovieStatusEnum.DRAW.getCode().byteValue())){
-                calBetUserReward(betScenceMovie, betUsers, betScence);
+                calBetUserReward(betScenceMovie, betUsers);
             }
-
+            /** 开奖失败 计算用户 退回 */
+            if(betScenceMovie.getStatus().equals(BetScenceMovieStatusEnum.CLOSE_RETURN.getCode().byteValue())) {
+                doReturning(betScenceMovie, betUsers);
+            }
+            int updateScenceMovieResult = betScenceMovieMapper.updateByPrimaryKeySelective(betScenceMovie);
+            if(updateScenceMovieResult <=0){
+                log.error(" 更新 场次 失败， id :{}",betScenceMovie.getId());
+                throw new RuntimeException();
+            }
 
         }
     }
 
-    private void calBetUserReward(BetScenceMovie betScenceMovie, List<BetUser> betUsers, BetScence betScence) {
+    private void doReturning(BetScenceMovie betScenceMovie, List<BetUser> betUsers) {
+        boolean hasRe = false;
+        if(betScenceMovie.getHasReservation().equals((byte)1)){
+            hasRe = true;
+        }
+        if(hasRe){
+            BigDecimal totalReserveAmount = (null!=betScenceMovie.getTotalReservation()?betScenceMovie.getTotalReservation():BigDecimal.ZERO);
+            BigDecimal totalReserveReturningAmount = (null!=betScenceMovie.getTotalReservationReturning()?betScenceMovie.getTotalReservationReturning():BigDecimal.ZERO);
+            boolean isEnough = false;
+            /** 备用金足以赔付 */
+            if(totalReserveAmount.compareTo(totalReserveReturningAmount) >=0){
+                isEnough = true;
+            }else{
+                isEnough = false;
+            }
+            for(BetUser returnUser: betUsers){
+                if(!isEnough){
+                    returnUser.setBingo(BingoStatusEnum.CLOSE_RETURNING_EXCEPTION.getCode().byteValue());
+                }else{
+                    returnUser.setBingo(BingoStatusEnum.CLOSE_RETURNING.getCode().byteValue());
+                    generateBalanceAndUpdateInvest(returnUser.getUserId(),returnUser.getBetAmount(), FinanceTypeEnum.BET_RETURNING.getCode());
+                }
+                int updateBetUser = betUserMapper.updateByPrimaryKeySelective(returnUser);
+                if(updateBetUser <=0){
+                    log.error(" 更新 竞猜用户失败 bet user id :{]",returnUser.getId());
+                    throw new RuntimeException();
+                }
+            }
+        }
+    }
+
+    private void calBetUserReward(BetScenceMovie betScenceMovie, List<BetUser> betUsers) {
         BigDecimal odds = betScenceMovie.getBingoOdds();
         boolean hasJa = false;
         boolean hasRe = false;
@@ -158,45 +196,52 @@ public class BetScheduledService {
         }
         /** 用户计算奖励 */
         for(BetUser betUser : betUsers){
-            switch (betScence.getBetType()){
-                case 0:
-                    /** 当猜单双时 */
-                    if(betScenceMovie.getStatus().equals(BetScenceMovieStatusEnum.CLOSE.getCode().byteValue())){
-                        /** 异常情况 */
-                        //TODO
-                        break;
-                    }
-                    if(!betScenceMovie.getStatus().equals(BetScenceMovieStatusEnum.DRAW.getCode().byteValue())){
-                        log.error(" 竞猜票房，猜单双，场次状态显示未开奖， 无法开奖 scenceMovieId :{}",betScenceMovie.getId());
-                        break;
-                    }
-                    if(betUser.getBetWhich().equals(betScenceMovie.getDrawResult())){
-                        /** Bingo */
-                        BigDecimal reward = BigDecimal.ZERO;
-                        BigDecimal betAmount = betUser.getBetAmount();
+            BigDecimal betAmount = betUser.getBetAmount();
 
-                    }
-                    break;
-                case 1:
-                    /** 是否能超过竞猜票房 */
+            if(betUser.getBetWhich().equals(betScenceMovie.getDrawResult())){
+                /** Bingo */
+                //奖金
+                BigDecimal oddsReward = betAmount.multiply(odds);
+                BigDecimal currentJa = BigDecimal.ZERO;
+                BigDecimal currentRe = BigDecimal.ZERO;
+                if(hasJa){
+                    //奖池手续费
+                    BigDecimal totalJas = (null!=betScenceMovie.getTotalJasckpot()?betScenceMovie.getTotalJasckpot():BigDecimal.ZERO);
+                    currentJa = oddsReward.multiply(jaFee);
+                    totalJas = totalJas.add(currentJa);
+                    betScenceMovie.setTotalJasckpot(totalJas);
+                    betUser.setBetFee(currentJa);
+                }
+                if(hasRe){
+                    //备用金手续费
+                    BigDecimal totalRe = (null!=betScenceMovie.getTotalReservation()?betScenceMovie.getTotalReservation():BigDecimal.ZERO);
+                    currentRe = oddsReward.multiply(reFee);
+                    totalRe = totalRe.add(currentRe);
+                    betScenceMovie.setTotalReservation(totalRe);
+                    betUser.setReserveFee(currentRe);
+                }
+                BigDecimal resultReward = betAmount.add(oddsReward.subtract(currentJa).subtract(currentRe));
+                betUser.setBingoPrice(resultReward);
+                betUser.setBingo(BingoStatusEnum.BINGO.getCode().byteValue());
 
-                    break;
-                case 2:
-                    /** 选择题 */
+                /** 生成 余额变动 */
+                generateBalanceAndUpdateInvest(betUser.getUserId(),resultReward,FinanceTypeEnum.BET_REWARD.getCode());
 
-                    break;
-                case 3:
-                    /** 竞猜总票房 */
-
-                    break;
-                default:
-                    break;
+            }else{
+                /** NOT Bingo */
+                betUser.setBingo(BingoStatusEnum.UN_BINGO.getCode().byteValue());
+            }
+            int updateUser = betUserMapper.updateByPrimaryKeySelective(betUser);
+            if(updateUser <=0){
+                log.error(" 竞猜 更新用户奖励失败, betUserid :{}",betUser.getId());
+                throw new RuntimeException();
             }
         }
     }
 
     private void doChangeScenceMoviceStatus(BetScenceMovie betScenceMovie, BetScence betScence, BoxOffice boxOffice) {
         BigDecimal odds = BigDecimal.ZERO;
+        BigDecimal totalBetAmount = BigDecimal.ZERO;
         /**场次 开奖*/
         switch (betScence.getBetType()){
             case 0:
@@ -209,13 +254,34 @@ public class BetScheduledService {
 
                 /** 赔率 */
                 BetOddEvenAmountVo oddEvenAmountVo = betUserMapper.countOddEvenAmount(betScenceMovie.getId());
-                if(null == oddEvenAmountVo || oddEvenAmountVo.getEvenFic().equals(BigDecimal.ZERO) || oddEvenAmountVo.getOddFic().equals(BigDecimal.ZERO)){
-                    log.error(" 竞猜票房，猜单双，异常情况, 无法开奖 scenceMovieId :{}",betScenceMovie.getId());
-                    betScenceMovie.setStatus(BetScenceMovieStatusEnum.CLOSE.getCode().byteValue());
+                if(null == oddEvenAmountVo){
+                    /** 无人投注 */
+                    log.debug("无人投注 ，竞猜单双 id:{}",betScenceMovie.getId());
+                    betScenceMovie.setStatus(BetScenceMovieStatusEnum.CLOSE_NO_BET.getCode().byteValue());
                     break;
                 }
-                BigDecimal oddTotalAmount = oddEvenAmountVo.getOddFic();
-                BigDecimal evenTotalAmount = oddEvenAmountVo.getEvenFic();
+                BigDecimal oddTotalAmount = (null!=oddEvenAmountVo.getOddFic()?oddEvenAmountVo.getOddFic():BigDecimal.ZERO);
+                BigDecimal evenTotalAmount = (null!=oddEvenAmountVo.getEvenFic()?oddEvenAmountVo.getEvenFic():BigDecimal.ZERO);
+                if(oddTotalAmount.compareTo(BigDecimal.ZERO) <=0 && evenTotalAmount.compareTo(BigDecimal.ZERO) <=0){
+                    /** 无人投注 */
+                    log.debug("无人投注 ，竞猜单双 id:{}",betScenceMovie.getId());
+                    betScenceMovie.setStatus(BetScenceMovieStatusEnum.CLOSE_NO_BET.getCode().byteValue());
+                    break;
+                }
+                if(oddEvenAmountVo.getEvenFic().compareTo(BigDecimal.ZERO) <=0  || oddEvenAmountVo.getOddFic().compareTo(BigDecimal.ZERO) <=0 ){
+                    log.error(" 竞猜票房，猜单双，异常情况, 退还 scenceMovieId :{}",betScenceMovie.getId());
+                    if(oddTotalAmount.compareTo(BigDecimal.ZERO) <=0 && evenTotalAmount.compareTo(BigDecimal.ZERO) > 0){
+                        /** 全部双 */
+                        totalBetAmount = evenTotalAmount;
+                    }
+                    if(evenTotalAmount.compareTo(BigDecimal.ZERO) <=0 && oddTotalAmount.compareTo(BigDecimal.ZERO) > 0){
+                        /** 全部单 */
+                        totalBetAmount = oddTotalAmount;
+                    }
+                    betScenceMovie.setStatus(BetScenceMovieStatusEnum.CLOSE_RETURN.getCode().byteValue());
+                    betScenceMovie.setTotalReservationReturning(totalBetAmount);
+                    break;
+                }
                 if(!odd){
                     //双
                     betScenceMovie.setDrawResult(PriceEnum.EVEN.getCode()+"");
@@ -237,23 +303,43 @@ public class BetScheduledService {
                 }
 
                 /** 赔率 */
-                BetGuessOverVo guessOverVo = betUserMapper.countGuessOverEven(betScenceMovie.getBetScenceId(),betScenceMovie.getBetMovieId());
-                if(null == guessOverVo || guessOverVo.getCanCount().equals(0) || guessOverVo.getCouldntCount().equals(0)){
-                    log.error(" 竞猜票房，猜单双，异常情况, 无法开奖 scenceMovieId :{}",betScenceMovie.getId());
-                    betScenceMovie.setStatus(BetScenceMovieStatusEnum.CLOSE.getCode().byteValue());
+                BetGuessOverAmountVo guessOverVo = betUserMapper.countGuessOverAmount(betScenceMovie.getId());
+                BigDecimal canAmount = guessOverVo.getCanFic();
+                BigDecimal couldntAmount = guessOverVo.getCouldntFic();
+                if(null == guessOverVo){
+                    log.error(" 竞猜票房，是否能超过竞猜票房，异常情况, 无法开奖 scenceMovieId :{}",betScenceMovie.getId());
+                    betScenceMovie.setStatus(BetScenceMovieStatusEnum.CLOSE_NO_BET.getCode().byteValue());
                     break;
                 }
-                BigDecimal canNum = new BigDecimal(guessOverVo.getCanCount());
-                BigDecimal couldntNum = new BigDecimal(guessOverVo.getCouldntCount());
+                if(canAmount.compareTo(BigDecimal.ZERO) <=0 && couldntAmount.compareTo(BigDecimal.ZERO) <=0){
+                    /** 无人投注 */
+                    log.error(" 竞猜票房，是否能超过竞猜票房，异常情况, 无人投注， 无法开奖 scenceMovieId :{}",betScenceMovie.getId());
+                    betScenceMovie.setStatus(BetScenceMovieStatusEnum.CLOSE_NO_BET.getCode().byteValue());
+                    break;
+                }
+                if(canAmount.compareTo(BigDecimal.ZERO) <=0 && couldntAmount.compareTo(BigDecimal.ZERO) >0){
+                    /** 全部不能*/
+                    totalBetAmount = couldntAmount;
+                    betScenceMovie.setTotalReservationReturning(totalBetAmount);
+                    betScenceMovie.setStatus(BetScenceMovieStatusEnum.CLOSE_RETURN.getCode().byteValue());
+                    break;
+                }
+                if(couldntAmount.compareTo(BigDecimal.ZERO) <=0 && canAmount.compareTo(BigDecimal.ZERO) >0){
+                    /** 全部能 */
+                    totalBetAmount = canAmount;
+                    betScenceMovie.setTotalReservationReturning(totalBetAmount);
+                    betScenceMovie.setStatus(BetScenceMovieStatusEnum.CLOSE_RETURN.getCode().byteValue());
+                    break;
+                }
                 boolean isOver = RegexUtil.checkIfOverChieseUnit(boxOffice.getBoxInfoUnit(),boxOffice.getBoxInfo());
                 if(isOver){
                     //能
                     betScenceMovie.setDrawResult(PriceEnum.CAN.getCode()+"");
-                    odds = couldntNum.divide(canNum);
+                    odds = couldntAmount.divide(canAmount);
                 }else{
                     //不能
                     betScenceMovie.setDrawResult(PriceEnum.COULD_NOT.getCode()+"");
-                    odds = canNum.divide(couldntNum);
+                    odds = canAmount.divide(couldntAmount);
                 }
                 betScenceMovie.setBingoOdds(odds);
                 betScenceMovie.setStatus(BetScenceMovieStatusEnum.DRAW.getCode().byteValue());
@@ -272,26 +358,35 @@ public class BetScheduledService {
                 BigDecimal dChoiceAmount = choiceAmountVo.getdChoiceAmount();
 
                 int resultChooice = RegexUtil.matchOption(betScenceMovie.getChoiceInput(),boxOffice.getBoxInfo());
-                if(resultChooice ==0 || (
-                                aChoiceAmount.equals(BigDecimal.ZERO) &&
-                                bChoiceAmount.equals(BigDecimal.ZERO) &&
-                                cChoiceAmount.equals(BigDecimal.ZERO) &&
-                                dChoiceAmount.equals(BigDecimal.ZERO)
-                )){
+                boolean extremeCondition = false;
+                boolean aTag = aChoiceAmount.compareTo(BigDecimal.ZERO) <=0 ?true:false;
+                boolean bTag = bChoiceAmount.compareTo(BigDecimal.ZERO) <=0 ?true:false;
+                boolean cTag = cChoiceAmount.compareTo(BigDecimal.ZERO) <=0 ?true:false;
+                boolean dTag = dChoiceAmount.compareTo(BigDecimal.ZERO) <=0 ?true:false;
+                if(!aTag && bTag && cTag && dTag)extremeCondition = true;
+                if(!bTag && aTag && cTag && dTag)extremeCondition = true;
+                if(!cTag && aTag && bTag && dTag)extremeCondition = true;
+                if(!dTag && aTag && cTag && bTag)extremeCondition = true;
+                if(resultChooice ==0 || (aTag && bTag && cTag && dTag)){
                     log.error(" 竞猜票房，中级场，无人竞猜，设置关闭, 无法开奖 scenceMovieId :{}",betScenceMovie.getId());
-                    betScenceMovie.setStatus(BetScenceMovieStatusEnum.CLOSE.getCode().byteValue());
+                    betScenceMovie.setStatus(BetScenceMovieStatusEnum.CLOSE_NO_BET.getCode().byteValue());
                     break;
                 }
-                if(resultChooice == PriceEnum.A_CHOICE.getCode() && !aChoiceAmount.equals(BigDecimal.ZERO)){
+                if( extremeCondition){
+                    log.error(" 竞猜票房，中级场，异常情况 , 无法开奖 scenceMovieId :{}",betScenceMovie.getId());
+                    betScenceMovie.setStatus(BetScenceMovieStatusEnum.CLOSE_RETURN.getCode().byteValue());
+                    break;
+                }
+                if(resultChooice == PriceEnum.A_CHOICE.getCode() && !(aChoiceAmount.compareTo(BigDecimal.ZERO) <=0)){
                      odds = (bChoiceAmount.add(cChoiceAmount).add(dChoiceAmount)).divide(aChoiceAmount);
                 }
-                if(resultChooice == PriceEnum.B_CHOICE.getCode() && !bChoiceAmount.equals(BigDecimal.ZERO)){
+                if(resultChooice == PriceEnum.B_CHOICE.getCode() && !(bChoiceAmount.compareTo(BigDecimal.ZERO) <=0)){
                     odds = (aChoiceAmount.add(cChoiceAmount).add(dChoiceAmount)).divide(bChoiceAmount);
                 }
-                if(resultChooice == PriceEnum.C_CHOICE.getCode() && !cChoiceAmount.equals(BigDecimal.ZERO)){
+                if(resultChooice == PriceEnum.C_CHOICE.getCode() && !(cChoiceAmount.compareTo(BigDecimal.ZERO) <=0)){
                     odds = (aChoiceAmount.add(bChoiceAmount).add(dChoiceAmount)).divide(cChoiceAmount);
                 }
-                if(resultChooice == PriceEnum.D_CHOICE.getCode() && !dChoiceAmount.equals(BigDecimal.ZERO)){
+                if(resultChooice == PriceEnum.D_CHOICE.getCode() && !(dChoiceAmount.compareTo(BigDecimal.ZERO) <=0)){
                     odds = (aChoiceAmount.add(bChoiceAmount).add(cChoiceAmount)).divide(dChoiceAmount);
                 }
                 betScenceMovie.setStatus(BetScenceMovieStatusEnum.DRAW.getCode().byteValue());
@@ -313,6 +408,7 @@ public class BetScheduledService {
                 List<BoxOffice> levelThreeForCurrentScenceMovice = boxOfficeMapper.countBoxByMovieNameBetween(startDay,endDay,betScenceMovie.getBetMovieId());
                 if(levelThreeForCurrentScenceMovice.size() ==0  || levelThreeForCurrentScenceMovice.size() < 7){
                     log.error(" 竞猜票房，高级场，票房数据不足一周，无法开奖 scenceMovieId :{}",betScenceMovie.getId());
+                    betScenceMovie.setStatus(BetScenceMovieStatusEnum.CLOSE_NO_BET.getCode().byteValue());
                     break;
                 }
                 BigDecimal totalWeekBox = BigDecimal.ZERO;
@@ -330,6 +426,18 @@ public class BetScheduledService {
                 BigDecimal winner = BigDecimal.ZERO;
                 BigDecimal loser = BigDecimal.ZERO;
                 boolean hasBingo = false;
+                if(weekBoxCountVoList.size() == 0){
+                    betScenceMovie.setStatus(BetScenceMovieStatusEnum.CLOSE_NO_BET.getCode().byteValue());
+                    log.error(" 竞猜票房，高级场，异常情况，无人投注");
+
+                    break;
+                }
+                if(0 < weekBoxCountVoList.size() && weekBoxCountVoList.size() < 2){
+                    betScenceMovie.setStatus(BetScenceMovieStatusEnum.CLOSE_RETURN.getCode().byteValue());
+                    log.error(" 竞猜票房，高级场，异常情况，竞猜人数不足以开奖");
+                    updateBetScenceMovie(betScenceMovie);
+                    break;
+                }
                 for(int i = 0 ; i < weekBoxCountVoList.size(); i++){
                     if(weekBoxCountVoList.get(i).getWeekBoxAmount().compareTo(totalWeekBox) ==0){
                         winner = weekBoxCountVoList.get(i).getWeekBoxAmount();
@@ -343,19 +451,32 @@ public class BetScheduledService {
                 }
                 betScenceMovie.setDrawResult(totalWeekBox+"");
                 betScenceMovie.setStatus(BetScenceMovieStatusEnum.DRAW.getCode().byteValue());
+                updateBetScenceMovie(betScenceMovie);
                 break;
             default:
                 break;
         }
+
+        updateBetScenceMovie(betScenceMovie);
     }
 
     @Transactional(isolation= Isolation.READ_COMMITTED,propagation= Propagation.REQUIRED,rollbackFor = Exception.class)
-    public void generateBalanceAndUpdateInvest(int userId,BigDecimal reward){
+    public void updateBetScenceMovie(BetScenceMovie betScenceMovie) {
+            int updateResult = betScenceMovieMapper.updateByPrimaryKeySelective(betScenceMovie);
+            if(updateResult <=0){
+                log.error(" 更新场次失败 ,回滚 ! scencemovieId:{}",betScenceMovie.getId());
+                throw new RuntimeException();
+            }
+    }
+
+
+    @Transactional(isolation= Isolation.READ_COMMITTED,propagation= Propagation.REQUIRED,rollbackFor = Exception.class)
+    public void generateBalanceAndUpdateInvest(int userId,BigDecimal reward,int betStatus){
         BalanceStatement balanceStatement = new BalanceStatement();
         balanceStatement.setUserId(userId);
         balanceStatement.setCreatedTime(new Date());
         balanceStatement.setAmount(reward);
-        balanceStatement.setType(FinanceTypeEnum.BET_REWARD.getCode());
+        balanceStatement.setType(betStatus);
         balanceStatement.setWay(FinanceWayEnum.IN.getCode());
         Invest invest = investMapper.findByUserId(userId);
         if(null == invest){
