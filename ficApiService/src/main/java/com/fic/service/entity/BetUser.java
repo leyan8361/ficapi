@@ -85,6 +85,9 @@ public class BetUser {
     }
 
     public BigDecimal getBetFee() {
+        if(null == this.betFee){
+            return BigDecimal.ZERO;
+        }
         return betFee;
     }
 

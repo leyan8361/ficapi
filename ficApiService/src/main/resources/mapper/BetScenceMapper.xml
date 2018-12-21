@@ -95,6 +95,12 @@
     select * from bet_scence where status = 1 and bet_type = #{betType} order by created_time desc limit 0,1;
   </select>
 
+  <select id="getBetTypeByScenceMovieId" resultType="int">
+    select b.bet_type from bet_scence b
+    left join bet_scence_movie sb on sb.bet_scence_id = b.id
+    where sb.id = #{scenceMovieId};
+  </select>
+
   <update id="updateStatus" parameterType="int">
     update bet_scence set status =  #{status,jdbcType=TINYINT} where #{id,jdbcType=INTEGER}
   </update>

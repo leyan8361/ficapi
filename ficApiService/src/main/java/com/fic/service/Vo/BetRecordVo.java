@@ -37,19 +37,17 @@ public class BetRecordVo {
     @ApiModelProperty(value = "赔率")
     private BigDecimal odds;
 
-    @ApiModelProperty(value = "是否中奖")
-    private boolean bingo;
 
-    @ApiModelProperty(value = "奖金总计")
-    private BigDecimal totalReward;
+    @ApiModelProperty(value = "(0,待开奖)(1，已中奖)(2，未中奖)(3，极端情况，启用备用金，返还竞猜金额)(4，备用金不足以赔付，运营后台人工干预)")
+    private byte bingo;
 
     @ApiModelProperty(value = "投注项")
     private String betWhich;
 
-    @ApiModelProperty(value = "竞猜项目类型")
+    @ApiModelProperty(value = "竞猜 项目类型(0,单双）(1,能不能)(2, ABCD)(3,总票房)")
     private int betType;
 
-    @ApiModelProperty(value = "开奖结果")
+    @ApiModelProperty(value = "开奖结果 (0,猜单双，单)(1,猜单双，双)(2，猜票房能不能，能)(3,猜票房能不能，不能)(4,选择题A)(5,选择题B)(6,选择题C)(7,选择题D)")
     private String drawResult;
 
     @ApiModelProperty(value = "连续奖励金")
@@ -87,20 +85,12 @@ public class BetRecordVo {
         this.odds = odds;
     }
 
-    public boolean isBingo() {
+    public byte getBingo() {
         return bingo;
     }
 
-    public void setBingo(boolean bingo) {
+    public void setBingo(byte bingo) {
         this.bingo = bingo;
-    }
-
-    public BigDecimal getTotalReward() {
-        return totalReward;
-    }
-
-    public void setTotalReward(BigDecimal totalReward) {
-        this.totalReward = totalReward;
     }
 
     public String getBetWhich() {

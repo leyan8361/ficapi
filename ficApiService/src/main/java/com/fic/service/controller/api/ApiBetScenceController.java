@@ -1,8 +1,5 @@
 package com.fic.service.controller.api;
-import com.fic.service.Vo.BetInfoVo;
-import com.fic.service.Vo.BetMovieDrawVo;
-import com.fic.service.Vo.BetMovieInfoVo;
-import com.fic.service.Vo.ResponseVo;
+import com.fic.service.Vo.*;
 import com.fic.service.service.BetScenceService;
 import io.swagger.annotations.*;
 import org.slf4j.Logger;
@@ -84,25 +81,19 @@ public class ApiBetScenceController {
         return ResponseEntity.ok(result);
     }
 
-//    @GetMapping("/getMyBetRecord")
-//    @ApiImplicitParams({
-//            @ApiImplicitParam(dataType = "int", name = "userId", value = "用户ID",required = true)
-//    })
-//    @ApiResponses({
-//            @ApiResponse(code = 1001, message = "User Not Exist"),
-//            @ApiResponse(code = 2000, message = "INVEST NOT EXIST"),
-//            @ApiResponse(code = 2001, message = "INVEST_BALANCE_NOT_ENOUGH"),
-//            @ApiResponse(code = 5006, message = "SCENCE_MOVIE_NOT_EXIST"),
-//            @ApiResponse(code = 5004, message = "NO_AVALIBLE_SCENCE"),
-//            @ApiResponse(code = 5002, message = "NO COULD USED BET MOVIE"),
-//            @ApiResponse(code = 500, message = "System ERROR"),
-//            @ApiResponse(code = 200, message = "SUCCESS")
-//    })
-//    @ApiOperation("获取我的竞猜记录")
-//    public ResponseEntity getMyBetRecord(@RequestParam("userId")int userId
-//    ) {
-//        log.debug("Api get bet record !!!");
-//        ResponseVo result = betScenceService.bet(userId,scenceMovieId,amount,betWhich);
-//        return ResponseEntity.ok(result);
-//    }
+    @GetMapping("/getMyBetRecord")
+    @ApiImplicitParams({
+            @ApiImplicitParam(dataType = "int", name = "userId", value = "用户ID",required = true)
+    })
+    @ApiResponses({
+            @ApiResponse(code = 5009, message = "NO_BET_RECORD"),
+            @ApiResponse(code = 200, message = "SUCCESS",response = BetRecordVo.class)
+    })
+    @ApiOperation("获取我的竞猜记录")
+    public ResponseEntity getMyBetRecord(@RequestParam("userId")int userId
+    ) {
+        log.debug("Api get bet record !!!");
+        ResponseVo result = betScenceService.getMyBetRecord(userId);
+        return ResponseEntity.ok(result);
+    }
 }

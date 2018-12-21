@@ -136,7 +136,6 @@ public class RegexUtil {
         return 0;
     }
 
-
     public static void main(String args[]){
         String version = "b1.12.1";
         System.out.println(RegexUtil.isVersion(version));

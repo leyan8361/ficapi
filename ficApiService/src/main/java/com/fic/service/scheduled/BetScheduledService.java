@@ -106,7 +106,7 @@ public class BetScheduledService {
             }
 
             /**根据开始结束时间，场次持续化，生成今天新场资，直到endDay为昨天，不再生成*/
-            if(betScenceMovie.getEndDay().compareTo(DateUtil.minDateOneDay(new Date())) <=0){
+            if(betScenceMovie.getEndDay().compareTo(DateUtil.minDateOneDay(new Date())) > 0){
                 BetScenceMovie newDayScenceMovie = new BetScenceMovie();
                 BeanUtil.copy(newDayScenceMovie,betScenceMovie);
                 newDayScenceMovie.setId(null);
@@ -250,6 +250,10 @@ public class BetScheduledService {
                 boolean odd = true;
                 if(boxInfo.intValue() % 2 == 0){
                     odd = false;
+                    betScenceMovie.setDrawResult(PriceEnum.ODD.getCode()+"");
+                }else{
+                    //双
+                    betScenceMovie.setDrawResult(PriceEnum.EVEN.getCode()+"");
                 }
 
                 /** 赔率 */
@@ -283,13 +287,10 @@ public class BetScheduledService {
                     break;
                 }
                 if(!odd){
-                    //双
-                    betScenceMovie.setDrawResult(PriceEnum.EVEN.getCode()+"");
                     /** 赔率 */
                     odds = oddTotalAmount.divide(evenTotalAmount);
                 }else{
                     //单
-                    betScenceMovie.setDrawResult(PriceEnum.ODD.getCode()+"");
                     odds = evenTotalAmount.divide(oddTotalAmount);
                 }
                 betScenceMovie.setBingoOdds(odds);
@@ -300,6 +301,17 @@ public class BetScheduledService {
                 if(StringUtils.isEmpty(betScenceMovie.getGuessOverUnit())){
                     log.error(" 竞猜票房，初级场，无设置竞猜单位 ，无法开奖 scenceMovieId :{}",betScenceMovie.getId());
                     break;
+                }
+
+                boolean isOver = RegexUtil.checkIfOverChieseUnit(boxOffice.getBoxInfoUnit(),boxOffice.getBoxInfo());
+
+                if(isOver){
+                    /** 开奖结果*/
+                    //能
+                    betScenceMovie.setDrawResult(PriceEnum.CAN.getCode()+"");
+                }else{
+                    //不能
+                    betScenceMovie.setDrawResult(PriceEnum.COULD_NOT.getCode()+"");
                 }
 
                 /** 赔率 */
@@ -331,14 +343,12 @@ public class BetScheduledService {
                     betScenceMovie.setStatus(BetScenceMovieStatusEnum.CLOSE_RETURN.getCode().byteValue());
                     break;
                 }
-                boolean isOver = RegexUtil.checkIfOverChieseUnit(boxOffice.getBoxInfoUnit(),boxOffice.getBoxInfo());
+
                 if(isOver){
                     //能
-                    betScenceMovie.setDrawResult(PriceEnum.CAN.getCode()+"");
                     odds = couldntAmount.divide(canAmount);
                 }else{
                     //不能
-                    betScenceMovie.setDrawResult(PriceEnum.COULD_NOT.getCode()+"");
                     odds = canAmount.divide(couldntAmount);
                 }
                 betScenceMovie.setBingoOdds(odds);
@@ -358,6 +368,7 @@ public class BetScheduledService {
                 BigDecimal dChoiceAmount = choiceAmountVo.getdChoiceAmount();
 
                 int resultChooice = RegexUtil.matchOption(betScenceMovie.getChoiceInput(),boxOffice.getBoxInfo());
+                betScenceMovie.setDrawResult(resultChooice+"");
                 boolean extremeCondition = false;
                 boolean aTag = aChoiceAmount.compareTo(BigDecimal.ZERO) <=0 ?true:false;
                 boolean bTag = bChoiceAmount.compareTo(BigDecimal.ZERO) <=0 ?true:false;
@@ -390,7 +401,6 @@ public class BetScheduledService {
                     odds = (aChoiceAmount.add(bChoiceAmount).add(cChoiceAmount)).divide(dChoiceAmount);
                 }
                 betScenceMovie.setStatus(BetScenceMovieStatusEnum.DRAW.getCode().byteValue());
-                betScenceMovie.setDrawResult(resultChooice+"");
                 betScenceMovie.setBingoOdds(odds);
                 break;
             case 3:

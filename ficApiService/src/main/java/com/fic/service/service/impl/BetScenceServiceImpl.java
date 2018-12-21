@@ -8,6 +8,7 @@ import com.fic.service.mapper.*;
 import com.fic.service.service.BetScenceService;
 import com.fic.service.utils.BeanUtil;
 import com.fic.service.utils.DateUtil;
+import okhttp3.internal.http2.ErrorCode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -186,11 +187,10 @@ public class BetScenceServiceImpl implements BetScenceService {
     @Override
     public ResponseVo getScence(int betType) {
         BetScence betScence = betScenceMapper.getByBetType(betType);
-        List<BetInfoVo> resultList = new ArrayList<>();
+        BetInfoVo result = new BetInfoVo();
         if(null == betScence){
-            return new ResponseVo(ErrorCodeEnum.NO_AVALIBLE_SCENCE,resultList);
+            return new ResponseVo(ErrorCodeEnum.NO_AVALIBLE_SCENCE,result);
         }
-            BetInfoVo result = new BetInfoVo();
             BeanUtil.copy(result,betScence);
             /** 未开奖的 */
             List<BetMovieInfoVo> movieInfoList = new ArrayList<BetMovieInfoVo>();
@@ -247,7 +247,7 @@ public class BetScenceServiceImpl implements BetScenceService {
 
             /** 开奖了的 */
             List<BetMovieDrawVo> drawMovieItem = new ArrayList<BetMovieDrawVo>();
-            List<BetMovie> drawMovies = betMovieMapper.findAllOffByScenceId(betScence.getId());
+            List<BetMovie> drawMovies = betMovieMapper.findAllOffByScenceId(betScence.getId(),DateUtil.getYestodayForMaoYan());
             if(drawMovies.size() != 0){
                 for(BetMovie betMovie: drawMovies){
                     BetMovieDrawVo drawMovieResult = new BetMovieDrawVo();
@@ -258,7 +258,14 @@ public class BetScenceServiceImpl implements BetScenceService {
                     if(null == boxOffice){
                         continue;
                     }
-                    drawMovieResult.setScenceMovieId(betScenceMovieMapper.findIdByScenceAndMovieOff(betScence.getId(),betMovie.getId(),DateUtil.getYesTodayAndFormatDay()));
+                    BetScenceMovie betScenceMovie =  betScenceMovieMapper.findIdByScenceAndMovieOff(betScence.getId(),betMovie.getId(),DateUtil.getYesTodayAndFormatDay());
+                    if(null == betScenceMovie){
+                        log.error(" 场次不存在 ，跳过, scence  id :{}, movie id :{}",betScence.getId(),betMovie.getId());
+                        continue;
+                    }
+                    drawMovieResult.setStatus(betScenceMovie.getStatus());
+                    drawMovieResult.setDrawResult(betScenceMovie.getDrawResult());
+                    drawMovieResult.setScenceMovieId(betScenceMovie.getId());
                     drawMovieResult.setBoxInfo(boxOffice.getBoxInfo() + boxOffice.getBoxInfoUnit());
                     drawMovieResult.setSumBoxInfo(boxOffice.getSumBoxInfo() + boxOffice.getSumBoxInfoUnit());
                     drawMovieResult.setSumDay(boxOffice.getSumDay());
@@ -267,10 +274,8 @@ public class BetScenceServiceImpl implements BetScenceService {
                 result.setDrawMovieItem(drawMovieItem);
             }
 
-            resultList.add(result);
 
-
-        return new ResponseVo(ErrorCodeEnum.SUCCESS,resultList);
+        return new ResponseVo(ErrorCodeEnum.SUCCESS,result);
     }
 
     @Override
@@ -348,12 +353,33 @@ public class BetScenceServiceImpl implements BetScenceService {
             BetMovie betMovie = betMovieMapper.findByScenceMovieId(betUser.getBetScenceMovieId());
             if(null == betMovie){
                 log.error(" 查找竞猜记录，跳过，查无此电影 scence movie id :{}",betUser.getBetScenceMovieId());
+                continue;
             }
-//            BetScence scence =
-//            recordVo.setBetMovieName(betMovie.getBetMovieName());
-//            recordVo.set
+            Integer betType = betScenceMapper.getBetTypeByScenceMovieId(betUser.getBetScenceMovieId());
+            if(null == betType){
+                log.error(" 无此 betType getMyBetRecord scenceMovieID :{}",betUser.getBetScenceMovieId());
+                continue;
+            }
+
+            BetScenceMovie betScenceMovie = betScenceMovieMapper.findByIdWithoutStatus(betUser.getBetScenceMovieId());
+            if(null == betScenceMovie){
+                log.error(" 无此场次 ，scence movie id :{}",betUser.getBetScenceMovieId());
+                continue;
+            }
+            recordVo.setBetMovieName(betMovie.getBetMovieName());
+            recordVo.setBetAmount(betUser.getBetAmount().setScale(0));
+            recordVo.setBetType(betType);
+            recordVo.setBetWhich(betUser.getBetWhich());
+            recordVo.setBingo(betUser.getBingo());
+            recordVo.setCreatedTime(betUser.getCreatedTime());
+            recordVo.setDrawResult(betUser.getBetWhich());
+            BigDecimal fee = betUser.getBetFee().add(betUser.getReserveFee());
+            recordVo.setFee(fee.setScale(0));
+            recordVo.setOdds(betScenceMovie.getBingoOdds());
+            recordVo.setContinueBetReward(BigDecimal.ZERO);
+            recordVos.add(recordVo);
         }
 
-        return null;
+        return new ResponseVo(ErrorCodeEnum.SUCCESS,recordVos);
     }
 }

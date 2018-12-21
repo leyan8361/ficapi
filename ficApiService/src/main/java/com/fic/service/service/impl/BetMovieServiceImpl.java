@@ -142,7 +142,7 @@ public class BetMovieServiceImpl implements BetMovieService {
             log.error(" getHistory no scence for the betType :{}",betType);
             return new ResponseVo(ErrorCodeEnum.THE_SCENCE_HAS_NO_MOVIE,null);
         }
-        List<BetMovie> drawMovies = betMovieMapper.findAllOffByScenceId(betScence.getId());
+        List<BetMovie> drawMovies = betMovieMapper.findAllOffByScenceId(betScence.getId(),DateUtil.getYestodayForMaoYan());
         if(drawMovies.size() != 0){
             for(BetMovie betMovie: drawMovies){
                 BetMovieDrawVo drawMovieResult = new BetMovieDrawVo();
@@ -153,7 +153,12 @@ public class BetMovieServiceImpl implements BetMovieService {
                 if(null == boxOffice){
                     continue;
                 }
-                drawMovieResult.setScenceMovieId(betScenceMovieMapper.findIdByScenceAndMovieOff(betScence.getId(),betMovie.getId(),DateUtil.getYesTodayAndFormatDay()));
+                BetScenceMovie betScenceMovie = betScenceMovieMapper.findIdByScenceAndMovieOff(betScence.getId(),betMovie.getId(),DateUtil.getYesTodayAndFormatDay());
+                if(null == betScenceMovie){
+                    log.error(" 场次不存在 ，跳过, scence  id :{}, movie id :{}",betScence.getId(),betMovie.getId());
+                    continue;
+                }
+                drawMovieResult.setScenceMovieId(betScenceMovie.getId());
                 drawMovieResult.setBoxInfo(boxOffice.getBoxInfo() + boxOffice.getBoxInfoUnit());
                 drawMovieResult.setSumBoxInfo(boxOffice.getSumBoxInfo() + boxOffice.getSumBoxInfoUnit());
                 drawMovieResult.setSumDay(boxOffice.getSumDay());

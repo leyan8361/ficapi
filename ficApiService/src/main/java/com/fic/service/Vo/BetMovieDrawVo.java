@@ -36,6 +36,20 @@ public class BetMovieDrawVo {
     @ApiModelProperty(value = "票房统计日期")
     private Date sumDay;
 
+    @ApiModelProperty(value = "status, (0,待开奖)(1,已开奖)(2,已退还关闭)(3,关闭无人投注)")
+    private byte status;
+
+    @ApiModelProperty(value = "drawResult ")
+    private String drawResult;
+
+    public String getDrawResult() {
+        return drawResult;
+    }
+
+    public void setDrawResult(String drawResult) {
+        this.drawResult = drawResult;
+    }
+
     public Integer getId() {
         return id;
     }
@@ -90,5 +104,13 @@ public class BetMovieDrawVo {
 
     public void setScenceMovieId(Integer scenceMovieId) {
         this.scenceMovieId = scenceMovieId;
+    }
+
+    public byte getStatus() {
+        return status;
+    }
+
+    public void setStatus(byte status) {
+        this.status = status;
     }
 }
