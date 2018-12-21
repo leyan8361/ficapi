@@ -47,6 +47,9 @@ public class BoxOffice {
     }
 
     public BigDecimal getBoxInfo() {
+        if(null == boxInfo){
+            return BigDecimal.ZERO.setScale(0);
+        }
         return boxInfo;
     }
 
@@ -63,6 +66,9 @@ public class BoxOffice {
     }
 
     public BigDecimal getSumBoxInfo() {
+        if(null == sumBoxInfo){
+            return BigDecimal.ZERO.setScale(0);
+        }
         return sumBoxInfo;
     }
 

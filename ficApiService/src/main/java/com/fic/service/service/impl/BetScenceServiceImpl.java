@@ -18,6 +18,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -209,8 +210,8 @@ public class BetScenceServiceImpl implements BetScenceService {
                 if(null == boxOffice){
                     continue;
                 }
-                movieResult.setBoxInfo(boxOffice.getBoxInfo() + boxOffice.getBoxInfoUnit());
-                movieResult.setSumBoxInfo(boxOffice.getSumBoxInfo() + boxOffice.getSumBoxInfoUnit());
+                movieResult.setBoxInfo(boxOffice.getBoxInfo().setScale(0, RoundingMode.DOWN) + boxOffice.getBoxInfoUnit());
+                movieResult.setSumBoxInfo(boxOffice.getSumBoxInfo().setScale(0, RoundingMode.DOWN)+ boxOffice.getSumBoxInfoUnit());
                 movieResult.setSumDay(boxOffice.getSumDay());
                 /**
                  * 统计投注人数
@@ -247,7 +248,7 @@ public class BetScenceServiceImpl implements BetScenceService {
 
             /** 开奖了的 */
             List<BetMovieDrawVo> drawMovieItem = new ArrayList<BetMovieDrawVo>();
-            List<BetMovie> drawMovies = betMovieMapper.findAllOffByScenceId(betScence.getId(),DateUtil.getYestodayForMaoYan());
+            List<BetMovie> drawMovies = betMovieMapper.findAllOffByScenceId(betScence.getId(),DateUtil.getYesTodayAndFormatDay());
             if(drawMovies.size() != 0){
                 for(BetMovie betMovie: drawMovies){
                     BetMovieDrawVo drawMovieResult = new BetMovieDrawVo();
@@ -266,8 +267,8 @@ public class BetScenceServiceImpl implements BetScenceService {
                     drawMovieResult.setStatus(betScenceMovie.getStatus());
                     drawMovieResult.setDrawResult(betScenceMovie.getDrawResult());
                     drawMovieResult.setScenceMovieId(betScenceMovie.getId());
-                    drawMovieResult.setBoxInfo(boxOffice.getBoxInfo() + boxOffice.getBoxInfoUnit());
-                    drawMovieResult.setSumBoxInfo(boxOffice.getSumBoxInfo() + boxOffice.getSumBoxInfoUnit());
+                    drawMovieResult.setBoxInfo(boxOffice.getBoxInfo().setScale(0, RoundingMode.DOWN) + boxOffice.getBoxInfoUnit());
+                    drawMovieResult.setSumBoxInfo(boxOffice.getSumBoxInfo().setScale(0, RoundingMode.DOWN) + boxOffice.getSumBoxInfoUnit());
                     drawMovieResult.setSumDay(boxOffice.getSumDay());
                     drawMovieItem.add(drawMovieResult);
                 }
@@ -299,8 +300,15 @@ public class BetScenceServiceImpl implements BetScenceService {
             log.error(" 查场资电影失败 , scence movie id : {}, movie id :{}",scenceMovieId,movieId);
             return new ResponseVo(ErrorCodeEnum.BET_NO_MOVIE,null);
         }
+        BoxOffice boxOffice = boxOfficeMapper.findByDay(DateUtil.getYesTodayAndFormatDay(),betMovie.getId());
+        if(null == boxOffice){
+            log.error(" 查找票房失败， scence movie id : {}",scenceMovieId);
+            return new ResponseVo(ErrorCodeEnum.BET_BOX_NOT_FOUND,null);
+        }
         BeanUtil.copy(result,betMovie);
         result.setScenceMovieId(betScenceMovie.getId());
+        result.setBoxInfo(boxOffice.getBoxInfo().setScale(0, RoundingMode.DOWN) + boxOffice.getBoxInfoUnit());
+        result.setSumBoxInfo(boxOffice.getSumBoxInfo().setScale(0, RoundingMode.DOWN) + boxOffice.getSumBoxInfoUnit());
         result.setOpenDay(DateUtil.plusDateOneDay(new Date(),1));
         result.setBetMovieCoverUrl(uploadProperties.getUrl(betMovie.getBetMovieCoverUrl()));
         switch (betScence.getBetType()) {

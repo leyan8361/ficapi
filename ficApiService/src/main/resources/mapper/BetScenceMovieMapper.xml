@@ -268,16 +268,11 @@
     select id from bet_scence_movie where  bet_scence_id = #{scenceId} and bet_movie_id = #{movieId} and status = 0 limit 0,1
   </select>
 
-  <select id="findIdByScenceAndMovieOff" resultType="int">
-    select id from bet_scence_movie where bet_scence_id = #{scenceId} and bet_movie_id = #{movieId} and status  != 0 and DATE_FORMAT(start_day,'%Y-%m-%d') = #{startDay} limit 0,1
+  <select id="findIdByScenceAndMovieOff" resultMap="BaseResultMap">
+    select * from bet_scence_movie where bet_scence_id = #{scenceId} and bet_movie_id = #{movieId} and status  != 0 and DATE_FORMAT(start_day,'%Y-%m-%d') = #{startDay} limit 0,1
   </select>
 
   <select id="findByIdWithoutStatus" resultMap="BaseResultMap">
     select * from bet_scence_movie where id = #{scenceMovieId};
   </select>
-  <!--<select id="findHighLevelByMovieName" resultMap="BaseResultMap">-->
-    <!--select * from bet_scence_movie sm-->
-    <!--left join bet_movie m on m.id = sm.bet_movie_id-->
-    <!--where sm.start_day = #{startDay} and sm.end_day =#{endDay}-->
-  <!--</select>-->
 </mapper>
