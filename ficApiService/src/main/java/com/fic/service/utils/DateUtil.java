@@ -67,13 +67,6 @@ public class DateUtil {
         return date;
     }
 
-    public static void main(String args[]){
-        Date date = new Date();
-        date = DateUtil.plusDateOneDay(date,1);
-        String day = DateUtil.dateToStrMatDay(date);
-        System.out.println(day);
-    }
-
     public static Date minDateOneDay(Date date) {
         LocalDate localDate = DateUtil.dateToLocalDate(date);
         localDate = localDate.minusDays(1);
@@ -159,6 +152,35 @@ public class DateUtil {
             return true;
         }
         return false;
+    }
+
+    public static boolean betLockTime(){
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        LocalDateTime date = LocalDateTime.now();
+        LocalDateTime startLock = LocalDateTime.of(date.getYear(),date.getMonth(),date.getDayOfMonth(),23,50,00);
+        LocalDateTime endLock = LocalDateTime.of(date.getYear(),date.getMonth(),date.getDayOfMonth(),00,20,00);
+        /** 开奖(23:50:00 - 00:20:00)，不允许下注*/
+        if(date.compareTo(startLock) <0){
+            return false;
+        }
+        if(date.compareTo(endLock) >0){
+            return false;
+        }
+        //        if(date.compareTo(startLock) <=0){
+//            return true;
+//        }
+//        if(date.compareTo(endLock) >=0){
+//            return true;
+//        }
+        System.out.println("start lock time : " + formatter.format(startLock));
+        System.out.println("end lock time : " + formatter.format(endLock));
+        System.out.println("now time : " + formatter.format(date));
+        return true;
+    }
+
+
+    public static void main(String args[]){
+        DateUtil.betLockTime();
     }
 
 }

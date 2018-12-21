@@ -169,6 +169,9 @@ public class BetScenceMovie {
     }
 
     public BigDecimal getBingoOdds() {
+        if(null == bingoOdds){
+            return BigDecimal.ZERO.setScale(0,BigDecimal.ROUND_DOWN);
+        }
         return bingoOdds;
     }
 

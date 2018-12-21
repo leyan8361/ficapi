@@ -1,6 +1,8 @@
 package com.fic.service.controller.api;
+import com.fic.service.Enum.ErrorCodeEnum;
 import com.fic.service.Vo.*;
 import com.fic.service.service.BetScenceService;
+import com.fic.service.utils.DateUtil;
 import io.swagger.annotations.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -68,6 +70,7 @@ public class ApiBetScenceController {
             @ApiResponse(code = 5004, message = "NO_AVALIBLE_SCENCE"),
             @ApiResponse(code = 5002, message = "NO COULD USED BET MOVIE"),
             @ApiResponse(code = 500, message = "System ERROR"),
+            @ApiResponse(code = 5010, message = "BET_TIME_LOCK"),
             @ApiResponse(code = 200, message = "SUCCESS")
     })
     @ApiOperation("下注")
@@ -77,6 +80,9 @@ public class ApiBetScenceController {
                               @RequestParam("betWhich") String betWhich
     ) {
         log.debug("Api bet!!!");
+        if(DateUtil.betLockTime()){
+            return ResponseEntity.ok(new ResponseVo(ErrorCodeEnum.BET_TIME_LOCK,null));
+        }
         ResponseVo result = betScenceService.bet(userId,scenceMovieId,amount,betWhich);
         return ResponseEntity.ok(result);
     }

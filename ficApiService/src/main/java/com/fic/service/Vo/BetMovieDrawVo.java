@@ -39,7 +39,7 @@ public class BetMovieDrawVo {
     @ApiModelProperty(value = "status, (0,待开奖)(1,已开奖)(2,已退还关闭)(3,关闭无人投注)")
     private byte status;
 
-    @ApiModelProperty(value = "drawResult ")
+    @ApiModelProperty(value = "开奖结果 (0,猜单双，单)(1,猜单双，双)(2，猜票房能不能，能)(3,猜票房能不能，不能)(4,选择题A)(5,选择题B)(6,选择题C)(7,选择题D)")
     private String drawResult;
 
     public String getDrawResult() {

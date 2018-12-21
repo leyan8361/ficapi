@@ -26,4 +26,6 @@ public interface BetScenceMapper {
     BetScence getByBetType(int betType);
 
     Integer getBetTypeByScenceMovieId(int scenceMovieId);
+
+    BetScence findByIdWithoutStatus(int id);
 }

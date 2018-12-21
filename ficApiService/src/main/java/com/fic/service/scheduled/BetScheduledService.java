@@ -12,6 +12,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
@@ -87,6 +88,7 @@ public class BetScheduledService {
             }
         }
     }
+
 
     @Transactional(isolation= Isolation.READ_COMMITTED,propagation= Propagation.REQUIRED,rollbackFor = Exception.class)
     public void openPrice(){
@@ -169,6 +171,7 @@ public class BetScheduledService {
                     returnUser.setBingo(BingoStatusEnum.CLOSE_RETURNING_EXCEPTION.getCode().byteValue());
                 }else{
                     returnUser.setBingo(BingoStatusEnum.CLOSE_RETURNING.getCode().byteValue());
+                    returnUser.setCloseWithReturning(returnUser.getBetAmount());
                     generateBalanceAndUpdateInvest(returnUser.getUserId(),returnUser.getBetAmount(), FinanceTypeEnum.BET_RETURNING.getCode());
                 }
                 int updateBetUser = betUserMapper.updateByPrimaryKeySelective(returnUser);
@@ -504,5 +507,10 @@ public class BetScheduledService {
             return;
         }
     }
+
+//    @Transactional(isolation= Isolation.READ_COMMITTED,propagation= Propagation.REQUIRED,rollbackFor = Exception.class)
+//    public void rewardPool(){
+//        List<BetUser> betUsers = betUserMapper
+//    }
 
 }

@@ -104,4 +104,8 @@
   <update id="updateStatus" parameterType="int">
     update bet_scence set status =  #{status,jdbcType=TINYINT} where #{id,jdbcType=INTEGER}
   </update>
+  
+  <select id="findByIdWithoutStatus" resultMap="BaseResultMap">
+    select * from bet_scence where id = #{id};
+  </select>
 </mapper>

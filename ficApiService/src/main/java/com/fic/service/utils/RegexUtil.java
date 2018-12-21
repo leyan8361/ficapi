@@ -5,6 +5,7 @@ import com.fic.service.Enum.PriceEnum;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.text.ParseException;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -136,8 +137,17 @@ public class RegexUtil {
         return 0;
     }
 
+    public static String getLastNum(BigDecimal boxInfo){
+        boxInfo = boxInfo.setScale(0,BigDecimal.ROUND_DOWN);
+        String boxInfoStr = boxInfo.toString();
+        String lastNum = boxInfoStr.substring(boxInfoStr.length()-1,boxInfoStr.length());
+        System.out.println(lastNum);
+        return lastNum;
+    }
+
+
     public static void main(String args[]){
-        String version = "b1.12.1";
-        System.out.println(RegexUtil.isVersion(version));
+        BigDecimal boxInfo = new BigDecimal("58713.456465");
+        RegexUtil.getLastNum(boxInfo);
     }
 }

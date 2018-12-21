@@ -8,6 +8,7 @@ import com.fic.service.mapper.*;
 import com.fic.service.service.BetScenceService;
 import com.fic.service.utils.BeanUtil;
 import com.fic.service.utils.DateUtil;
+import com.fic.service.utils.RegexUtil;
 import okhttp3.internal.http2.ErrorCode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -69,8 +70,6 @@ public class BetScenceServiceImpl implements BetScenceService {
         }
         return new ResponseVo(ErrorCodeEnum.SUCCESS,null);
     }
-
-
 
     @Override
     @Transactional(isolation= Isolation.READ_COMMITTED,propagation= Propagation.REQUIRED,rollbackFor = Exception.class)
@@ -137,6 +136,7 @@ public class BetScenceServiceImpl implements BetScenceService {
         betUser.setBingo(BingoStatusEnum.WAIT_BINGO.getCode().byteValue());
         betUser.setBetAmount(amount);
         betUser.setUserId(userId);
+        betUser.setCreatedTime(new Date());
         BigDecimal jaFe = BigDecimal.ZERO;
         BigDecimal reFe = BigDecimal.ZERO;
         if(betScenceMovie.getHasJasckpot().equals((byte)1)){
@@ -207,12 +207,12 @@ public class BetScenceServiceImpl implements BetScenceService {
                 movieResult.setBetMovieCoverUrl(uploadProperties.getUrl(movie.getBetMovieCoverUrl()));
                 /**统计票房*/
                 BoxOffice boxOffice = boxOfficeMapper.findByDay(DateUtil.getYesTodayAndFormatDay(),movie.getId());
-                if(null == boxOffice){
-                    continue;
+                if(null != boxOffice){
+                    movieResult.setBoxInfo(boxOffice.getBoxInfo().setScale(0, RoundingMode.DOWN) + boxOffice.getBoxInfoUnit());
+                    movieResult.setSumBoxInfo(boxOffice.getSumBoxInfo().setScale(0, RoundingMode.DOWN)+ boxOffice.getSumBoxInfoUnit());
+                    movieResult.setSumDay(boxOffice.getSumDay());
                 }
-                movieResult.setBoxInfo(boxOffice.getBoxInfo().setScale(0, RoundingMode.DOWN) + boxOffice.getBoxInfoUnit());
-                movieResult.setSumBoxInfo(boxOffice.getSumBoxInfo().setScale(0, RoundingMode.DOWN)+ boxOffice.getSumBoxInfoUnit());
-                movieResult.setSumDay(boxOffice.getSumDay());
+
                 /**
                  * 统计投注人数
                  * betType @Type BetTypeEnum
@@ -374,17 +374,44 @@ public class BetScenceServiceImpl implements BetScenceService {
                 log.error(" 无此场次 ，scence movie id :{}",betUser.getBetScenceMovieId());
                 continue;
             }
+
+            BetScence betScence = betScenceMapper.findByIdWithoutStatus(betScenceMovie.getBetScenceId());
+            if(null == betScenceMovie){
+                log.error(" 项目类型为空 ， scence id :{}",betScenceMovie.getBetScenceId());
+                continue;
+            }
+
+            BoxOffice boxOffice = boxOfficeMapper.findByDay(DateUtil.dateToStrMatDay(betScenceMovie.getStartDay()),betMovie.getId());
+            if(null == boxOffice){
+                log.error(" 票房记录为空，scence movie start day :{}, movie id :{}",DateUtil.dateToStrMatDay(betScenceMovie.getStartDay()),betMovie.getId());
+                continue;
+            }
             recordVo.setBetMovieName(betMovie.getBetMovieName());
-            recordVo.setBetAmount(betUser.getBetAmount().setScale(0));
+            recordVo.setBetAmount(betUser.getBetAmount().setScale(0,BigDecimal.ROUND_DOWN));
             recordVo.setBetType(betType);
             recordVo.setBetWhich(betUser.getBetWhich());
             recordVo.setBingo(betUser.getBingo());
             recordVo.setCreatedTime(betUser.getCreatedTime());
-            recordVo.setDrawResult(betUser.getBetWhich());
+            recordVo.setDrawResult(betScenceMovie.getDrawResult());
             BigDecimal fee = betUser.getBetFee().add(betUser.getReserveFee());
-            recordVo.setFee(fee.setScale(0));
+            recordVo.setFee(fee.setScale(0,BigDecimal.ROUND_DOWN));
+            recordVo.setBingoPrice(betUser.getBingoPrice().setScale(0,BigDecimal.ROUND_DOWN));
             recordVo.setOdds(betScenceMovie.getBingoOdds());
+            if(betScence.getBetType().equals(BetTypeEnum.ODD_EVEN.getCode().byteValue())){
+                /** 单双时 */
+                BigDecimal boxInfo = boxOffice.getBoxInfo().setScale(0,BigDecimal.ROUND_DOWN);
+                recordVo.setDrawResultHelper(RegexUtil.getLastNum(boxInfo));
+            }else{
+                String boxInfo = boxOffice.getBoxInfo().setScale(0,BigDecimal.ROUND_DOWN)+boxOffice.getBoxInfoUnit();
+                recordVo.setDrawResultHelper(boxInfo);
+            }
+            if(betUser.getBingo().equals(BingoStatusEnum.CLOSE_RETURNING.getCode().byteValue())){
+                /** 赔付，备用金*/
+                recordVo.setReturningAmount(betUser.getCloseWithReturning());
+            }
             recordVo.setContinueBetReward(BigDecimal.ZERO);
+
+
             recordVos.add(recordVo);
         }
 

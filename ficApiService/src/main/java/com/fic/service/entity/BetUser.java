@@ -1,6 +1,7 @@
 package com.fic.service.entity;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Date;
 
 public class BetUser {
@@ -69,6 +70,9 @@ public class BetUser {
     }
 
     public BigDecimal getBingoPrice() {
+        if(null == bingoPrice){
+            return BigDecimal.ZERO.setScale(0,BigDecimal.ROUND_DOWN);
+        }
         return bingoPrice;
     }
 
@@ -104,6 +108,9 @@ public class BetUser {
     }
 
     public BigDecimal getBetAmount() {
+        if(null == betAmount){
+            return BigDecimal.ZERO.setScale(0, RoundingMode.DOWN);
+        }
         return betAmount;
     }
 
