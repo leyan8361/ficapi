@@ -234,15 +234,7 @@ public class MovieServiceImpl implements MovieService {
         }
 
         Movie existMovie = movieMapper.selectByPrimaryKey(movie.getMovieId());
-        try{
-            BeanUtil.copy(existMovie,movie);
-        } catch (IllegalAccessException e) {
-            log.error(" 更新电影失败 异常 :{}",e);
-            throw new RuntimeException();
-        } catch (InvocationTargetException e) {
-            log.error(" 更新电影失败 异常 :{}",e);
-            throw new RuntimeException();
-        }
+        BeanUtil.copy(existMovie,movie);
 
         int updateMovieResult = movieMapper.updateByPrimaryKeySelective(existMovie);
 
