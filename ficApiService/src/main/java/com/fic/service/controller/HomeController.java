@@ -56,17 +56,19 @@ public class HomeController {
         System.out.println("index !!!!!");
         log.debug(" Home Page !!!");
 //        maoYanService.getDataByDate(DateUtil.getYesTodayAndFormatDay());
-//        betScheduledService.doBoxPull();//拉数据
+        betScheduledService.doBoxPull();//拉数据
         betScheduledService.openPrice();
         return ResponseEntity.ok().body("success");
     }
 
     @GetMapping("/pull")
-    @ApiOperation("获取票房数据")
+    @ApiOperation("获取开奖数据")
 //    @RequiresAuthentication
     public ResponseEntity pull() {
         System.out.println("pull !!!!!");
-        betScheduledService.doBoxPull();//拉数据
+//        betScheduledService.doBoxPull();//拉数据
+//        betScheduledService.openPrice();
+        betScheduledService.rewardPool();
         return ResponseEntity.ok().body("success");
     }
 

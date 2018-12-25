@@ -50,4 +50,10 @@ public class ApiStaticController {
         return "bet_rules";
     }
 
+    @GetMapping(value = "/bet_agreement")
+    @ApiOperation("Api-竞猜协议")
+    public String betAgreement() {
+        return "bet_agreement";
+    }
+
 }

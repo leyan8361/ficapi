@@ -4,6 +4,7 @@ import com.fic.service.entity.BetScence;
 import org.apache.ibatis.annotations.Mapper;
 import org.springframework.stereotype.Repository;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Mapper
@@ -28,4 +29,10 @@ public interface BetScenceMapper {
     Integer getBetTypeByScenceMovieId(int scenceMovieId);
 
     BetScence findByIdWithoutStatus(int id);
+
+    List<BetScence> findAllOnLine();
+
+    int updateRewardPool(BigDecimal restAmount,int id);
+
+    int updateReservePool(BigDecimal restAmount, int id);
 }

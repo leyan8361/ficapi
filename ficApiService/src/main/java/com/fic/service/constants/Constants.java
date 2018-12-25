@@ -40,6 +40,18 @@ public class Constants {
         public static final String ETH = "ETH";
         public static final String BTC = "BTC";
 
+        /**
+         * 连续竞猜标记
+         */
+        public static final String FIVE_T = "fiveT";
+        public static final String TWO_T = "twoT";
+        public static final String THREE_T = "threeT";
+        public static final String FOUR_T = "fourT";
+        public static final String FIVE_PERCENT = "0.4";
+        public static final String TWO_PERCENT = "0.1";
+        public static final String THREE_PERCENT = "0.2";
+        public static final String FOUR_PERCENT = "0.3";
+
         public static final String LOGIN_PATH = "/api/v1/login";
         public static final String REGISTER_PATH = "/api/v1/register";
         public static final String RESET_PASSWORD_PATH = "/api/v1/resetPassword";

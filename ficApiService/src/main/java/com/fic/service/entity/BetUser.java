@@ -100,6 +100,9 @@ public class BetUser {
     }
 
     public BigDecimal getReserveFee() {
+        if(null == this.reserveFee){
+            return BigDecimal.ZERO;
+        }
         return reserveFee;
     }
 

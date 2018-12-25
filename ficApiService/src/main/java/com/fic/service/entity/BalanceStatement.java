@@ -94,4 +94,19 @@ public class BalanceStatement {
     public void setInvestDetailId(Integer investDetailId) {
         this.investDetailId = investDetailId;
     }
+
+    @Override
+    public String toString() {
+        return "BalanceStatement{" +
+                "id=" + id +
+                ", userId=" + userId +
+                ", amount=" + amount +
+                ", type=" + type +
+                ", way=" + way +
+                ", createdTime=" + createdTime +
+                ", distributionId=" + distributionId +
+                ", investDetailId=" + investDetailId +
+                ", balance=" + balance +
+                '}';
+    }
 }

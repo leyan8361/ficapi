@@ -4,6 +4,7 @@ import com.fic.service.entity.BalanceStatement;
 import org.apache.ibatis.annotations.Mapper;
 import org.springframework.stereotype.Repository;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Mapper
@@ -22,4 +23,6 @@ public interface BalanceStatementMapper {
     int updateByPrimaryKey(BalanceStatement record);
 
     List<BalanceStatement> findAllByUserId(Integer userId);
+
+    BigDecimal sumContinueReward(int userId,String startDay,String endDay);
 }

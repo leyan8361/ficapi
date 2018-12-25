@@ -32,7 +32,6 @@ public interface BetUserMapper {
 
     Integer countGuessTotalBox(int scenceId,int movieId);
 
-
     BetOddEvenAmountVo countOddEvenAmount(int scenceMovieId);
 
     BetGuessOverAmountVo countGuessOverAmount(int scenceMovieId);
@@ -46,4 +45,8 @@ public interface BetUserMapper {
     List<BetUser> findByScenceMovieId(int scenceMovieId);
 
     List<BetUser> findAllByUserId(int userId);
+
+    List<BetContinueBetUserVo> findLastWeekAlreadyBet(String startDay,String endDay);
+
+    List<BetUser> findlastWeekAlreadyBetByUserId(String startDay,String endDay,int userId);
 }

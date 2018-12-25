@@ -14,6 +14,80 @@ public class BetScence {
 
     private Byte betType;
 
+    private int hasJasckpot;
+
+    private BigDecimal jasckpotFee;
+
+    private BigDecimal totalJasckpot;
+
+    private int hasReservation;
+
+    private BigDecimal reservationFee;
+
+    private BigDecimal totalReservation;
+
+    public int getHasJasckpot() {
+        return hasJasckpot;
+    }
+
+    public void setHasJasckpot(int hasJasckpot) {
+        this.hasJasckpot = hasJasckpot;
+    }
+
+    public int getHasReservation() {
+        return hasReservation;
+    }
+
+    public void setHasReservation(int hasReservation) {
+        this.hasReservation = hasReservation;
+    }
+
+    public void setHasJasckpot(Byte hasJasckpot) {
+        this.hasJasckpot = hasJasckpot;
+    }
+
+    public BigDecimal getJasckpotFee() {
+        return jasckpotFee;
+    }
+
+    public void setJasckpotFee(BigDecimal jasckpotFee) {
+        this.jasckpotFee = jasckpotFee;
+    }
+
+    public BigDecimal getTotalJasckpot() {
+        if(null == totalJasckpot){
+            return BigDecimal.ZERO;
+        }
+        return totalJasckpot;
+    }
+
+    public void setTotalJasckpot(BigDecimal totalJasckpot) {
+        this.totalJasckpot = totalJasckpot;
+    }
+
+    public void setHasReservation(Byte hasReservation) {
+        this.hasReservation = hasReservation;
+    }
+
+    public BigDecimal getReservationFee() {
+        return reservationFee;
+    }
+
+    public void setReservationFee(BigDecimal reservationFee) {
+        this.reservationFee = reservationFee;
+    }
+
+    public BigDecimal getTotalReservation() {
+        if(null == totalReservation){
+            return BigDecimal.ZERO;
+        }
+        return totalReservation;
+    }
+
+    public void setTotalReservation(BigDecimal totalReservation) {
+        this.totalReservation = totalReservation;
+    }
+
     public Integer getId() {
         return id;
     }
@@ -52,5 +126,22 @@ public class BetScence {
 
     public void setBetType(Byte betType) {
         this.betType = betType;
+    }
+
+    @Override
+    public String toString() {
+        return "BetScence{" +
+                "id=" + id +
+                ", betName='" + betName + '\'' +
+                ", status=" + status +
+                ", createdTime=" + createdTime +
+                ", betType=" + betType +
+                ", hasJasckpot=" + hasJasckpot +
+                ", jasckpotFee=" + jasckpotFee +
+                ", totalJasckpot=" + totalJasckpot +
+                ", hasReservation=" + hasReservation +
+                ", reservationFee=" + reservationFee +
+                ", totalReservation=" + totalReservation +
+                '}';
     }
 }

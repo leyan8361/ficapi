@@ -362,4 +362,15 @@
   <select id="findAllByUserId" resultMap="BaseResultMap">
     select * from bet_user where user_id = #{userId};
   </select>
+
+  <select id="findLastWeekAlreadyBet" resultType="com.fic.service.Vo.BetContinueBetUserVo">
+    select count(u.user_id) as betCount,u.user_id as userId from bet_user u where u.created_time
+    between #{startDay} and #{endDay}
+    group by u.user_id having count(u.user_id) > 1 order by u.created_time desc
+  </select>
+
+  <select id="findlastWeekAlreadyBetByUserId" resultMap="BaseResultMap">
+    select * from bet_user u  where u.created_time
+    between #{startDay} and #{endDay} and u.user_id = #{userId} order by u.created_time desc
+  </select>
 </mapper>

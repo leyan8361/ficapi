@@ -62,10 +62,40 @@ public class BetScenceServiceImpl implements BetScenceService {
         }
         BetScence betScence = new BetScence();
         BeanUtil.copy(betScence,betScenceVo);
+        if(null != betScence.getJasckpotFee() && betScence.getJasckpotFee().compareTo(BigDecimal.ZERO) >0){
+            betScence.setJasckpotFee(betScence.getJasckpotFee().divide(new BigDecimal("100")));
+        }
+        if(null != betScence.getReservationFee() && betScence.getReservationFee().compareTo(BigDecimal.ZERO) > 0){
+           betScence.setReservationFee(betScence.getReservationFee().divide(new BigDecimal("100")));
+        }
         betScence.setCreatedTime(new Date());
         int addResult = betScenceMapper.insertSelective(betScence);
         if(addResult <=0){
             log.error(" add bet Scence 失败 ");
+            throw new RuntimeException();
+        }
+        return new ResponseVo(ErrorCodeEnum.SUCCESS,null);
+    }
+
+    @Override
+    @Transactional(isolation= Isolation.READ_COMMITTED,propagation= Propagation.REQUIRED,rollbackFor = Exception.class)
+    public ResponseVo update(BetScenceVo betScenceVo) {
+        if(null == betScenceVo || null == betScenceVo.getId()){
+            log.error(" update bet Scence失败  scence is null");
+            return new ResponseVo(ErrorCodeEnum.BET_ADD_MOVIE_NOT_FOUND,null);
+        }
+        BetScence betScence = new BetScence();
+        BeanUtil.copy(betScence,betScenceVo);
+        if(null != betScence.getJasckpotFee() && betScence.getJasckpotFee().compareTo(BigDecimal.ZERO) >0){
+            betScence.setJasckpotFee(betScence.getJasckpotFee().divide(new BigDecimal("100")));
+        }
+        if(null != betScence.getReservationFee() && betScence.getReservationFee().compareTo(BigDecimal.ZERO) > 0){
+            betScence.setReservationFee(betScence.getReservationFee().divide(new BigDecimal("100")));
+        }
+        betScence.setCreatedTime(new Date());
+        int addResult = betScenceMapper.updateByPrimaryKeySelective(betScence);
+        if(addResult <=0){
+            log.error(" update bet Scence 失败 ");
             throw new RuntimeException();
         }
         return new ResponseVo(ErrorCodeEnum.SUCCESS,null);
@@ -137,18 +167,18 @@ public class BetScenceServiceImpl implements BetScenceService {
         betUser.setBetAmount(amount);
         betUser.setUserId(userId);
         betUser.setCreatedTime(new Date());
-        BigDecimal jaFe = BigDecimal.ZERO;
-        BigDecimal reFe = BigDecimal.ZERO;
-        if(betScenceMovie.getHasJasckpot().equals((byte)1)){
-            jaFe = betScenceMovie.getJasckpotFee();
-            BigDecimal jasFeeResult = jaFe.multiply(amount);
-            betUser.setBetFee(jasFeeResult);
-        }
-        if(betScenceMovie.getHasReservation().equals((byte)1)){
-            reFe = betScenceMovie.getReservationFee();
-            BigDecimal reFeeResult = reFe.multiply(amount);
-            betUser.setReserveFee(reFeeResult);
-        }
+//        BigDecimal jaFe = BigDecimal.ZERO;
+//        BigDecimal reFe = BigDecimal.ZERO;
+//        if(betScence.getHasJasckpot() == 1){
+//            jaFe = betScence.getJasckpotFee();
+//            BigDecimal jasFeeResult = jaFe.multiply(amount);
+//            betUser.setBetFee(jasFeeResult);
+//        }
+//        if(betScence.getHasReservation() == 1){
+//            reFe = betScence.getReservationFee();
+//            BigDecimal reFeeResult = reFe.multiply(amount);
+//            betUser.setReserveFee(reFeeResult);
+//        }
         int saveResult = betUserMapper.insertSelective(betUser);
         if(saveResult <=0){
             log.error(" bet user add exception ");
@@ -186,7 +216,7 @@ public class BetScenceServiceImpl implements BetScenceService {
     }
 
     @Override
-    public ResponseVo getScence(int betType) {
+    public ResponseVo getScence(int betType,int userId) {
         BetScence betScence = betScenceMapper.getByBetType(betType);
         BetInfoVo result = new BetInfoVo();
         if(null == betScence){
@@ -275,6 +305,75 @@ public class BetScenceServiceImpl implements BetScenceService {
                 result.setDrawMovieItem(drawMovieItem);
             }
 
+        /** 连续投注 ，奖池*/
+        result.setTotalJasckpot(betScence.getTotalJasckpot().add(betScence.getTotalReservation()).setScale(0,BigDecimal.ROUND_DOWN));
+        Date now  = new Date();
+        String endDay = DateUtil.dateToStrMatSec(now);
+        String startDay = DateUtil.minDateNDay(now,7);
+        List<BetUser> betUsers = betUserMapper.findlastWeekAlreadyBetByUserId(startDay,endDay,userId);
+        if(betUsers.size() == 0){
+            result.setContinueBetTime(0);
+        }else{
+            for(int i = 0 ; i < betUsers.size(); i++){
+                if(i+1 < betUsers.size()){
+                    if(DateUtil.getSubstractDay(betUsers.get(i+1).getCreatedTime(),betUsers.get(i).getCreatedTime()) == 1){
+                        /** 连续竞猜两天 */
+                        if(i+2 < betUsers.size()){
+                            if(DateUtil.getSubstractDay(betUsers.get(i+2).getCreatedTime(),betUsers.get(i+1).getCreatedTime()) == 1){
+                                /** 连续竞猜三天 */
+                                if(i+3 < betUsers.size()){
+                                    if(DateUtil.getSubstractDay(betUsers.get(i+3).getCreatedTime(),betUsers.get(i+2).getCreatedTime()) == 1){
+                                        /** 连续竞猜四天 */
+                                        if(i+4 < betUsers.size()){
+                                            if(DateUtil.getSubstractDay(betUsers.get(i+4).getCreatedTime(),betUsers.get(i+3).getCreatedTime()) == 1){
+                                                /** 连续竞猜五天*/
+                                                if(i+5 < betUsers.size()){
+                                                    if(DateUtil.getSubstractDay(betUsers.get(i+5).getCreatedTime(),betUsers.get(i+4).getCreatedTime()) == 1){
+                                                        /**连续竞猜六天*/
+                                                        if(i+6 < betUsers.size()){
+                                                            if(DateUtil.getSubstractDay(betUsers.get(i+6).getCreatedTime(),betUsers.get(i+5).getCreatedTime()) == 1){
+                                                                /**连续竞猜七天*/
+                                                                log.debug("连续竞猜七天 userId : {}",userId);
+                                                                result.setContinueBetTime(7);
+                                                                if(i + 7 < betUsers.size()){
+                                                                    i = i + 7;
+                                                                }
+                                                                continue;
+                                                            }
+                                                        }
+                                                        log.debug("连续竞猜六天 userId : {}",userId);
+                                                        i = i + 6;
+                                                        result.setContinueBetTime(6);
+                                                        continue;
+                                                    }
+                                                }
+                                                log.debug("连续竞猜五天 userId : {}",userId);
+                                                result.setContinueBetTime(5);
+                                                i = i + 5;
+                                                continue;
+                                            }
+                                        }
+                                        log.debug("连续竞猜四天 userId : {}",userId);
+                                        result.setContinueBetTime(4);
+                                        i = i + 4;
+                                        continue;
+                                    }
+                                }
+                                log.debug("连续竞猜三天 userId : {}",userId);
+                                result.setContinueBetTime(3);
+                                i = i + 3;
+                                continue;
+                            }
+                        }
+                        log.debug("连续竞猜两天 userId : {}",userId);
+                        result.setContinueBetTime(2);
+                        i = i + 2;
+                        continue;
+                    }
+                }
+            }
+        }
+
 
         return new ResponseVo(ErrorCodeEnum.SUCCESS,result);
     }
@@ -301,14 +400,13 @@ public class BetScenceServiceImpl implements BetScenceService {
             return new ResponseVo(ErrorCodeEnum.BET_NO_MOVIE,null);
         }
         BoxOffice boxOffice = boxOfficeMapper.findByDay(DateUtil.getYesTodayAndFormatDay(),betMovie.getId());
-        if(null == boxOffice){
-            log.error(" 查找票房失败， scence movie id : {}",scenceMovieId);
-            return new ResponseVo(ErrorCodeEnum.BET_BOX_NOT_FOUND,null);
+        if(null != boxOffice){
+            log.debug(" 查找票房失败， scence movie id : {}",scenceMovieId);
+            result.setBoxInfo(boxOffice.getBoxInfo().setScale(0, RoundingMode.DOWN) + boxOffice.getBoxInfoUnit());
+            result.setSumBoxInfo(boxOffice.getSumBoxInfo().setScale(0, RoundingMode.DOWN) + boxOffice.getSumBoxInfoUnit());
         }
         BeanUtil.copy(result,betMovie);
         result.setScenceMovieId(betScenceMovie.getId());
-        result.setBoxInfo(boxOffice.getBoxInfo().setScale(0, RoundingMode.DOWN) + boxOffice.getBoxInfoUnit());
-        result.setSumBoxInfo(boxOffice.getSumBoxInfo().setScale(0, RoundingMode.DOWN) + boxOffice.getSumBoxInfoUnit());
         result.setOpenDay(DateUtil.plusDateOneDay(new Date(),1));
         result.setBetMovieCoverUrl(uploadProperties.getUrl(betMovie.getBetMovieCoverUrl()));
         switch (betScence.getBetType()) {
@@ -342,6 +440,8 @@ public class BetScenceServiceImpl implements BetScenceService {
     @Override
     public ResponseVo getMyBetRecord(int userId) {
 
+        BetRecordInfoVo result = new BetRecordInfoVo();
+
         int checkUserExist = userMapper.checkIfExistByUserId(userId);
         if(checkUserExist <=0){
             return new ResponseVo(ErrorCodeEnum.USER_NOT_EXIST,null);
@@ -353,6 +453,8 @@ public class BetScenceServiceImpl implements BetScenceService {
         if(betUsers.size() ==0){
             return new ResponseVo(ErrorCodeEnum.NO_BET_RECORD,null);
         }
+
+        result.setUserId(userId);
 
         for(BetUser betUser: betUsers){
             BetRecordVo recordVo = new BetRecordVo();
@@ -382,9 +484,16 @@ public class BetScenceServiceImpl implements BetScenceService {
             }
 
             BoxOffice boxOffice = boxOfficeMapper.findByDay(DateUtil.dateToStrMatDay(betScenceMovie.getStartDay()),betMovie.getId());
-            if(null == boxOffice){
-                log.error(" 票房记录为空，scence movie start day :{}, movie id :{}",DateUtil.dateToStrMatDay(betScenceMovie.getStartDay()),betMovie.getId());
-                continue;
+            if(null != boxOffice){
+                log.debug(" 票房记录为空，scence movie start day :{}, movie id :{}",DateUtil.dateToStrMatDay(betScenceMovie.getStartDay()),betMovie.getId());
+                if(betScence.getBetType().equals(BetTypeEnum.ODD_EVEN.getCode().byteValue())){
+                    /** 单双时 */
+                    BigDecimal boxInfo = boxOffice.getBoxInfo().setScale(0,BigDecimal.ROUND_DOWN);
+                    recordVo.setDrawResultHelper(RegexUtil.getLastNum(boxInfo));
+                }else{
+                    String boxInfo = boxOffice.getBoxInfo().setScale(0,BigDecimal.ROUND_DOWN)+boxOffice.getBoxInfoUnit();
+                    recordVo.setDrawResultHelper(boxInfo);
+                }
             }
             recordVo.setBetMovieName(betMovie.getBetMovieName());
             recordVo.setBetAmount(betUser.getBetAmount().setScale(0,BigDecimal.ROUND_DOWN));
@@ -397,24 +506,19 @@ public class BetScenceServiceImpl implements BetScenceService {
             recordVo.setFee(fee.setScale(0,BigDecimal.ROUND_DOWN));
             recordVo.setBingoPrice(betUser.getBingoPrice().setScale(0,BigDecimal.ROUND_DOWN));
             recordVo.setOdds(betScenceMovie.getBingoOdds());
-            if(betScence.getBetType().equals(BetTypeEnum.ODD_EVEN.getCode().byteValue())){
-                /** 单双时 */
-                BigDecimal boxInfo = boxOffice.getBoxInfo().setScale(0,BigDecimal.ROUND_DOWN);
-                recordVo.setDrawResultHelper(RegexUtil.getLastNum(boxInfo));
-            }else{
-                String boxInfo = boxOffice.getBoxInfo().setScale(0,BigDecimal.ROUND_DOWN)+boxOffice.getBoxInfoUnit();
-                recordVo.setDrawResultHelper(boxInfo);
-            }
             if(betUser.getBingo().equals(BingoStatusEnum.CLOSE_RETURNING.getCode().byteValue())){
                 /** 赔付，备用金*/
-                recordVo.setReturningAmount(betUser.getCloseWithReturning());
+                recordVo.setBingoPrice(betUser.getCloseWithReturning().setScale(0,BigDecimal.ROUND_DOWN));
             }
-            recordVo.setContinueBetReward(BigDecimal.ZERO);
-
 
             recordVos.add(recordVo);
         }
-
-        return new ResponseVo(ErrorCodeEnum.SUCCESS,recordVos);
+        result.setItems(recordVos);
+        Date now  = new Date();
+        String endDay = DateUtil.dateToStrMatDay(now);
+        String startDay = DateUtil.minDateNDay(now,7);
+        BigDecimal continueReward = balanceStatementMapper.sumContinueReward(userId,startDay,endDay);
+        result.setContinueBetReward(null != continueReward ? continueReward.setScale(0,BigDecimal.ROUND_DOWN):BigDecimal.ZERO);
+        return new ResponseVo(ErrorCodeEnum.SUCCESS,result);
     }
 }

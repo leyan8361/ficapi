@@ -40,8 +40,8 @@ public class BetRecordVo {
     @ApiModelProperty(value = "总计奖励")
     private BigDecimal bingoPrice;
 
-    @ApiModelProperty(value = "特殊情况预备备金赔付")
-    private BigDecimal returningAmount;
+//    @ApiModelProperty(value = "特殊情况预备备金赔付")
+//    private BigDecimal returningAmount;
 
     @ApiModelProperty(value = "(0,待开奖)(1，已中奖)(2，未中奖)(3，极端情况，启用备用金，返还竞猜金额)(4，备用金不足以赔付，运营后台人工干预)")
     private byte bingo;
@@ -58,8 +58,8 @@ public class BetRecordVo {
     @ApiModelProperty(value = "开奖结果辅助 (当betType为单双时，此项为票房个位)(当betType其他时，此项为票房金额[包含单位])")
     private String drawResultHelper;
 
-    @ApiModelProperty(value = "连续奖励金")
-    private BigDecimal continueBetReward;
+//    @ApiModelProperty(value = "连续奖励金")
+//    private BigDecimal continueBetReward;
 
     public Date getCreatedTime() {
         return createdTime;
@@ -133,13 +133,13 @@ public class BetRecordVo {
         this.betMovieName = betMovieName;
     }
 
-    public BigDecimal getContinueBetReward() {
-        return continueBetReward;
-    }
-
-    public void setContinueBetReward(BigDecimal continueBetReward) {
-        this.continueBetReward = continueBetReward;
-    }
+//    public BigDecimal getContinueBetReward() {
+//        return continueBetReward;
+//    }
+//
+//    public void setContinueBetReward(BigDecimal continueBetReward) {
+//        this.continueBetReward = continueBetReward;
+//    }
 
     public Integer getId() {
         return id;
@@ -165,11 +165,4 @@ public class BetRecordVo {
         this.drawResultHelper = drawResultHelper;
     }
 
-    public BigDecimal getReturningAmount() {
-        return returningAmount;
-    }
-
-    public void setReturningAmount(BigDecimal returningAmount) {
-        this.returningAmount = returningAmount;
-    }
 }

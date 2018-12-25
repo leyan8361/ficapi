@@ -14,8 +14,8 @@ import java.util.Date;
 @ApiModel
 public class BetScenceVo {
 
-//    @ApiModelProperty(value = "项目ID")
-//    private Integer id;
+    @ApiModelProperty(value = "项目ID")
+    private Integer id;
 
     @ApiModelProperty(value = "项目名称",required = true)
     private String betName;
@@ -26,14 +26,55 @@ public class BetScenceVo {
     @ApiModelProperty(value = "(0，下架)(1,上架)，默认下架")
     private Byte status;
 
+    @ApiModelProperty(value = "(0，无)(1,有)")
+    private int hasJasckpot;
 
-//    public Integer getId() {
-//        return id;
-//    }
-//
-//    public void setId(Integer id) {
-//        this.id = id;
-//    }
+    @ApiModelProperty(value = "手续费%")
+    private BigDecimal jasckpotFee;
+
+    @ApiModelProperty(value = "累计奖池")
+    private BigDecimal totalJasckpot;
+
+    @ApiModelProperty(value = "(0，无)(1,有)")
+    private int hasReservation;
+
+    @ApiModelProperty(value = "备用金抽取竞彩金额%")
+    private BigDecimal reservationFee;
+
+    @ApiModelProperty(value = "累计备用金")
+    private BigDecimal totalReservation;
+
+    public int getHasJasckpot() {
+        return hasJasckpot;
+    }
+
+    public void setHasJasckpot(int hasJasckpot) {
+        this.hasJasckpot = hasJasckpot;
+    }
+
+    public BigDecimal getJasckpotFee() {
+        return jasckpotFee;
+    }
+
+    public void setJasckpotFee(BigDecimal jasckpotFee) {
+        this.jasckpotFee = jasckpotFee;
+    }
+
+    public int getHasReservation() {
+        return hasReservation;
+    }
+
+    public void setHasReservation(int hasReservation) {
+        this.hasReservation = hasReservation;
+    }
+
+    public BigDecimal getReservationFee() {
+        return reservationFee;
+    }
+
+    public void setReservationFee(BigDecimal reservationFee) {
+        this.reservationFee = reservationFee;
+    }
 
     public String getBetName() {
         return betName;
@@ -59,4 +100,27 @@ public class BetScenceVo {
         this.betType = betType;
     }
 
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public BigDecimal getTotalJasckpot() {
+        return totalJasckpot;
+    }
+
+    public void setTotalJasckpot(BigDecimal totalJasckpot) {
+        this.totalJasckpot = totalJasckpot;
+    }
+
+    public BigDecimal getTotalReservation() {
+        return totalReservation;
+    }
+
+    public void setTotalReservation(BigDecimal totalReservation) {
+        this.totalReservation = totalReservation;
+    }
 }

@@ -54,6 +54,12 @@ public class BetInfoVo {
 //    @ApiModelProperty(value = "总计备用金")
 //    private BigDecimal totalReservation;
 
+    @ApiModelProperty(value = "过去一周连续投注次数")
+    private int continueBetTime;
+
+    @ApiModelProperty(value = "奖励池剩余预备金")
+    private BigDecimal totalJasckpot;
+
     @ApiModelProperty(value = "竞猜电影列表(未开奖的)")
     private List<BetMovieInfoVo> movieItem;
 
@@ -100,7 +106,23 @@ public class BetInfoVo {
         this.betType = betType;
     }
 
-//    public BigDecimal getBetFee() {
+    public int getContinueBetTime() {
+        return continueBetTime;
+    }
+
+    public void setContinueBetTime(int continueBetTime) {
+        this.continueBetTime = continueBetTime;
+    }
+
+    public BigDecimal getTotalJasckpot() {
+        return totalJasckpot;
+    }
+
+    public void setTotalJasckpot(BigDecimal totalJasckpot) {
+        this.totalJasckpot = totalJasckpot;
+    }
+
+    //    public BigDecimal getBetFee() {
 //        return betFee;
 //    }
 //

@@ -18,17 +18,6 @@ public class BetScenceMovie {
 
     private String drawResult;
 
-    private Byte hasJasckpot;
-
-    private BigDecimal jasckpotFee;
-
-    private BigDecimal totalJasckpot;
-
-    private Byte hasReservation;
-
-    private BigDecimal reservationFee;
-
-    private BigDecimal totalReservation;
 
     private BigDecimal totalReservationReturning;
 
@@ -96,54 +85,6 @@ public class BetScenceMovie {
         this.drawResult = drawResult;
     }
 
-    public Byte getHasJasckpot() {
-        return hasJasckpot;
-    }
-
-    public void setHasJasckpot(Byte hasJasckpot) {
-        this.hasJasckpot = hasJasckpot;
-    }
-
-    public BigDecimal getJasckpotFee() {
-        return jasckpotFee;
-    }
-
-    public void setJasckpotFee(BigDecimal jasckpotFee) {
-        this.jasckpotFee = jasckpotFee;
-    }
-
-    public BigDecimal getTotalJasckpot() {
-        return totalJasckpot;
-    }
-
-    public void setTotalJasckpot(BigDecimal totalJasckpot) {
-        this.totalJasckpot = totalJasckpot;
-    }
-
-    public Byte getHasReservation() {
-        return hasReservation;
-    }
-
-    public void setHasReservation(Byte hasReservation) {
-        this.hasReservation = hasReservation;
-    }
-
-    public BigDecimal getReservationFee() {
-        return reservationFee;
-    }
-
-    public void setReservationFee(BigDecimal reservationFee) {
-        this.reservationFee = reservationFee;
-    }
-
-    public BigDecimal getTotalReservation() {
-        return totalReservation;
-    }
-
-    public void setTotalReservation(BigDecimal totalReservation) {
-        this.totalReservation = totalReservation;
-    }
-
     public String getGuessOverUnit() {
         return guessOverUnit;
     }
@@ -180,6 +121,9 @@ public class BetScenceMovie {
     }
 
     public BigDecimal getTotalReservationReturning() {
+        if(null == totalReservationReturning){
+            return BigDecimal.ZERO;
+        }
         return totalReservationReturning;
     }
 
@@ -197,12 +141,6 @@ public class BetScenceMovie {
                 ", startDay=" + startDay +
                 ", endDay=" + endDay +
                 ", drawResult='" + drawResult + '\'' +
-                ", hasJasckpot=" + hasJasckpot +
-                ", jasckpotFee=" + jasckpotFee +
-                ", totalJasckpot=" + totalJasckpot +
-                ", hasReservation=" + hasReservation +
-                ", reservationFee=" + reservationFee +
-                ", totalReservation=" + totalReservation +
                 ", totalReservationReturning=" + totalReservationReturning +
                 ", guessOverUnit='" + guessOverUnit + '\'' +
                 ", choiceInput='" + choiceInput + '\'' +

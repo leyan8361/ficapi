@@ -28,14 +28,15 @@ public class ApiBetScenceController {
     @GetMapping("/scence/getAllByBetType")
     @ApiImplicitParams({
             @ApiImplicitParam(dataType = "int", name = "betType", value = "项目类型(0,单双）(1,能不能)(2, ABCD)(3,总票房))"),
+            @ApiImplicitParam(dataType = "int", name = "userId", value = "用户ID"),
     })
     @ApiResponses({
             @ApiResponse(code = 200, message = "SUCCESS",response = BetInfoVo.class)
     })
     @ApiOperation("获取竞猜项目列表信息(包含当前项目涵盖的电影信息&票房信息")
-    public ResponseEntity getAllByBetType(@RequestParam("betType")int betType) {
+    public ResponseEntity getAllByBetType(@RequestParam("betType")int betType,@RequestParam("userId")int userId) {
         log.debug("Api getScence!!!");
-        ResponseVo result = betScenceService.getScence(betType);
+        ResponseVo result = betScenceService.getScence(betType,userId);
         return ResponseEntity.ok(result);
     }
 
@@ -93,7 +94,7 @@ public class ApiBetScenceController {
     })
     @ApiResponses({
             @ApiResponse(code = 5009, message = "NO_BET_RECORD"),
-            @ApiResponse(code = 200, message = "SUCCESS",response = BetRecordVo.class)
+            @ApiResponse(code = 200, message = "SUCCESS",response = BetRecordInfoVo.class)
     })
     @ApiOperation("获取我的竞猜记录")
     public ResponseEntity getMyBetRecord(@RequestParam("userId")int userId

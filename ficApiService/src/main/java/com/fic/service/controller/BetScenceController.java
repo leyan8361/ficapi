@@ -41,6 +41,15 @@ public class BetScenceController {
     }
 
 
+    @PostMapping("/update")
+    @ApiOperation("修改项目 项目类型(0,单双）(1,能不能)(2, ABCD)(3,总票房) ")
+    public ResponseEntity update(@RequestBody BetScenceVo betScenceVo) {
+        log.debug(" bet update !!!");
+        ResponseVo result = betScenceService.add(betScenceVo);
+        return ResponseEntity.ok(result);
+    }
+
+
 
 //    @GetMapping("/onShelf")
 //    @ApiOperation("上架竞猜项目")

@@ -7,9 +7,16 @@
     <result column="status" jdbcType="TINYINT" property="status" />
     <result column="created_time" jdbcType="TIMESTAMP" property="createdTime" />
     <result column="bet_type" jdbcType="TINYINT" property="betType" />
+    <result column="has_jasckpot" jdbcType="TINYINT" property="hasJasckpot" />
+    <result column="jasckpot_fee" jdbcType="DECIMAL" property="jasckpotFee" />
+    <result column="total_jasckpot" jdbcType="DECIMAL" property="totalJasckpot" />
+    <result column="has_reservation" jdbcType="TINYINT" property="hasReservation" />
+    <result column="reservation_fee" jdbcType="DECIMAL" property="reservationFee" />
+    <result column="total_reservation" jdbcType="DECIMAL" property="totalReservation" />
   </resultMap>
   <sql id="Base_Column_List">
-    id, bet_name, status, created_time, bet_type
+    id, bet_name, status, created_time, bet_type, has_jasckpot, jasckpot_fee, total_jasckpot,
+    has_reservation, reservation_fee, total_reservation
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
     select
@@ -23,9 +30,13 @@
   </delete>
   <insert id="insert" parameterType="com.fic.service.entity.BetScence">
     insert into bet_scence (id, bet_name, status,
-      created_time, bet_type)
+      created_time, bet_type, has_jasckpot,
+      jasckpot_fee, total_jasckpot, has_reservation,
+      reservation_fee, total_reservation)
     values (#{id,jdbcType=INTEGER}, #{betName,jdbcType=VARCHAR}, #{status,jdbcType=TINYINT},
-      #{createdTime,jdbcType=TIMESTAMP}, #{betType,jdbcType=TINYINT})
+      #{createdTime,jdbcType=TIMESTAMP}, #{betType,jdbcType=TINYINT}, #{hasJasckpot,jdbcType=TINYINT},
+      #{jasckpotFee,jdbcType=DECIMAL}, #{totalJasckpot,jdbcType=DECIMAL}, #{hasReservation,jdbcType=TINYINT},
+      #{reservationFee,jdbcType=DECIMAL}, #{totalReservation,jdbcType=DECIMAL})
   </insert>
   <insert id="insertSelective" parameterType="com.fic.service.entity.BetScence">
     insert into bet_scence
@@ -45,6 +56,24 @@
       <if test="betType != null">
         bet_type,
       </if>
+      <if test="hasJasckpot != null">
+        has_jasckpot,
+      </if>
+      <if test="jasckpotFee != null">
+        jasckpot_fee,
+      </if>
+      <if test="totalJasckpot != null">
+        total_jasckpot,
+      </if>
+      <if test="hasReservation != null">
+        has_reservation,
+      </if>
+      <if test="reservationFee != null">
+        reservation_fee,
+      </if>
+      <if test="totalReservation != null">
+        total_reservation,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="id != null">
@@ -61,6 +90,24 @@
       </if>
       <if test="betType != null">
         #{betType,jdbcType=TINYINT},
+      </if>
+      <if test="hasJasckpot != null">
+        #{hasJasckpot,jdbcType=TINYINT},
+      </if>
+      <if test="jasckpotFee != null">
+        #{jasckpotFee,jdbcType=DECIMAL},
+      </if>
+      <if test="totalJasckpot != null">
+        #{totalJasckpot,jdbcType=DECIMAL},
+      </if>
+      <if test="hasReservation != null">
+        #{hasReservation,jdbcType=TINYINT},
+      </if>
+      <if test="reservationFee != null">
+        #{reservationFee,jdbcType=DECIMAL},
+      </if>
+      <if test="totalReservation != null">
+        #{totalReservation,jdbcType=DECIMAL},
       </if>
     </trim>
   </insert>
@@ -79,6 +126,24 @@
       <if test="betType != null">
         bet_type = #{betType,jdbcType=TINYINT},
       </if>
+      <if test="hasJasckpot != null">
+        has_jasckpot = #{hasJasckpot,jdbcType=TINYINT},
+      </if>
+      <if test="jasckpotFee != null">
+        jasckpot_fee = #{jasckpotFee,jdbcType=DECIMAL},
+      </if>
+      <if test="totalJasckpot != null">
+        total_jasckpot = #{totalJasckpot,jdbcType=DECIMAL},
+      </if>
+      <if test="hasReservation != null">
+        has_reservation = #{hasReservation,jdbcType=TINYINT},
+      </if>
+      <if test="reservationFee != null">
+        reservation_fee = #{reservationFee,jdbcType=DECIMAL},
+      </if>
+      <if test="totalReservation != null">
+        total_reservation = #{totalReservation,jdbcType=DECIMAL},
+      </if>
     </set>
     where id = #{id,jdbcType=INTEGER}
   </update>
@@ -87,7 +152,13 @@
     set bet_name = #{betName,jdbcType=VARCHAR},
       status = #{status,jdbcType=TINYINT},
       created_time = #{createdTime,jdbcType=TIMESTAMP},
-      bet_type = #{betType,jdbcType=TINYINT}
+      bet_type = #{betType,jdbcType=TINYINT},
+      has_jasckpot = #{hasJasckpot,jdbcType=TINYINT},
+      jasckpot_fee = #{jasckpotFee,jdbcType=DECIMAL},
+      total_jasckpot = #{totalJasckpot,jdbcType=DECIMAL},
+      has_reservation = #{hasReservation,jdbcType=TINYINT},
+      reservation_fee = #{reservationFee,jdbcType=DECIMAL},
+      total_reservation = #{totalReservation,jdbcType=DECIMAL}
     where id = #{id,jdbcType=INTEGER}
   </update>
 
@@ -108,4 +179,16 @@
   <select id="findByIdWithoutStatus" resultMap="BaseResultMap">
     select * from bet_scence where id = #{id};
   </select>
+
+  <select id="findAllOnLine" resultMap="BaseResultMap">
+    select * from bet_scence where status = 1;
+  </select>
+
+  <update id="updateRewardPool">
+    update bet_scence set total_jasckpot = #{restAmount} where id = #{id}
+  </update>
+
+  <update id="updateReservePool">
+    update bet_scence set total_reservation = #{restAmount} where id = #{id}
+  </update>
 </mapper>
