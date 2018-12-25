@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fic.service.mapper.BannerInfoMapper">
+  <resultMap id="BaseResultMap" type="com.fic.service.entity.BannerInfo">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="banner_url" jdbcType="VARCHAR" property="bannerUrl" />
+    <result column="in_order" jdbcType="INTEGER" property="inOrder" />
+    <result column="jump_url_android" jdbcType="VARCHAR" property="jumpUrlAndroid" />
+    <result column="jump_url_ios" jdbcType="VARCHAR" property="jumpUrlIos" />
+    <result column="created_time" jdbcType="TIMESTAMP" property="createdTime" />
+    <result column="status" jdbcType="TINYINT" property="status" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, banner_url, in_order, jump_url_android, jump_url_ios, created_time, status
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from banner_info
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from banner_info
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.fic.service.entity.BannerInfo" useGeneratedKeys="true" keyProperty="id">
+    insert into banner_info (id, banner_url, in_order,
+      jump_url_android, jump_url_ios, created_time, 
+      status)
+    values (#{id,jdbcType=INTEGER}, #{bannerUrl,jdbcType=VARCHAR}, #{inOrder,jdbcType=INTEGER},
+      #{jumpUrlAndroid,jdbcType=VARCHAR}, #{jumpUrlIos,jdbcType=VARCHAR}, #{createdTime,jdbcType=TIMESTAMP}, 
+      #{status,jdbcType=TINYINT})
+  </insert>
+  <insert id="insertSelective" parameterType="com.fic.service.entity.BannerInfo" useGeneratedKeys="true" keyProperty="id">
+    insert into banner_info
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="bannerUrl != null">
+        banner_url,
+      </if>
+      <if test="inOrder != null">
+        in_order,
+      </if>
+      <if test="jumpUrlAndroid != null">
+        jump_url_android,
+      </if>
+      <if test="jumpUrlIos != null">
+        jump_url_ios,
+      </if>
+      <if test="createdTime != null">
+        created_time,
+      </if>
+      <if test="status != null">
+        status,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="bannerUrl != null">
+        #{bannerUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="inOrder != null">
+        #{inOrder,jdbcType=INTEGER},
+      </if>
+      <if test="jumpUrlAndroid != null">
+        #{jumpUrlAndroid,jdbcType=VARCHAR},
+      </if>
+      <if test="jumpUrlIos != null">
+        #{jumpUrlIos,jdbcType=VARCHAR},
+      </if>
+      <if test="createdTime != null">
+        #{createdTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="status != null">
+        #{status,jdbcType=TINYINT},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.fic.service.entity.BannerInfo">
+    update banner_info
+    <set>
+      <if test="bannerUrl != null">
+        banner_url = #{bannerUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="inOrder != null">
+        in_order = #{inOrder,jdbcType=INTEGER},
+      </if>
+      <if test="jumpUrlAndroid != null">
+        jump_url_android = #{jumpUrlAndroid,jdbcType=VARCHAR},
+      </if>
+      <if test="jumpUrlIos != null">
+        jump_url_ios = #{jumpUrlIos,jdbcType=VARCHAR},
+      </if>
+      <if test="createdTime != null">
+        created_time = #{createdTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="status != null">
+        status = #{status,jdbcType=TINYINT},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.fic.service.entity.BannerInfo">
+    update banner_info
+    set banner_url = #{bannerUrl,jdbcType=VARCHAR},
+      in_order = #{inOrder,jdbcType=INTEGER},
+      jump_url_android = #{jumpUrlAndroid,jdbcType=VARCHAR},
+      jump_url_ios = #{jumpUrlIos,jdbcType=VARCHAR},
+      created_time = #{createdTime,jdbcType=TIMESTAMP},
+      status = #{status,jdbcType=TINYINT}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateBannerUrl">
+    update banner_info set banner_url = #{bannerUrl,jdbcType=VARCHAR} where id = #{id}
+  </update>
+  <select id="getAll" resultMap="BaseResultMap">
+    select * from banner_info order by in_order asc
+  </select>
+</mapper>

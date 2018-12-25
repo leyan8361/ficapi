@@ -4,6 +4,7 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
 import java.math.BigDecimal;
+import java.util.Date;
 
 /**
  * @Author Xie
@@ -25,6 +26,16 @@ public class MovieInfoVo {
     private int investCount;
     @ApiModelProperty(value = "投资金额")
     private BigDecimal investTotalAmount;
+    @ApiModelProperty(value = "电影类型")
+    private String movieType;
+    @ApiModelProperty(value = "总预算(亿)")
+    private BigDecimal budget;
+    @ApiModelProperty(value = "开放额度(万元)")
+    private BigDecimal quota;
+    @ApiModelProperty(value = "上映地点")
+    private String showPlace;
+    @ApiModelProperty(value = "上映时间")
+    private Date showTime;
 
     public int getMovieId() {
         return movieId;
@@ -72,5 +83,45 @@ public class MovieInfoVo {
 
     public void setInvestTotalAmount(BigDecimal investTotalAmount) {
         this.investTotalAmount = investTotalAmount;
+    }
+
+    public String getMovieType() {
+        return movieType;
+    }
+
+    public void setMovieType(String movieType) {
+        this.movieType = movieType;
+    }
+
+    public BigDecimal getBudget() {
+        return budget;
+    }
+
+    public void setBudget(BigDecimal budget) {
+        this.budget = budget;
+    }
+
+    public BigDecimal getQuota() {
+        return quota;
+    }
+
+    public void setQuota(BigDecimal quota) {
+        this.quota = quota;
+    }
+
+    public String getShowPlace() {
+        return showPlace;
+    }
+
+    public void setShowPlace(String showPlace) {
+        this.showPlace = showPlace;
+    }
+
+    public Date getShowTime() {
+        return showTime;
+    }
+
+    public void setShowTime(Date showTime) {
+        this.showTime = showTime;
     }
 }

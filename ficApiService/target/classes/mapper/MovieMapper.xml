@@ -9,12 +9,20 @@
     <result column="created_by" jdbcType="INTEGER" property="createdBy" />
     <result column="updated_time" jdbcType="TIMESTAMP" property="updatedTime" />
     <result column="updated_by" jdbcType="INTEGER" property="updatedBy" />
+    <result column="movie_type" jdbcType="VARCHAR" property="movieType" />
+    <result column="budget" jdbcType="DECIMAL" property="budget" />
+    <result column="quota" jdbcType="DECIMAL" property="quota" />
+    <result column="movie_cover_url" jdbcType="VARCHAR" property="movieCoverUrl" />
+    <result column="show_place" jdbcType="VARCHAR" property="showPlace" />
+    <result column="show_time" jdbcType="TIMESTAMP" property="showTime" />
+    <result column="status" jdbcType="TINYINT" property="status" />
   </resultMap>
   <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="com.fic.service.entity.Movie">
     <result column="movie_note" jdbcType="LONGVARCHAR" property="movieNote" />
   </resultMap>
   <sql id="Base_Column_List">
-    movie_id, movie_name, movie_remark, created_time, created_by, updated_time, updated_by
+    movie_id, movie_name, movie_remark, created_time, created_by, updated_time, updated_by,
+    movie_type, budget, quota, movie_cover_url, show_place, show_time,status
   </sql>
   <sql id="Blob_Column_List">
     movie_note
@@ -31,15 +39,19 @@
     delete from movie
     where movie_id = #{movieId,jdbcType=INTEGER}
   </delete>
-  <insert id="insert" parameterType="com.fic.service.entity.Movie">
+  <insert id="insert" parameterType="com.fic.service.entity.Movie" useGeneratedKeys="true" keyProperty="movieId">
     insert into movie (movie_id, movie_name, movie_remark, 
       created_time, created_by, updated_time, 
-      updated_by, movie_note)
+      updated_by, movie_type, budget,
+      quota, movie_cover_url, show_place,
+      show_time,movie_note,status)
     values (#{movieId,jdbcType=INTEGER}, #{movieName,jdbcType=VARCHAR}, #{movieRemark,jdbcType=VARCHAR}, 
       #{createdTime,jdbcType=TIMESTAMP}, #{createdBy,jdbcType=INTEGER}, #{updatedTime,jdbcType=TIMESTAMP}, 
-      #{updatedBy,jdbcType=INTEGER}, #{movieNote,jdbcType=LONGVARCHAR})
+      #{updatedBy,jdbcType=INTEGER}, #{movieType,jdbcType=VARCHAR}, #{budget,jdbcType=DECIMAL},
+      #{quota,jdbcType=DECIMAL}, #{movieCoverUrl,jdbcType=VARCHAR}, #{showPlace,jdbcType=VARCHAR},
+      #{showTime,jdbcType=TIMESTAMP}, #{movieNote,jdbcType=LONGVARCHAR},#{status,jdbcType=TINYINT})
   </insert>
-  <insert id="insertSelective" parameterType="com.fic.service.entity.Movie">
+  <insert id="insertSelective" parameterType="com.fic.service.entity.Movie" useGeneratedKeys="true" keyProperty="movieId">
     insert into movie
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="movieId != null">
@@ -63,8 +75,29 @@
       <if test="updatedBy != null">
         updated_by,
       </if>
+      <if test="movieType != null">
+        movie_type,
+      </if>
+      <if test="budget != null and budget != 0">
+        budget,
+      </if>
+      <if test="quota != null and quota != 0">
+        quota,
+      </if>
+      <if test="movieCoverUrl != null">
+        movie_cover_url,
+      </if>
+      <if test="showPlace != null">
+        show_place,
+      </if>
+      <if test="showTime != null">
+        show_time,
+      </if>
       <if test="movieNote != null">
         movie_note,
+      </if>
+      <if test="status != null">
+        status
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
@@ -89,8 +122,29 @@
       <if test="updatedBy != null">
         #{updatedBy,jdbcType=INTEGER},
       </if>
+      <if test="movieType != null">
+        #{movieType,jdbcType=VARCHAR},
+      </if>
+      <if test="budget != null and budget != 0">
+        #{budget,jdbcType=DECIMAL},
+      </if>
+      <if test="quota != null and quota != 0">
+        #{quota,jdbcType=DECIMAL},
+      </if>
+      <if test="movieCoverUrl != null">
+        #{movieCoverUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="showPlace != null">
+        #{showPlace,jdbcType=VARCHAR},
+      </if>
+      <if test="showTime != null">
+        #{showTime,jdbcType=TIMESTAMP},
+      </if>
       <if test="movieNote != null">
         #{movieNote,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="status != null">
+        #{status,jdbcType=TINYINT}
       </if>
     </trim>
   </insert>
@@ -115,8 +169,29 @@
       <if test="updatedBy != null">
         updated_by = #{updatedBy,jdbcType=INTEGER},
       </if>
+      <if test="movieType != null">
+        movie_type = #{movieType,jdbcType=VARCHAR},
+      </if>
+      <if test="budget != null and budget != 0">
+        budget = #{budget,jdbcType=DECIMAL},
+      </if>
+      <if test="quota != null and quota != 0">
+        quota = #{quota,jdbcType=DECIMAL},
+      </if>
+      <if test="movieCoverUrl != null">
+        movie_cover_url = #{movieCoverUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="showPlace != null">
+        show_place = #{showPlace,jdbcType=VARCHAR},
+      </if>
+      <if test="showTime != null">
+        show_time = #{showTime,jdbcType=TIMESTAMP},
+      </if>
       <if test="movieNote != null">
         movie_note = #{movieNote,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="status != null">
+        status = #{status,jdbcType=TINYINT}
       </if>
     </set>
     where movie_id = #{movieId,jdbcType=INTEGER}
@@ -129,7 +204,14 @@
       created_by = #{createdBy,jdbcType=INTEGER},
       updated_time = #{updatedTime,jdbcType=TIMESTAMP},
       updated_by = #{updatedBy,jdbcType=INTEGER},
-      movie_note = #{movieNote,jdbcType=LONGVARCHAR}
+      movie_type = #{movieType,jdbcType=VARCHAR},
+      budget = #{budget,jdbcType=DECIMAL},
+      quota = #{quota,jdbcType=DECIMAL},
+      movie_cover_url = #{movieCoverUrl,jdbcType=VARCHAR},
+      show_place = #{showPlace,jdbcType=VARCHAR},
+      show_time = #{showTime,jdbcType=TIMESTAMP},
+      movie_note = #{movieNote,jdbcType=LONGVARCHAR},
+      status = #{status,jdbcType=TINYINT}
     where movie_id = #{movieId,jdbcType=INTEGER}
   </update>
   <update id="updateByPrimaryKey" parameterType="com.fic.service.entity.Movie">
@@ -139,7 +221,26 @@
       created_time = #{createdTime,jdbcType=TIMESTAMP},
       created_by = #{createdBy,jdbcType=INTEGER},
       updated_time = #{updatedTime,jdbcType=TIMESTAMP},
-      updated_by = #{updatedBy,jdbcType=INTEGER}
+      updated_by = #{updatedBy,jdbcType=INTEGER},
+      movie_type = #{movieType,jdbcType=VARCHAR},
+      budget = #{budget,jdbcType=DECIMAL},
+      quota = #{quota,jdbcType=DECIMAL},
+      movie_cover_url = #{movieCoverUrl,jdbcType=VARCHAR},
+      show_place = #{showPlace,jdbcType=VARCHAR},
+      show_time = #{showTime,jdbcType=TIMESTAMP}
+      status = #{status,jdbcType=TINYINT}
     where movie_id = #{movieId,jdbcType=INTEGER}
+  </update>
+  <select id="findAll" resultMap="BaseResultMap">
+    select * from movie where 1=1;
+  </select>
+  <select id="checkIfExistById" resultType="int">
+    select movie_id from movie where movie_id = #{movidId};
+  </select>
+  <update id="updateMovieCover">
+    update movie set movie_cover_url = #{movieCoverUrl} where movie_id = #{movieId};
+  </update>
+  <update id="updateStatus">
+    update movie set status = #{status,jdbcType=TINYINT} where movie_id = #{movieId}
   </update>
 </mapper>

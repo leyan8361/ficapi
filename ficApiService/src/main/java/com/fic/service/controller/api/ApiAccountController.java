@@ -81,7 +81,7 @@ public class ApiAccountController {
         log.debug(" Api register Action !!!");
         if(StringUtils.isEmpty(userInfoVo.getUsername()))return ResponseEntity.ok(new ResponseVo(ErrorCodeEnum.PARAMETER_MISSED,null));
         int existRegisterDevice = deviceMapper.checkSameDevice(userInfoVo.getDeviceCode());
-        if(existRegisterDevice >0)return ResponseEntity.ok(new ResponseVo(ErrorCodeEnum.DEVICE_EXCEPTION,null));
+        if(existRegisterDevice > 1)return ResponseEntity.ok(new ResponseVo(ErrorCodeEnum.DEVICE_EXCEPTION,null));
         User checkUser = userMapper.findByUsername(userInfoVo.getUsername());
         if(null != checkUser)return ResponseEntity.ok(new ResponseVo(ErrorCodeEnum.USERNAME_EXIST,null));
         if(StringUtils.isNotEmpty(userInfoVo.getInviteCode())){

@@ -93,7 +93,7 @@ public class AccountServiceImpl implements AccountService {
             throw new RuntimeException();
         }
 
-        Integer lastInsertId = userMapper.getLastInsertID();
+        Integer lastInsertId = userMapper.getLastInsertID() + 1;
         User user = new User();
         user.setUserName(userInfoVo.getUsername());
         user.setPassword(userInfoVo.getPassword());

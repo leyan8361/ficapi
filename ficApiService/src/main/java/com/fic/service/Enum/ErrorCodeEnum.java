@@ -71,6 +71,7 @@ public enum ErrorCodeEnum {
      * 电影相关
      */
     MOVIE_NOT_FOUND(4000,"MOVIE NOT FOUND"),
+    BANNER_NOT_FOUND(4001,"BANNER LIST IS EMPTY"),
 
     /**
      * 竞猜相关

@@ -6,7 +6,9 @@
     <result column="user_name" property="userName" />
     <result column="nick_name" property="nickName" />
     <result column="password" property="password" />
+    <result column="pay_password" property="payPassword" />
     <result column="himage_url" property="himageUrl" />
+    <result column="wallet_address" property="walletAddress" />
     <result column="user_invite_code" property="userInviteCode" />
     <result column="t_user_invite_code" property="tUserInviteCode" />
     <result column="t_user_id" property="tUserId" />
@@ -43,6 +45,9 @@
       </if>
       <if test="condition.himageUrl != null">
          and himage_url = #{condition.himageUrl}
+      </if>
+      <if test="condition.walletAddress != null">
+        and wallet_address = #{condition.walletAddress}
       </if>
       <if test="condition.userInviteCode != null">
          and user_invite_code = #{condition.userInviteCode}
@@ -113,7 +118,7 @@
     </trim>
   </sql>
   <sql id="columnList">
-    id, user_name, nick_name, password, himage_url, user_invite_code, t_user_invite_code, 
+    id, user_name, nick_name, password, pay_password,himage_url, wallet_address,user_invite_code, t_user_invite_code,
     t_user_id, mobile, phone, zip, email, remark, updated_time, created_time, created_by, 
     updated_by, user_re_1, user_re_2, user_re_3, user_re_4, user_re_5, user_re_6, user_re_7, 
     user_re_8, user_re_9, user_re_10
@@ -135,6 +140,9 @@
       </if>
       <if test="user.himageUrl != null">
         himage_url,
+      </if>
+      <if test="user.walletAddress != null">
+        wallet_address,
       </if>
       <if test="user.userInviteCode != null">
         user_invite_code,
@@ -218,6 +226,9 @@
       </if>
       <if test="user.himageUrl != null">
         #{user.himageUrl},
+      </if>
+      <if test="user.walletAddress != null">
+        #{user.walletAddress},
       </if>
       <if test="user.userInviteCode != null">
         #{user.userInviteCode},
@@ -303,8 +314,14 @@
       <if test="user.password != null">
         password = #{user.password},
       </if>
+      <if test="user.payPassword != null">
+        pay_password = #{user.payPassword},
+      </if>
       <if test="user.himageUrl != null">
         himage_url = #{user.himageUrl},
+      </if>
+      <if test="user.walletAddress != null">
+        wallet_address = #{user.walletAddress},
       </if>
       <if test="user.userInviteCode != null">
         user_invite_code = #{user.userInviteCode},
@@ -388,6 +405,21 @@
     where user_name = #{username}
   </select>
   <select id="getLastInsertID" resultType="java.lang.Integer">
-    SELECT LAST_INSERT_ID()
+    SELECT max(id) from user
+  </select>
+  <select id="checkExistByInviteCode" resultType="java.lang.Integer">
+    select id from user where user_invite_code = #{inviteCode};
+  </select>
+  <select id="findByInviteCode" resultMap="resultMap">
+    select * from user where user_invite_code = #{inviteCode};
+  </select>
+  <select id="getUserNameByUserId" resultType="string">
+    select user_name from user where id = #{userId}
+  </select>
+  <select id="findMissingAddress" resultMap="resultMap">
+
+  </select>
+  <select id="checkIfExistByUserId" resultType="int">
+    select id from user where id = #{userId}
   </select>
 </mapper>

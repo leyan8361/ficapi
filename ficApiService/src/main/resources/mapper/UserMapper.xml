@@ -405,7 +405,7 @@
     where user_name = #{username}
   </select>
   <select id="getLastInsertID" resultType="java.lang.Integer">
-    SELECT LAST_INSERT_ID()
+    SELECT max(id) from user
   </select>
   <select id="checkExistByInviteCode" resultType="java.lang.Integer">
     select id from user where user_invite_code = #{inviteCode};
