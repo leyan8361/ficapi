@@ -273,7 +273,7 @@
     INNER JOIN bet_scence_movie sb ON sb.id = u.bet_scence_movie_id
     WHERE
         sb.id = #{scenceMovieId}
-    AND sb.status = 0
+    AND sb.status = 0 and u.bingo = 0
   </select>
 
   <select id="countGuessOverAmount" resultType="com.fic.service.Vo.BetGuessOverAmountVo">
@@ -297,7 +297,7 @@
     INNER JOIN bet_scence_movie sb ON sb.id = u.bet_scence_movie_id
     WHERE
         sb.id = #{scenceMovieId}
-    AND sb.status = 0
+    AND sb.status = 0 and u.bingo = 0
   </select>
 
   <select id="countChoiceAmount" resultType="com.fic.service.Vo.BetChoiceAmountVo">
@@ -335,7 +335,7 @@
     INNER JOIN bet_scence_movie sb ON sb.id = u.bet_scence_movie_id
     WHERE
         sb.id = #{scenceMovieId}
-    AND sb.status = 0
+    AND sb.status = 0 and u.bingo = 0
   </select>
 
   <select id="countWeekBoxGroupAmount" resultType="com.fic.service.Vo.BetWeekBoxCountVo">
@@ -347,7 +347,7 @@
     INNER JOIN bet_scence_movie sb ON sb.id = u.bet_scence_movie_id
     WHERE
         sb.id = #{scenceMovieId}
-    AND sb.status = 0
+    AND sb.status = 0  and u.bingo = 0
 	  group by u.bet_week_total_box;
   </select>
 
@@ -372,5 +372,9 @@
   <select id="findlastWeekAlreadyBetByUserId" resultMap="BaseResultMap">
     select * from bet_user u  where u.created_time
     between #{startDay} and #{endDay} and u.user_id = #{userId} order by u.created_time desc
+  </select>
+
+  <select id="findByScenceMovieAndNotReturing" resultMap="BaseResultMap">
+    select u.* from bet_user u where u.bet_scence_movie_id = #{scenceMovieId} and u.bingo = #{status};
   </select>
 </mapper>

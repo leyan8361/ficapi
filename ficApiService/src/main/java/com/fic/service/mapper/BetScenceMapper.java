@@ -32,7 +32,7 @@ public interface BetScenceMapper {
 
     List<BetScence> findAllOnLine();
 
-    int updateRewardPool(BigDecimal restAmount,int id);
+//    int updateRewardPool(BigDecimal restAmount,int id);
 
     int updateReservePool(BigDecimal restAmount, int id);
 }

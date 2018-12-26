@@ -10,6 +10,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.*;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.WeekFields;
 import java.util.*;
 
 /**
@@ -87,6 +88,7 @@ public class DateUtil {
         return formatter.format(date);
     }
 
+
     public static String dateToStrMatSec(Date date){
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         return formatter.format(date);
@@ -107,6 +109,76 @@ public class DateUtil {
         return dateString;
     }
 
+    public static String startDay(Date date,int day){
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        Instant instant = date.toInstant();
+        ZoneId zoneId = ZoneId.systemDefault();
+        LocalDateTime localDate = instant.atZone(zoneId).toLocalDateTime();
+        localDate = localDate.minusDays(day);
+        localDate = localDate.withHour(0).withMinute(0).withSecond(01);
+        String result = formatter.format(localDate);
+        return result;
+    }
+
+    public static String getThisWeekMonDay(Date date){
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        Instant instant = date.toInstant();
+        ZoneId zoneId = ZoneId.systemDefault();
+        LocalDateTime localDate = instant.atZone(zoneId).toLocalDateTime();
+        WeekFields weekFields = WeekFields.of(DayOfWeek.MONDAY,4);
+        int day = localDate.get(weekFields.dayOfWeek());
+        if (day != 0) {
+            day = day -1;
+        }
+        localDate = localDate.minusDays(day).withHour(0).withMinute(0).withSecond(01);
+        String result = formatter.format(localDate);
+        return result;
+    }
+
+    public static String getLastWeekMonDay(){
+        Date date = new Date();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        Instant instant = date.toInstant();
+        ZoneId zoneId = ZoneId.systemDefault();
+        LocalDateTime localDate = instant.atZone(zoneId).toLocalDateTime();
+        localDate = localDate.minusWeeks(1);
+        WeekFields weekFields = WeekFields.of(DayOfWeek.MONDAY,4);
+        int day = localDate.get(weekFields.dayOfWeek());
+        if (day != 0) {
+            day = day -1;
+        }
+        localDate = localDate.minusDays(day).withHour(0).withMinute(0).withSecond(01);
+        String result = formatter.format(localDate);
+        return result;
+    }
+
+    public static String getLastWeekSunDay(){
+        Date date = new Date();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        Instant instant = date.toInstant();
+        ZoneId zoneId = ZoneId.systemDefault();
+        LocalDateTime localDate = instant.atZone(zoneId).toLocalDateTime();
+        WeekFields weekFields = WeekFields.of(DayOfWeek.SUNDAY,4);
+        int day = localDate.get(weekFields.dayOfWeek());
+        if (day != 0) {
+            day = day -1;
+        }
+        localDate = localDate.minusDays(day).withHour(23).withMinute(59).withSecond(30);
+        String result = formatter.format(localDate);
+        return result;
+    }
+
+
+    public static String endDay(Date date){
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        Instant instant = date.toInstant();
+        ZoneId zoneId = ZoneId.systemDefault();
+        LocalDateTime localDate = instant.atZone(zoneId).toLocalDateTime();
+        localDate = localDate.withHour(23).withMinute(59).withSecond(59);
+        String result = formatter.format(localDate);
+        return result;
+    }
+
     public static Date toDayFormatDay(String dateStr){
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
         Date result = null;
@@ -123,6 +195,20 @@ public class DateUtil {
 
     public static Date toDayFormatDay_1(String dateStr){
         SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMdd");
+        Date result = null;
+        try{
+            if(StringUtils.isNotEmpty(dateStr)){
+                result = formatter.parse(dateStr);
+                return result;
+            }
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public static Date toSecFormatDay(String dateStr){
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         Date result = null;
         try{
             if(StringUtils.isNotEmpty(dateStr)){
@@ -161,8 +247,11 @@ public class DateUtil {
     }
 
     public static int getDayOfMonth(Date date){
-        int day = date.getDay();
-        return day;
+        Instant instant = date.toInstant();
+        ZoneId zoneId = ZoneId.systemDefault();
+        LocalDateTime localDate = instant.atZone(zoneId).toLocalDateTime();
+        localDate.getDayOfMonth();
+        return localDate.getDayOfMonth();
     }
 
     public static boolean betLockTime(){
@@ -228,10 +317,18 @@ public class DateUtil {
 
     public static void main(String args[]) throws ParseException {
 
-//        boxInfo.remainder(new BigDecimal("2")).compareTo(BigDecimal.ZERO)
-                BigDecimal test = new BigDecimal("2330.56");
-                System.out.println(test.setScale(0,BigDecimal.ROUND_DOWN).remainder(new BigDecimal("2")));
-
+        Date date = new Date();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        Instant instant = date.toInstant();
+        ZoneId zoneId = ZoneId.systemDefault();
+        LocalDateTime localDate = instant.atZone(zoneId).toLocalDateTime();
+        WeekFields weekFields = WeekFields.of(DayOfWeek.SUNDAY,4);
+        int day = localDate.get(weekFields.dayOfWeek());
+        if (day != 0) {
+            day = day -1;
+        }
+        localDate = localDate.minusDays(day).withHour(23).withMinute(59).withSecond(30);
+        String result = formatter.format(localDate);
     }
 
 }

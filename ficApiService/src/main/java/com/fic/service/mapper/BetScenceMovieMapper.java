@@ -35,6 +35,7 @@ public interface BetScenceMovieMapper {
 
     BetScenceMovie findIdByScenceAndMovieOff(int scenceId,int movieId,String startDay);
 
+    List<BetScenceMovie> findAllWithStatus(int status);
 
 
 //    List<BetScenceMovie> findHighLevelByMovieName(String startDay,String endDay);

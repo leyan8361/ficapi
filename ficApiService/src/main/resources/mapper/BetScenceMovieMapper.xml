@@ -204,4 +204,8 @@
   <select id="findByIdWithoutStatus" resultMap="BaseResultMap">
     select * from bet_scence_movie where id = #{scenceMovieId};
   </select>
+  
+  <select id="findAllWithStatus" resultMap="BaseResultMap">
+    select * from bet_scence_movie where status = #{status};
+  </select>
 </mapper>

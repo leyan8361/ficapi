@@ -20,9 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 /**
  * @Author Xie
@@ -306,18 +304,33 @@ public class BetScenceServiceImpl implements BetScenceService {
             }
 
         /** 连续投注 ，奖池*/
-        result.setTotalJasckpot(betScence.getTotalJasckpot().add(betScence.getTotalReservation()).setScale(0,BigDecimal.ROUND_DOWN));
+        result.setTotalJasckpot(betScence.getTotalReservation().multiply(new BigDecimal("0.5")).setScale(0,BigDecimal.ROUND_DOWN));
         Date now  = new Date();
-        String endDay = DateUtil.dateToStrMatSec(now);
-        String startDay = DateUtil.minDateNDay(now,7);
+        String endDay = DateUtil.endDay(now);
+        String startDay = DateUtil.getThisWeekMonDay(now);
         List<BetUser> betUsers = betUserMapper.findlastWeekAlreadyBetByUserId(startDay,endDay,userId);
+
         if(betUsers.size() == 0){
             result.setContinueBetTime(0);
         }else{
+
+            /** 去除同一天的 */
+            Map<String,BetUser> needToContinue = new HashMap<String,BetUser>();
+            List<BetUser> stored = new ArrayList<BetUser>();
+            for(BetUser betUser: betUsers){
+                int day = DateUtil.getDayOfMonth(betUser.getCreatedTime());
+                if(!needToContinue.containsKey(day+"")){
+                    needToContinue.put(day+"",betUser);
+                    stored.add(betUser);
+                }
+            }
+            betUsers = stored;
+            boolean isContinue = false;
             for(int i = 0 ; i < betUsers.size(); i++){
                 if(i+1 < betUsers.size()){
                     if(DateUtil.getSubstractDay(betUsers.get(i+1).getCreatedTime(),betUsers.get(i).getCreatedTime()) == 1){
                         /** 连续竞猜两天 */
+                        isContinue = true;
                         if(i+2 < betUsers.size()){
                             if(DateUtil.getSubstractDay(betUsers.get(i+2).getCreatedTime(),betUsers.get(i+1).getCreatedTime()) == 1){
                                 /** 连续竞猜三天 */
@@ -371,6 +384,9 @@ public class BetScenceServiceImpl implements BetScenceService {
                         continue;
                     }
                 }
+            }
+            if(!isContinue){
+                result.setContinueBetTime(1);
             }
         }
 
@@ -451,7 +467,10 @@ public class BetScenceServiceImpl implements BetScenceService {
 
         List<BetUser> betUsers = betUserMapper.findAllByUserId(userId);
         if(betUsers.size() ==0){
-            return new ResponseVo(ErrorCodeEnum.NO_BET_RECORD,null);
+            result.setUserId(userId);
+            result.setItems(recordVos);
+            result.setContinueBetReward(BigDecimal.ZERO);
+            return new ResponseVo(ErrorCodeEnum.SUCCESS,result);
         }
 
         result.setUserId(userId);
@@ -515,8 +534,8 @@ public class BetScenceServiceImpl implements BetScenceService {
         }
         result.setItems(recordVos);
         Date now  = new Date();
-        String endDay = DateUtil.dateToStrMatDay(now);
-        String startDay = DateUtil.minDateNDay(now,7);
+        String endDay = DateUtil.endDay(now);
+        String startDay = DateUtil.startDay(now,7);
         BigDecimal continueReward = balanceStatementMapper.sumContinueReward(userId,startDay,endDay);
         result.setContinueBetReward(null != continueReward ? continueReward.setScale(0,BigDecimal.ROUND_DOWN):BigDecimal.ZERO);
         return new ResponseVo(ErrorCodeEnum.SUCCESS,result);

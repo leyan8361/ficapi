@@ -50,25 +50,29 @@ public class HomeController {
     BetScheduledService betScheduledService;
 
     @GetMapping("/home")
-    @ApiOperation("获取首页数据")
-//    @RequiresAuthentication
+    @ApiOperation("获取首页数据 , 拉票房，开奖")
     public ResponseEntity home() {
         System.out.println("index !!!!!");
         log.debug(" Home Page !!!");
-//        maoYanService.getDataByDate(DateUtil.getYesTodayAndFormatDay());
         betScheduledService.doBoxPull();//拉数据
         betScheduledService.openPrice();
         return ResponseEntity.ok().body("success");
     }
 
-    @GetMapping("/pull")
-    @ApiOperation("获取开奖数据")
+    @GetMapping("/reward")
+    @ApiOperation("分奖池")
 //    @RequiresAuthentication
     public ResponseEntity pull() {
-        System.out.println("pull !!!!!");
-//        betScheduledService.doBoxPull();//拉数据
-//        betScheduledService.openPrice();
+        System.out.println("reward !!!!!");
         betScheduledService.rewardPool();
+        return ResponseEntity.ok().body("success");
+    }
+
+    @GetMapping("/returning")
+    @ApiOperation("赔付")
+    public ResponseEntity returning() {
+        System.out.println("returning !!!!!");
+        betScheduledService.makeUpReturning();
         return ResponseEntity.ok().body("success");
     }
 

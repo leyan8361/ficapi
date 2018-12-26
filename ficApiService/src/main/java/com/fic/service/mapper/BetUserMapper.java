@@ -49,4 +49,6 @@ public interface BetUserMapper {
     List<BetContinueBetUserVo> findLastWeekAlreadyBet(String startDay,String endDay);
 
     List<BetUser> findlastWeekAlreadyBetByUserId(String startDay,String endDay,int userId);
+
+    List<BetUser> findByScenceMovieAndNotReturing(int scenceMovieId,int status);
 }

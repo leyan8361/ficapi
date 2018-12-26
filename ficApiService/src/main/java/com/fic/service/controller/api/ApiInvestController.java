@@ -72,7 +72,7 @@ public class ApiInvestController {
         if(null == invest)return ResponseEntity.ok(new ResponseVo(ErrorCodeEnum.INVEST_NOT_EXIST,null));
         InvestBalanceInfoVo balanceInfoVo = new InvestBalanceInfoVo();
         balanceInfoVo.setUserId(invest.getUserId());
-        balanceInfoVo.setBalance(invest.getBalance().add(invest.getRewardBalance()).setScale(0));
+        balanceInfoVo.setBalance(invest.getBalance().add(invest.getRewardBalance()).setScale(0,BigDecimal.ROUND_DOWN));
         return ResponseEntity.ok(new ResponseVo(ErrorCodeEnum.SUCCESS,balanceInfoVo));
     }
 

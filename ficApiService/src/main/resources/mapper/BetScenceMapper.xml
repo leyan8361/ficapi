@@ -184,9 +184,9 @@
     select * from bet_scence where status = 1;
   </select>
 
-  <update id="updateRewardPool">
-    update bet_scence set total_jasckpot = #{restAmount} where id = #{id}
-  </update>
+  <!--<update id="updateRewardPool">-->
+    <!--update bet_scence set total_jasckpot = #{restAmount} where id = #{id}-->
+  <!--</update>-->
 
   <update id="updateReservePool">
     update bet_scence set total_reservation = #{restAmount} where id = #{id}

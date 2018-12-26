@@ -10,7 +10,8 @@ public enum BetScenceMovieStatusEnum {
     WAIT(0,"待开奖"),
     DRAW(1,"已开奖"),
     CLOSE_RETURN(2,"已退还关闭"),
-    CLOSE_NO_BET(3,"关闭无人投注");
+    CLOSE_NO_BET(3,"关闭无人投注"),
+    CLOSE_RETURNING_EXCEPTION(4,"关闭退回，备用金不足以赔付，人工干预");
 
     private Integer code;
     private String remark;
