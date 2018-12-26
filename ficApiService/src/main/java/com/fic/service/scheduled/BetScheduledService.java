@@ -115,7 +115,7 @@ public class BetScheduledService {
             }
 
             /**根据开始结束时间，场次持续化，生成今天新场资，直到endDay为昨天，不再生成*/
-            if (betScenceMovie.getEndDay().compareTo(DateUtil.minDateOneDay(new Date())) > 0) {
+            if (DateUtil.getSubstractDay(DateUtil.minDateOneDay(new Date()),betScenceMovie.getEndDay()) > 0) {
                 BetScenceMovie newDayScenceMovie = new BetScenceMovie();
                 BeanUtil.copy(newDayScenceMovie, betScenceMovie);
                 newDayScenceMovie.setId(null);
