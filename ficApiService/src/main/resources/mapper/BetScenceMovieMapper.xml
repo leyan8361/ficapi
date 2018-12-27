@@ -208,4 +208,8 @@
   <select id="findAllWithStatus" resultMap="BaseResultMap">
     select * from bet_scence_movie where status = #{status};
   </select>
+
+  <select id="getAll" resultMap="BaseResultMap">
+    select * from bet_scence_movie order by id desc;
+  </select>
 </mapper>

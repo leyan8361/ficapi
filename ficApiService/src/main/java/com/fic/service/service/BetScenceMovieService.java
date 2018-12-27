@@ -10,6 +10,8 @@ import com.fic.service.entity.BetScenceMovie;
 **/
 public interface BetScenceMovieService {
 
+    ResponseVo getAll();
+
     ResponseVo add(BetScenceMovie scenceMovie);
 
     ResponseVo update(BetScenceMovie scenceMovie);

@@ -34,6 +34,9 @@ public class BetRecordVo {
     @ApiModelProperty(value = "服务费加奖励金")
     private BigDecimal fee;
 
+    @ApiModelProperty(value = "投注获取奖励")
+    private BigDecimal addedPrice;
+
     @ApiModelProperty(value = "赔率")
     private BigDecimal odds;
 
@@ -165,4 +168,11 @@ public class BetRecordVo {
         this.drawResultHelper = drawResultHelper;
     }
 
+    public BigDecimal getAddedPrice() {
+        return addedPrice;
+    }
+
+    public void setAddedPrice(BigDecimal addedPrice) {
+        this.addedPrice = addedPrice;
+    }
 }

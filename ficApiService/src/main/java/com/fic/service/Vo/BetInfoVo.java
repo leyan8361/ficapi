@@ -54,8 +54,11 @@ public class BetInfoVo {
 //    @ApiModelProperty(value = "总计备用金")
 //    private BigDecimal totalReservation;
 
-    @ApiModelProperty(value = "过去一周连续投注次数")
+    @ApiModelProperty(value = "连续投注次数")
     private int continueBetTime;
+
+    @ApiModelProperty(value = "连续竞猜奖励")
+    private BigDecimal continueBetReward;
 
     @ApiModelProperty(value = "奖励池剩余预备金")
     private BigDecimal totalJasckpot;
@@ -200,4 +203,13 @@ public class BetInfoVo {
 //    public void setTotalReservation(BigDecimal totalReservation) {
 //        this.totalReservation = totalReservation;
 //    }
+
+
+    public BigDecimal getContinueBetReward() {
+        return continueBetReward;
+    }
+
+    public void setContinueBetReward(BigDecimal continueBetReward) {
+        this.continueBetReward = continueBetReward;
+    }
 }

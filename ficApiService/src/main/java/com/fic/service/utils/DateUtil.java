@@ -135,6 +135,36 @@ public class DateUtil {
         return result;
     }
 
+    public static String getThisWeekMonDayBegin(Date date){
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        Instant instant = date.toInstant();
+        ZoneId zoneId = ZoneId.systemDefault();
+        LocalDateTime localDate = instant.atZone(zoneId).toLocalDateTime();
+        WeekFields weekFields = WeekFields.of(DayOfWeek.MONDAY,4);
+        int day = localDate.get(weekFields.dayOfWeek());
+        if (day != 0) {
+            day = day -2;
+        }
+        localDate = localDate.minusDays(day).withHour(0).withMinute(0).withSecond(01);
+        String result = formatter.format(localDate);
+        return result;
+    }
+
+    public static String getThisWeekMonDayEnd(Date date){
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        Instant instant = date.toInstant();
+        ZoneId zoneId = ZoneId.systemDefault();
+        LocalDateTime localDate = instant.atZone(zoneId).toLocalDateTime();
+        WeekFields weekFields = WeekFields.of(DayOfWeek.MONDAY,4);
+        int day = localDate.get(weekFields.dayOfWeek());
+        if (day != 0) {
+            day = day -2;
+        }
+        localDate = localDate.minusDays(day).withHour(23).withMinute(59).withSecond(59);
+        String result = formatter.format(localDate);
+        return result;
+    }
+
     public static String getLastWeekMonDay(){
         Date date = new Date();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");

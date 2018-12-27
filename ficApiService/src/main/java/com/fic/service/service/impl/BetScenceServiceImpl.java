@@ -61,10 +61,10 @@ public class BetScenceServiceImpl implements BetScenceService {
         BetScence betScence = new BetScence();
         BeanUtil.copy(betScence,betScenceVo);
         if(null != betScence.getJasckpotFee() && betScence.getJasckpotFee().compareTo(BigDecimal.ZERO) >0){
-            betScence.setJasckpotFee(betScence.getJasckpotFee().divide(new BigDecimal("100")));
+            betScence.setJasckpotFee(betScence.getJasckpotFee().divide(new BigDecimal("100"),2));
         }
         if(null != betScence.getReservationFee() && betScence.getReservationFee().compareTo(BigDecimal.ZERO) > 0){
-           betScence.setReservationFee(betScence.getReservationFee().divide(new BigDecimal("100")));
+           betScence.setReservationFee(betScence.getReservationFee().divide(new BigDecimal("100"),2));
         }
         betScence.setCreatedTime(new Date());
         int addResult = betScenceMapper.insertSelective(betScence);
@@ -85,10 +85,10 @@ public class BetScenceServiceImpl implements BetScenceService {
         BetScence betScence = new BetScence();
         BeanUtil.copy(betScence,betScenceVo);
         if(null != betScence.getJasckpotFee() && betScence.getJasckpotFee().compareTo(BigDecimal.ZERO) >0){
-            betScence.setJasckpotFee(betScence.getJasckpotFee().divide(new BigDecimal("100")));
+            betScence.setJasckpotFee(betScence.getJasckpotFee().divide(new BigDecimal("100"),2));
         }
         if(null != betScence.getReservationFee() && betScence.getReservationFee().compareTo(BigDecimal.ZERO) > 0){
-            betScence.setReservationFee(betScence.getReservationFee().divide(new BigDecimal("100")));
+            betScence.setReservationFee(betScence.getReservationFee().divide(new BigDecimal("100"),2));
         }
         betScence.setCreatedTime(new Date());
         int addResult = betScenceMapper.updateByPrimaryKeySelective(betScence);
@@ -389,8 +389,10 @@ public class BetScenceServiceImpl implements BetScenceService {
                 result.setContinueBetTime(1);
             }
         }
-
-
+        String monDayBegin = DateUtil.getThisWeekMonDayBegin(now);
+        String monDayEnd = DateUtil.getThisWeekMonDayEnd(now);
+        BigDecimal continueReward = balanceStatementMapper.sumContinueReward(userId,monDayBegin,monDayEnd);
+        result.setContinueBetReward(null != continueReward ? continueReward.setScale(0,BigDecimal.ROUND_DOWN):BigDecimal.ZERO);
         return new ResponseVo(ErrorCodeEnum.SUCCESS,result);
     }
 
@@ -515,21 +517,27 @@ public class BetScenceServiceImpl implements BetScenceService {
                 }
             }
             recordVo.setBetMovieName(betMovie.getBetMovieName());
-            recordVo.setBetAmount(betUser.getBetAmount().setScale(0,BigDecimal.ROUND_DOWN));
+            recordVo.setBetAmount(betUser.getBetAmount().setScale(0,BigDecimal.ROUND_HALF_UP));
             recordVo.setBetType(betType);
             recordVo.setBetWhich(betUser.getBetWhich());
             recordVo.setBingo(betUser.getBingo());
             recordVo.setCreatedTime(betUser.getCreatedTime());
             recordVo.setDrawResult(betScenceMovie.getDrawResult());
-            BigDecimal fee = betUser.getBetFee().add(betUser.getReserveFee());
-            recordVo.setFee(fee.setScale(0,BigDecimal.ROUND_DOWN));
-            recordVo.setBingoPrice(betUser.getBingoPrice().setScale(0,BigDecimal.ROUND_DOWN));
             recordVo.setOdds(betScenceMovie.getBingoOdds());
+            BigDecimal fee = betUser.getBetFee().add(betUser.getReserveFee()).setScale(0,BigDecimal.ROUND_HALF_UP);
+            recordVo.setFee(fee.setScale(0,BigDecimal.ROUND_HALF_UP));
+            BigDecimal bingGoPrice = betUser.getBingoPrice().setScale(0,BigDecimal.ROUND_HALF_UP);
+            recordVo.setBingoPrice(bingGoPrice);
             if(betUser.getBingo().equals(BingoStatusEnum.CLOSE_RETURNING.getCode().byteValue())){
                 /** 赔付，备用金*/
-                recordVo.setBingoPrice(betUser.getCloseWithReturning().setScale(0,BigDecimal.ROUND_DOWN));
+                recordVo.setBingoPrice(betUser.getCloseWithReturning().setScale(0,BigDecimal.ROUND_HALF_UP));
             }
-
+            if(betUser.getBingo().equals(BingoStatusEnum.BINGO.getCode().byteValue())){
+                recordVo.setAddedPrice((betUser.getBetAmount().add(betScenceMovie.getBingoOdds().multiply(betUser.getBetAmount()))).setScale(0,BigDecimal.ROUND_HALF_UP));
+            }else if(betUser.getBingo().equals(BingoStatusEnum.CLOSE_RETURNING.getCode().byteValue())){
+                recordVo.setAddedPrice(betUser.getBetAmount().multiply(new BigDecimal("2")).setScale(0,BigDecimal.ROUND_HALF_UP));
+                recordVo.setOdds(BigDecimal.ONE);
+            }
             recordVos.add(recordVo);
         }
         result.setItems(recordVos);

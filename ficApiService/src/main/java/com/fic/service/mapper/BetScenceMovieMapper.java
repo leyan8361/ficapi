@@ -37,6 +37,7 @@ public interface BetScenceMovieMapper {
 
     List<BetScenceMovie> findAllWithStatus(int status);
 
+    List<BetScenceMovie> getAll();
 
 //    List<BetScenceMovie> findHighLevelByMovieName(String startDay,String endDay);
 }

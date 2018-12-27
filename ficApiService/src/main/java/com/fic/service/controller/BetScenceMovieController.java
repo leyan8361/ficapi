@@ -35,6 +35,15 @@ public class BetScenceMovieController {
     @Autowired
     BetScenceService betScenceService;
 
+    @GetMapping("/getAll")
+    @ApiOperation("查看所有")
+    public ResponseEntity getAll() {
+        log.debug(" get All scence movie !!!");
+        ResponseVo result = betScenceMovieService.getAll();
+        return ResponseEntity.ok(result);
+    }
+
+
     @GetMapping("/add")
     @ApiImplicitParams({
             @ApiImplicitParam(dataType = "int", name = "scenceId", value = "项目ID"),

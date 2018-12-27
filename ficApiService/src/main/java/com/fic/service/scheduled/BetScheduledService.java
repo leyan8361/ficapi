@@ -16,6 +16,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.Order;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
@@ -56,6 +57,7 @@ public class BetScheduledService {
     /**
      * 每天 00:08:00触发
      */
+    @Scheduled(cron = "0 8 0 * * ?")
     @Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public void doBoxPull() {
         log.debug(" do Box Pull action !");
@@ -97,6 +99,7 @@ public class BetScheduledService {
     /**
      * 每天 晚上 00:10:00触发
      */
+    @Scheduled(cron = "0 10 0 * * ?")
     @Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public void openPrice() {
         String yestToday = DateUtil.getYesTodayAndFormatDay();
@@ -361,10 +364,10 @@ public class BetScheduledService {
                 }
                 if (!odd) {
                     /** 赔率 */
-                    odds = oddTotalAmount.divide(evenTotalAmount);
+                    odds = oddTotalAmount.divide(evenTotalAmount,2);
                 } else {
                     //单
-                    odds = evenTotalAmount.divide(oddTotalAmount);
+                    odds = evenTotalAmount.divide(oddTotalAmount,2);
                 }
                 betScenceMovie.setBingoOdds(odds);
                 betScenceMovie.setStatus(BetScenceMovieStatusEnum.DRAW.getCode().byteValue());
@@ -419,10 +422,10 @@ public class BetScheduledService {
 
                 if (isOver) {
                     //能
-                    odds = couldntAmount.divide(canAmount);
+                    odds = couldntAmount.divide(canAmount,2);
                 } else {
                     //不能
-                    odds = canAmount.divide(couldntAmount);
+                    odds = canAmount.divide(couldntAmount,2);
                 }
                 betScenceMovie.setBingoOdds(odds);
                 betScenceMovie.setStatus(BetScenceMovieStatusEnum.DRAW.getCode().byteValue());
@@ -462,16 +465,16 @@ public class BetScheduledService {
                     break;
                 }
                 if (resultChooice == PriceEnum.A_CHOICE.getCode() && !(aChoiceAmount.compareTo(BigDecimal.ZERO) <= 0)) {
-                    odds = (bChoiceAmount.add(cChoiceAmount).add(dChoiceAmount)).divide(aChoiceAmount);
+                    odds = (bChoiceAmount.add(cChoiceAmount).add(dChoiceAmount)).divide(aChoiceAmount,2);
                 }
                 if (resultChooice == PriceEnum.B_CHOICE.getCode() && !(bChoiceAmount.compareTo(BigDecimal.ZERO) <= 0)) {
-                    odds = (aChoiceAmount.add(cChoiceAmount).add(dChoiceAmount)).divide(bChoiceAmount);
+                    odds = (aChoiceAmount.add(cChoiceAmount).add(dChoiceAmount)).divide(bChoiceAmount,2);
                 }
                 if (resultChooice == PriceEnum.C_CHOICE.getCode() && !(cChoiceAmount.compareTo(BigDecimal.ZERO) <= 0)) {
-                    odds = (aChoiceAmount.add(bChoiceAmount).add(dChoiceAmount)).divide(cChoiceAmount);
+                    odds = (aChoiceAmount.add(bChoiceAmount).add(dChoiceAmount)).divide(cChoiceAmount,2);
                 }
                 if (resultChooice == PriceEnum.D_CHOICE.getCode() && !(dChoiceAmount.compareTo(BigDecimal.ZERO) <= 0)) {
-                    odds = (aChoiceAmount.add(bChoiceAmount).add(cChoiceAmount)).divide(dChoiceAmount);
+                    odds = (aChoiceAmount.add(bChoiceAmount).add(cChoiceAmount)).divide(dChoiceAmount,2);
                 }
                 betScenceMovie.setStatus(BetScenceMovieStatusEnum.DRAW.getCode().byteValue());
                 betScenceMovie.setBingoOdds(odds);
@@ -498,7 +501,7 @@ public class BetScheduledService {
                 for (BoxOffice weekBox : levelThreeForCurrentScenceMovice) {
                     totalWeekBox = totalWeekBox.add(weekBox.getBoxInfo());
                     /**票房单位 为万，竞猜累计为千万，转换*/
-                    totalWeekBox = totalWeekBox.divide(new BigDecimal("1000"));
+                    totalWeekBox = totalWeekBox.divide(new BigDecimal("1000"),2);
                 }
                 /**
                  * 统计猜不同票房的用户赌资
@@ -529,7 +532,7 @@ public class BetScheduledService {
                     loser = loser.add(weekBoxCountVoList.get(i).getBetAmount());
                 }
                 if (hasBingo) {
-                    odds = loser.divide(winner);
+                    odds = loser.divide(winner,2);
                     betScenceMovie.setBingoOdds(odds);
                 }
                 betScenceMovie.setDrawResult(totalWeekBox + "");
@@ -579,6 +582,7 @@ public class BetScheduledService {
     /**
      * 周一 00:15:00触发
      */
+    @Scheduled(cron = "0 15 0 * * MON")
     @Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public void rewardPool() {
         /** 查询过去一周，投注次数过至少两次的竞猜用户数据 */
@@ -721,11 +725,10 @@ public class BetScheduledService {
             log.error(" 奖池为 0 ");
             return;
         }
-        twoReward = totalRwardAmount.multiply(twoRewardPercent).divide(twoRewardPeopleCount);
-        threeReward = totalRwardAmount.multiply(threeRewardPercent).divide(threeRewardPeopleCount);
-        fourReward = totalRwardAmount.multiply(fourRewardPercent).divide(fourRewardPeopleCount);
-        fiveReward = totalRwardAmount.multiply(fiveRewardPercent).divide(fiveRewardPeopleCount);
-
+        twoReward = totalRwardAmount.multiply(twoRewardPercent).divide(twoRewardPeopleCount,2);
+        threeReward = totalRwardAmount.multiply(threeRewardPercent).divide(threeRewardPeopleCount,2);
+        fourReward = totalRwardAmount.multiply(fourRewardPercent).divide(fourRewardPeopleCount,2);
+        fiveReward = totalRwardAmount.multiply(fiveRewardPercent).divide(fiveRewardPeopleCount,2);
 
         BigDecimal realRewardAmount = BigDecimal.ZERO;
         for(Map.Entry<String,List<Integer>> map: rewardMap.entrySet()){
