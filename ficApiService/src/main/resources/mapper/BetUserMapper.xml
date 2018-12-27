@@ -352,7 +352,7 @@
   </select>
 
   <select id="checkAlreadyBetUser" resultType="int">
-    select count(*) from bet_user where bet_scence_movie_id = #{scenceMovieId} and bingo !=0;
+    select count(*) from bet_user where bet_scence_movie_id = #{scenceMovieId};
   </select>
   
   <select id="findByScenceMovieId" resultMap="BaseResultMap">

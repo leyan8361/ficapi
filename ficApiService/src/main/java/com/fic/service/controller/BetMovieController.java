@@ -104,17 +104,24 @@ public class BetMovieController {
 
     @GetMapping("/onShelf")
     @ApiOperation("上架竞猜项目")
-    public ResponseEntity onShelf() {
+    @ApiImplicitParams({
+            @ApiImplicitParam(dataType = "int", name = "id", value = "电影ID")
+    })
+    public ResponseEntity onShelf(int id) {
         log.debug(" bet on shelf !!!");
-
-        return ResponseEntity.ok().body("success");
+        ResponseVo result =  betMovieService.onShelf(id);
+        return ResponseEntity.ok(result);
     }
 
     @GetMapping("/shelf")
     @ApiOperation("下架竞猜项目")
-    public ResponseEntity shelf() {
+    @ApiImplicitParams({
+            @ApiImplicitParam(dataType = "int", name = "id", value = "电影ID")
+    })
+    public ResponseEntity shelf(int id) {
         log.debug(" bet shelf !!!");
-        return ResponseEntity.ok().body("success");
+        ResponseVo result =  betMovieService.shelf(id);
+        return ResponseEntity.ok(result);
     }
 
 
