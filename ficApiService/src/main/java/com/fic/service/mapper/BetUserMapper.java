@@ -51,4 +51,8 @@ public interface BetUserMapper {
     List<BetUser> findlastWeekAlreadyBetByUserId(String startDay,String endDay,int userId);
 
     List<BetUser> findByScenceMovieAndNotReturing(int scenceMovieId,int status);
+
+    List<BetUser> findAllNotReturning();
+
+    List<BetUser> findAllWithoutStatusByScenceMovieId(int scenceMovieId);
 }

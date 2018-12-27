@@ -1,5 +1,7 @@
 package com.fic.service.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import java.util.Date;
 
 public class BetMovie {
@@ -15,12 +17,14 @@ public class BetMovie {
 
     private Byte status;
 
+    @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
     private Date createdTime;
 
     private String movieType;
 
     private String movieDirector;
 
+    @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd")
     private Date showTime;
 
     public Integer getId() {

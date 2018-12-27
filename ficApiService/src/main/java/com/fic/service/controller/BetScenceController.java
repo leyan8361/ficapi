@@ -32,6 +32,14 @@ public class BetScenceController {
     @Autowired
     BetScenceService betScenceService;
 
+    @GetMapping("/getAll")
+    @ApiOperation("查看所有项目")
+    public ResponseEntity getAll() {
+        log.debug(" bet get All !!!");
+        ResponseVo result = betScenceService.getAll();
+        return ResponseEntity.ok(result);
+    }
+
     @PostMapping("/add")
     @ApiOperation("新增项目 项目类型(0,单双）(1,能不能)(2, ABCD)(3,总票房) ")
     public ResponseEntity add(@RequestBody BetScenceVo betScenceVo) {
@@ -48,7 +56,6 @@ public class BetScenceController {
         ResponseVo result = betScenceService.add(betScenceVo);
         return ResponseEntity.ok(result);
     }
-
 
 
 //    @GetMapping("/onShelf")

@@ -201,6 +201,7 @@ public class BetScheduledService {
                 }else{
                     if (!isEnough) {
                         returnUser.setBingo(BingoStatusEnum.CLOSE_RETURNING_EXCEPTION.getCode().byteValue());
+                        betScenceMovie.setStatus(BetScenceMovieStatusEnum.CLOSE_RETURNING_EXCEPTION.getCode().byteValue());
                     } else {
                         needReturn = true;
                         BigDecimal returning = returnUser.getBetAmount().multiply(new BigDecimal("2"));
@@ -227,6 +228,13 @@ public class BetScheduledService {
                 int updateBetScence = betScenceMapper.updateByPrimaryKey(betScence);
                 if(updateBetScence <=0){
                     log.error(" 更改退还金额失败，betscence :{}",betScence.toString());
+                    throw new RuntimeException();
+                }
+            }
+            if(betScenceMovie.getStatus().equals(BetScenceMovieStatusEnum.CLOSE_RETURNING_EXCEPTION.getCode().byteValue())) {
+                int updateBetScenceMovie = betScenceMovieMapper.updateStatus(betScenceMovie.getId(),BetScenceMovieStatusEnum.CLOSE_RETURNING_EXCEPTION.getCode());
+                if(updateBetScenceMovie <=0) {
+                    log.error(" not enough to returning ,");
                     throw new RuntimeException();
                 }
             }
@@ -786,91 +794,66 @@ public class BetScheduledService {
      */
     @Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public void makeUpReturning() {
-        List<BetScenceMovie> findCloseNeedReturing = betScenceMovieMapper.findAllWithStatus(BingoStatusEnum.CLOSE_RETURNING_EXCEPTION.getCode());
-        if(findCloseNeedReturing.size() == 0){
-            log.debug("  bet scence movie have no need to returning");
+
+        List<BetScenceMovie> betScenceMovies = betScenceMovieMapper.findAllWithStatus(BetScenceMovieStatusEnum.CLOSE_RETURNING_EXCEPTION.getCode());
+
+        if(betScenceMovies.size() == 0 ) {
+            log.debug(" make up returning no need to returning ");
             return;
         }
-        for(BetScenceMovie betScenceMovie : findCloseNeedReturing){
-            BetScence betScence = betScenceMapper.findByIdWithoutStatus(betScenceMovie.getBetScenceId());
-            if(null == betScence){
-                log.error(" bet scence is null ,id :{}",betScenceMovie.getBetScenceId());
+
+        BetScence betScence = betScenceMapper.findByIdWithoutStatus(1);
+        if(null == betScence) {
+            log.error(" bet scence not found id :{}",1);
+            return;
+        }
+
+        BigDecimal totalReserveAmount = betScence.getTotalReservation().multiply(new BigDecimal("0.5"));
+        BigDecimal totalNeedReturning = BigDecimal.ZERO;
+        BigDecimal totalBetFee = BigDecimal.ZERO;
+        BigDecimal jaFe = betScence.getJasckpotFee();
+        BigDecimal reFe = betScence.getReservationFee();
+        for(BetScenceMovie betScenceMovie : betScenceMovies) {
+            totalNeedReturning = totalNeedReturning.add(betScenceMovie.getTotalReservationReturning());
+        }
+
+        /**
+         * 奖池 * 0.5 = 备用金
+         * 备用金 - (备用金 * jaFe * reFe) = 实际赔付
+         */
+        BigDecimal cutFe = totalNeedReturning.multiply(jaFe.add(reFe));
+        totalNeedReturning = totalNeedReturning.multiply(new BigDecimal("2")).subtract(cutFe);
+        BigDecimal totalRealReturing = BigDecimal.ZERO;
+        if(totalReserveAmount.compareTo(totalNeedReturning) <=0) {
+            log.error(" not enough to returning totalReserveAmount :{}, totalNeedReturning amount :{}",totalReserveAmount,totalNeedReturning);
+            return;
+        }
+
+        for(BetScenceMovie betScenceMovie : betScenceMovies) {
+            List<BetUser> returnUsers = betUserMapper.findAllWithoutStatusByScenceMovieId(betScenceMovie.getId());
+            if(returnUsers.size() == 0) {
+                log.debug(" no bet user bet scence movie id : {}",betScenceMovie.getId());
                 continue;
             }
-            List<BetUser> notReturingUsers = betUserMapper.findByScenceMovieAndNotReturing(betScenceMovie.getId(),BingoStatusEnum.CLOSE_RETURNING_EXCEPTION.getCode());
-            if(notReturingUsers.size() == 0){
-                log.debug(" no need returning users , bet scence movie id :{}",betScenceMovie.getId());
-                continue;
-            }
-
-            boolean hasRe = false;
-            boolean needReturn = false;
-            BigDecimal totalReserveAmount = BigDecimal.ZERO;
-            BigDecimal totalBetFee = BigDecimal.ZERO;
-            BigDecimal jaFee = BigDecimal.ONE;
-            BigDecimal reFee = BigDecimal.ONE;
-            if (betScence.getHasReservation() == 1) {
-                totalReserveAmount = totalReserveAmount.add(betScence.getTotalReservation().multiply(new BigDecimal("0.5")));
-                hasRe = true;
-                if(betScence.getReservationFee().compareTo(BigDecimal.ZERO) >=0){
-                    reFee = betScence.getReservationFee();
+            for(BetUser returnUser: returnUsers) {
+                if(!returnUser.getBingo().equals(BingoStatusEnum.CLOSE_RETURNING_EXCEPTION.getCode().byteValue())) {
+                    continue;
                 }
-            }
-            if(betScence.getHasJasckpot() ==1 ){
-                if(betScence.getJasckpotFee().compareTo(BigDecimal.ZERO) >=0){
-                    jaFee = betScence.getJasckpotFee();
-                    totalBetFee = betScence.getTotalJasckpot();
-                }
-            }
-            if (hasRe) {
-                /** 实际赔付金额 是需要中奖 投注人本金 * 2 - (投注人本金 * jaFe + 投注人本金 * reFe) */
-                BigDecimal totalJaFe = betScenceMovie.getTotalReservationReturning().multiply(jaFee);
-                BigDecimal totalReFe = betScenceMovie.getTotalReservationReturning().multiply(reFee);
-                BigDecimal principle = betScenceMovie.getTotalReservationReturning();//本金
-                BigDecimal totalReserveReturningAmount = principle.add(principle.subtract(totalJaFe).subtract(totalReFe));
-                boolean isEnough = false;
-                /** 备用金足以赔付 */
-                if (totalReserveAmount.compareTo(totalReserveReturningAmount) >= 0) {
-                    isEnough = true;
-                } else {
-                    isEnough = false;
-                }
-                BigDecimal totalRealReserve = BigDecimal.ZERO;
-
-                for(BetUser returnUser : notReturingUsers){
-                    if (!betScenceMovie.getDrawResult().equals(returnUser.getBetWhich())) {
-                        returnUser.setBingo(BingoStatusEnum.UN_BINGO.getCode().byteValue());
-                    }else{
-                        if (!isEnough) {
-                            returnUser.setBingo(BingoStatusEnum.CLOSE_RETURNING_EXCEPTION.getCode().byteValue());
-                        } else {
-                            needReturn = true;
-                            BigDecimal returning = returnUser.getBetAmount().multiply(new BigDecimal("2"));
-                            BigDecimal betFee = returning.multiply(jaFee);
-                            BigDecimal reserveFee = returning.multiply(reFee);
-                            returnUser.setBetFee(betFee);
-                            returnUser.setReserveFee(reserveFee);
-                            returnUser.setBingo(BingoStatusEnum.CLOSE_RETURNING.getCode().byteValue());
-                            BigDecimal returningFee = returning.subtract(betFee).subtract(reserveFee);
-                            totalRealReserve = totalRealReserve.add(returningFee);
-                            totalBetFee = totalBetFee.add(betFee);
-                            returnUser.setCloseWithReturning(returningFee);
-                            generateBalanceAndUpdateInvest(returnUser.getUserId(), returningFee, FinanceTypeEnum.BET_RETURNING.getCode());
-                        }
-                    }
-                    int updateBetUser = betUserMapper.updateByPrimaryKeySelective(returnUser);
-                    if (updateBetUser <= 0) {
-                        log.error(" 更新 竞猜用户失败 bet user id :{]", returnUser.getId());
-                        throw new RuntimeException();
-                    }
-                }
-                if(hasRe && needReturn && totalRealReserve.compareTo(BigDecimal.ZERO) >0){
-                    betScence.setTotalReservation(betScence.getTotalReservation().subtract(totalRealReserve));
-                    int updateBetScence = betScenceMapper.updateByPrimaryKey(betScence);
-                    if(updateBetScence <=0){
-                        log.error(" 更改退还金额失败，betscence :{}",betScence.toString());
-                        throw new RuntimeException();
-                    }
+                BigDecimal returning = returnUser.getBetAmount().multiply(new BigDecimal("2"));
+                BigDecimal betFee = returning.multiply(jaFe);
+                BigDecimal reserveFee = returning.multiply(reFe);
+                returnUser.setBetFee(betFee);
+                returnUser.setReserveFee(reserveFee);
+                returnUser.setBingo(BingoStatusEnum.CLOSE_RETURNING.getCode().byteValue());
+                BigDecimal returningFee = returning.subtract(betFee).subtract(reserveFee);
+                totalBetFee = totalBetFee.add(betFee);
+                totalRealReturing = totalRealReturing.add(returningFee);
+                returnUser.setCloseWithReturning(returningFee);
+                generateBalanceAndUpdateInvest(returnUser.getUserId(), returningFee, FinanceTypeEnum.BET_RETURNING.getCode());
+                int updateBetUser = betUserMapper.updateByPrimaryKeySelective(returnUser);
+                if (updateBetUser <= 0) {
+                    log.error(" 更新 竞猜用户失败 bet user id :{]", returnUser.getId());
+                    throw new RuntimeException();
                 }
             }
 
@@ -879,6 +862,13 @@ public class BetScheduledService {
                 log.error(" 处理betscence movie 赔付失败，betscencemovie id :{}",betScenceMovie.getId());
                 throw new RuntimeException();
             }
+        }
+        betScence.setTotalJasckpot(betScence.getTotalJasckpot().add(totalBetFee));
+        betScence.setTotalReservation(betScence.getTotalReservation().subtract(totalRealReturing));
+        int updateBetScence = betScenceMapper.updateByPrimaryKey(betScence);
+        if(updateBetScence <=0){
+            log.error(" 更改退还金额失败，betscence :{}",betScence.toString());
+            throw new RuntimeException();
         }
     }
 

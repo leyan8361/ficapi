@@ -540,4 +540,10 @@ public class BetScenceServiceImpl implements BetScenceService {
         result.setContinueBetReward(null != continueReward ? continueReward.setScale(0,BigDecimal.ROUND_DOWN):BigDecimal.ZERO);
         return new ResponseVo(ErrorCodeEnum.SUCCESS,result);
     }
+
+    @Override
+    public ResponseVo getAll() {
+        List<BetScence> result = betScenceMapper.findAllOnLine();
+        return new ResponseVo(ErrorCodeEnum.SUCCESS,result);
+    }
 }

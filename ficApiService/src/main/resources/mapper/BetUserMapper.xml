@@ -377,4 +377,11 @@
   <select id="findByScenceMovieAndNotReturing" resultMap="BaseResultMap">
     select u.* from bet_user u where u.bet_scence_movie_id = #{scenceMovieId} and u.bingo = #{status};
   </select>
+  <select id="findAllNotReturning" resultMap="BaseResultMap">
+    select u.* from bet_user u where u.bingo = 4;
+  </select>
+
+  <select id="findAllWithoutStatusByScenceMovieId" resultMap="BaseResultMap">
+    select u.* from bet_user u where u.bet_scence_movie_id = #{scenceMovieId};
+  </select>
 </mapper>

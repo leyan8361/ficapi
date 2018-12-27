@@ -300,4 +300,16 @@ public class BetMovieServiceImpl implements BetMovieService {
         }
         return new ResponseVo(ErrorCodeEnum.SUCCESS,null);
     }
+
+    @Override
+    public ResponseVo getAll() {
+        List<BetMovie> result = betMovieMapper.findAll();
+        for(BetMovie movie : result){
+            if(StringUtils.isEmpty(movie.getBetMovieCoverUrl())){
+                continue;
+            }
+            movie.setBetMovieCoverUrl(uploadProperties.getUrl(movie.getBetMovieCoverUrl()));
+        }
+        return new ResponseVo(ErrorCodeEnum.SUCCESS,result);
+    }
 }

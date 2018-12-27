@@ -19,6 +19,8 @@ public interface BetMovieService {
 
     ResponseVo getById(int movieId);
 
+    ResponseVo getAll();
+
     ResponseVo add(BetMovie betMovie, MultipartFile movieCoverFile);
 
     ResponseVo update(BetMovie betMovie, MultipartFile movieCoverFile);

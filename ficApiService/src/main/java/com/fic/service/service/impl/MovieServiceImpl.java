@@ -1,7 +1,7 @@
 package com.fic.service.service.impl;
 
 import com.fic.service.Enum.ErrorCodeEnum;
-import com.fic.service.Enum.MovieEnum;
+import com.fic.service.Enum.ShelfStatusEnum;
 import com.fic.service.Vo.MovieDetailInfoVo;
 import com.fic.service.Vo.MovieInfoVo;
 import com.fic.service.Vo.ResponseVo;
@@ -10,17 +10,12 @@ import com.fic.service.constants.UploadProperties;
 import com.fic.service.entity.Movie;
 import com.fic.service.entity.MovieMedia;
 import com.fic.service.entity.MovieUserInfo;
-import com.fic.service.entity.User;
 import com.fic.service.mapper.*;
 import com.fic.service.service.MovieService;
 import com.fic.service.utils.BeanUtil;
 import com.fic.service.utils.DateUtil;
 import com.fic.service.utils.FileUtil;
 import com.fic.service.utils.RegexUtil;
-import okhttp3.internal.http2.ErrorCode;
-import org.apache.commons.beanutils.BeanUtils;
-import org.apache.commons.beanutils.ConvertUtils;
-import org.apache.commons.beanutils.converters.BigDecimalConverter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,7 +25,6 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
@@ -272,10 +266,10 @@ public class MovieServiceImpl implements MovieService {
     @Override
     @Transactional(isolation= Isolation.READ_COMMITTED,propagation= Propagation.REQUIRED,rollbackFor = Exception.class)
     public ResponseVo onShelf(int id) {
-        int onShelfResult = movieMapper.updateStatus(MovieEnum.ON_SHELF.getCode(),id);
+        int onShelfResult = movieMapper.updateStatus(ShelfStatusEnum.ON_SHELF.getCode(),id);
         if(onShelfResult <=0){
             log.error(" 上架失败 电影ID : {}",id);
-
+            //TODO
         }
         return new ResponseVo(ErrorCodeEnum.SUCCESS,null);
     }
@@ -283,10 +277,10 @@ public class MovieServiceImpl implements MovieService {
     @Override
     @Transactional(isolation= Isolation.READ_COMMITTED,propagation= Propagation.REQUIRED,rollbackFor = Exception.class)
     public ResponseVo shelf(int id) {
-        int onShelfResult = movieMapper.updateStatus(MovieEnum.SHELF.getCode(),id);
+        int onShelfResult = movieMapper.updateStatus(ShelfStatusEnum.SHELF.getCode(),id);
         if(onShelfResult <=0){
             log.error(" 下架失败 电影ID : {}",id);
-
+            //TODO
         }
         return new ResponseVo(ErrorCodeEnum.SUCCESS,null);
     }

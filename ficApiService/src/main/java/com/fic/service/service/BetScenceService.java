@@ -26,6 +26,8 @@ public interface BetScenceService {
 
     ResponseVo getMyBetRecord(int userId);
 
+    ResponseVo getAll();
+
     ResponseVo onShelf(int id);
 
     ResponseVo shelf(int id);

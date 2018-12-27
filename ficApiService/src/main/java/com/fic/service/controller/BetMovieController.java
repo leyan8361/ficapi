@@ -24,7 +24,7 @@ import java.util.Date;
 **/
 @RestController
 @RequestMapping("/backend/betMovie")
-@Api("竞猜管理")
+@Api("竞猜电影管理")
 public class BetMovieController {
 
     private final Logger log = LoggerFactory.getLogger(BetMovieController.class);
@@ -32,11 +32,20 @@ public class BetMovieController {
     @Autowired
     BetMovieService betMovieService;
 
+
+    @GetMapping("/getAll")
+    @ApiOperation("查看所有")
+    public ResponseEntity getAll() {
+        log.debug(" bet getAll!!!");
+        ResponseVo result =  betMovieService.getAll();
+        return ResponseEntity.ok(result);
+    }
+
     @PostMapping(value = "/add",consumes = MediaType.MULTIPART_FORM_DATA_VALUE,headers="content-type=multipart/form-data")
     @ApiImplicitParams({
             @ApiImplicitParam(dataType = "string", name = "betMovieName", value = "竞猜电影名称"),
-            @ApiImplicitParam(dataType = "date", name = "activityTime", value = "上架时间"),
-            @ApiImplicitParam(dataType = "date", name = "disabledTime", value = "下架时间"),
+//            @ApiImplicitParam(dataType = "date", name = "activityTime", value = "上架时间"),
+//            @ApiImplicitParam(dataType = "date", name = "disabledTime", value = "下架时间"),
             @ApiImplicitParam(dataType = "string", name = "movieType", value = "电影类型"),
             @ApiImplicitParam(dataType = "string", name = "movieDirector", value = "导演"),
             @ApiImplicitParam(dataType = "date", name = "showTime", value = "上映日期"),
@@ -44,8 +53,8 @@ public class BetMovieController {
     @ApiOperation("新增竞猜电影")
     public ResponseEntity add(
             @RequestParam("betMovieName")String betMovieName,
-                              @RequestParam("activityTime") String activityTime,
-                              @RequestParam("disabledTime") String disabledTime,
+//                              @RequestParam("activityTime") String activityTime,
+//                              @RequestParam("disabledTime") String disabledTime,
                               @RequestParam("movieType") String movieType,
                               @RequestParam("movieDirector") String movieDirector,
                               @RequestParam("showTime") String showTime,
@@ -54,8 +63,8 @@ public class BetMovieController {
         log.debug(" bet add !!!");
         BetMovie betMovie = new BetMovie();
         betMovie.setBetMovieName(betMovieName);
-        betMovie.setActivityTime(DateUtil.toMinFormatDay(activityTime));
-        betMovie.setDisabledTime(DateUtil.toMinFormatDay(disabledTime));
+//        betMovie.setActivityTime(DateUtil.toMinFormatDay(activityTime));
+//        betMovie.setDisabledTime(DateUtil.toMinFormatDay(disabledTime));
         betMovie.setMovieDirector(movieDirector);
         betMovie.setMovieType(movieType);
         betMovie.setShowTime(DateUtil.toDayFormatDay(showTime));
@@ -66,16 +75,16 @@ public class BetMovieController {
     @GetMapping("/update")
     @ApiImplicitParams({
             @ApiImplicitParam(dataType = "string", name = "betMovieName", value = "竞猜电影名称"),
-            @ApiImplicitParam(dataType = "date", name = "activityTime", value = "上架时间"),
-            @ApiImplicitParam(dataType = "date", name = "disabledTime", value = "下架时间"),
+//            @ApiImplicitParam(dataType = "date", name = "activityTime", value = "上架时间"),
+//            @ApiImplicitParam(dataType = "date", name = "disabledTime", value = "下架时间"),
             @ApiImplicitParam(dataType = "string", name = "movieType", value = "电影类型"),
             @ApiImplicitParam(dataType = "string", name = "movieDirector", value = "导演"),
             @ApiImplicitParam(dataType = "date", name = "showTime", value = "上映日期"),
     })
     @ApiOperation("更新竞猜电影")
     public ResponseEntity update(@RequestParam("betMovieName")String betMovieName,
-                              @RequestParam("activityTime") Date activityTime,
-                              @RequestParam("disabledTime") Date disabledTime,
+//                              @RequestParam("activityTime") Date activityTime,
+//                              @RequestParam("disabledTime") Date disabledTime,
                               @RequestParam("movieType") String movieType,
                               @RequestParam("movieDirector") String movieDirector,
                               @RequestParam("showTime") Date showTime,
@@ -84,8 +93,8 @@ public class BetMovieController {
         log.debug(" bet add !!!");
         BetMovie betMovie = new BetMovie();
         betMovie.setBetMovieName(betMovieName);
-        betMovie.setActivityTime(activityTime);
-        betMovie.setDisabledTime(disabledTime);
+//        betMovie.setActivityTime(activityTime);
+//        betMovie.setDisabledTime(disabledTime);
         betMovie.setMovieDirector(movieDirector);
         betMovie.setMovieType(movieType);
         betMovie.setShowTime(showTime);
@@ -107,5 +116,7 @@ public class BetMovieController {
         log.debug(" bet shelf !!!");
         return ResponseEntity.ok().body("success");
     }
+
+
 
 }
