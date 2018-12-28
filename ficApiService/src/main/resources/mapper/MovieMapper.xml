@@ -19,8 +19,6 @@
     <result column="invest_count" jdbcType="INTEGER" property="investCount" />
     <result column="movie_last" jdbcType="INTEGER" property="movieLast" />
     <result column="return_rate" jdbcType="DECIMAL" property="returnRate" />
-  </resultMap>
-  <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="com.fic.service.entity.MovieWithBLOBs">
     <result column="actor_list" jdbcType="LONGVARCHAR" property="actorList" />
     <result column="movie_brief_list" jdbcType="LONGVARCHAR" property="movieBriefList" />
   </resultMap>
@@ -32,7 +30,7 @@
   <sql id="Blob_Column_List">
     actor_list, movie_brief_list
   </sql>
-  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="ResultMapWithBLOBs">
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
     select
     <include refid="Base_Column_List" />
     ,
@@ -44,7 +42,7 @@
     delete from movie
     where movie_id = #{movieId,jdbcType=INTEGER}
   </delete>
-  <insert id="insert" parameterType="com.fic.service.entity.MovieWithBLOBs">
+  <insert id="insert" parameterType="com.fic.service.entity.Movie">
     insert into movie (movie_id, movie_name, created_time,
       updated_time, movie_type, budget,
       quota, movie_cover_url, show_place,
@@ -60,7 +58,7 @@
       #{movieLast,jdbcType=INTEGER}, #{returnRate,jdbcType=DECIMAL}, #{actorList,jdbcType=LONGVARCHAR},
       #{movieBriefList,jdbcType=LONGVARCHAR})
   </insert>
-  <insert id="insertSelective" parameterType="com.fic.service.entity.MovieWithBLOBs">
+  <insert id="insertSelective" parameterType="com.fic.service.entity.Movie">
     insert into movie
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="movieId != null">
@@ -181,7 +179,7 @@
       </if>
     </trim>
   </insert>
-  <update id="updateByPrimaryKeySelective" parameterType="com.fic.service.entity.MovieWithBLOBs">
+  <update id="updateByPrimaryKeySelective" parameterType="com.fic.service.entity.Movie">
     update movie
     <set>
       <if test="movieName != null">
@@ -241,7 +239,7 @@
     </set>
     where movie_id = #{movieId,jdbcType=INTEGER}
   </update>
-  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.fic.service.entity.MovieWithBLOBs">
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.fic.service.entity.Movie">
     update movie
     set movie_name = #{movieName,jdbcType=VARCHAR},
       created_time = #{createdTime,jdbcType=TIMESTAMP},
