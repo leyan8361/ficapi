@@ -4,31 +4,36 @@
   <resultMap id="BaseResultMap" type="com.fic.service.entity.Movie">
     <id column="movie_id" jdbcType="INTEGER" property="movieId" />
     <result column="movie_name" jdbcType="VARCHAR" property="movieName" />
-    <result column="movie_remark" jdbcType="VARCHAR" property="movieRemark" />
     <result column="created_time" jdbcType="TIMESTAMP" property="createdTime" />
-    <result column="created_by" jdbcType="INTEGER" property="createdBy" />
     <result column="updated_time" jdbcType="TIMESTAMP" property="updatedTime" />
-    <result column="updated_by" jdbcType="INTEGER" property="updatedBy" />
     <result column="movie_type" jdbcType="VARCHAR" property="movieType" />
     <result column="budget" jdbcType="DECIMAL" property="budget" />
     <result column="quota" jdbcType="DECIMAL" property="quota" />
     <result column="movie_cover_url" jdbcType="VARCHAR" property="movieCoverUrl" />
     <result column="show_place" jdbcType="VARCHAR" property="showPlace" />
-    <result column="show_time" jdbcType="TIMESTAMP" property="showTime" />
+    <result column="show_time" jdbcType="VARCHAR" property="showTime" />
     <result column="status" jdbcType="TINYINT" property="status" />
+    <result column="duty_description" jdbcType="VARCHAR" property="dutyDescription" />
+    <result column="box_info" jdbcType="VARCHAR" property="boxInfo" />
+    <result column="invest_cycle" jdbcType="INTEGER" property="investCycle" />
+    <result column="invest_count" jdbcType="INTEGER" property="investCount" />
+    <result column="movie_last" jdbcType="INTEGER" property="movieLast" />
+    <result column="return_rate" jdbcType="DECIMAL" property="returnRate" />
   </resultMap>
-  <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="com.fic.service.entity.Movie">
-    <result column="movie_note" jdbcType="LONGVARCHAR" property="movieNote" />
+  <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="com.fic.service.entity.MovieWithBLOBs">
+    <result column="actor_list" jdbcType="LONGVARCHAR" property="actorList" />
+    <result column="movie_brief_list" jdbcType="LONGVARCHAR" property="movieBriefList" />
   </resultMap>
   <sql id="Base_Column_List">
-    movie_id, movie_name, movie_remark, created_time, created_by, updated_time, updated_by,
-    movie_type, budget, quota, movie_cover_url, show_place, show_time,status
+    movie_id, movie_name, created_time, updated_time, movie_type, budget, quota, movie_cover_url,
+    show_place, show_time, status, duty_description, box_info, invest_cycle, invest_count,
+    movie_last, return_rate
   </sql>
   <sql id="Blob_Column_List">
-    movie_note
+    actor_list, movie_brief_list
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="ResultMapWithBLOBs">
-    select 
+    select
     <include refid="Base_Column_List" />
     ,
     <include refid="Blob_Column_List" />
@@ -39,19 +44,23 @@
     delete from movie
     where movie_id = #{movieId,jdbcType=INTEGER}
   </delete>
-  <insert id="insert" parameterType="com.fic.service.entity.Movie" useGeneratedKeys="true" keyProperty="movieId">
-    insert into movie (movie_id, movie_name, movie_remark, 
-      created_time, created_by, updated_time, 
-      updated_by, movie_type, budget,
+  <insert id="insert" parameterType="com.fic.service.entity.MovieWithBLOBs">
+    insert into movie (movie_id, movie_name, created_time,
+      updated_time, movie_type, budget,
       quota, movie_cover_url, show_place,
-      show_time,movie_note,status)
-    values (#{movieId,jdbcType=INTEGER}, #{movieName,jdbcType=VARCHAR}, #{movieRemark,jdbcType=VARCHAR}, 
-      #{createdTime,jdbcType=TIMESTAMP}, #{createdBy,jdbcType=INTEGER}, #{updatedTime,jdbcType=TIMESTAMP}, 
-      #{updatedBy,jdbcType=INTEGER}, #{movieType,jdbcType=VARCHAR}, #{budget,jdbcType=DECIMAL},
+      show_time, status, duty_description,
+      box_info, invest_cycle, invest_count,
+      movie_last, return_rate, actor_list,
+      movie_brief_list)
+    values (#{movieId,jdbcType=INTEGER}, #{movieName,jdbcType=VARCHAR}, #{createdTime,jdbcType=TIMESTAMP},
+      #{updatedTime,jdbcType=TIMESTAMP}, #{movieType,jdbcType=VARCHAR}, #{budget,jdbcType=DECIMAL},
       #{quota,jdbcType=DECIMAL}, #{movieCoverUrl,jdbcType=VARCHAR}, #{showPlace,jdbcType=VARCHAR},
-      #{showTime,jdbcType=TIMESTAMP}, #{movieNote,jdbcType=LONGVARCHAR},#{status,jdbcType=TINYINT})
+      #{showTime,jdbcType=VARCHAR}, #{status,jdbcType=TINYINT}, #{dutyDescription,jdbcType=VARCHAR},
+      #{boxInfo,jdbcType=VARCHAR}, #{investCycle,jdbcType=INTEGER}, #{investCount,jdbcType=INTEGER},
+      #{movieLast,jdbcType=INTEGER}, #{returnRate,jdbcType=DECIMAL}, #{actorList,jdbcType=LONGVARCHAR},
+      #{movieBriefList,jdbcType=LONGVARCHAR})
   </insert>
-  <insert id="insertSelective" parameterType="com.fic.service.entity.Movie" useGeneratedKeys="true" keyProperty="movieId">
+  <insert id="insertSelective" parameterType="com.fic.service.entity.MovieWithBLOBs">
     insert into movie
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="movieId != null">
@@ -60,28 +69,19 @@
       <if test="movieName != null">
         movie_name,
       </if>
-      <if test="movieRemark != null">
-        movie_remark,
-      </if>
       <if test="createdTime != null">
         created_time,
-      </if>
-      <if test="createdBy != null">
-        created_by,
       </if>
       <if test="updatedTime != null">
         updated_time,
       </if>
-      <if test="updatedBy != null">
-        updated_by,
-      </if>
       <if test="movieType != null">
         movie_type,
       </if>
-      <if test="budget != null and budget != 0">
+      <if test="budget != null">
         budget,
       </if>
-      <if test="quota != null and quota != 0">
+      <if test="quota != null">
         quota,
       </if>
       <if test="movieCoverUrl != null">
@@ -93,11 +93,32 @@
       <if test="showTime != null">
         show_time,
       </if>
-      <if test="movieNote != null">
-        movie_note,
-      </if>
       <if test="status != null">
-        status
+        status,
+      </if>
+      <if test="dutyDescription != null">
+        duty_description,
+      </if>
+      <if test="boxInfo != null">
+        box_info,
+      </if>
+      <if test="investCycle != null">
+        invest_cycle,
+      </if>
+      <if test="investCount != null">
+        invest_count,
+      </if>
+      <if test="movieLast != null">
+        movie_last,
+      </if>
+      <if test="returnRate != null">
+        return_rate,
+      </if>
+      <if test="actorList != null">
+        actor_list,
+      </if>
+      <if test="movieBriefList != null">
+        movie_brief_list,
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
@@ -107,28 +128,19 @@
       <if test="movieName != null">
         #{movieName,jdbcType=VARCHAR},
       </if>
-      <if test="movieRemark != null">
-        #{movieRemark,jdbcType=VARCHAR},
-      </if>
       <if test="createdTime != null">
         #{createdTime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="createdBy != null">
-        #{createdBy,jdbcType=INTEGER},
       </if>
       <if test="updatedTime != null">
         #{updatedTime,jdbcType=TIMESTAMP},
       </if>
-      <if test="updatedBy != null">
-        #{updatedBy,jdbcType=INTEGER},
-      </if>
       <if test="movieType != null">
         #{movieType,jdbcType=VARCHAR},
       </if>
-      <if test="budget != null and budget != 0">
+      <if test="budget != null">
         #{budget,jdbcType=DECIMAL},
       </if>
-      <if test="quota != null and quota != 0">
+      <if test="quota != null">
         #{quota,jdbcType=DECIMAL},
       </if>
       <if test="movieCoverUrl != null">
@@ -138,44 +150,56 @@
         #{showPlace,jdbcType=VARCHAR},
       </if>
       <if test="showTime != null">
-        #{showTime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="movieNote != null">
-        #{movieNote,jdbcType=LONGVARCHAR},
+        #{showTime,jdbcType=VARCHAR},
       </if>
       <if test="status != null">
-        #{status,jdbcType=TINYINT}
+        #{status,jdbcType=TINYINT},
+      </if>
+      <if test="dutyDescription != null">
+        #{dutyDescription,jdbcType=VARCHAR},
+      </if>
+      <if test="boxInfo != null">
+        #{boxInfo,jdbcType=VARCHAR},
+      </if>
+      <if test="investCycle != null">
+        #{investCycle,jdbcType=INTEGER},
+      </if>
+      <if test="investCount != null">
+        #{investCount,jdbcType=INTEGER},
+      </if>
+      <if test="movieLast != null">
+        #{movieLast,jdbcType=INTEGER},
+      </if>
+      <if test="returnRate != null">
+        #{returnRate,jdbcType=DECIMAL},
+      </if>
+      <if test="actorList != null">
+        #{actorList,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="movieBriefList != null">
+        #{movieBriefList,jdbcType=LONGVARCHAR},
       </if>
     </trim>
   </insert>
-  <update id="updateByPrimaryKeySelective" parameterType="com.fic.service.entity.Movie">
+  <update id="updateByPrimaryKeySelective" parameterType="com.fic.service.entity.MovieWithBLOBs">
     update movie
     <set>
       <if test="movieName != null">
         movie_name = #{movieName,jdbcType=VARCHAR},
       </if>
-      <if test="movieRemark != null">
-        movie_remark = #{movieRemark,jdbcType=VARCHAR},
-      </if>
       <if test="createdTime != null">
         created_time = #{createdTime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="createdBy != null">
-        created_by = #{createdBy,jdbcType=INTEGER},
       </if>
       <if test="updatedTime != null">
         updated_time = #{updatedTime,jdbcType=TIMESTAMP},
       </if>
-      <if test="updatedBy != null">
-        updated_by = #{updatedBy,jdbcType=INTEGER},
-      </if>
       <if test="movieType != null">
         movie_type = #{movieType,jdbcType=VARCHAR},
       </if>
-      <if test="budget != null and budget != 0">
+      <if test="budget != null">
         budget = #{budget,jdbcType=DECIMAL},
       </if>
-      <if test="quota != null and quota != 0">
+      <if test="quota != null">
         quota = #{quota,jdbcType=DECIMAL},
       </if>
       <if test="movieCoverUrl != null">
@@ -185,50 +209,78 @@
         show_place = #{showPlace,jdbcType=VARCHAR},
       </if>
       <if test="showTime != null">
-        show_time = #{showTime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="movieNote != null">
-        movie_note = #{movieNote,jdbcType=LONGVARCHAR},
+        show_time = #{showTime,jdbcType=VARCHAR},
       </if>
       <if test="status != null">
-        status = #{status,jdbcType=TINYINT}
+        status = #{status,jdbcType=TINYINT},
+      </if>
+      <if test="dutyDescription != null">
+        duty_description = #{dutyDescription,jdbcType=VARCHAR},
+      </if>
+      <if test="boxInfo != null">
+        box_info = #{boxInfo,jdbcType=VARCHAR},
+      </if>
+      <if test="investCycle != null">
+        invest_cycle = #{investCycle,jdbcType=INTEGER},
+      </if>
+      <if test="investCount != null">
+        invest_count = #{investCount,jdbcType=INTEGER},
+      </if>
+      <if test="movieLast != null">
+        movie_last = #{movieLast,jdbcType=INTEGER},
+      </if>
+      <if test="returnRate != null">
+        return_rate = #{returnRate,jdbcType=DECIMAL},
+      </if>
+      <if test="actorList != null">
+        actor_list = #{actorList,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="movieBriefList != null">
+        movie_brief_list = #{movieBriefList,jdbcType=LONGVARCHAR},
       </if>
     </set>
     where movie_id = #{movieId,jdbcType=INTEGER}
   </update>
-  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.fic.service.entity.Movie">
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.fic.service.entity.MovieWithBLOBs">
     update movie
     set movie_name = #{movieName,jdbcType=VARCHAR},
-      movie_remark = #{movieRemark,jdbcType=VARCHAR},
       created_time = #{createdTime,jdbcType=TIMESTAMP},
-      created_by = #{createdBy,jdbcType=INTEGER},
       updated_time = #{updatedTime,jdbcType=TIMESTAMP},
-      updated_by = #{updatedBy,jdbcType=INTEGER},
       movie_type = #{movieType,jdbcType=VARCHAR},
       budget = #{budget,jdbcType=DECIMAL},
       quota = #{quota,jdbcType=DECIMAL},
       movie_cover_url = #{movieCoverUrl,jdbcType=VARCHAR},
       show_place = #{showPlace,jdbcType=VARCHAR},
-      show_time = #{showTime,jdbcType=TIMESTAMP},
-      movie_note = #{movieNote,jdbcType=LONGVARCHAR},
-      status = #{status,jdbcType=TINYINT}
+      show_time = #{showTime,jdbcType=VARCHAR},
+      status = #{status,jdbcType=TINYINT},
+      duty_description = #{dutyDescription,jdbcType=VARCHAR},
+      box_info = #{boxInfo,jdbcType=VARCHAR},
+      invest_cycle = #{investCycle,jdbcType=INTEGER},
+      invest_count = #{investCount,jdbcType=INTEGER},
+      movie_last = #{movieLast,jdbcType=INTEGER},
+      return_rate = #{returnRate,jdbcType=DECIMAL},
+      actor_list = #{actorList,jdbcType=LONGVARCHAR},
+      movie_brief_list = #{movieBriefList,jdbcType=LONGVARCHAR}
     where movie_id = #{movieId,jdbcType=INTEGER}
   </update>
   <update id="updateByPrimaryKey" parameterType="com.fic.service.entity.Movie">
     update movie
     set movie_name = #{movieName,jdbcType=VARCHAR},
-      movie_remark = #{movieRemark,jdbcType=VARCHAR},
       created_time = #{createdTime,jdbcType=TIMESTAMP},
-      created_by = #{createdBy,jdbcType=INTEGER},
       updated_time = #{updatedTime,jdbcType=TIMESTAMP},
-      updated_by = #{updatedBy,jdbcType=INTEGER},
       movie_type = #{movieType,jdbcType=VARCHAR},
       budget = #{budget,jdbcType=DECIMAL},
       quota = #{quota,jdbcType=DECIMAL},
       movie_cover_url = #{movieCoverUrl,jdbcType=VARCHAR},
       show_place = #{showPlace,jdbcType=VARCHAR},
-      show_time = #{showTime,jdbcType=TIMESTAMP}
-      status = #{status,jdbcType=TINYINT}
+      show_time = #{showTime,jdbcType=VARCHAR},
+      status = #{status,jdbcType=TINYINT},
+      duty_description = #{dutyDescription,jdbcType=VARCHAR},
+      box_info = #{boxInfo,jdbcType=VARCHAR},
+      invest_cycle = #{investCycle,jdbcType=INTEGER},
+      invest_count = #{investCount,jdbcType=INTEGER},
+      movie_last = #{movieLast,jdbcType=INTEGER},
+      return_rate = #{returnRate,jdbcType=DECIMAL}
     where movie_id = #{movieId,jdbcType=INTEGER}
   </update>
   <select id="findAll" resultMap="BaseResultMap">

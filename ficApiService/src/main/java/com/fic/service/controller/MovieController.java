@@ -6,6 +6,7 @@ import com.fic.service.Vo.ResponseVo;
 import com.fic.service.entity.Movie;
 import com.fic.service.mapper.MovieMapper;
 import com.fic.service.service.MovieService;
+import com.fic.service.utils.DateUtil;
 import io.swagger.annotations.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,14 +47,13 @@ public class MovieController {
     }
 
     @PostMapping(value = "/add")
-    @ApiOperation("新增")
+    @ApiOperation("新增电影")
     @ApiImplicitParams({
             @ApiImplicitParam(dataType = "string", name = "movieName", value = "电影名", required = true),
             @ApiImplicitParam(dataType = "BigDecimal", name = "budget", value = "总预算", required = true),
             @ApiImplicitParam(dataType = "BigDecimal", name = "quota", value = "开放额度", required = true),
             @ApiImplicitParam(dataType = "string", name = "showPlace", value = "上映地点", required = true),
             @ApiImplicitParam(dataType = "date", name = "showTime", value = "上映时间", required = true),
-            @ApiImplicitParam(dataType = "int", name = "status", value = "状态,(0，未上架)(1上架)", required = true)
     })
     @ApiResponses({
             @ApiResponse(code = 1018, message = "ERROR PIC TYPE (png|jpg|bmp|jpeg)"),
@@ -64,7 +64,7 @@ public class MovieController {
                               @RequestParam(value = "budget",required = true) BigDecimal budget,
                               @RequestParam(value = "quota",required = true) BigDecimal quota,
                               @RequestParam(value = "showPlace",required = true) String showPlace,
-                              @RequestParam(value = "showTime",required = true) Date showTime,
+                              @RequestParam(value = "showTime",required = true) String showTime,
                               @RequestParam(value = "status",required = true) int status) {
         log.debug(" movie add Action !!!");
         Movie movie = new Movie();
@@ -114,32 +114,32 @@ public class MovieController {
         return ResponseEntity.ok(responseVo);
     }
 
-    @GetMapping("/onShelf")
-    @ApiOperation("上架")
-    @ApiImplicitParams({
-            @ApiImplicitParam(dataType = "int", name = "id", value = "movie ID", required = true)
-    })
-    @ApiResponses({
-            @ApiResponse(code = 200, message = "SUCCESS")
-    })
-    public ResponseEntity onShelf(@RequestParam Integer id) {
-        log.debug(" movie onShelf Action !!!");
-        ResponseVo responseVo = movieService.onShelf(id);
-        return ResponseEntity.ok(responseVo);
-    }
-
-
-    @GetMapping("/shelf")
-    @ApiOperation("下架")
-    @ApiImplicitParams({
-            @ApiImplicitParam(dataType = "int", name = "id", value = "movie ID", required = true)
-    })
-    @ApiResponses({
-            @ApiResponse(code = 200, message = "SUCCESS")
-    })
-    public ResponseEntity shelf(@RequestParam Integer id) {
-        log.debug(" movie shelf Action !!!");
-        ResponseVo responseVo = movieService.shelf(id);
-        return ResponseEntity.ok(responseVo);
-    }
+//    @GetMapping("/onShelf")
+//    @ApiOperation("上架")
+//    @ApiImplicitParams({
+//            @ApiImplicitParam(dataType = "int", name = "id", value = "movie ID", required = true)
+//    })
+//    @ApiResponses({
+//            @ApiResponse(code = 200, message = "SUCCESS")
+//    })
+//    public ResponseEntity onShelf(@RequestParam Integer id) {
+//        log.debug(" movie onShelf Action !!!");
+//        ResponseVo responseVo = movieService.onShelf(id);
+//        return ResponseEntity.ok(responseVo);
+//    }
+//
+//
+//    @GetMapping("/shelf")
+//    @ApiOperation("下架")
+//    @ApiImplicitParams({
+//            @ApiImplicitParam(dataType = "int", name = "id", value = "movie ID", required = true)
+//    })
+//    @ApiResponses({
+//            @ApiResponse(code = 200, message = "SUCCESS")
+//    })
+//    public ResponseEntity shelf(@RequestParam Integer id) {
+//        log.debug(" movie shelf Action !!!");
+//        ResponseVo responseVo = movieService.shelf(id);
+//        return ResponseEntity.ok(responseVo);
+//    }
 }

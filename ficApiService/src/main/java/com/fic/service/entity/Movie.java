@@ -1,38 +1,58 @@
 package com.fic.service.entity;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
+@ApiModel
 public class Movie {
+
+    @ApiModelProperty("新增修改不需要填写,电影ID")
     private Integer movieId;
 
+    @ApiModelProperty("电影名称")
     private String movieName;
-
-    private String movieRemark;
 
     private Date createdTime;
 
-    private Integer createdBy;
-
     private Date updatedTime;
-
-    private Integer updatedBy;
-
+    @ApiModelProperty("电影类型")
     private String movieType;
-
+    @ApiModelProperty("总预算")
     private BigDecimal budget;
-
+    @ApiModelProperty("开放额度")
     private BigDecimal quota;
-
+    @ApiModelProperty("封面url")
     private String movieCoverUrl;
-
+    @ApiModelProperty("上映地点")
     private String showPlace;
+    @ApiModelProperty("上映时间")
+    private String showTime;
+    @ApiModelProperty("(0，已杀青)(1，待开机)(2,已分红)(3,待分红)")
+    private int status;
+    @ApiModelProperty("责任描述")
+    private String dutyDescription;
+    @ApiModelProperty("票房")
+    private String boxInfo;
+    @ApiModelProperty(value = "周期(月)",example = "2")
+    private Integer investCycle;
+    @ApiModelProperty("新增修改不需要填写, 参投人数")
+    private Integer investCount;
+    @ApiModelProperty(value = "影片时长",example = "120")
+    private Integer movieLast;
+    @ApiModelProperty(value = "回报率",example = "0")
+    private BigDecimal returnRate;
+    @ApiModelProperty(value = "新增修改不需要填写,演员列表")
+    private List<ActorInfo> actorArray;
 
-    private Date showTime;
+    private String actorList;
+    @ApiModelProperty(value = "新增修改不需要填写,项目简介")
+    private MovieDetailInfo movieDetailInfo;
 
-    private String movieNote;
-
-    private byte status;
+    private String movieBriefList;
 
     public Integer getMovieId() {
         return movieId;
@@ -50,14 +70,6 @@ public class Movie {
         this.movieName = movieName;
     }
 
-    public String getMovieRemark() {
-        return movieRemark;
-    }
-
-    public void setMovieRemark(String movieRemark) {
-        this.movieRemark = movieRemark;
-    }
-
     public Date getCreatedTime() {
         return createdTime;
     }
@@ -66,28 +78,12 @@ public class Movie {
         this.createdTime = createdTime;
     }
 
-    public Integer getCreatedBy() {
-        return createdBy;
-    }
-
-    public void setCreatedBy(Integer createdBy) {
-        this.createdBy = createdBy;
-    }
-
     public Date getUpdatedTime() {
         return updatedTime;
     }
 
     public void setUpdatedTime(Date updatedTime) {
         this.updatedTime = updatedTime;
-    }
-
-    public Integer getUpdatedBy() {
-        return updatedBy;
-    }
-
-    public void setUpdatedBy(Integer updatedBy) {
-        this.updatedBy = updatedBy;
     }
 
     public String getMovieType() {
@@ -130,48 +126,83 @@ public class Movie {
         this.showPlace = showPlace;
     }
 
-    public Date getShowTime() {
+    public String getShowTime() {
         return showTime;
     }
 
-    public void setShowTime(Date showTime) {
+    public void setShowTime(String showTime) {
         this.showTime = showTime;
     }
 
-    public String getMovieNote() {
-        return movieNote;
-    }
-
-    public void setMovieNote(String movieNote) {
-        this.movieNote = movieNote;
-    }
-
-    public byte getStatus() {
+    public int getStatus() {
         return status;
     }
 
-    public void setStatus(byte status) {
+    public void setStatus(int status) {
         this.status = status;
     }
 
-    @Override
-    public String toString() {
-        return "Movie{" +
-                "movieId=" + movieId +
-                ", movieName='" + movieName + '\'' +
-                ", movieRemark='" + movieRemark + '\'' +
-                ", createdTime=" + createdTime +
-                ", createdBy=" + createdBy +
-                ", updatedTime=" + updatedTime +
-                ", updatedBy=" + updatedBy +
-                ", movieType='" + movieType + '\'' +
-                ", budget=" + budget +
-                ", quota=" + quota +
-                ", movieCoverUrl='" + movieCoverUrl + '\'' +
-                ", showPlace='" + showPlace + '\'' +
-                ", showTime=" + showTime +
-                ", movieNote='" + movieNote + '\'' +
-                ", status=" + status +
-                '}';
+    public String getDutyDescription() {
+        return dutyDescription;
+    }
+
+    public void setDutyDescription(String dutyDescription) {
+        this.dutyDescription = dutyDescription;
+    }
+
+    public String getBoxInfo() {
+        return boxInfo;
+    }
+
+    public void setBoxInfo(String boxInfo) {
+        this.boxInfo = boxInfo;
+    }
+
+    public Integer getInvestCycle() {
+        return investCycle;
+    }
+
+    public void setInvestCycle(Integer investCycle) {
+        this.investCycle = investCycle;
+    }
+
+    public Integer getInvestCount() {
+        return investCount;
+    }
+
+    public void setInvestCount(Integer investCount) {
+        this.investCount = investCount;
+    }
+
+    public Integer getMovieLast() {
+        return movieLast;
+    }
+
+    public void setMovieLast(Integer movieLast) {
+        this.movieLast = movieLast;
+    }
+
+    public BigDecimal getReturnRate() {
+        return returnRate;
+    }
+
+    public void setReturnRate(BigDecimal returnRate) {
+        this.returnRate = returnRate;
+    }
+
+    public String getActorList() {
+        return actorList;
+    }
+
+    public void setActorList(String actorList) {
+        this.actorList = actorList;
+    }
+
+    public String getMovieBriefList() {
+        return movieBriefList;
+    }
+
+    public void setMovieBriefList(String movieBriefList) {
+        this.movieBriefList = movieBriefList;
     }
 }
