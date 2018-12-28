@@ -210,8 +210,20 @@ public class BetScheduledService {
                         BigDecimal returning = returnUser.getBetAmount().multiply(new BigDecimal("2"));
                         BigDecimal betFee = returning.multiply(jaFee);
                         BigDecimal reserveFee = returning.multiply(reFee);
-                        returnUser.setBetFee(betFee);
-                        returnUser.setReserveFee(reserveFee);
+                        if(betFee.compareTo(BigDecimal.ONE) <=0){
+                            betFee = BigDecimal.ONE;
+                            returnUser.setBetFee(betFee);
+                        }else{
+                            betFee = betFee.setScale(0,BigDecimal.ROUND_DOWN);
+                            returnUser.setBetFee(betFee);
+                        }
+                        if(reserveFee.compareTo(BigDecimal.ONE) <=0){
+                            reserveFee =  BigDecimal.ONE;
+                            returnUser.setReserveFee(reserveFee);
+                        }else{
+                            reserveFee = reserveFee.setScale(0,BigDecimal.ROUND_DOWN);
+                            returnUser.setReserveFee(reserveFee);
+                        }
                         returnUser.setBingo(BingoStatusEnum.CLOSE_RETURNING.getCode().byteValue());
                         BigDecimal returningFee = returning.subtract(betFee).subtract(reserveFee);
                         totalRealReserve = totalRealReserve.add(returningFee);
@@ -268,22 +280,42 @@ public class BetScheduledService {
             if (betUser.getBetWhich().equals(betScenceMovie.getDrawResult())) {
                 /** Bingo */
                 //奖金
-                BigDecimal oddsReward = betAmount.multiply(odds);
+                BigDecimal oddsReward = betAmount.multiply(odds).setScale(0,BigDecimal.ROUND_DOWN);
                 BigDecimal currentJa = BigDecimal.ZERO;
                 BigDecimal currentRe = BigDecimal.ZERO;
+                BigDecimal totalFee = BigDecimal.ZERO;
                 if (hasJa) {
                     //手续费
                     currentJa = betAmount.add(oddsReward).multiply(jaFee);
-                    totalJaFee = totalJaFee.add(currentJa);
-                    betScence.setTotalJasckpot(totalJaFee);
-                    betUser.setBetFee(currentJa);
+                    if(currentJa.compareTo(new BigDecimal("0.5")) >=0 && currentJa.compareTo(BigDecimal.ONE) <=0){
+                        currentJa = BigDecimal.ONE;
+                    }else{
+                        currentJa = currentJa.setScale(0,BigDecimal.ROUND_DOWN);
+                    }
+                    totalFee = totalFee.add(currentJa);
                 }
                 if (hasRe) {
                     //备用金手续费
                     currentRe = betAmount.add(oddsReward).multiply(reFee);
-                    totalReFee = totalReFee.add(currentRe);
-                    betScence.setTotalReservation(totalReFee);
-                    betUser.setReserveFee(currentRe);
+                    if(currentRe.compareTo(new BigDecimal("0.5")) >=0 && currentRe.compareTo(BigDecimal.ONE) <=0){
+                        currentRe = BigDecimal.ONE;
+                    }else{
+                        currentRe = currentRe.setScale(0,BigDecimal.ROUND_DOWN);
+                    }
+                    if(oddsReward.subtract(currentRe).compareTo(BigDecimal.ONE) > 0){
+                        betUser.setReserveFee(BigDecimal.ZERO);
+                    }else{
+                        betUser.setReserveFee(currentRe);
+                    }
+                    totalFee = totalFee.add(currentRe);
+                }
+                if(totalFee.compareTo(BigDecimal.ZERO) >=0){
+                    if(oddsReward.compareTo(totalFee) > 0){
+                        totalJaFee = totalJaFee.add(currentJa);
+                        totalReFee = totalReFee.add(currentRe);
+                        betScence.setTotalJasckpot(totalJaFee);
+                        betScence.setTotalReservation(totalReFee);
+                    }
                 }
                 BigDecimal resultReward = betAmount.add(oddsReward).subtract(currentJa).subtract(currentRe);
                 betUser.setBingoPrice(resultReward);

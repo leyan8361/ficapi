@@ -50,7 +50,7 @@ public class SmsServiceImpl implements SmsService {
         try{
             String[] params = {sms.getCode()};
             SmsSingleSender sender = new SmsSingleSender(smsProperties.getAppId(),smsProperties.getAppKey());
-            SmsSingleSenderResult result = sender.sendWithParam("86", telephone,224458, params, "", "", "");
+            SmsSingleSenderResult result = sender.sendWithParam("86", telephone,253834, params, "", "", "");
             switch (result.result){
                 case 0:
                     return ErrorCodeEnum.SUCCESS;
