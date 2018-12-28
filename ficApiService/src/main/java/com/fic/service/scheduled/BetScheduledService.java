@@ -268,19 +268,19 @@ public class BetScheduledService {
             if (betUser.getBetWhich().equals(betScenceMovie.getDrawResult())) {
                 /** Bingo */
                 //奖金
-                BigDecimal oddsReward = betAmount.multiply(odds);
+                BigDecimal oddsReward = betAmount.multiply(odds).setScale(0,BigDecimal.ROUND_DOWN);
                 BigDecimal currentJa = BigDecimal.ZERO;
                 BigDecimal currentRe = BigDecimal.ZERO;
                 if (hasJa) {
                     //手续费
-                    currentJa = betAmount.add(oddsReward).multiply(jaFee);
+                    currentJa = betAmount.add(oddsReward).multiply(jaFee).setScale(0,BigDecimal.ROUND_UP);
                     totalJaFee = totalJaFee.add(currentJa);
                     betScence.setTotalJasckpot(totalJaFee);
                     betUser.setBetFee(currentJa);
                 }
                 if (hasRe) {
                     //备用金手续费
-                    currentRe = betAmount.add(oddsReward).multiply(reFee);
+                    currentRe = betAmount.add(oddsReward).multiply(reFee).setScale(0,BigDecimal.ROUND_UP);
                     totalReFee = totalReFee.add(currentRe);
                     betScence.setTotalReservation(totalReFee);
                     betUser.setReserveFee(currentRe);

@@ -517,25 +517,25 @@ public class BetScenceServiceImpl implements BetScenceService {
                 }
             }
             recordVo.setBetMovieName(betMovie.getBetMovieName());
-            recordVo.setBetAmount(betUser.getBetAmount().setScale(0,BigDecimal.ROUND_HALF_UP));
+            recordVo.setBetAmount(betUser.getBetAmount());
             recordVo.setBetType(betType);
             recordVo.setBetWhich(betUser.getBetWhich());
             recordVo.setBingo(betUser.getBingo());
             recordVo.setCreatedTime(betUser.getCreatedTime());
             recordVo.setDrawResult(betScenceMovie.getDrawResult());
             recordVo.setOdds(betScenceMovie.getBingoOdds());
-            BigDecimal fee = betUser.getBetFee().add(betUser.getReserveFee()).setScale(0,BigDecimal.ROUND_HALF_UP);
-            recordVo.setFee(fee.setScale(0,BigDecimal.ROUND_HALF_UP));
-            BigDecimal bingGoPrice = betUser.getBingoPrice().setScale(0,BigDecimal.ROUND_HALF_UP);
+            BigDecimal fee = betUser.getBetFee().add(betUser.getReserveFee());
+            recordVo.setFee(fee);
+            BigDecimal bingGoPrice = betUser.getBingoPrice();
             recordVo.setBingoPrice(bingGoPrice);
             if(betUser.getBingo().equals(BingoStatusEnum.CLOSE_RETURNING.getCode().byteValue())){
                 /** 赔付，备用金*/
-                recordVo.setBingoPrice(betUser.getCloseWithReturning().setScale(0,BigDecimal.ROUND_HALF_UP));
+                recordVo.setBingoPrice(betUser.getCloseWithReturning());
             }
             if(betUser.getBingo().equals(BingoStatusEnum.BINGO.getCode().byteValue())){
-                recordVo.setAddedPrice((betUser.getBetAmount().add(betScenceMovie.getBingoOdds().multiply(betUser.getBetAmount()))).setScale(0,BigDecimal.ROUND_HALF_UP));
+                recordVo.setAddedPrice((betUser.getBetAmount().add(betScenceMovie.getBingoOdds().multiply(betUser.getBetAmount()))).setScale(0,BigDecimal.ROUND_DOWN));
             }else if(betUser.getBingo().equals(BingoStatusEnum.CLOSE_RETURNING.getCode().byteValue())){
-                recordVo.setAddedPrice(betUser.getBetAmount().multiply(new BigDecimal("2")).setScale(0,BigDecimal.ROUND_HALF_UP));
+                recordVo.setAddedPrice(betUser.getBetAmount().multiply(new BigDecimal("2")).setScale(0,BigDecimal.ROUND_DOWN));
                 recordVo.setOdds(BigDecimal.ONE);
             }
             recordVos.add(recordVo);
