@@ -74,6 +74,7 @@ public class BetMovieController {
 
     @GetMapping("/update")
     @ApiImplicitParams({
+            @ApiImplicitParam(dataType = "int", name = "id", value = "竞猜电影ID"),
             @ApiImplicitParam(dataType = "string", name = "betMovieName", value = "竞猜电影名称"),
 //            @ApiImplicitParam(dataType = "date", name = "activityTime", value = "上架时间"),
 //            @ApiImplicitParam(dataType = "date", name = "disabledTime", value = "下架时间"),
@@ -82,16 +83,19 @@ public class BetMovieController {
             @ApiImplicitParam(dataType = "date", name = "showTime", value = "上映日期"),
     })
     @ApiOperation("更新竞猜电影")
-    public ResponseEntity update(@RequestParam("betMovieName")String betMovieName,
+    public ResponseEntity update(
+            @RequestParam(value = "id",required = true)int id,
+            @RequestParam(value = "betMovieName",required = false)String betMovieName,
 //                              @RequestParam("activityTime") Date activityTime,
 //                              @RequestParam("disabledTime") Date disabledTime,
-                              @RequestParam("movieType") String movieType,
-                              @RequestParam("movieDirector") String movieDirector,
-                              @RequestParam("showTime") Date showTime,
-                              @RequestParam("movieCoverFile")MultipartFile movieCoverFile
+                              @RequestParam(value = "movieType",required = false) String movieType,
+                              @RequestParam(value = "movieDirector",required = false) String movieDirector,
+                              @RequestParam(value = "showTime",required = false) Date showTime,
+                              @RequestParam(value = "movieCoverFile",required = false)MultipartFile movieCoverFile
     ) {
-        log.debug(" bet add !!!");
+        log.debug(" bet update !!!");
         BetMovie betMovie = new BetMovie();
+        betMovie.setId(id);
         betMovie.setBetMovieName(betMovieName);
 //        betMovie.setActivityTime(activityTime);
 //        betMovie.setDisabledTime(disabledTime);

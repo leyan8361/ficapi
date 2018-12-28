@@ -252,7 +252,7 @@ public class BetMovieServiceImpl implements BetMovieService {
             log.error(" update bet movie  is null or movie cover file is null");
             return new ResponseVo(ErrorCodeEnum.PARAMETER_MISSED,null);
         }
-        int result = betMovieMapper.checkExistMovieName(betMovie.getBetMovieName());
+        int result = betMovieMapper.checkExistById(betMovie.getId());
         if(result <=0){
             log.error("update bet movie failed .moive not found id :{}",betMovie.getId());
             return new ResponseVo(ErrorCodeEnum.BET_ADD_MOVIE_NOT_FOUND,null);
