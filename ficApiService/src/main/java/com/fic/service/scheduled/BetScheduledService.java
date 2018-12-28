@@ -273,14 +273,14 @@ public class BetScheduledService {
                 BigDecimal currentRe = BigDecimal.ZERO;
                 if (hasJa) {
                     //手续费
-                    currentJa = betAmount.add(oddsReward).multiply(jaFee).setScale(0,BigDecimal.ROUND_UP);
+                    currentJa = betAmount.add(oddsReward).multiply(jaFee).setScale(0,BigDecimal.ROUND_DOWN);
                     totalJaFee = totalJaFee.add(currentJa);
                     betScence.setTotalJasckpot(totalJaFee);
                     betUser.setBetFee(currentJa);
                 }
                 if (hasRe) {
                     //备用金手续费
-                    currentRe = betAmount.add(oddsReward).multiply(reFee).setScale(0,BigDecimal.ROUND_UP);
+                    currentRe = betAmount.add(oddsReward).multiply(reFee).setScale(0,BigDecimal.ROUND_DOWN);
                     totalReFee = totalReFee.add(currentRe);
                     betScence.setTotalReservation(totalReFee);
                     betUser.setReserveFee(currentRe);
