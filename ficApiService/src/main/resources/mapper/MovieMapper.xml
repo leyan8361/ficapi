@@ -227,7 +227,7 @@
       quota = #{quota,jdbcType=DECIMAL},
       movie_cover_url = #{movieCoverUrl,jdbcType=VARCHAR},
       show_place = #{showPlace,jdbcType=VARCHAR},
-      show_time = #{showTime,jdbcType=TIMESTAMP}
+      show_time = #{showTime,jdbcType=TIMESTAMP},
       status = #{status,jdbcType=TINYINT}
     where movie_id = #{movieId,jdbcType=INTEGER}
   </update>
