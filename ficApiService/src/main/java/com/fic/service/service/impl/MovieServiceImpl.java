@@ -63,7 +63,6 @@ public class MovieServiceImpl implements MovieService {
             }
             result.setMovieId(movie.getMovieId());
             result.setMovieName(movie.getMovieName());
-            result.setMovieRemark(movie.getMovieRemark());
 
             result.setInvestCount(investDetailMapper.countInvestPeople(movie.getMovieId()).size());
             BigDecimal totalAmount = investDetailMapper.sumTotalInvestByMovieId(movie.getMovieId());

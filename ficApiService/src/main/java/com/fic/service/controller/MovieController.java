@@ -2,6 +2,8 @@ package com.fic.service.controller;
 
 import com.fic.service.Enum.ErrorCodeEnum;
 import com.fic.service.Vo.BannerInfoVo;
+import com.fic.service.Vo.MoiveAddInfoVo;
+import com.fic.service.Vo.MovieInfoVo;
 import com.fic.service.Vo.ResponseVo;
 import com.fic.service.entity.Movie;
 import com.fic.service.mapper.MovieMapper;
@@ -48,33 +50,20 @@ public class MovieController {
 
     @PostMapping(value = "/add")
     @ApiOperation("新增电影")
-    @ApiImplicitParams({
-            @ApiImplicitParam(dataType = "string", name = "movieName", value = "电影名", required = true),
-            @ApiImplicitParam(dataType = "BigDecimal", name = "budget", value = "总预算", required = true),
-            @ApiImplicitParam(dataType = "BigDecimal", name = "quota", value = "开放额度", required = true),
-            @ApiImplicitParam(dataType = "string", name = "showPlace", value = "上映地点", required = true),
-            @ApiImplicitParam(dataType = "date", name = "showTime", value = "上映时间", required = true),
-    })
+//    @ApiImplicitParams({
+//            @ApiImplicitParam(dataType = "string", name = "movieName", value = "电影名", required = true),
+//            @ApiImplicitParam(dataType = "BigDecimal", name = "budget", value = "总预算", required = true),
+//            @ApiImplicitParam(dataType = "BigDecimal", name = "quota", value = "开放额度", required = true),
+//            @ApiImplicitParam(dataType = "string", name = "showPlace", value = "上映地点", required = true),
+//            @ApiImplicitParam(dataType = "date", name = "showTime", value = "上映时间", required = true),
+//    })
     @ApiResponses({
             @ApiResponse(code = 1018, message = "ERROR PIC TYPE (png|jpg|bmp|jpeg)"),
             @ApiResponse(code = 200, message = "SUCCESS")
     })
-    public ResponseEntity add(@RequestParam(value = "movieCoverFile",required = true) MultipartFile movieCoverFile,
-                              @RequestParam(value = "movieName",required = true) String movieName,
-                              @RequestParam(value = "budget",required = true) BigDecimal budget,
-                              @RequestParam(value = "quota",required = true) BigDecimal quota,
-                              @RequestParam(value = "showPlace",required = true) String showPlace,
-                              @RequestParam(value = "showTime",required = true) String showTime,
-                              @RequestParam(value = "status",required = true) int status) {
+    public ResponseEntity add(@RequestBody MoiveAddInfoVo movie) {
         log.debug(" movie add Action !!!");
-        Movie movie = new Movie();
-        movie.setMovieName(movieName);
-        movie.setBudget(budget);
-        movie.setQuota(quota);
-        movie.setShowPlace(showPlace);
-        movie.setShowTime(showTime);
-        movie.setStatus((byte)status);
-        ResponseVo responseVo = movieService.add(movie,movieCoverFile);
+        ResponseVo responseVo = movieService.add(movie,movie.getMovieCoverFile());
         return ResponseEntity.ok(responseVo);
     }
 
