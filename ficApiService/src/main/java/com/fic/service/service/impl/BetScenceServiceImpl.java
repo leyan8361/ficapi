@@ -524,7 +524,7 @@ public class BetScenceServiceImpl implements BetScenceService {
             recordVo.setCreatedTime(betUser.getCreatedTime());
             recordVo.setDrawResult(betScenceMovie.getDrawResult());
             recordVo.setOdds(betScenceMovie.getBingoOdds());
-            BigDecimal fee = betUser.getBetFee().add(betUser.getReserveFee()).setScale(0,BigDecimal.ROUND_HALF_UP);
+            BigDecimal fee = betUser.getBetFee().setScale(0,BigDecimal.ROUND_HALF_UP).add(betUser.getReserveFee()).setScale(0,BigDecimal.ROUND_HALF_UP);
             recordVo.setFee(fee.setScale(0,BigDecimal.ROUND_HALF_UP));
             BigDecimal bingGoPrice = betUser.getBingoPrice().setScale(0,BigDecimal.ROUND_HALF_UP);
             recordVo.setBingoPrice(bingGoPrice);
