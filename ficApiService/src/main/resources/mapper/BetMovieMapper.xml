@@ -153,6 +153,9 @@
   <select id="checkExistMovieName" parameterType="string" resultType="int">
     select count(id) from bet_movie where bet_movie_name = #{betMovieName,jdbcType=VARCHAR};
   </select>
+  <select id="checkExistById" parameterType="int" resultType="int">
+    select count(id) from bet_movie where id = #{id};
+  </select>
 
   <update id="updateMovieCoverURL">
     update bet_movie set bet_movie_cover_url = #{movieCoverURL,jdbcType=VARCHAR} where id = #{id,jdbcType=INTEGER}

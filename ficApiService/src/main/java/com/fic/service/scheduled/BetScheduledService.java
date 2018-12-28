@@ -574,7 +574,7 @@ public class BetScheduledService {
                 break;
         }
 
-        updateBetScenceMovie(betScenceMovie);
+//        updateBetScenceMovie(betScenceMovie);
     }
 
     @Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)

@@ -360,7 +360,7 @@
   </select>
   
   <select id="findAllByUserId" resultMap="BaseResultMap">
-    select * from bet_user where user_id = #{userId};
+    select * from bet_user where user_id = #{userId} order by u.created_time desc;
   </select>
 
   <select id="findLastWeekAlreadyBet" resultType="com.fic.service.Vo.BetContinueBetUserVo">
