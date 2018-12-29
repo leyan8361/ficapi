@@ -1,8 +1,7 @@
-package com.fic.service.controller.api;
+package com.fic.service.controller;
 
 import com.fic.service.Vo.BannerInfoVo;
 import com.fic.service.Vo.ResponseVo;
-import com.fic.service.controller.BetMovieController;
 import com.fic.service.service.BannerInfoService;
 import io.swagger.annotations.*;
 import org.slf4j.Logger;
