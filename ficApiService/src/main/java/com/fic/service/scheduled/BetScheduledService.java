@@ -289,6 +289,8 @@ public class BetScheduledService {
                     currentJa = betAmount.add(oddsReward).multiply(jaFee);
                     if(currentJa.compareTo(new BigDecimal("0.5")) >=0 && currentJa.compareTo(BigDecimal.ONE) <=0){
                         currentJa = BigDecimal.ONE;
+                    }else if(currentJa.compareTo(new BigDecimal("0.5")) <0){
+                        currentJa = BigDecimal.ZERO;
                     }else{
                         currentJa = currentJa.setScale(0,BigDecimal.ROUND_DOWN);
                     }
@@ -299,18 +301,17 @@ public class BetScheduledService {
                     currentRe = betAmount.add(oddsReward).multiply(reFee);
                     if(currentRe.compareTo(new BigDecimal("0.5")) >=0 && currentRe.compareTo(BigDecimal.ONE) <=0){
                         currentRe = BigDecimal.ONE;
+                    }else if(currentRe.compareTo(new BigDecimal("0.5")) <=0){
+                        currentRe = BigDecimal.ZERO;
                     }else{
                         currentRe = currentRe.setScale(0,BigDecimal.ROUND_DOWN);
-                    }
-                    if(oddsReward.subtract(currentRe).compareTo(BigDecimal.ONE) > 0){
-                        betUser.setReserveFee(BigDecimal.ZERO);
-                    }else{
-                        betUser.setReserveFee(currentRe);
                     }
                     totalFee = totalFee.add(currentRe);
                 }
                 if(totalFee.compareTo(BigDecimal.ZERO) >=0){
                     if(oddsReward.compareTo(totalFee) > 0){
+                        betUser.setReserveFee(currentRe);
+                        betUser.setBetFee(currentJa);
                         totalJaFee = totalJaFee.add(currentJa);
                         totalReFee = totalReFee.add(currentRe);
                         betScence.setTotalJasckpot(totalJaFee);

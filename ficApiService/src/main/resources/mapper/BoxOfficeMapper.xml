@@ -140,7 +140,7 @@
     where id = #{id,jdbcType=INTEGER}
   </update>
   <select id="findByDay" resultMap="BaseResultMap">
-    select * from box_office where sum_day = #{sumDay} and movie_id = #{movieId};
+    select * from box_office where sum_day = #{sumDay} and movie_id = #{movieId} limit 0,1;
   </select>
   
   <select id="findAllByDay" resultMap="BaseResultMap">
