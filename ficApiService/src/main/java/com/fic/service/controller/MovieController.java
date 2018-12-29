@@ -63,8 +63,8 @@ public class MovieController {
     })
     public ResponseEntity add(@RequestBody MoiveAddInfoVo movie) {
         log.debug(" movie add Action !!!");
-        ResponseVo responseVo = movieService.add(movie,movie.getMovieCoverFile());
-        return ResponseEntity.ok(responseVo);
+//        ResponseVo responseVo = movieService.add(movie,movie.getMovieCoverFile());
+        return ResponseEntity.ok().build();
     }
 
     @PostMapping("/update")
