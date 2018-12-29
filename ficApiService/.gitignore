@@ -3,10 +3,10 @@
 ### Example user template
 
 # IntelliJ project files
-.idea/*
 *.iml
 target
 out
 gen
 /.idea/workspace.xml
 .idea/libraries/
+/.idea/
