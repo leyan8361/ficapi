@@ -1,15 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="263bde48-2834-410a-8538-82ccba9913fa" name="Default Changelist" comment="置换">
-      <change afterPath="$PROJECT_DIR$/service.iml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/main.iml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/test/test.iml" afterDir="false" />
+    <list default="true" id="263bde48-2834-410a-8538-82ccba9913fa" name="Default Changelist" comment="1. ignore">
+      <change afterPath="$PROJECT_DIR$/../ficApiService.zip" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.name" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/artifacts/FicApiService_war.xml" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/artifacts/FicApiService_war_exploded.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/artifacts/demo_war.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/artifacts/demo_war_exploded.xml" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/compiler.xml" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/encodings.xml" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__ch_qos_logback_logback_classic_1_2_3.xml" beforeDir="false" />
@@ -113,36 +109,76 @@
       <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/application-dev.properties" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/application-dev.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/application-prod.properties" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/application-prod.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/application.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/fic/service/FicApiServiceApplication.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/fic/service/FicApiServiceApplication.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/fic/service/Vo/LoginUserInfoVo.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/fic/service/Vo/LoginUserInfoVo.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/fic/service/Vo/RegisterUserInfoVo.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/fic/service/Vo/RegisterUserInfoVo.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/fic/service/Vo/ResponseVo.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/fic/service/Vo/ResponseVo.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/fic/service/config/WebConfig.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/fic/service/config/WebConfig.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/fic/service/controller/HomeController.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/fic/service/controller/HomeController.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/fic/service/controller/LoginController.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/fic/service/controller/LoginController.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/fic/service/controller/TestController.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/fic/service/entity/AdminLog.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/fic/service/entity/AdminLog.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/fic/service/entity/ExchangeRate.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/fic/service/entity/ExchangeRate.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/fic/service/entity/InvestDetail.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/fic/service/entity/InvestDetail.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/fic/service/entity/User.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/fic/service/entity/User.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/fic/service/mapper/ExchangeRateMapper.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/fic/service/mapper/ExchangeRateMapper.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/fic/service/mapper/InvestDetailMapper.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/fic/service/mapper/InvestDetailMapper.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/fic/service/mapper/InvestMapper.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/fic/service/mapper/InvestMapper.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/fic/service/mapper/MovieMediaMapper.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/fic/service/mapper/MovieMediaMapper.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/fic/service/mapper/UserMapper.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/fic/service/mapper/UserMapper.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/fic/service/security/ShiroAccessControllerFilter.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/fic/service/security/ShiroAccessControllerFilter.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/fic/service/service/AccountService.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/fic/service/service/AccountService.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/fic/service/swagger/Swagger2.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/fic/service/swagger/Swagger2.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/fic/service/utils/DateUtil.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/fic/service/utils/DateUtil.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/fic/service/utils/InviteCodeUtil.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/fic/service/utils/InviteCodeUtil.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/mapper/ExchangeRateMapper.xml" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/mapper/ExchangeRateMapper.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/mapper/InvestDetailMapper.xml" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/mapper/InvestDetailMapper.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/mapper/MovieMapper.xml" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/mapper/MovieMapper.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/mapper/MovieMediaMapper.xml" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/mapper/MovieMediaMapper.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/mapper/TokenBaseMapper.xml" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/mapper/TokenBaseMapper.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FicApiService.iml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/application-dev.properties" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/application-prod.properties" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/application.properties" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/fic/service/FicApiServiceApplication.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/fic/service/Vo/LoginUserInfoVo.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/fic/service/Vo/RegisterUserInfoVo.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/fic/service/Vo/ResetPasswordInfo.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/fic/service/Vo/ResponseVo.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/fic/service/config/ShiroConfig.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/fic/service/config/WebConfig.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/fic/service/controller/GlobaErrorController.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/fic/service/controller/HomeController.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/fic/service/controller/LoginController.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/fic/service/controller/api/ApiHomeController.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/fic/service/entity/AdminLog.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/fic/service/entity/AdminUser.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/fic/service/entity/Authority.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/fic/service/entity/ExchangeRate.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/fic/service/entity/InvestDetail.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/fic/service/entity/MovieMedia.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/fic/service/entity/Permission.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/fic/service/entity/Ticket.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/fic/service/entity/TicketSale.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/fic/service/entity/TokenBase.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/fic/service/entity/User.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/fic/service/entity/UserFriend.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/fic/service/entity/Wallet.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/fic/service/exception/TokenMissedException.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/fic/service/mapper/AdminLogMapper.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/fic/service/mapper/AdminUserMapper.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/fic/service/mapper/AuthorityMapper.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/fic/service/mapper/ExchangeRateMapper.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/fic/service/mapper/InvestDetailMapper.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/fic/service/mapper/InvestMapper.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/fic/service/mapper/MovieMediaMapper.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/fic/service/mapper/PermissionMapper.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/fic/service/mapper/TicketMapper.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/fic/service/mapper/TicketSaleMapper.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/fic/service/mapper/TokenBaseMapper.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/fic/service/mapper/UserFriendMapper.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/fic/service/mapper/UserMapper.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/fic/service/mapper/WalletMapper.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/fic/service/security/SessionManager.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/fic/service/security/ShiroAccessControllerFilter.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/fic/service/security/ShiroLogoutFilter.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/fic/service/security/ShiroPermissionsAuthorizationFilter.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/fic/service/security/ShiroRealm.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/fic/service/service/AccountService.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/fic/service/swagger/Swagger2.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/fic/service/utils/DateUtil.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/fic/service/utils/InviteCodeUtil.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/fic/service/utils/MD5Util.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/fic/service/utils/Sha1Util.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/mapper/AdminLogMapper.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/mapper/AdminUserMapper.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/mapper/AuthorityMapper.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/mapper/ExchangeRateMapper.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/mapper/InvestDetailMapper.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/mapper/InvestMapper.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/mapper/MovieMapper.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/mapper/MovieMediaMapper.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/mapper/PermissionMapper.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/mapper/TicketMapper.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/mapper/TicketSaleMapper.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/mapper/TokenBaseMapper.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/mapper/UserFriendMapper.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/mapper/UserMapper.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/mapper/WalletMapper.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/test-classes/com/fic/service/FicApiServiceApplicationTests.class" beforeDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/target/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -255,37 +291,39 @@
     <session id="338381091">
       <usages-collector id="statistics.lifecycle.project">
         <counts>
-          <entry key="project.closed" value="2" />
-          <entry key="project.open.time.0" value="1" />
+          <entry key="project.closed" value="3" />
+          <entry key="project.open.time.0" value="2" />
           <entry key="project.open.time.4" value="1" />
           <entry key="project.open.time.5" value="1" />
           <entry key="project.open.time.6" value="1" />
           <entry key="project.open.time.7" value="1" />
-          <entry key="project.opened" value="5" />
+          <entry key="project.opened" value="6" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.vcs.git.usages">
         <counts>
-          <entry key="git.branch.checkout.local" value="31" />
+          <entry key="git.branch.checkout.local" value="32" />
           <entry key="git.branch.checkout.remote" value="1" />
-          <entry key="git.branch.merge" value="16" />
+          <entry key="git.branch.merge" value="17" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.open">
         <counts>
           <entry key="class" value="7" />
+          <entry key="gitignore" value="1" />
           <entry key="html" value="4" />
           <entry key="java" value="241" />
-          <entry key="properties" value="58" />
+          <entry key="properties" value="59" />
           <entry key="xml" value="42" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.open">
         <counts>
           <entry key="CLASS" value="7" />
+          <entry key="Git file" value="1" />
           <entry key="HTML" value="4" />
           <entry key="JAVA" value="241" />
-          <entry key="Properties" value="58" />
+          <entry key="Properties" value="59" />
           <entry key="XML" value="42" />
         </counts>
       </usages-collector>
@@ -294,8 +332,8 @@
           <entry key="dummy" value="1" />
           <entry key="html" value="89" />
           <entry key="java" value="7434" />
-          <entry key="properties" value="228" />
-          <entry key="txt" value="179" />
+          <entry key="properties" value="234" />
+          <entry key="txt" value="190" />
           <entry key="xml" value="533" />
         </counts>
       </usages-collector>
@@ -303,8 +341,8 @@
         <counts>
           <entry key="HTML" value="89" />
           <entry key="JAVA" value="7434" />
-          <entry key="PLAIN_TEXT" value="180" />
-          <entry key="Properties" value="228" />
+          <entry key="PLAIN_TEXT" value="191" />
+          <entry key="Properties" value="234" />
           <entry key="SQL" value="5" />
           <entry key="XML" value="528" />
         </counts>
@@ -316,8 +354,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/main/resources/application.properties">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="228">
-              <caret line="12" column="51" lean-forward="true" selection-start-line="12" selection-start-column="51" selection-end-line="12" selection-end-column="51" />
+            <state relative-caret-position="209">
+              <caret line="11" column="28" lean-forward="true" selection-start-line="11" selection-start-column="28" selection-end-line="11" selection-end-column="28" />
             </state>
           </provider>
         </entry>
@@ -478,11 +516,15 @@
   <component name="ProjectLevelVcsManager" settingsEditedManually="true">
     <ConfirmationsSetting value="2" id="Add" />
   </component>
+  <component name="ProjectReloadState">
+    <option name="STATE" value="1" />
+  </component>
   <component name="ProjectView">
     <navigator proportions="" version="1">
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -513,7 +555,6 @@
         </subPane>
       </pane>
       <pane id="PackagesPane" />
-      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -523,7 +564,7 @@
     <property name="RequestMappingsPanelWidth1" value="75" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="aspect.path.notification.shown" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/.idea" />
     <property name="nodejs_interpreter_path.stuck_in_default_project" value="undefined stuck path" />
     <property name="nodejs_npm_path_reset_for_default_project" value="true" />
     <property name="project.structure.last.edited" value="Modules" />
@@ -583,6 +624,7 @@
       <workItem from="1544434481969" duration="1744000" />
       <workItem from="1545724408261" duration="745000" />
       <workItem from="1546051355302" duration="723000" />
+      <workItem from="1546052519733" duration="502000" />
     </task>
     <task id="LOCAL-00001" summary="Api Service">
       <created>1542942967683</created>
@@ -700,7 +742,7 @@
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="111715000" />
+    <option name="totallyTimeSpent" value="112219000" />
   </component>
   <component name="TodoView" selected-index="1">
     <todo-panel id="selected-file">
@@ -712,9 +754,10 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
+    <frame x="-8" y="-8" width="1936" height="1056" extended-state="7" />
+    <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.21748401" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.2217484" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Web" order="2" side_tool="true" />
       <window_info id="Designer" order="3" />
@@ -732,7 +775,7 @@
       <window_info anchor="bottom" id="Event Log" order="10" sideWeight="0.50053304" side_tool="true" weight="0.28121606" />
       <window_info anchor="bottom" id="Java Enterprise" order="11" />
       <window_info anchor="bottom" id="Spring" order="12" weight="0.32899022" />
-      <window_info anchor="bottom" id="Terminal" order="13" sideWeight="0.49946696" weight="0.29098806" />
+      <window_info active="true" anchor="bottom" id="Terminal" order="13" sideWeight="0.49946696" visible="true" weight="0.29098806" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
@@ -809,7 +852,8 @@
     <MESSAGE value="1.8089" />
     <MESSAGE value="1.8088" />
     <MESSAGE value="1.手续费" />
-    <option name="LAST_COMMIT_MESSAGE" value="1.手续费" />
+    <MESSAGE value="1. ignore" />
+    <option name="LAST_COMMIT_MESSAGE" value="1. ignore" />
   </component>
   <component name="antWorkspaceConfiguration">
     <option name="IS_AUTOSCROLL_TO_SOURCE" value="false" />
@@ -866,13 +910,6 @@
     </expressions>
   </component>
   <component name="editorHistoryManager">
-    <entry file="jar://$MAVEN_REPOSITORY$/org/web3j/crypto/3.3.1/crypto-3.3.1.jar!/org/web3j/crypto/WalletUtils.class">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="187">
-          <caret line="36" column="25" selection-start-line="36" selection-start-column="25" selection-end-line="36" selection-end-column="25" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/com/fic/service/constants/ServerProperties.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="152">
@@ -1157,9 +1194,16 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/fic/service/controller/MovieController.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="722">
+          <caret line="58" column="8" selection-start-line="58" selection-start-column="8" selection-end-line="58" selection-end-column="8" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/com/fic/service/Vo/MovieInfoVo.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="76">
+        <state relative-caret-position="190">
           <caret line="14" column="13" selection-start-line="14" selection-start-column="13" selection-end-line="14" selection-end-column="13" />
         </state>
       </provider>
@@ -1168,13 +1212,13 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="247">
           <caret line="13" column="27" selection-start-line="13" selection-start-column="13" selection-end-line="13" selection-end-column="27" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/com/fic/service/controller/MovieController.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="684">
-          <caret line="58" column="8" selection-start-line="58" selection-start-column="8" selection-end-line="58" selection-end-column="8" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#452#453#0" expanded="true" />
+            <element signature="e#489#490#0" expanded="true" />
+            <element signature="e#556#557#0" expanded="true" />
+            <element signature="e#608#609#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -1185,17 +1229,24 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/.gitignore">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="133">
+          <caret line="7" column="6" lean-forward="true" selection-start-line="7" selection-start-column="6" selection-end-line="7" selection-end-column="6" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/pom.xml">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="115">
-          <caret line="130" column="57" lean-forward="true" selection-start-line="130" selection-start-column="57" selection-end-line="130" selection-end-column="57" />
+        <state relative-caret-position="343">
+          <caret line="142" column="31" lean-forward="true" selection-start-line="142" selection-start-column="31" selection-end-line="142" selection-end-column="31" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/resources/application.properties">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="228">
-          <caret line="12" column="51" lean-forward="true" selection-start-line="12" selection-start-column="51" selection-end-line="12" selection-end-column="51" />
+        <state relative-caret-position="209">
+          <caret line="11" column="28" lean-forward="true" selection-start-line="11" selection-start-column="28" selection-end-line="11" selection-end-column="28" />
         </state>
       </provider>
     </entry>
