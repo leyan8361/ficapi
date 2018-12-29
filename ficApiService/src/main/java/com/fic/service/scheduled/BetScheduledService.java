@@ -877,7 +877,21 @@ public class BetScheduledService {
                 }
                 BigDecimal returning = returnUser.getBetAmount().multiply(new BigDecimal("2"));
                 BigDecimal betFee = returning.multiply(jaFe);
+                if(betFee.compareTo(new BigDecimal("0.5")) >=0 && betFee.compareTo(BigDecimal.ONE) <=0){
+                    betFee = BigDecimal.ONE;
+                }else if(betFee.compareTo(new BigDecimal("0.5")) <0){
+                    betFee = BigDecimal.ZERO;
+                }else{
+                    betFee = betFee.setScale(0,BigDecimal.ROUND_DOWN);
+                }
                 BigDecimal reserveFee = returning.multiply(reFe);
+                if(reserveFee.compareTo(new BigDecimal("0.5")) >=0 && reserveFee.compareTo(BigDecimal.ONE) <=0){
+                    reserveFee = BigDecimal.ONE;
+                }else if(reserveFee.compareTo(new BigDecimal("0.5")) <=0){
+                    reserveFee = BigDecimal.ZERO;
+                }else{
+                    reserveFee = reserveFee.setScale(0,BigDecimal.ROUND_DOWN);
+                }
                 returnUser.setBetFee(betFee);
                 returnUser.setReserveFee(reserveFee);
                 returnUser.setBingo(BingoStatusEnum.CLOSE_RETURNING.getCode().byteValue());
