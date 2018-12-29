@@ -94,6 +94,6 @@
     select * from token_base where token_value = #{token}
   </select>
   <delete id="deleteByTokenValue">
-    delete * from token_base where token_value = #{token}
+    delete from token_base where token_value = #{token}
   </delete>
 </mapper>

@@ -67,4 +67,7 @@
       </if>
     </trim>
   </insert>
+  <select id="findFicExchangeCny" resultMap="BaseResultMap">
+    select * from exchange_rate where coin2 = 'FIC' and coin1 = 'CNY';
+  </select>
 </mapper>
