@@ -4,6 +4,7 @@ import com.fic.service.Enum.ErrorCodeEnum;
 import com.fic.service.Vo.InvestBalanceInfoVo;
 import com.fic.service.Vo.ResponseVo;
 import com.fic.service.Vo.VersionInfoVo;
+import com.fic.service.constants.UploadProperties;
 import com.fic.service.controller.HomeController;
 import com.fic.service.entity.AppVersion;
 import com.fic.service.mapper.AppVersionMapper;
@@ -32,6 +33,8 @@ public class ApiVersionController {
 
     @Autowired
     AppVersionMapper appVersionMapper;
+    @Autowired
+    UploadProperties uploadProperties;
 
     @GetMapping("/checkVersion")
     @ApiOperation("Api-版本检测")
@@ -56,6 +59,7 @@ public class ApiVersionController {
             log.debug(" the current version is lasted ! version:{}",version);
             return ResponseEntity.ok(new ResponseVo(ErrorCodeEnum.SUCCESS,versionInfoVo));
         }
+        versionInfoVo.setLastedVersionDownloadUrl(uploadProperties.getUrl(appVersion.getDownloadUrl()));
         versionInfoVo.setLastedVersion(appVersion.getVersion());
         versionInfoVo.setNeedToUpdate(true);
         return ResponseEntity.ok(new ResponseVo(ErrorCodeEnum.SUCCESS,versionInfoVo));

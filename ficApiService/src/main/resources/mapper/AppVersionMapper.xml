@@ -7,12 +7,14 @@
     <result column="device_type" jdbcType="TINYINT" property="deviceType" />
     <result column="created_time" jdbcType="TIMESTAMP" property="createdTime" />
     <result column="updated_time" jdbcType="TIMESTAMP" property="updatedTime" />
+    <result column="download_url" jdbcType="VARCHAR" property="downloadUrl" />
+    <result column="download_count" jdbcType="INTEGER" property="downloadCount" />
   </resultMap>
   <sql id="Base_Column_List">
-    id, version, device_type, created_time, updated_time
+    id, version, device_type, created_time, updated_time, download_url, download_count
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
-    select 
+    select
     <include refid="Base_Column_List" />
     from app_version
     where id = #{id,jdbcType=INTEGER}
@@ -22,12 +24,14 @@
     where id = #{id,jdbcType=INTEGER}
   </delete>
   <insert id="insert" parameterType="com.fic.service.entity.AppVersion">
-    insert into app_version (id, version, device_type, 
-      created_time, updated_time)
-    values (#{id,jdbcType=INTEGER}, #{version,jdbcType=VARCHAR}, #{deviceType,jdbcType=TINYINT}, 
-      #{createdTime,jdbcType=TIMESTAMP}, #{updatedTime,jdbcType=TIMESTAMP})
+    insert into app_version (id, version, device_type,
+      created_time, updated_time, download_url,
+      download_count)
+    values (#{id,jdbcType=INTEGER}, #{version,jdbcType=VARCHAR}, #{deviceType,jdbcType=TINYINT},
+      #{createdTime,jdbcType=TIMESTAMP}, #{updatedTime,jdbcType=TIMESTAMP}, #{downloadUrl,jdbcType=VARCHAR},
+      #{downloadCount,jdbcType=INTEGER})
   </insert>
-  <insert id="insertSelective" parameterType="com.fic.service.entity.AppVersion">
+  <insert id="insertSelective" parameterType="com.fic.service.entity.AppVersion" useGeneratedKeys="true" keyProperty="id">
     insert into app_version
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="id != null">
@@ -44,6 +48,12 @@
       </if>
       <if test="updatedTime != null">
         updated_time,
+      </if>
+      <if test="downloadUrl != null">
+        download_url,
+      </if>
+      <if test="downloadCount != null">
+        download_count,
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
@@ -62,6 +72,12 @@
       <if test="updatedTime != null">
         #{updatedTime,jdbcType=TIMESTAMP},
       </if>
+      <if test="downloadUrl != null">
+        #{downloadUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="downloadCount != null">
+        #{downloadCount,jdbcType=INTEGER},
+      </if>
     </trim>
   </insert>
   <update id="updateByPrimaryKeySelective" parameterType="com.fic.service.entity.AppVersion">
@@ -79,6 +95,12 @@
       <if test="updatedTime != null">
         updated_time = #{updatedTime,jdbcType=TIMESTAMP},
       </if>
+      <if test="downloadUrl != null">
+        download_url = #{downloadUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="downloadCount != null">
+        download_count = #{downloadCount,jdbcType=INTEGER},
+      </if>
     </set>
     where id = #{id,jdbcType=INTEGER}
   </update>
@@ -87,10 +109,21 @@
     set version = #{version,jdbcType=VARCHAR},
       device_type = #{deviceType,jdbcType=TINYINT},
       created_time = #{createdTime,jdbcType=TIMESTAMP},
-      updated_time = #{updatedTime,jdbcType=TIMESTAMP}
+      updated_time = #{updatedTime,jdbcType=TIMESTAMP},
+      download_url = #{downloadUrl,jdbcType=VARCHAR},
+      download_count = #{downloadCount,jdbcType=INTEGER}
     where id = #{id,jdbcType=INTEGER}
   </update>
   <select id="findByDeviceType" resultMap="BaseResultMap">
     select * from app_version where device_type=#{deviceType} group by created_time desc limit 0,1;
   </select>
+  <select id="findAll" resultMap="BaseResultMap">
+    select * from app_version group by created_time asc;
+  </select>
+  <select id="checkByVersionInType" resultType="int">
+    select count(id) from app_version where version = #{version} and device_type = #{deviceType};
+  </select>
+  <update id="updateFileUrl">
+    update app_version set download_url = #{appFilePath} where id = #{id};
+  </update>
 </mapper>

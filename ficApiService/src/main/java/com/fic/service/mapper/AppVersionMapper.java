@@ -4,6 +4,8 @@ import com.fic.service.entity.AppVersion;
 import org.apache.ibatis.annotations.Mapper;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Mapper
 @Repository
 public interface AppVersionMapper {
@@ -21,4 +23,10 @@ public interface AppVersionMapper {
     int updateByPrimaryKey(AppVersion record);
 
     AppVersion findByDeviceType(byte deviceType);
+
+    List<AppVersion> findAll();
+
+    int checkByVersionInType(String version,int deviceType);
+
+    int updateFileUrl(String appFilePath, int id);
 }

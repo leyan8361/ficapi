@@ -50,6 +50,15 @@ public class RegexUtil {
         return false;
     }
 
+    public static boolean isApkOrIpa(String fileName){
+        Pattern pattern = Pattern.compile(".*(.ipa|.apk)$",Pattern.CASE_INSENSITIVE);
+        Matcher matcher = pattern.matcher(fileName);
+        if(matcher.matches()){
+            return true;
+        }
+        return false;
+    }
+
     public static int isVersion(String version){
         Pattern pattern = Pattern.compile("^[v][0-99]{1,2}[\\.][0-99]{1,2}[\\.][0-99]{1,2}",Pattern.CASE_INSENSITIVE);
         Matcher matcher = pattern.matcher(version);

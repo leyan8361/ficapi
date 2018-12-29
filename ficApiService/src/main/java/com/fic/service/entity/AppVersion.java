@@ -1,5 +1,7 @@
 package com.fic.service.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import java.util.Date;
 /**
  *   @Author Xie
@@ -12,11 +14,16 @@ public class AppVersion {
 
     private String version;
 
-    private Byte deviceType;
+    private int deviceType;
 
+    @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
     private Date createdTime;
-
+    @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
     private Date updatedTime;
+
+    private String downloadUrl;
+
+    private Integer downloadCount;
 
     public Integer getId() {
         return id;
@@ -34,11 +41,11 @@ public class AppVersion {
         this.version = version;
     }
 
-    public Byte getDeviceType() {
+    public int getDeviceType() {
         return deviceType;
     }
 
-    public void setDeviceType(Byte deviceType) {
+    public void setDeviceType(int deviceType) {
         this.deviceType = deviceType;
     }
 
@@ -56,5 +63,21 @@ public class AppVersion {
 
     public void setUpdatedTime(Date updatedTime) {
         this.updatedTime = updatedTime;
+    }
+
+    public String getDownloadUrl() {
+        return downloadUrl;
+    }
+
+    public void setDownloadUrl(String downloadUrl) {
+        this.downloadUrl = downloadUrl;
+    }
+
+    public Integer getDownloadCount() {
+        return downloadCount;
+    }
+
+    public void setDownloadCount(Integer downloadCount) {
+        this.downloadCount = downloadCount;
     }
 }

@@ -65,8 +65,9 @@ public enum ErrorCodeEnum {
      * 版本，更新相关
      */
     VERSION_ILLEGAL(3200,"VERSION ILLEGAL OR UNSUPPORTED DEVICE"),
-
-
+    VERSION_EXIST(3201,"EXIST"),
+    VERSION_NOT_EXIST(3202,"NOT_EXIST"),
+    VERSION_FILE_TYPE_NOT_MATCH(3203,"FILE TYPE NOT MATCH"),
     /**
      * 电影相关
      */

@@ -34,6 +34,7 @@ public class Constants {
         public static final String HEAD_CUT_PATH="user/";
         public static final String BET_MOVIE_COVER_PATH="/bet/movie/";
         public static final String BANNER_URL_PATH ="banner/";
+        public static final String APP_FILE_PATH="app/";
 
         /**
          * 币种
