@@ -73,6 +73,7 @@ public enum ErrorCodeEnum {
      */
     MOVIE_NOT_FOUND(4000,"MOVIE NOT FOUND"),
     BANNER_NOT_FOUND(4001,"BANNER LIST IS EMPTY"),
+    MOVIE_EXIST(4002,"MOVIE_EXIST"),
 
     /**
      * 竞猜相关

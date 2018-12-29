@@ -187,6 +187,12 @@ public class MovieServiceImpl implements MovieService {
             throw new RuntimeException();
         }
 
+        int checkIfExistByName = movieMapper.checkIfExistByName(movie.getMovieName());
+        if(checkIfExistByName>0){
+            log.debug("电影已存在 movie name :{}",movie.getMovieName());
+            return new ResponseVo(ErrorCodeEnum.MOVIE_EXIST,null);
+        }
+
         int saveMovieResult = movieMapper.insertSelective(movie);
         if( saveMovieResult <=0){
             log.error(" 保存电影失败 {}",movie.toString());

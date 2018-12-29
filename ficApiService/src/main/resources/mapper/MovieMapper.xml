@@ -58,7 +58,7 @@
       #{movieLast,jdbcType=INTEGER}, #{returnRate,jdbcType=DECIMAL}, #{actorList,jdbcType=LONGVARCHAR},
       #{movieBriefList,jdbcType=LONGVARCHAR})
   </insert>
-  <insert id="insertSelective" parameterType="com.fic.service.entity.Movie">
+  <insert id="insertSelective" parameterType="com.fic.service.entity.Movie" useGeneratedKeys="true" keyProperty="movieId">
     insert into movie
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="movieId != null">
@@ -293,4 +293,7 @@
   <update id="updateStatus">
     update movie set status = #{status,jdbcType=TINYINT} where movie_id = #{movieId}
   </update>
+  <select id="checkIfExistByName" resultType="int">
+    select count(*) from movie where movie_name = #{movieName};
+  </select>
 </mapper>

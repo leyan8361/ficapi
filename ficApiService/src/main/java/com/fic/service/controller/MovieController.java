@@ -50,55 +50,102 @@ public class MovieController {
 
     @PostMapping(value = "/add")
     @ApiOperation("新增电影")
-//    @ApiImplicitParams({
-//            @ApiImplicitParam(dataType = "string", name = "movieName", value = "电影名", required = true),
-//            @ApiImplicitParam(dataType = "BigDecimal", name = "budget", value = "总预算", required = true),
-//            @ApiImplicitParam(dataType = "BigDecimal", name = "quota", value = "开放额度", required = true),
-//            @ApiImplicitParam(dataType = "string", name = "showPlace", value = "上映地点", required = true),
-//            @ApiImplicitParam(dataType = "date", name = "showTime", value = "上映时间", required = true),
-//    })
+    @ApiImplicitParams({
+            @ApiImplicitParam(dataType = "string", name = "movieName", value = "电影名称", required = true),
+            @ApiImplicitParam(dataType = "BigDecimal", name = "budget", value = "总预算(亿)", required = true,example = "1.2"),
+            @ApiImplicitParam(dataType = "BigDecimal", name = "quota", value = "开放额度(万)", required = true,example = "3000"),
+            @ApiImplicitParam(dataType = "string", name = "showPlace", value = "上映地点", required = true,example = "中国香港"),
+            @ApiImplicitParam(dataType = "string", name = "showTime", value = "上映时间", required = true,example = "2019-05-01"),
+            @ApiImplicitParam(dataType = "string", name = "dutyDescription", value = "责任描述,以、号相隔", required = true,example = "承诺上映、完片担保"),
+            @ApiImplicitParam(dataType = "string", name = "boxInfo", value = "票房", required = true,example = "1亿"),
+            @ApiImplicitParam(dataType = "int", name = "investCycle", value = "周期(月)", required = true,example = "2"),
+            @ApiImplicitParam(dataType = "int", name = "movieLast", value = "影片时长", required = true,example = "120"),
+            @ApiImplicitParam(dataType = "int", name = "status", value = "(0，已杀青)(1，待开机)(2,已分红)(3,待分红)", required = true,example = "1"),
+            @ApiImplicitParam(dataType = "BigDecimal", name = "returnRate", value = "回报率(%)", required = true,example = "125")
+    })
     @ApiResponses({
             @ApiResponse(code = 1018, message = "ERROR PIC TYPE (png|jpg|bmp|jpeg)"),
             @ApiResponse(code = 200, message = "SUCCESS")
     })
-    public ResponseEntity add(@RequestBody MoiveAddInfoVo movie) {
+    public ResponseEntity add(@RequestParam(name = "movieName",defaultValue = "电影名称")String movieName,
+                              @RequestParam(name = "budget",defaultValue = "总预算(亿)")BigDecimal budget,
+                              @RequestParam(name = "quota",defaultValue = "开放额度(万)")BigDecimal quota,
+                              @RequestParam(name = "showPlace",defaultValue = "上映地点")String showPlace,
+                              @RequestParam(name = "showTime",defaultValue = "上映地点")String showTime,
+                              @RequestParam(name = "dutyDescription",defaultValue = "责任描述,以、号相隔")String dutyDescription,
+                              @RequestParam(name = "boxInfo",defaultValue = "票房") String boxInfo,
+                              @RequestParam(name = "investCycle",defaultValue = "周期(月)") int investCycle,
+                              @RequestParam(name = "returnRate",defaultValue = "回报率(%)") BigDecimal returnRate,
+                              @RequestParam(name = "movieLast",defaultValue = "影片时长") int movieLast,
+                              @RequestParam(name = "status",defaultValue = "(0，已杀青)(1，待开机)(2,已分红)(3,待分红)") int status,
+                              @RequestParam(name = "movieCoverFile",defaultValue = "电影封面") MultipartFile movieCoverFile
+                              ) {
         log.debug(" movie add Action !!!");
-//        ResponseVo responseVo = movieService.add(movie,movie.getMovieCoverFile());
-        return ResponseEntity.ok().build();
+        Movie movie = new Movie();
+        movie.setMovieName(movieName);
+        movie.setBudget(budget);
+        movie.setQuota(quota);
+        movie.setShowPlace(showPlace);
+        movie.setShowTime(showTime);
+        movie.setDutyDescription(dutyDescription);
+        movie.setBoxInfo(boxInfo);
+        movie.setInvestCycle(investCycle);
+        movie.setReturnRate(returnRate);
+        movie.setMovieLast(movieLast);
+        movie.setStatus(status);
+        movie.setCreatedTime(new Date());
+        movie.setUpdatedTime(new Date());
+        ResponseVo responseVo = movieService.add(movie,movieCoverFile);
+        return ResponseEntity.ok(responseVo);
     }
 
     @PostMapping("/update")
     @ApiOperation("修改")
     @ApiImplicitParams({
-            @ApiImplicitParam(dataType = "int", name = "id", value = "电影ID", required = true),
-            @ApiImplicitParam(dataType = "string", name = "movieName", value = "电影名", required = true),
-//            @ApiImplicitParam(dataType = "BigDecimal", name = "budget", value = "总预算", required = true),
-//            @ApiImplicitParam(dataType = "BigDecimal", name = "quota", value = "开放额度", required = true),
-//            @ApiImplicitParam(dataType = "string", name = "showPlace", value = "上映地点", required = true),
-//            @ApiImplicitParam(dataTypeClass = Date.class,name = "showTime", value = "上映时间", required = true),
-            @ApiImplicitParam(dataType = "int", name = "status", value = "状态,(0，未上架)(1上架)", required = true)
+            @ApiImplicitParam(dataType = "int", name = "movieId", value = "电影ID", required = true),
+            @ApiImplicitParam(dataType = "string", name = "movieName", value = "电影名"),
+            @ApiImplicitParam(dataType = "BigDecimal", name = "budget", value = "总预算(亿)"),
+            @ApiImplicitParam(dataType = "BigDecimal", name = "quota", value = "开放额度(万)"),
+            @ApiImplicitParam(dataType = "string", name = "showPlace", value = "上映地点"),
+            @ApiImplicitParam(dataType = "string", name = "showTime", value = "上映时间"),
+            @ApiImplicitParam(dataType = "string", name = "dutyDescription", value = "责任描述,以、号相隔"),
+            @ApiImplicitParam(dataType = "string", name = "boxInfo", value = "票房"),
+            @ApiImplicitParam(dataType = "int", name = "investCycle", value = "周期(月)",example = "2"),
+            @ApiImplicitParam(dataType = "int", name = "movieLast", value = "影片时长", example = "120"),
+            @ApiImplicitParam(dataType = "int", name = "status", value = "(0，已杀青)(1，待开机)(2,已分红)(3,待分红)", example = "1"),
+            @ApiImplicitParam(dataType = "BigDecimal", name = "returnRate", value = "回报率(%)", required = true,example = "125")
     })
     @ApiResponses({
             @ApiResponse(code = 1018, message = "ERROR PIC TYPE (png|jpg|bmp|jpeg)"),
             @ApiResponse(code = 200, message = "SUCCESS")
     })
-    public ResponseEntity update(@RequestParam(value = "movieCoverFile",required = false) MultipartFile movieCoverFile,
-                                 @RequestParam(value = "id") int id,
-                                 @RequestParam(value = "movieName") String movieName,
-//                                 @RequestParam(value = "budget") BigDecimal budget,
-//                                 @RequestParam(value = "quota") BigDecimal quota,
-//                                 @RequestParam(value = "showPlace") String showPlace,
-//                                 @RequestParam(value = "showTime") Date showTime,
-                                 @RequestParam(value = "status") int status) {
+    public ResponseEntity update(@RequestParam(name = "movieId",defaultValue = "(0，已杀青)(1，待开机)(2,已分红)(3,待分红)") Integer movieId,
+                                 @RequestParam(name = "movieName",defaultValue = "电影名称")String movieName,
+                                 @RequestParam(name = "budget",defaultValue = "总预算(亿)")BigDecimal budget,
+                                 @RequestParam(name = "quota",defaultValue = "开放额度(万)")BigDecimal quota,
+                                 @RequestParam(name = "showPlace",defaultValue = "上映地点")String showPlace,
+                                 @RequestParam(name = "showTime",defaultValue = "上映地点")String showTime,
+                                 @RequestParam(name = "dutyDescription",defaultValue = "责任描述,以、号相隔")String dutyDescription,
+                                 @RequestParam(name = "boxInfo",defaultValue = "票房") String boxInfo,
+                                 @RequestParam(name = "investCycle",defaultValue = "周期(月)") Integer investCycle,
+                                 @RequestParam(name = "returnRate",defaultValue = "回报率(%)") BigDecimal returnRate,
+                                 @RequestParam(name = "movieLast",defaultValue = "影片时长") int movieLast,
+                                 @RequestParam(name = "status",defaultValue = "(0，已杀青)(1，待开机)(2,已分红)(3,待分红)") Integer status,
+                                 @RequestParam(name = "movieCoverFile",defaultValue = "电影封面") MultipartFile movieCoverFile){
         log.debug(" movie update Action !!!");
         Movie movie = new Movie();
+        movie.setMovieId(movieId);
         movie.setMovieName(movieName);
-//        movie.setBudget(budget);
-//        movie.setQuota(quota);
-//        movie.setShowPlace(showPlace);
-//        movie.setShowTime(showTime);
-        movie.setStatus((byte)status);
-        movie.setMovieId(id);
+        movie.setBudget(budget);
+        movie.setQuota(quota);
+        movie.setShowPlace(showPlace);
+        movie.setShowTime(showTime);
+        movie.setDutyDescription(dutyDescription);
+        movie.setBoxInfo(boxInfo);
+        movie.setInvestCycle(investCycle);
+        movie.setReturnRate(returnRate);
+        movie.setMovieLast(movieLast);
+        movie.setStatus(status);
         ResponseVo responseVo = movieService.update(movie,movieCoverFile);
         return ResponseEntity.ok(responseVo);
     }
