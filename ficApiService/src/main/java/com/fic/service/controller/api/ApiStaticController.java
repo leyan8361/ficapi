@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 **/
 @Controller
 @RequestMapping("/api/v1/static")
-@Api("Api-条款")
+@Api(description = "Api-条款")
 public class ApiStaticController {
 
     private final Logger log = LoggerFactory.getLogger(ApiStaticController.class);

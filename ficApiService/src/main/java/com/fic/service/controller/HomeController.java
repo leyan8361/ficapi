@@ -31,7 +31,7 @@ import java.util.List;
 **/
 @RestController
 @RequestMapping("/backend")
-@Api("首页")
+@Api(description = "首页")
 public class HomeController {
 
     private final Logger log = LoggerFactory.getLogger(HomeController.class);

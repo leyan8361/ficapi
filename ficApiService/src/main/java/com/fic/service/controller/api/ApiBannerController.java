@@ -22,7 +22,7 @@ import java.util.List;
 **/
 @RestController
 @RequestMapping("/api/v1/banner")
-@Api("Api-广告图，轮播图相关")
+@Api(description = "Api-广告图，轮播图相关")
 public class ApiBannerController {
 
     private final Logger log = LoggerFactory.getLogger(ApiBannerController.class);

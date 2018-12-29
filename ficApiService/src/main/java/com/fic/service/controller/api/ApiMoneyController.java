@@ -27,7 +27,7 @@ import java.util.List;
 **/
 @RestController
 @RequestMapping("/api/v1")
-@Api("Api-资产变动记录相关")
+@Api(description = "Api-资产变动记录相关")
 public class ApiMoneyController {
 
     private final Logger log = LoggerFactory.getLogger(ApiMoneyController.class);

@@ -17,7 +17,7 @@ import java.math.BigDecimal;
 
 @RestController
 @RequestMapping("/api/v1/")
-@Api("Api-竞猜")
+@Api(description = "Api-竞猜")
 public class ApiBetScenceController {
 
     private final Logger log = LoggerFactory.getLogger(ApiBetScenceController.class);

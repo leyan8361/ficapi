@@ -24,7 +24,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/backend/movie")
-@Api("电影管理")
+@Api(description = "电影管理")
 public class MovieController {
 
     private final Logger log = LoggerFactory.getLogger(MovieController.class);

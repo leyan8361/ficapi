@@ -24,7 +24,7 @@ import java.util.List;
 **/
 @RestController
 @RequestMapping("/api/v1")
-@Api("Api-投资相关")
+@Api(description = "Api-投资相关")
 public class ApiInvestController {
 
     private final Logger log = LoggerFactory.getLogger(ApiInvestController.class);

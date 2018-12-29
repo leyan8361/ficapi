@@ -25,7 +25,7 @@ import org.springframework.web.bind.annotation.RestController;
 **/
 @RestController
 @RequestMapping("/api/v1")
-@Api("Api-版本检测")
+@Api(description = "Api-版本检测")
 public class ApiVersionController {
 
     private final Logger log = LoggerFactory.getLogger(ApiVersionController.class);

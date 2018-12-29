@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 **/
 @RestController
 @RequestMapping("/api/v1")
-@Api("Api-短信")
+@Api(description = "Api-短信")
 public class ApiSmsController {
 
     private final Logger log = LoggerFactory.getLogger(ApiSmsController.class);

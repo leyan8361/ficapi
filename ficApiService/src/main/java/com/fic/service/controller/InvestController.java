@@ -17,7 +17,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 @RestController
 @RequestMapping("/backend")
-@Api("资产管理")
+@Api(description = "资产管理")
 public class InvestController {
 
     private final Logger log = LoggerFactory.getLogger(InvestController.class);

@@ -25,7 +25,7 @@ import org.springframework.web.bind.annotation.*;
  **/
 @RestController
 @RequestMapping("/backend")
-@Api("登录登出")
+@Api(description = "登录登出")
 public class LoginController {
 
     private final Logger log = LoggerFactory.getLogger(LoginController.class);

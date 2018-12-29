@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
  **/
 @RestController
 @RequestMapping("/api/v1")
-@Api("Api-首页")
+@Api(description = "Api-首页")
 public class ApiHomeController {
 
     private final Logger log = LoggerFactory.getLogger(HomeController.class);

@@ -32,7 +32,7 @@ import java.util.List;
  **/
 @RestController
 @RequestMapping("/api/v1")
-@Api("Api-账户相关，登录、登出、注册、获取账户信息")
+@Api(description = "Api-账户相关，登录、登出、注册、获取账户信息")
 public class ApiAccountController {
 
     private final Logger log = LoggerFactory.getLogger(HomeController.class);

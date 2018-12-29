@@ -18,7 +18,7 @@ import org.springframework.web.multipart.MultipartFile;
  **/
 @RestController
 @RequestMapping("/backend/banner")
-@Api("广告轮播图相关")
+@Api(description = "广告轮播图相关")
 public class BannerController {
 
     private final Logger log = LoggerFactory.getLogger(BannerController.class);

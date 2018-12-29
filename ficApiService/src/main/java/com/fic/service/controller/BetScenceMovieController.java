@@ -24,7 +24,7 @@ import java.util.Date;
 
 @RestController
 @RequestMapping("/backend/bet/scence_movie")
-@Api("竞猜场次管理")
+@Api(description = "竞猜场次管理")
 public class BetScenceMovieController {
 
     private final Logger log = LoggerFactory.getLogger(BetScenceMovieController.class);

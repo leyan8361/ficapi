@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
  **/
 @RestController
 @RequestMapping("/api/v1/betMovie")
-@Api("Api-获取竞猜电影信息")
+@Api(description = "Api-获取竞猜电影信息")
 public class ApiBetMovieController {
 
     private final Logger log = LoggerFactory.getLogger(ApiBetMovieController.class);

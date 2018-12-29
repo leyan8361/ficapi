@@ -27,7 +27,7 @@ import java.lang.reflect.InvocationTargetException;
 **/
 @RestController
 @RequestMapping("/api/v1")
-@Api("Api-兑币比例")
+@Api(description = "Api-兑币比例")
 public class ApiExchangeRateController {
 
     private final Logger log = LoggerFactory.getLogger(ApiExchangeRateController.class);
