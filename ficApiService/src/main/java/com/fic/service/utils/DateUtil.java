@@ -2,6 +2,7 @@ package com.fic.service.utils;
 
 import com.fic.service.Enum.PriceEnum;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.tomcat.jni.Local;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -287,25 +288,22 @@ public class DateUtil {
     public static boolean betLockTime(){
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         LocalDateTime date = LocalDateTime.now();
-        LocalDateTime startLock = LocalDateTime.of(date.getYear(),date.getMonth(),date.getDayOfMonth(),23,50,00);
-        LocalDateTime endLock = LocalDateTime.of(date.getYear(),date.getMonth(),date.getDayOfMonth(),00,20,00);
+        LocalDateTime zeroTime = LocalDateTime.of(date.getYear(),date.getMonth(),date.getDayOfMonth(),00,00,00);
+        LocalDateTime endLock= LocalDateTime.of(date.getYear(),date.getMonth(),date.getDayOfMonth(),00,20,00);
+        LocalDateTime startLock  = LocalDateTime.of(date.getYear(),date.getMonth(),date.getDayOfMonth(),23,50,00);
         /** 开奖(23:50:00 - 00:20:00)，不允许下注*/
-        if(date.compareTo(startLock) <0){
-            return false;
+        if(date.compareTo(zeroTime) >=0 && date.compareTo(endLock) <= 0){
+            /** 00:00:00 <= bet Time < 00:20:00*/
+            return true;
         }
-        if(date.compareTo(endLock) >0){
-            return false;
+        if(date.compareTo(startLock) >=0 && date.compareTo(zeroTime) >= 0){
+            /** 23:50:00 <= bet Time < 00:00:00*/
+            return true;
         }
-        //        if(date.compareTo(startLock) <=0){
-//            return true;
-//        }
-//        if(date.compareTo(endLock) >=0){
-//            return true;
-//        }
         System.out.println("start lock time : " + formatter.format(startLock));
         System.out.println("end lock time : " + formatter.format(endLock));
         System.out.println("now time : " + formatter.format(date));
-        return true;
+        return false;
     }
 
 
@@ -346,19 +344,29 @@ public class DateUtil {
 
 
     public static void main(String args[]) throws ParseException {
-
-        Date date = new Date();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-        Instant instant = date.toInstant();
-        ZoneId zoneId = ZoneId.systemDefault();
-        LocalDateTime localDate = instant.atZone(zoneId).toLocalDateTime();
-        WeekFields weekFields = WeekFields.of(DayOfWeek.SUNDAY,4);
-        int day = localDate.get(weekFields.dayOfWeek());
-        if (day != 0) {
-            day = day -1;
+        LocalDateTime date = LocalDateTime.of(2019,1,2,00,19,59);
+        LocalDateTime zeroTime = LocalDateTime.of(date.getYear(),date.getMonth(),date.getDayOfMonth(),00,00,00);
+        LocalDateTime endLock= LocalDateTime.of(date.getYear(),date.getMonth(),date.getDayOfMonth(),00,20,00);
+        LocalDateTime startLock  = LocalDateTime.of(date.getYear(),date.getMonth(),date.getDayOfMonth(),23,50,00);
+        /** 开奖(23:50:00 - 00:20:00)，不允许下注*/
+        if(date.compareTo(zeroTime) >=0 && date.compareTo(endLock) <= 0){
+            /** 00:00:00 <= bet Time < 00:20:00*/
+            System.out.println("00:00:00 <= bet Time < 00:20:00");
         }
-        localDate = localDate.minusDays(day).withHour(23).withMinute(59).withSecond(30);
-        String result = formatter.format(localDate);
+        if(date.compareTo(startLock) >=0 && date.compareTo(zeroTime) >= 0){
+            /** 23:50:00 <= bet Time < 00:00:00*/
+            System.out.println("23:50:00 <= bet Time < 00:00:00");
+        }
+        //        if(date.compareTo(startLock) <=0){
+//            return true;
+//        }
+//        if(date.compareTo(endLock) >=0){
+//            return true;
+//        }
+        System.out.println("start lock time : " + formatter.format(startLock));
+        System.out.println("end lock time : " + formatter.format(endLock));
+        System.out.println("now time : " + formatter.format(date));
     }
 
 }

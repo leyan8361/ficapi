@@ -177,14 +177,14 @@
     select m.* from bet_movie m
     left join bet_scence_movie sb on sb.bet_movie_id = m.id
     left join bet_scence b on sb.bet_scence_id = b.id
-    where sb.status = 0 and b.id = #{scenceId} order by m.created_time asc
+    where sb.status = 0 and b.id = #{scenceId} order by sb.sort asc
   </select>
 
   <select id="findAllOffByScenceId"  resultMap="BaseResultMap">
     select m.* from bet_movie m
     left join bet_scence_movie sb on sb.bet_movie_id = m.id
     left join bet_scence b on sb.bet_scence_id = b.id
-    where sb.status != 0 and b.id = #{scenceId}  and DATE_FORMAT(sb.start_day,'%Y-%m-%d') = #{startDay}  order by m.created_time asc
+    where sb.status != 0 and b.id = #{scenceId}  and DATE_FORMAT(sb.start_day,'%Y-%m-%d') = #{startDay}  order by sb.sort asc
   </select>
 
   <select id="checkMovieNameExistAndStatus" resultType="int">

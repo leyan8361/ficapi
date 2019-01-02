@@ -50,6 +50,7 @@ public class BetScenceMovieController {
             @ApiImplicitParam(dataType = "int", name = "movieId", value = "竞猜电影ID"),
             @ApiImplicitParam(dataType = "string", name = "startDay", value = "开始时间,注：当场次选择为高级场时，开始与结束时间控制为一周",example = "2018-12-7"),
             @ApiImplicitParam(dataType = "string", name = "endDay", value = "结束时间",example = "2018-12-28"),
+            @ApiImplicitParam(dataType = "int", name = "sort", value = "排序，小的排前面",example = "0"),
             @ApiImplicitParam(dataType = "string", name = "guessOverUnit", value = "当场次选择<竞猜是否能超过票房>，此项必填，例:['1.2','1.5','1.8']"),
             @ApiImplicitParam(dataType = "string", name = "choiceInput", value = "当场次选择<中级场，选择题>，此项票房单位 ，必填,例:'万'或'十万'，'百分'，'千万'，'亿'"),
             @ApiImplicitParam(dataType = "string", name = "sumBoxInput", value = "当场次选择<高级场>，此项票房单位必填,默认千万,例:'万'或'十万'，'百分'，'千万'，'亿'"),
@@ -59,6 +60,7 @@ public class BetScenceMovieController {
                                    @RequestParam("movieId") int movieId,
                                    @RequestParam("startDay") String startDay,
                                    @RequestParam("endDay") String endDay,
+                                   @RequestParam("sort") int sort,
                                    @RequestParam(value = "guessOverUnit",required = false) String guessOverUnit,
                                    @RequestParam(value = "choiceInput",required = false) String choiceInput,
                                    @RequestParam(value = "sumBoxInput",required = false) String sumBoxInput
@@ -72,6 +74,7 @@ public class BetScenceMovieController {
         scenceMovie.setGuessOverUnit(guessOverUnit);
         scenceMovie.setChoiceInput(choiceInput);
         scenceMovie.setSumBoxInput(sumBoxInput);
+        scenceMovie.setSort(sort);
         ResponseVo result = betScenceMovieService.add(scenceMovie);
         return ResponseEntity.ok(result);
     }
@@ -80,18 +83,21 @@ public class BetScenceMovieController {
     @ApiImplicitParams({
             @ApiImplicitParam(dataType = "int", name = "id", value = "场次ID",required = true),
             @ApiImplicitParam(dataType = "string", name = "startDay", value = "开始时间"),
-            @ApiImplicitParam(dataType = "string", name = "endDay", value = "结束时间")
+            @ApiImplicitParam(dataType = "string", name = "endDay", value = "结束时间"),
+            @ApiImplicitParam(dataType = "int", name = "sort", value = "排序，小的排前面",example = "0")
     })
     @ApiOperation("设置场次")
     public ResponseEntity update(@RequestParam("id") int id,
                                    @RequestParam(value = "startDay",required = false) String startDay,
-                                   @RequestParam(value = "endDay",required = false) String endDay
+                                   @RequestParam(value = "endDay",required = false) String endDay,
+                                   @RequestParam("sort") int sort
     ) {
         log.debug(" update movie_scence !!!");
         BetScenceMovie scenceMovie = new BetScenceMovie();
         scenceMovie.setId(id);
         scenceMovie.setStartDay(DateUtil.toMinFormatDay(startDay));
         scenceMovie.setEndDay(DateUtil.toMinFormatDay(endDay));
+        scenceMovie.setSort(sort);
         ResponseVo result = betScenceMovieService.update(scenceMovie);
         return ResponseEntity.ok(result);
     }
