@@ -80,11 +80,11 @@ public class ShiroAccessControllerFilter extends AccessControlFilter {
             request.getRequestDispatcher("/error").forward(request,response);
             return false;
         }
-//        if(StringUtils.isEmpty(userAgent) || !tokenBase.getUserAgent().equals(userAgent)){
-//            request.setAttribute("javax.servlet.error.status_code",ErrorCodeEnum.USER_AGENT_NOT_MATCH.getCode());
-//            request.getRequestDispatcher("/error").forward(request,response);
-//            return false;
-//        }
+        if(StringUtils.isEmpty(userAgent) || !tokenBase.getUserAgent().equals(userAgent)){
+            request.setAttribute("javax.servlet.error.status_code",ErrorCodeEnum.USER_AGENT_NOT_MATCH.getCode());
+            request.getRequestDispatcher("/error").forward(request,response);
+            return false;
+        }
         return true;
     }
 
