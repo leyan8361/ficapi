@@ -36,6 +36,8 @@ public class BetScenceMovie {
 
     private BigDecimal bingoOdds;
 
+    private int sort;
+
     public Integer getId() {
         return id;
     }
@@ -136,6 +138,14 @@ public class BetScenceMovie {
 
     public void setTotalReservationReturning(BigDecimal totalReservationReturning) {
         this.totalReservationReturning = totalReservationReturning;
+    }
+
+    public int getSort() {
+        return sort;
+    }
+
+    public void setSort(int sort) {
+        this.sort = sort;
     }
 
     @Override
