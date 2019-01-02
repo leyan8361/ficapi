@@ -1,5 +1,6 @@
 package com.fic.service.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
@@ -15,9 +16,9 @@ public class Movie {
 
     @ApiModelProperty("电影名称")
     private String movieName;
-
+    @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
     private Date createdTime;
-
+    @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
     private Date updatedTime;
     @ApiModelProperty("电影类型")
     private String movieType;
@@ -45,14 +46,11 @@ public class Movie {
     private Integer movieLast;
     @ApiModelProperty(value = "回报率",example = "0")
     private BigDecimal returnRate;
+
     @ApiModelProperty(value = "新增修改不需要填写,演员列表")
     private List<ActorInfo> actorArray;
-
-    private String actorList;
     @ApiModelProperty(value = "新增修改不需要填写,项目简介")
     private MovieDetailInfo movieDetailInfo;
-
-    private String movieBriefList;
 
     public Integer getMovieId() {
         return movieId;
@@ -190,19 +188,21 @@ public class Movie {
         this.returnRate = returnRate;
     }
 
-    public String getActorList() {
-        return actorList;
+    public List<ActorInfo> getActorArray() {
+        return actorArray;
     }
 
-    public void setActorList(String actorList) {
-        this.actorList = actorList;
+    public void setActorArray(List<ActorInfo> actorArray) {
+        this.actorArray = actorArray;
     }
 
-    public String getMovieBriefList() {
-        return movieBriefList;
+
+    public MovieDetailInfo getMovieDetailInfo() {
+        return movieDetailInfo;
     }
 
-    public void setMovieBriefList(String movieBriefList) {
-        this.movieBriefList = movieBriefList;
+    public void setMovieDetailInfo(MovieDetailInfo movieDetailInfo) {
+        this.movieDetailInfo = movieDetailInfo;
     }
+
 }

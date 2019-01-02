@@ -29,7 +29,9 @@ public class Constants {
         /**
          * 文件类型
          */
-        public static final String MEDIA_PREFIX="movie/media/";
+        public static final String MEDIA_PREFIX_ACTOR="movie/media/actor/";
+        public static final String MEDIA_PREFIX_BRIEF="movie/media/brief/";
+        public static final String MEDIA_PREFIX_PLOT="movie/media/plot/";
         public static final String MOVIE_COVER="movie/cover/";
         public static final String HEAD_CUT_PATH="user/";
         public static final String BET_MOVIE_COVER_PATH="/bet/movie/";

@@ -33,4 +33,6 @@ public interface MovieMapper {
     int updateMovieCover(String movieCoverUrl, Integer movieId);
 
     int updateStatus(int status, Integer movieId);
+
+    int updateActorInfo(int movieId,String actorInfoStr);
 }

@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fic.service.mapper.ActorInfoMapper">
+  <resultMap id="BaseResultMap" type="com.fic.service.entity.ActorInfo">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="movie_id" jdbcType="INTEGER" property="movieId" />
+    <result column="role" jdbcType="VARCHAR" property="role" />
+    <result column="role_name" jdbcType="VARCHAR" property="roleName" />
+    <result column="role_cover_url" jdbcType="VARCHAR" property="roleCoverUrl" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id,movie_id, role, role_name, role_cover_url
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from actor_info
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from actor_info
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.fic.service.entity.ActorInfo">
+    insert into actor_info (id, movie_id,role, role_name,
+      role_cover_url)
+    values (#{id,jdbcType=INTEGER}, #{movieId,jdbcType=INTEGER},#{role,jdbcType=VARCHAR}, #{roleName,jdbcType=VARCHAR},
+      #{roleCoverUrl,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.fic.service.entity.ActorInfo" useGeneratedKeys="true" keyProperty="id">
+    insert into actor_info
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="movieId != null">
+        movie_id,
+      </if>
+      <if test="role != null">
+        role,
+      </if>
+      <if test="roleName != null">
+        role_name,
+      </if>
+      <if test="roleCoverUrl != null">
+        role_cover_url,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="movieId != null">
+        #{movieId,jdbcType=INTEGER},
+      </if>
+      <if test="role != null">
+        #{role,jdbcType=VARCHAR},
+      </if>
+      <if test="roleName != null">
+        #{roleName,jdbcType=VARCHAR},
+      </if>
+      <if test="roleCoverUrl != null">
+        #{roleCoverUrl,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.fic.service.entity.ActorInfo">
+    update actor_info
+    <set>
+      <if test="movieId != null">
+        movie_id = #{movieId,jdbcType=VARCHAR},
+      </if>
+      <if test="role != null">
+        role = #{role,jdbcType=VARCHAR},
+      </if>
+      <if test="roleName != null">
+        role_name = #{roleName,jdbcType=VARCHAR},
+      </if>
+      <if test="roleCoverUrl != null">
+        role_cover_url = #{roleCoverUrl,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.fic.service.entity.ActorInfo">
+    update actor_info
+    set role = #{role,jdbcType=VARCHAR},
+      role_name = #{roleName,jdbcType=VARCHAR},
+      role_cover_url = #{roleCoverUrl,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateCoverUrl">
+    update actor_info set role_cover_url = #{roleCoverUrl,jdbcType=VARCHAR} where id = #{id,jdbcType=INTEGER}
+  </update>
+  <select id="findAllByMovieId" resultMap="BaseResultMap">
+    select * from actor_info where movie_id = #{movieId};
+  </select>
+</mapper>

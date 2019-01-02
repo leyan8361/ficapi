@@ -6,6 +6,9 @@ import io.swagger.annotations.ApiModelProperty;
 @ApiModel
 public class MovieDetailInfo {
 
+    private Integer id;
+    @ApiModelProperty(value = "电影ID")
+    private int movieId;
     @ApiModelProperty(value = "项目简介")
     private String briefText;
     @ApiModelProperty(value = "项目简介URL")
@@ -14,6 +17,22 @@ public class MovieDetailInfo {
     private String plotSummary;
     @ApiModelProperty(value = "剧情简介URL")
     private String plotSummaryUrl;
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public int getMovieId() {
+        return movieId;
+    }
+
+    public void setMovieId(int movieId) {
+        this.movieId = movieId;
+    }
 
     public String getBriefText() {
         return briefText;

@@ -1,7 +1,9 @@
 package com.fic.service.service;
 
 
+import com.fic.service.Vo.MovieInfoVo;
 import com.fic.service.Vo.ResponseVo;
+import com.fic.service.entity.ActorInfo;
 import com.fic.service.entity.Movie;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -17,15 +19,18 @@ public interface MovieService {
 
     ResponseVo doFavMovie(Integer userId,Integer movieId);
 
-    List<Movie> getAll();
+    List<MovieInfoVo> getAll();
 
     ResponseVo add(Movie movie,MultipartFile movieCoverFile);
 
     ResponseVo update(Movie movie,MultipartFile movieCoverFile);
 
-    ResponseVo onShelf(int id);
+    ResponseVo addActorInfo(int movieId,String role,String roleName,MultipartFile movieCoverFile);
 
-    ResponseVo shelf(int id);
+    ResponseVo updateActorInfo(int actorId,String role,String roleName,MultipartFile movieCoverFile);
 
+    ResponseVo addBrief(int movieId,String brief,String plotSummary,MultipartFile briefCoverFile,MultipartFile plotSummaryCoverFile);
+
+    ResponseVo updateBrief(int briefId,String brief,String plotSummary,MultipartFile briefCoverFile,MultipartFile plotSummaryCoverFile);
 
 }
