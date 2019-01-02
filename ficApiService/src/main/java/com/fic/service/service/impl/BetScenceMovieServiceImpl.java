@@ -77,9 +77,14 @@ public class BetScenceMovieServiceImpl implements BetScenceMovieService {
         if(null == scenceMovie || null == scenceMovie.getId()){
             return new ResponseVo(ErrorCodeEnum.NO_AVALIBLE_SCENCE,null);
         }
-        BetScenceMovie scenceMovieExist = betScenceMovieMapper.selectByPrimaryKey(scenceMovie.getId());
-        BeanUtil.copy(scenceMovieExist,scenceMovie);
-        int updateResult = betScenceMovieMapper.updateByPrimaryKeySelective(scenceMovie);
+        BetScenceMovie scenceMovieExist = betScenceMovieMapper.findByIdWithoutStatus(scenceMovie.getId());
+        scenceMovieExist.setStatus((byte)0);
+        scenceMovieExist.setStartDay(scenceMovie.getStartDay());
+        scenceMovieExist.setEndDay(scenceMovie.getEndDay());
+        scenceMovieExist.setDrawResult("");
+        scenceMovieExist.setBingoOdds(null);
+        scenceMovieExist.setTotalReservationReturning(null);
+        int updateResult = betScenceMovieMapper.updateByPrimaryKeySelective(scenceMovieExist);
         if(updateResult <=0){
             log.error(" 为scence 更新movie 失败 ");
             throw new RuntimeException();
