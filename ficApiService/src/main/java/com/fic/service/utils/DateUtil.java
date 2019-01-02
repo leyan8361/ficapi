@@ -289,27 +289,21 @@ public class DateUtil {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         LocalDateTime date = LocalDateTime.now();
         LocalDateTime zeroTime = LocalDateTime.of(date.getYear(),date.getMonth(),date.getDayOfMonth(),00,00,00);
-        LocalDateTime startLock = LocalDateTime.of(date.getYear(),date.getMonth(),date.getDayOfMonth(),00,20,00);
-        LocalDateTime endLock = LocalDateTime.of(date.getYear(),date.getMonth(),date.getDayOfMonth(),23,50,00);
+        LocalDateTime endLock= LocalDateTime.of(date.getYear(),date.getMonth(),date.getDayOfMonth(),00,20,00);
+        LocalDateTime startLock  = LocalDateTime.of(date.getYear(),date.getMonth(),date.getDayOfMonth(),23,50,00);
         /** 开奖(23:50:00 - 00:20:00)，不允许下注*/
-        if(date.compareTo(zeroTime) >=0 && date.compareTo(startLock) <= 0){
+        if(date.compareTo(zeroTime) >=0 && date.compareTo(endLock) <= 0){
             /** 00:00:00 <= bet Time < 00:20:00*/
             return true;
         }
-        if(date.compareTo(zeroTime) <0 && date.compareTo(endLock) >= 0){
+        if(date.compareTo(startLock) >=0 && date.compareTo(zeroTime) >= 0){
             /** 23:50:00 <= bet Time < 00:00:00*/
             return true;
         }
-        //        if(date.compareTo(startLock) <=0){
-//            return true;
-//        }
-//        if(date.compareTo(endLock) >=0){
-//            return true;
-//        }
         System.out.println("start lock time : " + formatter.format(startLock));
         System.out.println("end lock time : " + formatter.format(endLock));
         System.out.println("now time : " + formatter.format(date));
-        return true;
+        return false;
     }
 
 
@@ -351,18 +345,16 @@ public class DateUtil {
 
     public static void main(String args[]) throws ParseException {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-        LocalDateTime date = LocalDateTime.of(2019,1,2,00,00,01);
-        LocalDateTime nowPlus = date.plusMinutes(30);
+        LocalDateTime date = LocalDateTime.of(2019,1,2,00,19,59);
         LocalDateTime zeroTime = LocalDateTime.of(date.getYear(),date.getMonth(),date.getDayOfMonth(),00,00,00);
-        LocalDateTime endTime = LocalDateTime.of(date.getYear(),date.getMonth(),date.getDayOfMonth(),23,59,59);
-        LocalDateTime startLock = LocalDateTime.of(date.getYear(),date.getMonth(),date.getDayOfMonth(),00,20,00);
-        LocalDateTime endLock = LocalDateTime.of(date.getYear(),date.getMonth(),date.getDayOfMonth(),23,50,00);
+        LocalDateTime endLock= LocalDateTime.of(date.getYear(),date.getMonth(),date.getDayOfMonth(),00,20,00);
+        LocalDateTime startLock  = LocalDateTime.of(date.getYear(),date.getMonth(),date.getDayOfMonth(),23,50,00);
         /** 开奖(23:50:00 - 00:20:00)，不允许下注*/
-        if(nowPlus.compareTo(endTime) < 0){
+        if(date.compareTo(zeroTime) >=0 && date.compareTo(endLock) <= 0){
             /** 00:00:00 <= bet Time < 00:20:00*/
             System.out.println("00:00:00 <= bet Time < 00:20:00");
         }
-        if(date.compareTo(zeroTime) <0 && date.compareTo(endLock) >= 0){
+        if(date.compareTo(startLock) >=0 && date.compareTo(zeroTime) >= 0){
             /** 23:50:00 <= bet Time < 00:00:00*/
             System.out.println("23:50:00 <= bet Time < 00:00:00");
         }
