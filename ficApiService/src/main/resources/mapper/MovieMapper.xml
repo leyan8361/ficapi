@@ -176,10 +176,10 @@
       <if test="movieType != null">
         movie_type = #{movieType,jdbcType=VARCHAR},
       </if>
-      <if test="budget != null">
+      <if test="budget != null and budget != 0">
         budget = #{budget,jdbcType=DECIMAL},
       </if>
-      <if test="quota != null">
+      <if test="quota != null and quota !=0">
         quota = #{quota,jdbcType=DECIMAL},
       </if>
       <if test="movieCoverUrl != null">

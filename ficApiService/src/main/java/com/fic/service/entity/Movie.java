@@ -33,7 +33,7 @@ public class Movie {
     @ApiModelProperty("上映时间")
     private String showTime;
     @ApiModelProperty("(0，已杀青)(1，待开机)(2,已分红)(3,待分红)")
-    private int status;
+    private Integer status;
     @ApiModelProperty("责任描述")
     private String dutyDescription;
     @ApiModelProperty("票房")
@@ -132,11 +132,11 @@ public class Movie {
         this.showTime = showTime;
     }
 
-    public int getStatus() {
+    public Integer getStatus() {
         return status;
     }
 
-    public void setStatus(int status) {
+    public void setStatus(Integer status) {
         this.status = status;
     }
 

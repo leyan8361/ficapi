@@ -75,7 +75,7 @@ public class MovieController {
                               @RequestParam(name = "budget",defaultValue = "总预算(亿)")BigDecimal budget,
                               @RequestParam(name = "quota",defaultValue = "开放额度(万)")BigDecimal quota,
                               @RequestParam(name = "showPlace",defaultValue = "上映地点")String showPlace,
-                              @RequestParam(name = "showTime",defaultValue = "上映地点")String showTime,
+                              @RequestParam(name = "showTime",defaultValue = "上映时间")String showTime,
                               @RequestParam(name = "dutyDescription",defaultValue = "责任描述,以、号相隔")String dutyDescription,
                               @RequestParam(name = "boxInfo",defaultValue = "票房") String boxInfo,
                               @RequestParam(name = "investCycle",defaultValue = "周期(月)") int investCycle,
@@ -116,36 +116,40 @@ public class MovieController {
             @ApiImplicitParam(dataType = "string", name = "showTime", value = "上映时间"),
             @ApiImplicitParam(dataType = "string", name = "dutyDescription", value = "责任描述,以、号相隔"),
             @ApiImplicitParam(dataType = "string", name = "boxInfo", value = "票房"),
-            @ApiImplicitParam(dataType = "int", name = "investCycle", value = "周期(月)",example = "2"),
-            @ApiImplicitParam(dataType = "int", name = "movieLast", value = "影片时长", example = "120"),
-            @ApiImplicitParam(dataType = "int", name = "status", value = "(0，已杀青)(1，待开机)(2,已分红)(3,待分红)", example = "1"),
-            @ApiImplicitParam(dataType = "BigDecimal", name = "returnRate", value = "回报率(%)", required = true,example = "125")
+            @ApiImplicitParam(dataType = "int", name = "investCycle", value = "周期(月)"),
+            @ApiImplicitParam(dataType = "int", name = "movieLast", value = "影片时长"),
+            @ApiImplicitParam(dataType = "int", name = "status", value = "(0，已杀青)(1，待开机)(2,已分红)(3,待分红)"),
+            @ApiImplicitParam(dataType = "BigDecimal", name = "returnRate", value = "回报率(%)")
     })
     @ApiResponses({
             @ApiResponse(code = 1018, message = "ERROR PIC TYPE (png|jpg|bmp|jpeg)"),
             @ApiResponse(code = 200, message = "SUCCESS")
     })
-    public ResponseEntity update(@RequestParam(name = "movieId") Integer movieId,
-                                 @RequestParam(name = "movieName",defaultValue = "电影名称")String movieName,
-                                 @RequestParam(name = "movieType",defaultValue = "电影类型")String movieType,
-                                 @RequestParam(name = "budget",defaultValue = "总预算(亿)")BigDecimal budget,
-                                 @RequestParam(name = "quota",defaultValue = "开放额度(万)")BigDecimal quota,
-                                 @RequestParam(name = "showPlace",defaultValue = "上映地点")String showPlace,
-                                 @RequestParam(name = "showTime",defaultValue = "上映地点")String showTime,
-                                 @RequestParam(name = "dutyDescription",defaultValue = "责任描述,以、号相隔")String dutyDescription,
-                                 @RequestParam(name = "boxInfo",defaultValue = "票房") String boxInfo,
-                                 @RequestParam(name = "investCycle",defaultValue = "周期(月)") Integer investCycle,
-                                 @RequestParam(name = "returnRate",defaultValue = "回报率(%)") BigDecimal returnRate,
-                                 @RequestParam(name = "movieLast",defaultValue = "影片时长") int movieLast,
-                                 @RequestParam(name = "status",defaultValue = "(0，已杀青)(1，待开机)(2,已分红)(3,待分红)") Integer status,
-                                 @RequestParam(name = "movieCoverFile",defaultValue = "电影封面") MultipartFile movieCoverFile){
+    public ResponseEntity update(@RequestParam Integer movieId,
+                                 @RequestParam(required = false)String movieName,
+                                 @RequestParam(required = false)String movieType,
+                                 @RequestParam(required = false)BigDecimal budget,
+                                 @RequestParam(required = false)BigDecimal quota,
+                                 @RequestParam(required = false)String showPlace,
+                                 @RequestParam(required = false)String showTime,
+                                 @RequestParam(required = false)String dutyDescription,
+                                 @RequestParam(required = false) String boxInfo,
+                                 @RequestParam(required = false) Integer investCycle,
+                                 @RequestParam(required = false) BigDecimal returnRate,
+                                 @RequestParam(required = false) Integer movieLast,
+                                 @RequestParam(required = false) Integer status,
+                                 @ApiParam MultipartFile movieCoverFile){
         log.debug(" movie update Action !!!");
         Movie movie = new Movie();
         movie.setMovieId(movieId);
         movie.setMovieName(movieName);
         movie.setMovieType(movieType);
-        movie.setBudget(budget);
-        movie.setQuota(quota);
+        if(null != budget && budget.compareTo(BigDecimal.ZERO) >0){
+            movie.setBudget(budget);
+        }
+        if(null !=quota && quota.compareTo(BigDecimal.ZERO) >0){
+            movie.setQuota(quota);
+        }
         movie.setShowPlace(showPlace);
         movie.setShowTime(showTime);
         movie.setDutyDescription(dutyDescription);
