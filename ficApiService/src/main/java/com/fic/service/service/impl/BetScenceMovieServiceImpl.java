@@ -83,6 +83,7 @@ public class BetScenceMovieServiceImpl implements BetScenceMovieService {
         scenceMovieExist.setEndDay(scenceMovie.getEndDay());
         scenceMovieExist.setDrawResult("");
         scenceMovieExist.setBingoOdds(null);
+        scenceMovieExist.setSort(scenceMovie.getSort());
         scenceMovieExist.setTotalReservationReturning(null);
         int updateResult = betScenceMovieMapper.updateByPrimaryKeySelective(scenceMovieExist);
         if(updateResult <=0){
