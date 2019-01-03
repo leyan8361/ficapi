@@ -1,4 +1,4 @@
-package com.fic.service.controller.api;
+package com.fic.service.controller.api.v1;
 
 import com.fic.service.controller.HomeController;
 import io.swagger.annotations.Api;

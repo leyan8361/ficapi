@@ -43,11 +43,8 @@ public class MovieController {
     })
     public ResponseEntity getAll() {
         log.debug(" movie getAll Action !!!");
-        List<MovieInfoVo> resultList = movieService.getAll();
-        if(resultList.isEmpty()){
-            return ResponseEntity.ok(new ResponseVo(ErrorCodeEnum.MOVIE_NOT_FOUND,null));
-        }
-        return ResponseEntity.ok(new ResponseVo(ErrorCodeEnum.SUCCESS,resultList));
+        ResponseVo result = movieService.getAll();
+        return ResponseEntity.ok(result);
     }
 
     @PostMapping(value = "/add")

@@ -1,4 +1,4 @@
-package com.fic.service.controller.api;
+package com.fic.service.controller.api.v1;
 
 import com.fic.service.Enum.ErrorCodeEnum;
 import com.fic.service.Vo.BannerInfoVo;
@@ -8,10 +8,8 @@ import io.swagger.annotations.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 

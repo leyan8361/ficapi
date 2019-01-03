@@ -1,12 +1,9 @@
-package com.fic.service.controller.api;
+package com.fic.service.controller.api.v1;
 
 import com.fic.service.Enum.ErrorCodeEnum;
-import com.fic.service.Vo.LoginUserInfoVo;
 import com.fic.service.Vo.ResponseVo;
 import com.fic.service.Vo.TradeRecordInfoVo;
-import com.fic.service.Vo.TradeRecordVo;
 import com.fic.service.mapper.UserMapper;
-import com.fic.service.service.AccountService;
 import com.fic.service.service.BalanceService;
 import io.swagger.annotations.*;
 import org.slf4j.Logger;
@@ -17,8 +14,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.List;
 
 /**
  *   @Author Xie

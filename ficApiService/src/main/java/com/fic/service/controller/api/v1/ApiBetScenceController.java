@@ -1,4 +1,4 @@
-package com.fic.service.controller.api;
+package com.fic.service.controller.api.v1;
 import com.fic.service.Enum.ErrorCodeEnum;
 import com.fic.service.Vo.*;
 import com.fic.service.service.BetScenceService;

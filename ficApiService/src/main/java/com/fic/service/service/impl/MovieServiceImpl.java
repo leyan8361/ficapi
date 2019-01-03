@@ -1,9 +1,11 @@
 package com.fic.service.service.impl;
 
 import com.fic.service.Enum.ErrorCodeEnum;
+import com.fic.service.Enum.MovieStatusEnum;
 import com.fic.service.Enum.ShelfStatusEnum;
 import com.fic.service.Vo.MovieDetailInfoVo;
 import com.fic.service.Vo.MovieInfoVo;
+import com.fic.service.Vo.MovieVo;
 import com.fic.service.Vo.ResponseVo;
 import com.fic.service.constants.Constants;
 import com.fic.service.constants.UploadProperties;
@@ -60,12 +62,12 @@ public class MovieServiceImpl implements MovieService {
 
 
     /**
-     * App 首页
-     * @return
+     * App v1 首页电影列表
      */
     @Override
     public ResponseVo getMovies() {
         List<MovieInfoVo> resultList = new ArrayList<MovieInfoVo>();
+
         List<Movie> movieList = movieMapper.findAll();
         if(movieList.size() <=0 )return new ResponseVo(ErrorCodeEnum.MOVIE_NOT_FOUND,null);
         for(Movie movie: movieList){
@@ -106,6 +108,8 @@ public class MovieServiceImpl implements MovieService {
         }
         detailInfoVo.setCountAlike(movieUserInfoMapper.countAlike(movieId));
         detailInfoVo.setCountCollect(movieUserInfoMapper.countCollect(movieId));
+
+
         return new ResponseVo(ErrorCodeEnum.SUCCESS,detailInfoVo);
     }
 
@@ -187,46 +191,9 @@ public class MovieServiceImpl implements MovieService {
     }
 
     @Override
-    public List<MovieInfoVo> getAll() {
+    public ResponseVo getAll() {
         List<Movie> movieList = movieMapper.findAll();
-        List<MovieInfoVo> resultList = new ArrayList<MovieInfoVo>();
-        for(Movie movie: movieList){
-            MovieInfoVo result = new MovieInfoVo();
-
-            List<ActorInfo> actorInfos = actorInfoMapper.findAllByMovieId(movie.getMovieId());
-            if(actorInfos.size() >0){
-                for(ActorInfo actorInfo : actorInfos){
-                    actorInfo.setRoleCoverUrl(uploadProperties.getUrl(actorInfo.getRoleCoverUrl()));
-                }
-                movie.setActorArray(actorInfos);
-            }
-
-            MovieDetailInfo movieDetailInfo = movieDetailInfoMapper.findByMovieId(movie.getMovieId());
-            if(null != movieDetailInfo){
-                if(StringUtils.isNotEmpty(movieDetailInfo.getBriefUrl())){
-                    movieDetailInfo.setBriefUrl(uploadProperties.getUrl(movieDetailInfo.getBriefUrl()));
-                }
-                if(StringUtils.isNotEmpty(movieDetailInfo.getPlotSummaryUrl())){
-                    movieDetailInfo.setPlotSummaryUrl(uploadProperties.getUrl(movieDetailInfo.getPlotSummaryUrl()));
-                }
-                movie.setMovieDetailInfo(movieDetailInfo);
-            }
-            movie.setMovieCoverUrl(uploadProperties.getUrl(movie.getMovieCoverUrl()));
-
-            movie.setInvestCount(investDetailMapper.countInvestPeople(movie.getMovieId()).size());
-            BigDecimal totalAmount = investDetailMapper.sumTotalInvestByMovieId(movie.getMovieId());
-            result.setInvestTotalAmount(null != totalAmount ? totalAmount : BigDecimal.ZERO);
-
-            if(StringUtils.isNotEmpty(movie.getDutyDescription())){
-                String [] dutyArray = movie.getDutyDescription().split("、");
-                if(dutyArray.length >0){
-                    result.setDutyDescriptionArray(dutyArray);
-                }
-            }
-            BeanUtil.copy(result,movie);
-            resultList.add(result);
-        }
-        return resultList;
+        return new ResponseVo(ErrorCodeEnum.SUCCESS,movieList);
     }
 
     @Override
@@ -543,5 +510,94 @@ public class MovieServiceImpl implements MovieService {
         }
 
         return new ResponseVo(ErrorCodeEnum.SUCCESS,null);
+    }
+
+    @Override
+    public ResponseVo getMovieInfoV2(Integer userId, Integer movieId) {
+        Integer existUserId = userMapper.checkIfExistByUserId(userId);
+        if(null == existUserId || existUserId == 0){
+            log.error("用户不存在，Like Movie User ID : {}",userId);
+            throw new RuntimeException();
+        }
+        Integer existMovieid = movieMapper.checkIfExistById(movieId);
+        if(null == existMovieid || existMovieid ==0 ){
+            log.error("电影不存在，like Movie Movie ID : {}", movieId);
+            throw new RuntimeException();
+        }
+        Movie movie = movieMapper.selectByPrimaryKey(movieId);
+        if(null == movie){
+            log.error(" 查找电影失几 id :{}",movieId);
+            return new ResponseVo(ErrorCodeEnum.SYSTEM_EXCEPTION,null);
+        }
+
+        MovieUserInfo movieUserInfo = movieUserInfoMapper.findByUserIdAndMovieId(userId,movieId);
+        MovieDetailInfoVo detailInfoVo = new MovieDetailInfoVo();
+        detailInfoVo.setMovieId(movieId);
+        if(null != movieUserInfo){
+            detailInfoVo.setFav(movieUserInfo.getFav());
+            detailInfoVo.setLikz(movieUserInfo.getLikz());
+        }
+        detailInfoVo.setCountAlike(movieUserInfoMapper.countAlike(movieId));
+        detailInfoVo.setCountCollect(movieUserInfoMapper.countCollect(movieId));
+
+
+        List<ActorInfo> actorInfos = actorInfoMapper.findAllByMovieId(movie.getMovieId());
+        if(actorInfos.size() >0){
+            for(ActorInfo actorInfo : actorInfos){
+                actorInfo.setRoleCoverUrl(uploadProperties.getUrl(actorInfo.getRoleCoverUrl()));
+            }
+            movie.setActorArray(actorInfos);
+        }
+
+        MovieDetailInfo movieDetailInfo = movieDetailInfoMapper.findByMovieId(movie.getMovieId());
+        if(null != movieDetailInfo){
+            if(StringUtils.isNotEmpty(movieDetailInfo.getBriefUrl())){
+                movieDetailInfo.setBriefUrl(uploadProperties.getUrl(movieDetailInfo.getBriefUrl()));
+            }
+            if(StringUtils.isNotEmpty(movieDetailInfo.getPlotSummaryUrl())){
+                movieDetailInfo.setPlotSummaryUrl(uploadProperties.getUrl(movieDetailInfo.getPlotSummaryUrl()));
+            }
+            movie.setMovieDetailInfo(movieDetailInfo);
+        }
+
+        if(StringUtils.isNotEmpty(movie.getDutyDescription())){
+            String [] dutyArray = movie.getDutyDescription().split("、");
+            if(dutyArray.length >0){
+                detailInfoVo.setDutyDescriptionArray(dutyArray);
+            }
+        }
+
+        BeanUtil.copy(detailInfoVo,movie);
+        detailInfoVo.setInvestCount(investDetailMapper.countInvestPeople(movie.getMovieId()).size());
+        BigDecimal totalAmount = investDetailMapper.sumTotalInvestByMovieId(movie.getMovieId());
+        detailInfoVo.setInvestTotalAmount(null != totalAmount ? totalAmount : BigDecimal.ZERO);
+
+        return new ResponseVo(ErrorCodeEnum.SUCCESS,detailInfoVo);
+    }
+
+    /**
+     * App v2 首页电影列表
+     */
+    @Override
+    public ResponseVo getMoviesV2() {
+        List<MovieInfoVo> resultList = new ArrayList<MovieInfoVo>();
+        List<MovieInfoVo> dividendList = new ArrayList<MovieInfoVo>();
+        List<Movie> movieList = movieMapper.findAll();
+        if(movieList.size() <=0 )return new ResponseVo(ErrorCodeEnum.MOVIE_NOT_FOUND,new MovieVo());
+        for(Movie movie: movieList){
+            MovieInfoVo result = new MovieInfoVo();
+
+            movie.setMovieCoverUrl(uploadProperties.getUrl(movie.getMovieCoverUrl()));
+            BeanUtil.copy(result,movie);
+            if(movie.getStatus().equals(MovieStatusEnum.WAIT_DIVIDEND.getCode()) || movie.getStatus().equals(MovieStatusEnum.DIVIDEND.getCode())){
+                dividendList.add(result);
+            }else{
+                resultList.add(result);
+            }
+        }
+        MovieVo movieVo = new MovieVo();
+        movieVo.setDividendList(dividendList);
+        movieVo.setInvestList(resultList);
+        return new ResponseVo(ErrorCodeEnum.SUCCESS,movieVo);
     }
 }

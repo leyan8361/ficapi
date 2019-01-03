@@ -1,6 +1,5 @@
-package com.fic.service.controller.api;
+package com.fic.service.controller.api.v1;
 
-import com.fic.service.Enum.ErrorCodeEnum;
 import com.fic.service.Vo.MovieDetailInfoVo;
 import com.fic.service.Vo.MovieInfoVo;
 import com.fic.service.Vo.ResponseVo;
@@ -11,8 +10,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 /**
  *   @Author Xie
@@ -37,8 +34,8 @@ public class ApiMovieController {
     })
     public ResponseEntity getMovies() {
         log.debug(" Api get Movie List !!!");
-        List<MovieInfoVo> result = movieService.getAll();
-        return ResponseEntity.ok(new ResponseVo(ErrorCodeEnum.SUCCESS,result));
+        ResponseVo result = movieService.getMovies();
+        return ResponseEntity.ok(result);
     }
 
     @GetMapping("/getMovieDetail")

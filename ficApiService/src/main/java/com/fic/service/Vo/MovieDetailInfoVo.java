@@ -4,10 +4,8 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
 @ApiModel
-public class MovieDetailInfoVo {
+public class MovieDetailInfoVo extends MovieInfoVo{
 
-    @ApiModelProperty(value = "电影ID")
-    private int movieId;
     @ApiModelProperty(value = "点赞(0,未点赞)(1,已点赞)")
     private int likz;
     @ApiModelProperty(value = "收藏(0,未收藏)(1,已收藏)")
@@ -17,13 +15,6 @@ public class MovieDetailInfoVo {
     @ApiModelProperty(value = "收藏人数")
     private int countCollect;
 
-    public int getMovieId() {
-        return movieId;
-    }
-
-    public void setMovieId(int movieId) {
-        this.movieId = movieId;
-    }
 
     public int getLikz() {
         return likz;

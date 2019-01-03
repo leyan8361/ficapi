@@ -13,13 +13,17 @@ public interface MovieService {
 
     ResponseVo getMovies();
 
+    ResponseVo getMoviesV2();
+
     ResponseVo getMovieInfo(Integer userId,Integer movieId);
+
+    ResponseVo getMovieInfoV2(Integer userId,Integer movieId);
 
     ResponseVo doLikeMovie(Integer userId,Integer movieId);
 
     ResponseVo doFavMovie(Integer userId,Integer movieId);
 
-    List<MovieInfoVo> getAll();
+    ResponseVo getAll();
 
     ResponseVo add(Movie movie,MultipartFile movieCoverFile);
 
