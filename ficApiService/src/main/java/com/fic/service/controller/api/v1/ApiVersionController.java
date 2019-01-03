@@ -1,11 +1,9 @@
-package com.fic.service.controller.api;
+package com.fic.service.controller.api.v1;
 
 import com.fic.service.Enum.ErrorCodeEnum;
-import com.fic.service.Vo.InvestBalanceInfoVo;
 import com.fic.service.Vo.ResponseVo;
 import com.fic.service.Vo.VersionInfoVo;
 import com.fic.service.constants.UploadProperties;
-import com.fic.service.controller.HomeController;
 import com.fic.service.entity.AppVersion;
 import com.fic.service.mapper.AppVersionMapper;
 import com.fic.service.utils.RegexUtil;

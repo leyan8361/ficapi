@@ -1,18 +1,11 @@
-package com.fic.service.controller.api;
+package com.fic.service.controller.api.v1;
 
-import com.fic.service.Vo.BetMovieDrawVo;
-import com.fic.service.Vo.BetMovieInfoVo;
-import com.fic.service.Vo.LoginUserInfoVo;
-import com.fic.service.Vo.ResponseVo;
 import com.fic.service.service.BetMovieService;
 import io.swagger.annotations.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 /**

@@ -37,10 +37,10 @@ public class Swagger2 {
                 .required(false).defaultValue("").build();
         pars.add(tokenParam.build());
         return new Docket(DocumentationType.SWAGGER_2)
-                .groupName("Api Group")
+                .groupName("Api v1 Group")
                 .apiInfo(apiInfo())
                 .select()
-                .apis(RequestHandlerSelectors.basePackage("com.fic.service.controller.api"))
+                .apis(RequestHandlerSelectors.basePackage("com.fic.service.controller.api.v1"))
                 .paths(PathSelectors.any())
                 .build().globalOperationParameters(pars);
     }
@@ -49,6 +49,31 @@ public class Swagger2 {
         return new ApiInfoBuilder()
                 .title("Fic Service Swagger Api v1.0")
                 .version("1.0")
+                .description("客户端 API 描述")
+                .build();
+    }
+
+    @Bean
+    public Docket createRestApiV2() {
+        ParameterBuilder tokenParam = new ParameterBuilder();
+        List<Parameter> pars = new ArrayList<Parameter>();
+        tokenParam.name(Constants.TOKEN_KEY).description("Token Value")
+                .modelRef(new ModelRef("string")).parameterType("header")
+                .required(false).defaultValue("").build();
+        pars.add(tokenParam.build());
+        return new Docket(DocumentationType.SWAGGER_2)
+                .groupName("Api v2 Group")
+                .apiInfo(apiV2Info())
+                .select()
+                .apis(RequestHandlerSelectors.basePackage("com.fic.service.controller.api.v2"))
+                .paths(PathSelectors.any())
+                .build().globalOperationParameters(pars);
+    }
+
+    private ApiInfo apiV2Info() {
+        return new ApiInfoBuilder()
+                .title("Fic Service Swagger Api v2.0")
+                .version("2.0")
                 .description("客户端 API 描述")
                 .build();
     }

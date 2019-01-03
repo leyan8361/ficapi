@@ -1,4 +1,4 @@
-package com.fic.service.entity;
+package com.fic.service.Vo;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModel;
@@ -6,20 +6,20 @@ import io.swagger.annotations.ApiModelProperty;
 
 import java.math.BigDecimal;
 import java.util.Date;
-import java.util.List;
 
+/**
+ * @Author Xie
+ * @Date $date$
+ * @Description: common
+ **/
 @ApiModel
-public class Movie {
+public class MovieInvestVo {
 
     @ApiModelProperty("新增修改不需要填写,电影ID")
     private Integer movieId;
 
     @ApiModelProperty("电影名称")
     private String movieName;
-    @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
-    private Date createdTime;
-    @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
-    private Date updatedTime;
     @ApiModelProperty("电影类型")
     private String movieType;
     @ApiModelProperty("总预算")
@@ -34,23 +34,15 @@ public class Movie {
     private String showTime;
     @ApiModelProperty("(0，已杀青)(1，待开机)(2,已分红)(3,待分红)")
     private Integer status;
-    @ApiModelProperty("责任描述")
-    private String dutyDescription;
     @ApiModelProperty("票房")
     private String boxInfo;
     @ApiModelProperty(value = "周期(月)",example = "2")
     private Integer investCycle;
-    @ApiModelProperty("新增修改不需要填写, 参投人数")
-    private Integer investCount;
-    @ApiModelProperty(value = "影片时长",example = "120")
-    private Integer movieLast;
-    @ApiModelProperty(value = "回报率",example = "0")
-    private BigDecimal returnRate;
 
-    @ApiModelProperty(value = "新增修改不需要填写,演员列表")
-    private List<ActorInfo> actorArray;
-    @ApiModelProperty(value = "新增修改不需要填写,项目简介")
-    private MovieDetailInfo movieDetailInfo;
+    @ApiModelProperty(value = "投资金额")
+    private BigDecimal investTotalAmount;
+    @ApiModelProperty("责任描述")
+    private String [] dutyDescriptionArray;
 
     public Integer getMovieId() {
         return movieId;
@@ -66,22 +58,6 @@ public class Movie {
 
     public void setMovieName(String movieName) {
         this.movieName = movieName;
-    }
-
-    public Date getCreatedTime() {
-        return createdTime;
-    }
-
-    public void setCreatedTime(Date createdTime) {
-        this.createdTime = createdTime;
-    }
-
-    public Date getUpdatedTime() {
-        return updatedTime;
-    }
-
-    public void setUpdatedTime(Date updatedTime) {
-        this.updatedTime = updatedTime;
     }
 
     public String getMovieType() {
@@ -133,22 +109,11 @@ public class Movie {
     }
 
     public Integer getStatus() {
-        if(null == status){
-            return 1;
-        }
         return status;
     }
 
     public void setStatus(Integer status) {
         this.status = status;
-    }
-
-    public String getDutyDescription() {
-        return dutyDescription;
-    }
-
-    public void setDutyDescription(String dutyDescription) {
-        this.dutyDescription = dutyDescription;
     }
 
     public String getBoxInfo() {
@@ -167,45 +132,19 @@ public class Movie {
         this.investCycle = investCycle;
     }
 
-    public Integer getInvestCount() {
-        return investCount;
+    public BigDecimal getInvestTotalAmount() {
+        return investTotalAmount;
     }
 
-    public void setInvestCount(Integer investCount) {
-        this.investCount = investCount;
+    public void setInvestTotalAmount(BigDecimal investTotalAmount) {
+        this.investTotalAmount = investTotalAmount;
     }
 
-    public Integer getMovieLast() {
-        return movieLast;
+    public String[] getDutyDescriptionArray() {
+        return dutyDescriptionArray;
     }
 
-    public void setMovieLast(Integer movieLast) {
-        this.movieLast = movieLast;
+    public void setDutyDescriptionArray(String[] dutyDescriptionArray) {
+        this.dutyDescriptionArray = dutyDescriptionArray;
     }
-
-    public BigDecimal getReturnRate() {
-        return returnRate;
-    }
-
-    public void setReturnRate(BigDecimal returnRate) {
-        this.returnRate = returnRate;
-    }
-
-    public List<ActorInfo> getActorArray() {
-        return actorArray;
-    }
-
-    public void setActorArray(List<ActorInfo> actorArray) {
-        this.actorArray = actorArray;
-    }
-
-
-    public MovieDetailInfo getMovieDetailInfo() {
-        return movieDetailInfo;
-    }
-
-    public void setMovieDetailInfo(MovieDetailInfo movieDetailInfo) {
-        this.movieDetailInfo = movieDetailInfo;
-    }
-
 }

@@ -49,7 +49,7 @@
       #{boxInfo,jdbcType=VARCHAR}, #{investCycle,jdbcType=INTEGER}, #{investCount,jdbcType=INTEGER},
       #{movieLast,jdbcType=INTEGER}, #{returnRate,jdbcType=DECIMAL})
   </insert>
-  <insert id="insertSelective" parameterType="com.fic.service.entity.Movie">
+  <insert id="insertSelective" parameterType="com.fic.service.entity.Movie" useGeneratedKeys="true" keyProperty="movieId">
     insert into movie
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="movieId != null">
@@ -173,10 +173,10 @@
       <if test="movieType != null">
         movie_type = #{movieType,jdbcType=VARCHAR},
       </if>
-      <if test="budget != null">
+      <if test="budget != null and budget != 0">
         budget = #{budget,jdbcType=DECIMAL},
       </if>
-      <if test="quota != null">
+      <if test="quota != null and quota !=0">
         quota = #{quota,jdbcType=DECIMAL},
       </if>
       <if test="movieCoverUrl != null">
@@ -263,5 +263,11 @@
   </update>
   <update id="updateStatus">
     update movie set status = #{status,jdbcType=TINYINT} where movie_id = #{movieId}
+  </update>
+  <select id="checkIfExistByName" resultType="int">
+    select count(*) from movie where movie_name = #{movieName};
+  </select>
+  <update id="updateActorInfo">
+    update movie set actor_list = #{actorInfoStr} where id = #{movieId}
   </update>
 </mapper>

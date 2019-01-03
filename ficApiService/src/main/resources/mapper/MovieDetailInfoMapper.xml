@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fic.service.mapper.MovieDetailInfoMapper">
+  <resultMap id="BaseResultMap" type="com.fic.service.entity.MovieDetailInfo">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="movie_id" jdbcType="INTEGER" property="movieId" />
+    <result column="brief_url" jdbcType="VARCHAR" property="briefUrl" />
+    <result column="plot_summary_url" jdbcType="VARCHAR" property="plotSummaryUrl" />
+    <result column="brief_text" jdbcType="LONGVARCHAR" property="briefText" />
+    <result column="plot_summary" jdbcType="LONGVARCHAR" property="plotSummary" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, movie_id,brief_url, plot_summary_url,brief_text, plot_summary
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from movie_detail_info
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from movie_detail_info
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.fic.service.entity.MovieDetailInfo">
+    insert into movie_detail_info (id,movie_id, brief_url, plot_summary_url,
+      brief_text, plot_summary)
+    values (#{id,jdbcType=INTEGER}, #{movieId,jdbcType=INTEGER},#{briefUrl,jdbcType=VARCHAR}, #{plotSummaryUrl,jdbcType=VARCHAR},
+      #{briefText,jdbcType=LONGVARCHAR}, #{plotSummary,jdbcType=LONGVARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.fic.service.entity.MovieDetailInfo" useGeneratedKeys="true" keyProperty="id">
+    insert into movie_detail_info
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="movieId != null">
+        movie_id,
+      </if>
+      <if test="briefUrl != null">
+        brief_url,
+      </if>
+      <if test="plotSummaryUrl != null">
+        plot_summary_url,
+      </if>
+      <if test="briefText != null">
+        brief_text,
+      </if>
+      <if test="plotSummary != null">
+        plot_summary,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="movieId != null">
+        #{movieId,jdbcType=INTEGER},
+      </if>
+      <if test="briefUrl != null">
+        #{briefUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="plotSummaryUrl != null">
+        #{plotSummaryUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="briefText != null">
+        #{briefText,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="plotSummary != null">
+        #{plotSummary,jdbcType=LONGVARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.fic.service.entity.MovieDetailInfo">
+    update movie_detail_info
+    <set>
+      <if test="movieId != null">
+        movie_id = #{movieId,jdbcType=INTEGER},
+      </if>
+      <if test="briefUrl != null">
+        brief_url = #{briefUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="plotSummaryUrl != null">
+        plot_summary_url = #{plotSummaryUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="briefText != null">
+        brief_text = #{briefText,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="plotSummary != null">
+        plot_summary = #{plotSummary,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.fic.service.entity.MovieDetailInfo">
+    update movie_detail_info
+    set brief_url = #{briefUrl,jdbcType=VARCHAR},
+      plot_summary_url = #{plotSummaryUrl,jdbcType=VARCHAR},
+      brief_text = #{briefText,jdbcType=LONGVARCHAR},
+      plot_summary = #{plotSummary,jdbcType=LONGVARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateBriefCoverUrl">
+    update movie_detail_info set  brief_url = #{briefCoverUrl,jdbcType=VARCHAR}, plot_summary_url = #{plotCoverUrl,jdbcType=VARCHAR} where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updatePlotCoverUrl">
+    update movie_detail_info set  plot_summary_url = #{plotCoverUrl,jdbcType=VARCHAR} where id = #{id,jdbcType=INTEGER}
+  </update>
+  <select id="findByMovieId" resultMap="BaseResultMap">
+    select * from movie_detail_info where movie_id = #{movieId};
+  </select>
+</mapper>

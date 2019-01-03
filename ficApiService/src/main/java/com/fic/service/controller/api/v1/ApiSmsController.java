@@ -1,8 +1,7 @@
-package com.fic.service.controller.api;
+package com.fic.service.controller.api.v1;
 
 import com.fic.service.Enum.ErrorCodeEnum;
 import com.fic.service.Vo.ResponseVo;
-import com.fic.service.entity.User;
 import com.fic.service.mapper.UserMapper;
 import com.fic.service.service.SmsService;
 import com.fic.service.utils.RegexUtil;
