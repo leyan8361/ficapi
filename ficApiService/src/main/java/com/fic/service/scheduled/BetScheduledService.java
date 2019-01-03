@@ -57,7 +57,7 @@ public class BetScheduledService {
     /**
      * 每天 00:08:00触发
      */
-    @Scheduled(cron = "0 8 0 * * ?")
+    @Scheduled(cron = "0 8 3 * * ?")
     @Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public void doBoxPull() {
         log.debug(" do Box Pull action !");
@@ -99,7 +99,7 @@ public class BetScheduledService {
     /**
      * 每天 晚上 00:10:00触发
      */
-    @Scheduled(cron = "0 10 0 * * ?")
+    @Scheduled(cron = "0 10 3 * * ?")
     @Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public void openPrice() {
         String yestToday = DateUtil.getYesTodayAndFormatDay();
