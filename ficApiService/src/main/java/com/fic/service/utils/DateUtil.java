@@ -28,6 +28,13 @@ public class DateUtil {
         return localDate;
     }
 
+    public static LocalDateTime dateToLocalDateTime(Date newDate) {
+        Instant instant = newDate.toInstant();
+        ZoneId zoneId = ZoneId.systemDefault();
+        LocalDateTime localDate = instant.atZone(zoneId).toLocalDateTime();
+        return localDate;
+    }
+
     public static Date LocalDateToDate(LocalDate localDate) {
         ZoneId zoneId = ZoneId.systemDefault();
         ZonedDateTime zdt = localDate.atStartOfDay(zoneId);

@@ -25,9 +25,6 @@
     show_place, show_time, status, duty_description, box_info, invest_cycle, invest_count,
     movie_last, return_rate
   </sql>
-  <sql id="Blob_Column_List">
-    actor_list, movie_brief_list
-  </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
     select
     <include refid="Base_Column_List" />
