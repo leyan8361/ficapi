@@ -59,10 +59,13 @@ public class MovieServiceImpl implements MovieService {
     MovieDetailInfoMapper movieDetailInfoMapper;
 
 
+    /**
+     * App 首页
+     * @return
+     */
     @Override
     public ResponseVo getMovies() {
         List<MovieInfoVo> resultList = new ArrayList<MovieInfoVo>();
-
         List<Movie> movieList = movieMapper.findAll();
         if(movieList.size() <=0 )return new ResponseVo(ErrorCodeEnum.MOVIE_NOT_FOUND,null);
         for(Movie movie: movieList){
@@ -189,7 +192,6 @@ public class MovieServiceImpl implements MovieService {
         List<MovieInfoVo> resultList = new ArrayList<MovieInfoVo>();
         for(Movie movie: movieList){
             MovieInfoVo result = new MovieInfoVo();
-
 
             List<ActorInfo> actorInfos = actorInfoMapper.findAllByMovieId(movie.getMovieId());
             if(actorInfos.size() >0){
