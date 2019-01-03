@@ -33,6 +33,7 @@ public class Constants {
         public static final String MEDIA_PREFIX_BRIEF="movie/media/brief/";
         public static final String MEDIA_PREFIX_PLOT="movie/media/plot/";
         public static final String MOVIE_COVER="movie/cover/";
+        public static final String BOOT_PAGE_COVER="bootpage/";
         public static final String HEAD_CUT_PATH="user/";
         public static final String BET_MOVIE_COVER_PATH="/bet/movie/";
         public static final String BANNER_URL_PATH ="banner/";
@@ -67,6 +68,7 @@ public class Constants {
         public static final String VERSION_CHECK_PATH = "/api/v1/checkVersion";//版本号
         public static final String BANNER_PATH = "/api/v1/banner/**";//版本号
         public static final String LOG_OUT_PATH = "/api/v1/logout/**";//登出
+        public static final String BOOT_PAGE_PATH = "/api/v1/bootPage/**";//登出
         public static final Map<String,String> pathMatchFilterMap = new HashMap<String,String>();
 
         static {
@@ -79,5 +81,6 @@ public class Constants {
                 pathMatchFilterMap.put(VERSION_CHECK_PATH,VERSION_CHECK_PATH);
                 pathMatchFilterMap.put(BANNER_PATH,BANNER_PATH);
                 pathMatchFilterMap.put(LOG_OUT_PATH,LOG_OUT_PATH);
+                pathMatchFilterMap.put(BOOT_PAGE_PATH,BOOT_PAGE_PATH);
         }
 }
