@@ -14,7 +14,7 @@ public class Constants {
 
         public static final String UID = "userId";
 
-        public static final Long TOKEN_VALIDITY_DAYS = 30l; //token 30 days
+        public static final Long TOKEN_VALIDITY_DAYS = 60l; //token 30 days
 
         public static final int DEFAULT_TOKEN_LENGTH = 16;
 
