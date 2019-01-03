@@ -64,6 +64,7 @@ public class Constants {
         public static final String CHECK_CODE_PATH = "/api/v1/checkCode";//验证码
         public static final String VERSION_CHECK_PATH = "/api/v1/checkVersion";//版本号
         public static final String BANNER_PATH = "/api/v1/banner/**";//版本号
+        public static final String LOG_OUT_PATH = "/api/v1/logout/**";//登出
         public static final Map<String,String> pathMatchFilterMap = new HashMap<String,String>();
 
         static {
@@ -75,5 +76,6 @@ public class Constants {
                 pathMatchFilterMap.put(CHECK_CODE_PATH,CHECK_CODE_PATH);
                 pathMatchFilterMap.put(VERSION_CHECK_PATH,VERSION_CHECK_PATH);
                 pathMatchFilterMap.put(BANNER_PATH,BANNER_PATH);
+                pathMatchFilterMap.put(LOG_OUT_PATH,LOG_OUT_PATH);
         }
 }
