@@ -190,6 +190,9 @@ public class MovieServiceImpl implements MovieService {
     @Override
     public ResponseVo getAll() {
         List<Movie> movieList = movieMapper.findAll();
+        for(Movie movie:movieList){
+            movie.setMovieCoverUrl(uploadProperties.getUrl(movie.getMovieCoverUrl()));
+        }
         return new ResponseVo(ErrorCodeEnum.SUCCESS,movieList);
     }
 
@@ -558,7 +561,7 @@ public class MovieServiceImpl implements MovieService {
         }
 
 
-
+        movie.setMovieCoverUrl(uploadProperties.getUrl(movie.getMovieCoverUrl()));
         BeanUtil.copy(detailInfoVo,movie);
         detailInfoVo.setInvestCount(investDetailMapper.countInvestPeople(movie.getMovieId()).size());
         BigDecimal totalAmount = investDetailMapper.sumTotalInvestByMovieId(movie.getMovieId());
