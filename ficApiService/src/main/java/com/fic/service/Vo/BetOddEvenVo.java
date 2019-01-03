@@ -18,6 +18,9 @@ public class BetOddEvenVo {
     private Integer evenCount;
 
     public Integer getOddCount() {
+        if(null == oddCount){
+            return 0;
+        }
         return oddCount;
     }
 
@@ -26,6 +29,9 @@ public class BetOddEvenVo {
     }
 
     public Integer getEvenCount() {
+        if(null == evenCount){
+            return 0;
+        }
         return evenCount;
     }
 

@@ -451,6 +451,14 @@ public class BetScenceServiceImpl implements BetScenceService {
             case 0:
                 /** 当猜单双时 */
                 BetOddEvenVo oddEvenVo = betUserMapper.countOddEven(scenceId,movieId);
+                if(null == oddEvenVo){
+                    oddEvenVo = new BetOddEvenVo();
+                    oddEvenVo.setOddCount(88);
+                    oddEvenVo.setEvenCount(99);
+                }else{
+                    oddEvenVo.setEvenCount(oddEvenVo.getEvenCount()+99);
+                    oddEvenVo.setOddCount(oddEvenVo.getOddCount()+88);
+                }
                 result.setBetCountVo(oddEvenVo);
                 break;
             case 1:
