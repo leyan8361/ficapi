@@ -2,6 +2,7 @@ package com.fic.service.controller.api.v2;
 
 import com.fic.service.Vo.MovieDetailInfoVo;
 import com.fic.service.Vo.MovieInfoVo;
+import com.fic.service.Vo.MovieVo;
 import com.fic.service.Vo.ResponseVo;
 import com.fic.service.service.MovieService;
 import io.swagger.annotations.*;
@@ -33,7 +34,7 @@ public class ApiV2MovieController {
     @ApiOperation("Api-获取电影列表")
     @ApiResponses({
             @ApiResponse(code = 4000, message = "MOVIE NOT FOUND"),
-            @ApiResponse(code = 200, message = "SUCCESS",response = MovieInfoVo.class)
+            @ApiResponse(code = 200, message = "SUCCESS",response = MovieVo.class)
     })
     public ResponseEntity getMovies() {
         log.debug(" Api get Movie List !!!");

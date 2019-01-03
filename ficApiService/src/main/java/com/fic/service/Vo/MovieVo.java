@@ -14,24 +14,24 @@ import java.util.List;
 public class MovieVo {
 
     @ApiModelProperty("已分红、待分红 电影列表")
-    private List<MovieInfoVo> dividendList;
+    private List<MovieDividendVo> dividendList;
 
     @ApiModelProperty("已杀青，待开机 电影列表")
-    private List<MovieInfoVo> investList;
+    private List<MovieInvestVo> investList;
 
-    public List<MovieInfoVo> getDividendList() {
+    public List<MovieDividendVo> getDividendList() {
         return dividendList;
     }
 
-    public void setDividendList(List<MovieInfoVo> dividendList) {
+    public void setDividendList(List<MovieDividendVo> dividendList) {
         this.dividendList = dividendList;
     }
 
-    public List<MovieInfoVo> getInvestList() {
+    public List<MovieInvestVo> getInvestList() {
         return investList;
     }
 
-    public void setInvestList(List<MovieInfoVo> investList) {
+    public void setInvestList(List<MovieInvestVo> investList) {
         this.investList = investList;
     }
 }

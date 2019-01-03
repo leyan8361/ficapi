@@ -3,10 +3,7 @@ package com.fic.service.service.impl;
 import com.fic.service.Enum.ErrorCodeEnum;
 import com.fic.service.Enum.MovieStatusEnum;
 import com.fic.service.Enum.ShelfStatusEnum;
-import com.fic.service.Vo.MovieDetailInfoVo;
-import com.fic.service.Vo.MovieInfoVo;
-import com.fic.service.Vo.MovieVo;
-import com.fic.service.Vo.ResponseVo;
+import com.fic.service.Vo.*;
 import com.fic.service.constants.Constants;
 import com.fic.service.constants.UploadProperties;
 import com.fic.service.entity.*;
@@ -560,12 +557,7 @@ public class MovieServiceImpl implements MovieService {
             movie.setMovieDetailInfo(movieDetailInfo);
         }
 
-        if(StringUtils.isNotEmpty(movie.getDutyDescription())){
-            String [] dutyArray = movie.getDutyDescription().split("、");
-            if(dutyArray.length >0){
-                detailInfoVo.setDutyDescriptionArray(dutyArray);
-            }
-        }
+
 
         BeanUtil.copy(detailInfoVo,movie);
         detailInfoVo.setInvestCount(investDetailMapper.countInvestPeople(movie.getMovieId()).size());
@@ -580,19 +572,28 @@ public class MovieServiceImpl implements MovieService {
      */
     @Override
     public ResponseVo getMoviesV2() {
-        List<MovieInfoVo> resultList = new ArrayList<MovieInfoVo>();
-        List<MovieInfoVo> dividendList = new ArrayList<MovieInfoVo>();
+        List<MovieInvestVo> resultList = new ArrayList<MovieInvestVo>();
+        List<MovieDividendVo> dividendList = new ArrayList<MovieDividendVo>();
         List<Movie> movieList = movieMapper.findAll();
         if(movieList.size() <=0 )return new ResponseVo(ErrorCodeEnum.MOVIE_NOT_FOUND,new MovieVo());
         for(Movie movie: movieList){
-            MovieInfoVo result = new MovieInfoVo();
-
             movie.setMovieCoverUrl(uploadProperties.getUrl(movie.getMovieCoverUrl()));
-            BeanUtil.copy(result,movie);
             if(movie.getStatus().equals(MovieStatusEnum.WAIT_DIVIDEND.getCode()) || movie.getStatus().equals(MovieStatusEnum.DIVIDEND.getCode())){
-                dividendList.add(result);
+                MovieDividendVo dividendVo = new MovieDividendVo();
+                BeanUtil.copy(dividendVo,movie);
+                dividendList.add(dividendVo);
             }else{
-                resultList.add(result);
+                MovieInvestVo investVo = new MovieInvestVo();
+                BeanUtil.copy(investVo,movie);
+                if(StringUtils.isNotEmpty(movie.getDutyDescription())){
+                    String [] dutyArray = movie.getDutyDescription().split("、");
+                    if(dutyArray.length >0){
+                        investVo.setDutyDescriptionArray(dutyArray);
+                    }
+                }
+                BigDecimal totalAmount = investDetailMapper.sumTotalInvestByMovieId(movie.getMovieId());
+                investVo.setInvestTotalAmount(null != totalAmount ? totalAmount : BigDecimal.ZERO);
+                resultList.add(investVo);
             }
         }
         MovieVo movieVo = new MovieVo();
