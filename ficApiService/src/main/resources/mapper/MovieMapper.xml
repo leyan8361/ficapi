@@ -19,22 +19,15 @@
     <result column="invest_count" jdbcType="INTEGER" property="investCount" />
     <result column="movie_last" jdbcType="INTEGER" property="movieLast" />
     <result column="return_rate" jdbcType="DECIMAL" property="returnRate" />
-    <result column="actor_list" jdbcType="LONGVARCHAR" property="actorList" />
-    <result column="movie_brief_list" jdbcType="LONGVARCHAR" property="movieBriefList" />
   </resultMap>
   <sql id="Base_Column_List">
     movie_id, movie_name, created_time, updated_time, movie_type, budget, quota, movie_cover_url,
     show_place, show_time, status, duty_description, box_info, invest_cycle, invest_count,
     movie_last, return_rate
   </sql>
-  <sql id="Blob_Column_List">
-    actor_list, movie_brief_list
-  </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
     select
     <include refid="Base_Column_List" />
-    ,
-    <include refid="Blob_Column_List" />
     from movie
     where movie_id = #{movieId,jdbcType=INTEGER}
   </select>
@@ -48,15 +41,13 @@
       quota, movie_cover_url, show_place,
       show_time, status, duty_description,
       box_info, invest_cycle, invest_count,
-      movie_last, return_rate, actor_list,
-      movie_brief_list)
+      movie_last, return_rate)
     values (#{movieId,jdbcType=INTEGER}, #{movieName,jdbcType=VARCHAR}, #{createdTime,jdbcType=TIMESTAMP},
       #{updatedTime,jdbcType=TIMESTAMP}, #{movieType,jdbcType=VARCHAR}, #{budget,jdbcType=DECIMAL},
       #{quota,jdbcType=DECIMAL}, #{movieCoverUrl,jdbcType=VARCHAR}, #{showPlace,jdbcType=VARCHAR},
       #{showTime,jdbcType=VARCHAR}, #{status,jdbcType=TINYINT}, #{dutyDescription,jdbcType=VARCHAR},
       #{boxInfo,jdbcType=VARCHAR}, #{investCycle,jdbcType=INTEGER}, #{investCount,jdbcType=INTEGER},
-      #{movieLast,jdbcType=INTEGER}, #{returnRate,jdbcType=DECIMAL}, #{actorList,jdbcType=LONGVARCHAR},
-      #{movieBriefList,jdbcType=LONGVARCHAR})
+      #{movieLast,jdbcType=INTEGER}, #{returnRate,jdbcType=DECIMAL})
   </insert>
   <insert id="insertSelective" parameterType="com.fic.service.entity.Movie">
     insert into movie
@@ -112,12 +103,6 @@
       <if test="returnRate != null">
         return_rate,
       </if>
-      <if test="actorList != null">
-        actor_list,
-      </if>
-      <if test="movieBriefList != null">
-        movie_brief_list,
-      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="movieId != null">
@@ -170,12 +155,6 @@
       </if>
       <if test="returnRate != null">
         #{returnRate,jdbcType=DECIMAL},
-      </if>
-      <if test="actorList != null">
-        #{actorList,jdbcType=LONGVARCHAR},
-      </if>
-      <if test="movieBriefList != null">
-        #{movieBriefList,jdbcType=LONGVARCHAR},
       </if>
     </trim>
   </insert>
@@ -230,12 +209,6 @@
       <if test="returnRate != null">
         return_rate = #{returnRate,jdbcType=DECIMAL},
       </if>
-      <if test="actorList != null">
-        actor_list = #{actorList,jdbcType=LONGVARCHAR},
-      </if>
-      <if test="movieBriefList != null">
-        movie_brief_list = #{movieBriefList,jdbcType=LONGVARCHAR},
-      </if>
     </set>
     where movie_id = #{movieId,jdbcType=INTEGER}
   </update>
@@ -256,9 +229,7 @@
       invest_cycle = #{investCycle,jdbcType=INTEGER},
       invest_count = #{investCount,jdbcType=INTEGER},
       movie_last = #{movieLast,jdbcType=INTEGER},
-      return_rate = #{returnRate,jdbcType=DECIMAL},
-      actor_list = #{actorList,jdbcType=LONGVARCHAR},
-      movie_brief_list = #{movieBriefList,jdbcType=LONGVARCHAR}
+      return_rate = #{returnRate,jdbcType=DECIMAL}
     where movie_id = #{movieId,jdbcType=INTEGER}
   </update>
   <update id="updateByPrimaryKey" parameterType="com.fic.service.entity.Movie">
