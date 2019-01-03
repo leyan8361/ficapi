@@ -453,11 +453,11 @@ public class BetScenceServiceImpl implements BetScenceService {
                 BetOddEvenVo oddEvenVo = betUserMapper.countOddEven(scenceId,movieId);
                 if(null == oddEvenVo){
                     oddEvenVo = new BetOddEvenVo();
-                    oddEvenVo.setOddCount(88);
-                    oddEvenVo.setEvenCount(99);
+                    oddEvenVo.setOddCount(188);
+                    oddEvenVo.setEvenCount(199);
                 }else{
-                    oddEvenVo.setEvenCount(oddEvenVo.getEvenCount()+99);
-                    oddEvenVo.setOddCount(oddEvenVo.getOddCount()+88);
+                    oddEvenVo.setEvenCount(oddEvenVo.getEvenCount()+199);
+                    oddEvenVo.setOddCount(oddEvenVo.getOddCount()+188);
                 }
                 result.setBetCountVo(oddEvenVo);
                 break;
