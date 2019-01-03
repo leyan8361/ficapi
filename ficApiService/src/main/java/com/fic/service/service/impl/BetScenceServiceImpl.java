@@ -249,21 +249,41 @@ public class BetScenceServiceImpl implements BetScenceService {
                     case 0:
                         /** 当猜单双时 */
                         BetOddEvenVo oddEvenVo = betUserMapper.countOddEven(betScence.getId(),movie.getId());
+                        if(null == oddEvenVo){
+                            oddEvenVo = new BetOddEvenVo();
+                            oddEvenVo.setEvenCount(0);
+                            oddEvenVo.setOddCount(0);
+                        }
                         movieResult.setBetCountVo(oddEvenVo);
                         break;
                     case 1:
                         /** 是否能超过竞猜票房 */
                         BetGuessOverVo guessOverVo = betUserMapper.countGuessOverEven(betScence.getId(),movie.getId());
+                        if(null == guessOverVo){
+                            guessOverVo = new BetGuessOverVo();
+                            guessOverVo.setCanCount(0);
+                            guessOverVo.setCouldntCount(0);
+                        }
                         movieResult.setBetCountVo(guessOverVo);
                         break;
                     case 2:
                         /** 选择题 */
                         BetChoiceVo choiceVo = betUserMapper.countChooice(betScence.getId(),movie.getId());
+                        if(null == choiceVo){
+                            choiceVo = new BetChoiceVo();
+                            choiceVo.setaChoice(0);
+                            choiceVo.setbChoice(0);
+                            choiceVo.setcChoice(0);
+                            choiceVo.setdChoice(0);
+                        }
                         movieResult.setBetCountVo(choiceVo);
                         break;
                     case 3:
                         /** 竞猜总票房 */
                         Integer guessTotalBox = betUserMapper.countGuessTotalBox(betScence.getId(),movie.getId());
+                        if(null == guessTotalBox){
+                            guessTotalBox = 0;
+                        }
                         movieResult.setBetCountVo(guessTotalBox);
                         break;
                     default:
