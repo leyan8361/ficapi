@@ -55,4 +55,10 @@ public interface BetUserMapper {
     List<BetUser> findAllNotReturning();
 
     List<BetUser> findAllWithoutStatusByScenceMovieId(int scenceMovieId);
+
+    List<BetUser> findByBingoPriceAndUserId(BigDecimal bingoPrice,int userId,String startDay,String endDay,String ids);
+
+    List<BetUser> findByReturningAndUserId(BigDecimal returning,int userId,String startDay,String endDay,String ids);
+
+    String findMovieNameById(int id);
 }

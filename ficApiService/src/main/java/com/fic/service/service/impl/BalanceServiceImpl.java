@@ -1,8 +1,6 @@
 package com.fic.service.service.impl;
 
-import com.fic.service.Enum.ErrorCodeEnum;
-import com.fic.service.Enum.FinanceTypeEnum;
-import com.fic.service.Enum.FinanceWayEnum;
+import com.fic.service.Enum.*;
 import com.fic.service.Vo.*;
 import com.fic.service.entity.*;
 import com.fic.service.mapper.*;
@@ -17,9 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 /**
  *   @Author Xie
@@ -45,6 +41,8 @@ public class BalanceServiceImpl implements BalanceService {
     InvestMapper investMapper;
     @Autowired
     AdminLogService adminLogService;
+    @Autowired
+    BetUserMapper betUserMapper;
 
     @Override
     public TradeRecordInfoVo getTradeRecord(Integer userId) {
@@ -155,4 +153,186 @@ public class BalanceServiceImpl implements BalanceService {
         return tradeRecordVoList;
     }
 
+
+    @Override
+    public ResponseVo getTradeRecordV2(TradeRecordRequestVo condition) {
+        TradeRecordInfoV2Vo result = new TradeRecordInfoV2Vo();
+        String startDay = DateUtil.getThisMonthBegin(condition.getMonth());
+        String endDay = DateUtil.getThisMonthEnd(condition.getMonth());
+        int offset = condition.getPageNum()*10;
+        List<BalanceStatement> findResult = balanceStatementMapper.findByCondition(startDay,endDay,condition,offset);
+        if(findResult.size() == 0){
+            return new ResponseVo(ErrorCodeEnum.SUCCESS,result);
+        }
+        BigDecimal totalIncome = BigDecimal.ZERO;
+        BigDecimal totalExpend = BigDecimal.ZERO;
+        List<TradeRecordV2Vo> items = new ArrayList<TradeRecordV2Vo>();
+        StringBuilder betBingoIds = new StringBuilder();
+        StringBuilder betReturningIds = new StringBuilder();
+        StringBuilder betIds = new StringBuilder();
+        betBingoIds.append("0");
+        betReturningIds.append("0");
+        betIds.append("0");
+        for(BalanceStatement balanceStatement: findResult){
+            BigDecimal amount = balanceStatement.getAmount();
+            TradeRecordV2Vo item = new TradeRecordV2Vo();
+            /** 分销奖励 */
+            if(balanceStatement.getType() == FinanceTypeEnum.REWARD.getCode()){
+                Distribution distribution = distributionMapper.selectByPrimaryKey(balanceStatement.getDistributionId());
+                if(null == distribution) {
+                    log.error(" 查询交易明细失败，分销奖励结果为空 distribution id :{}", balanceStatement.getDistributionId());
+                    continue;
+                }
+                BigDecimal inviteOne = null!=distribution.getInviteRewardOne()?distribution.getInviteRewardOne():BigDecimal.ZERO;//300
+                BigDecimal inviteTwo = null!=distribution.getInviteRewardTwo()?distribution.getInviteRewardOne():BigDecimal.ZERO;//100
+                BigDecimal investOne = null!=distribution.getInvestRewardOne()?distribution.getInvestRewardOne():BigDecimal.ZERO;//1000
+                BigDecimal investTwo = null!=distribution.getInvestRewardTwo()?distribution.getInvestRewardTwo():BigDecimal.ZERO;//300
+
+                if(amount.compareTo(inviteOne) == 0){
+                    /** 300 判断是一级注册 or 二级投资 时间前的是注册*/
+                    List<BalanceStatement> repeatReward = balanceStatementMapper.findAllSameAmountWithUserDis(amount,balanceStatement.getUserId(),distribution.getId(),balanceStatement.getId());
+                    if(repeatReward.size() != 0){
+                        for(BalanceStatement repeatAmountBalance : repeatReward){
+                            if(balanceStatement.getCreatedTime().compareTo(repeatAmountBalance.getCreatedTime()) < 0){
+                                /**一级注册*/
+                                item.setDistributionType(TradeRecordDistributionEnum.INVITE_ONE.getCode());
+                                break;
+                            }else{
+                                /**二级投资*/
+                                item.setDistributionType(TradeRecordDistributionEnum.INVEST_TWO.getCode());
+                                break;
+                            }
+                        }
+                    }else{
+                        /** 只有一条 300 必定是一级注册*/
+                        item.setDistributionType(TradeRecordDistributionEnum.INVITE_ONE.getCode());
+                    }
+
+                }
+                if(amount.compareTo(investOne) == 0){
+                    /** 1000 判断是自己注册 or 一级投资 时间前的是注册*/
+                    List<BalanceStatement> repeatReward = balanceStatementMapper.findAllSameAmountWithUserDis(amount,balanceStatement.getUserId(),distribution.getId(),balanceStatement.getId());
+                    if(repeatReward.size() != 0){
+                        for(BalanceStatement repeatAmountBalance : repeatReward){
+                            if(balanceStatement.getCreatedTime().compareTo(repeatAmountBalance.getCreatedTime()) < 0){
+                                /**自己注册*/
+                                item.setDistributionType(TradeRecordDistributionEnum.REGISTER.getCode());
+                                break;
+                            }else{
+                                /**一级投资*/
+                                item.setDistributionType(TradeRecordDistributionEnum.INVEST_ONE.getCode());
+                                break;
+                            }
+                        }
+                    }else{
+                        /** 只有一条 1000 必定是自己注册*/
+                        item.setDistributionType(TradeRecordDistributionEnum.REGISTER.getCode());
+                    }
+                }
+
+                if(amount.compareTo(inviteTwo) == 0){
+                    item.setDistributionType(TradeRecordDistributionEnum.INVEST_TWO.getCode());
+                }
+
+                if(null == item.getDistributionType()){
+                    log.error(" 查询交易明细 无对应分销记录, balance id :{}, distribution id :{}",balanceStatement.getId(),distribution.getId());
+                    continue;
+                }else{
+                    item.setAmount(amount);
+                }
+
+            }
+
+            /** 投资 */
+            if(balanceStatement.getType() == FinanceTypeEnum.INVEST.getCode()){
+                InvestDetail detail =  investDetailMapper.selectByPrimaryKey(balanceStatement.getInvestDetailId());
+                if(null == detail){
+                    log.error("查询交易明细失败，投资记录，invest detail 为空， id :{}",balanceStatement.getInvestDetailId());
+                    continue;
+                }
+                Movie movie = movieMapper.selectByPrimaryKey(detail.getMovieId());
+                if(null == movie){
+                    log.error("查询交易明细失败，投资电影为空, movie Id :{},invest detail id :{}",detail.getMovieId(),detail.getInvestDetailId());
+                    continue;
+                }
+                item.setMoveName(movie.getMovieName());
+                item.setAmount(detail.getAmount());
+            }
+
+            /** 竞猜奖励 */
+            if(balanceStatement.getType() == FinanceTypeEnum.BET_REWARD.getCode()){
+                List<BetUser> betUsers = betUserMapper.findByBingoPriceAndUserId(balanceStatement.getAmount(),balanceStatement.getUserId(),startDay,endDay,betBingoIds.toString());
+                if(betUsers.size() == 0){
+                    log.error(" 查询交易明细失败，竞猜记录异常，无相差竞猜记录 bet amount :{},userId :{},startDay :{},endDay:{},ids:{}",balanceStatement.getAmount(),balanceStatement.getUserId(),startDay,endDay,betBingoIds.toString());
+                    continue;
+                }
+                String movieName = betUserMapper.findMovieNameById(betUsers.get(0).getId());
+                if(StringUtils.isEmpty(movieName)){
+                    log.error("查询交易明细失败，竞猜记录异常，无相关电影 bet scence movie id :{}",betUsers.get(0).getBetScenceMovieId());
+                    continue;
+                }
+                betBingoIds.append(",").append(betUsers.get(0).getId());
+                item.setMoveName(movieName);
+                item.setAmount(balanceStatement.getAmount());
+            }
+
+            /**竞猜返还*/
+            if(balanceStatement.getType() == FinanceTypeEnum.BET_RETURNING.getCode()){
+                List<BetUser> betUsers = betUserMapper.findByReturningAndUserId(balanceStatement.getAmount(),balanceStatement.getUserId(),startDay,endDay,betReturningIds.toString());
+                if(betUsers.size() == 0){
+                    log.error(" 查询交易明细失败，竞猜记录异常，无相差竞猜返还记录 bet amount :{},userId :{},startDay :{},endDay:{},ids:{}",balanceStatement.getAmount(),balanceStatement.getUserId(),startDay,endDay,betReturningIds.toString());
+                    continue;
+                }
+                String movieName = betUserMapper.findMovieNameById(betUsers.get(0).getId());
+                if(StringUtils.isEmpty(movieName)){
+                    log.error("查询交易明细失败，竞猜记录异常，无相关电影 bet scence movie id :{}",betUsers.get(0).getBetScenceMovieId());
+                    continue;
+                }
+                betReturningIds.append(",").append(betUsers.get(0).getId());
+                item.setMoveName(movieName);
+                item.setAmount(balanceStatement.getAmount());
+            }
+
+            /**投注*/
+            if(balanceStatement.getType() == FinanceTypeEnum.BET.getCode()){
+                List<BetUser> betUsers = betUserMapper.findByReturningAndUserId(balanceStatement.getAmount(),balanceStatement.getUserId(),startDay,endDay,betIds.toString());
+                if(betUsers.size() == 0){
+                    log.error(" 查询交易明细失败，竞猜记录异常，无相关竞猜投注记录 bet amount :{},userId :{},startDay :{},endDay:{},ids:{}",balanceStatement.getAmount(),balanceStatement.getUserId(),startDay,endDay,betIds.toString());
+                    continue;
+                }
+                String movieName = betUserMapper.findMovieNameById(betUsers.get(0).getId());
+                if(StringUtils.isEmpty(movieName)){
+                    log.error("查询交易明细失败，竞猜记录异常，无相关电影 bet scence movie id :{}",betUsers.get(0).getBetScenceMovieId());
+                    continue;
+                }
+                betIds.append(",").append(betUsers.get(0).getId());
+                item.setMoveName(movieName);
+                item.setAmount(balanceStatement.getAmount());
+            }
+
+            /** 连续奖励 */
+            if(balanceStatement.getType() == FinanceTypeEnum.BET_REWARD_POOL.getCode()){
+                item.setAmount(balanceStatement.getAmount());
+            }
+
+            if(balanceStatement.getWay() == FinanceWayEnum.IN.getCode()){
+                /** 收入 */
+                totalIncome = totalIncome.add(balanceStatement.getAmount());
+            }
+            if(balanceStatement.getWay() == FinanceWayEnum.OUT.getCode()){
+                /** 支出 */
+                totalExpend = totalExpend.add(balanceStatement.getAmount());
+            }
+            item.setType(balanceStatement.getType());
+            item.setWay(balanceStatement.getWay());
+            item.setCreatedTime(balanceStatement.getCreatedTime());
+            items.add(item);
+        }
+
+        result.setItems(items);
+        result.setIncome(totalIncome);
+        result.setExpend(totalExpend);
+
+        return new ResponseVo(ErrorCodeEnum.SUCCESS,items);
+    }
 }

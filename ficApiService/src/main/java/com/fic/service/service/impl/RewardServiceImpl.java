@@ -65,7 +65,7 @@ public class RewardServiceImpl implements RewardService {
             BalanceStatement statement = new BalanceStatement();
             statement.setAmount(reward.getRegisterSelf());
             statement.setUserId(user.getId());
-            statement.setWay(DistributionTypeEnum.TYPE_REGISTER.getCode());
+            statement.setWay(FinanceWayEnum.IN.getCode());
             statement.setType(FinanceTypeEnum.REWARD.getCode());
             statement.setCreatedTime(new Date());
             statement.setDistributionId(distributionSelf.getId());

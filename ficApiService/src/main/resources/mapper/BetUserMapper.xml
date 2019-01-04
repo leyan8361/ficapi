@@ -384,4 +384,23 @@
   <select id="findAllWithoutStatusByScenceMovieId" resultMap="BaseResultMap">
     select u.* from bet_user u where u.bet_scence_movie_id = #{scenceMovieId};
   </select>
+
+  <select id="findByBingoPriceAndUserId" resultMap="BaseResultMap">
+    select u.* from bet_user u where u.bingo_price = #{bingoPrice} and u.user_id = #{userId} and u.created_time between #{startDay} and #{endDay} and u.id not in (#{ids});
+  </select>
+
+  <select id="findByReturningAndUserId" resultMap="BaseResultMap">
+    select u.* from bet_user u where u.close_with_returning = #{returning} and u.user_id = #{userId} and u.created_time between #{startDay} and #{endDay} and u.id not in (#{ids});
+  </select>
+
+  <select id="findByBetAmountAndUserId" resultMap="BaseResultMap">
+    select u.* from bet_user u where u.bet_amount = #{amount} and u.user_id = #{userId} and u.created_time between #{startDay} and #{endDay} and u.id not in (#{ids});
+  </select>
+
+  <select id="findMovieNameById" resultType="string">
+    select m.bet_movie_name from bet_user u
+    left join bet_scence_movie sb on sb.id = u.bet_scence_movie_id
+    left join bet_movie m on sb.bet_movie_id = m.id
+    where u.id = #{id};
+  </select>
 </mapper>

@@ -13,6 +13,7 @@ import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.WeekFields;
 import java.util.*;
+import java.util.logging.SimpleFormatter;
 
 /**
  * @Author Xie
@@ -169,6 +170,41 @@ public class DateUtil {
             day = day -2;
         }
         localDate = localDate.minusDays(day).withHour(23).withMinute(59).withSecond(59);
+        String result = formatter.format(localDate);
+        return result;
+    }
+
+    public static String getThisMonthBegin(String date) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        SimpleDateFormat simpleFormatter = new SimpleDateFormat("yyyy-MM");
+        LocalDateTime localDate = null;
+        try {
+            Date date_  = simpleFormatter.parse(date);
+            localDate = dateToLocalDateTime(date_);
+        }catch (ParseException e){
+            e.printStackTrace();
+        }
+        localDate = localDate.withDayOfMonth(1).withHour(00).withMinute(00).withSecond(01);
+        String result = formatter.format(localDate);
+        return result;
+    }
+    public static String getThisMonthEnd(String date){
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        SimpleDateFormat simpleFormatter = new SimpleDateFormat("yyyy-MM");
+        LocalDateTime localDate = null;
+        try {
+            Date date_  = simpleFormatter.parse(date);
+            localDate = dateToLocalDateTime(date_);
+        }catch (ParseException e){
+            e.printStackTrace();
+        }
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.YEAR,localDate.getYear());
+        calendar.set(Calendar.MONTH,localDate.getMonthValue()-1);
+//        calendar.set(Calendar.DAY_OF_MONTH,1);
+//        calendar.set(Calendar.HOUR,00);
+        int lastDayOfMonth = calendar.getActualMaximum(Calendar.DAY_OF_MONTH);
+        localDate = localDate.withDayOfMonth(lastDayOfMonth).withHour(23).withMinute(59).withSecond(58);
         String result = formatter.format(localDate);
         return result;
     }
@@ -351,29 +387,9 @@ public class DateUtil {
 
 
     public static void main(String args[]) throws ParseException {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-        LocalDateTime date = LocalDateTime.of(2019,1,2,00,19,59);
-        LocalDateTime zeroTime = LocalDateTime.of(date.getYear(),date.getMonth(),date.getDayOfMonth(),00,00,00);
-        LocalDateTime endLock= LocalDateTime.of(date.getYear(),date.getMonth(),date.getDayOfMonth(),00,20,00);
-        LocalDateTime startLock  = LocalDateTime.of(date.getYear(),date.getMonth(),date.getDayOfMonth(),23,50,00);
-        /** 开奖(23:50:00 - 00:20:00)，不允许下注*/
-        if(date.compareTo(zeroTime) >=0 && date.compareTo(endLock) <= 0){
-            /** 00:00:00 <= bet Time < 00:20:00*/
-            System.out.println("00:00:00 <= bet Time < 00:20:00");
-        }
-        if(date.compareTo(startLock) >=0 && date.compareTo(zeroTime) >= 0){
-            /** 23:50:00 <= bet Time < 00:00:00*/
-            System.out.println("23:50:00 <= bet Time < 00:00:00");
-        }
-        //        if(date.compareTo(startLock) <=0){
-//            return true;
-//        }
-//        if(date.compareTo(endLock) >=0){
-//            return true;
-//        }
-        System.out.println("start lock time : " + formatter.format(startLock));
-        System.out.println("end lock time : " + formatter.format(endLock));
-        System.out.println("now time : " + formatter.format(date));
+        String date = "2019-2";
+        System.out.println(DateUtil.getThisMonthBegin(date));
+        System.out.println(DateUtil.getThisMonthEnd(date));
     }
 
 }

@@ -1,5 +1,6 @@
 package com.fic.service.mapper;
 
+import com.fic.service.Vo.TradeRecordRequestVo;
 import com.fic.service.entity.BalanceStatement;
 import org.apache.ibatis.annotations.Mapper;
 import org.springframework.stereotype.Repository;
@@ -25,4 +26,8 @@ public interface BalanceStatementMapper {
     List<BalanceStatement> findAllByUserId(Integer userId);
 
     BigDecimal sumContinueReward(int userId,String startDay,String endDay);
+
+    List<BalanceStatement> findByCondition(String startDay,String endDay,TradeRecordRequestVo param,int offset);
+
+    List<BalanceStatement> findAllSameAmountWithUserDis(BigDecimal amount,int userId,int distributionId,int balanceSelfId);
 }

@@ -1,9 +1,6 @@
 package com.fic.service.service.impl;
 
-import com.fic.service.Enum.DistributionStatusEnum;
-import com.fic.service.Enum.DistributionTypeEnum;
-import com.fic.service.Enum.ErrorCodeEnum;
-import com.fic.service.Enum.FinanceTypeEnum;
+import com.fic.service.Enum.*;
 import com.fic.service.Vo.*;
 import com.fic.service.constants.Constants;
 import com.fic.service.constants.UploadProperties;
@@ -173,7 +170,7 @@ public class AccountServiceImpl implements AccountService {
            BalanceStatement statement = new BalanceStatement();
            statement.setAmount(reward.getRegisterSelf());
            statement.setUserId(user.getId());
-           statement.setWay(DistributionTypeEnum.TYPE_REGISTER.getCode());
+           statement.setWay(FinanceWayEnum.IN.getCode());
            statement.setType(FinanceTypeEnum.REWARD.getCode());
            statement.setCreatedTime(new Date());
            statement.setDistributionId(distribution.getId());

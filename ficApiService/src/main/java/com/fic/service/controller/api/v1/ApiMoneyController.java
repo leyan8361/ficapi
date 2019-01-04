@@ -46,4 +46,6 @@ public class ApiMoneyController {
         TradeRecordInfoVo result = balanceService.getTradeRecord(userId);
         return ResponseEntity.ok(new ResponseVo(ErrorCodeEnum.SUCCESS,result));
     }
+
+
 }

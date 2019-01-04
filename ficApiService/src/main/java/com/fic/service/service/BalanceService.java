@@ -14,6 +14,8 @@ public interface BalanceService {
 
      TradeRecordInfoVo getTradeRecord(Integer userId);
 
+     ResponseVo getTradeRecordV2(TradeRecordRequestVo tradeRecordRequestVo);
+
      ResponseVo reward(RewardInfoVo rewardInfoVo);
 
      List<RewardRecordInfoVo> getReward(Integer userId);
