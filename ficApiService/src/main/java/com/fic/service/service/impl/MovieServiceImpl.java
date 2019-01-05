@@ -192,6 +192,24 @@ public class MovieServiceImpl implements MovieService {
         List<Movie> movieList = movieMapper.findAll();
         for(Movie movie:movieList){
             movie.setMovieCoverUrl(uploadProperties.getUrl(movie.getMovieCoverUrl()));
+            List<ActorInfo> actorInfos = actorInfoMapper.findAllByMovieId(movie.getMovieId());
+            if(actorInfos.size() >0){
+                for(ActorInfo actorInfo : actorInfos){
+                    actorInfo.setRoleCoverUrl(uploadProperties.getUrl(actorInfo.getRoleCoverUrl()));
+                }
+                movie.setActorArray(actorInfos);
+            }
+
+            MovieDetailInfo movieDetailInfo = movieDetailInfoMapper.findByMovieId(movie.getMovieId());
+            if(null != movieDetailInfo){
+                if(StringUtils.isNotEmpty(movieDetailInfo.getBriefUrl())){
+                    movieDetailInfo.setBriefUrl(uploadProperties.getUrl(movieDetailInfo.getBriefUrl()));
+                }
+                if(StringUtils.isNotEmpty(movieDetailInfo.getPlotSummaryUrl())){
+                    movieDetailInfo.setPlotSummaryUrl(uploadProperties.getUrl(movieDetailInfo.getPlotSummaryUrl()));
+                }
+                movie.setMovieDetailInfo(movieDetailInfo);
+            }
         }
         return new ResponseVo(ErrorCodeEnum.SUCCESS,movieList);
     }
@@ -584,11 +602,6 @@ public class MovieServiceImpl implements MovieService {
         if(movieList.size() <=0 )return new ResponseVo(ErrorCodeEnum.MOVIE_NOT_FOUND,new MovieVo());
         for(Movie movie: movieList){
             movie.setMovieCoverUrl(uploadProperties.getUrl(movie.getMovieCoverUrl()));
-            if(movie.getStatus().equals(MovieStatusEnum.WAIT_DIVIDEND.getCode()) || movie.getStatus().equals(MovieStatusEnum.DIVIDEND.getCode())){
-                MovieDividendVo dividendVo = new MovieDividendVo();
-                BeanUtil.copy(dividendVo,movie);
-                dividendList.add(dividendVo);
-            }else{
                 MovieInvestVo investVo = new MovieInvestVo();
                 BeanUtil.copy(investVo,movie);
                 if(StringUtils.isNotEmpty(movie.getDutyDescription())){
@@ -600,7 +613,14 @@ public class MovieServiceImpl implements MovieService {
                 BigDecimal totalAmount = investDetailMapper.sumTotalInvestByMovieId(movie.getMovieId());
                 investVo.setInvestTotalAmount(null != totalAmount ? totalAmount : BigDecimal.ZERO);
                 resultList.add(investVo);
-            }
+        }
+
+        List<Movie> dividendFindResult = movieMapper.findAllByPageDividend(offset);
+        for(Movie movie: dividendFindResult){
+            movie.setMovieCoverUrl(uploadProperties.getUrl(movie.getMovieCoverUrl()));
+            MovieDividendVo dividendVo = new MovieDividendVo();
+            BeanUtil.copy(dividendVo,movie);
+            dividendList.add(dividendVo);
         }
         MovieVo movieVo = new MovieVo();
         movieVo.setDividendList(dividendList);

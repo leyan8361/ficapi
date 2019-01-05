@@ -26,6 +26,8 @@ public interface MovieMapper {
 
     List<Movie> findAllByPage(int offset);
 
+    List<Movie> findAllByPageDividend(int offset);
+
     Integer checkIfExistById(Integer movieId);
 
     int checkIfExistByName(String movieName);
