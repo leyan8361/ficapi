@@ -61,7 +61,7 @@ public class BetMovieServiceImpl implements BetMovieService {
         }
 
         List<BetMovieInfoVo> movieInfoList = new ArrayList<BetMovieInfoVo>();
-        List<BetMovie> movies = betMovieMapper.findAllOnByScenceId(betScence.getId());
+        List<BetMovie> movies = betMovieMapper.findAllOnByScenceId(betScence.getId(),DateUtil.getYesTodayAndFormatDay());
         if(movies.size() == 0){
             return new ResponseVo(ErrorCodeEnum.THE_SCENCE_HAS_NO_MOVIE,null);
         }

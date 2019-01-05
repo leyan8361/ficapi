@@ -223,7 +223,7 @@ public class BetScenceServiceImpl implements BetScenceService {
             BeanUtil.copy(result,betScence);
             /** 未开奖的 */
             List<BetMovieInfoVo> movieInfoList = new ArrayList<BetMovieInfoVo>();
-            List<BetMovie> movies = betMovieMapper.findAllOnByScenceId(betScence.getId());
+            List<BetMovie> movies = betMovieMapper.findAllOnByScenceId(betScence.getId(),DateUtil.dateToStrMatDay(new Date()));
             if(movies.size() == 0){
                 return new ResponseVo(ErrorCodeEnum.THE_SCENCE_HAS_NO_MOVIE,null);
             }
@@ -451,6 +451,14 @@ public class BetScenceServiceImpl implements BetScenceService {
             case 0:
                 /** 当猜单双时 */
                 BetOddEvenVo oddEvenVo = betUserMapper.countOddEven(scenceId,movieId);
+                if(null == oddEvenVo){
+                    oddEvenVo = new BetOddEvenVo();
+                    oddEvenVo.setOddCount(188);
+                    oddEvenVo.setEvenCount(199);
+                }else{
+                    oddEvenVo.setEvenCount(oddEvenVo.getEvenCount()+199);
+                    oddEvenVo.setOddCount(oddEvenVo.getOddCount()+188);
+                }
                 result.setBetCountVo(oddEvenVo);
                 break;
             case 1:
