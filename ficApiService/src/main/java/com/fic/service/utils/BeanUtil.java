@@ -22,7 +22,8 @@ public class BeanUtil {
             DateConverter dateConverter = new DateConverter();
             dateConverter.setPatterns(new String[]{"yyyy-MM-dd","yyyy-MM-dd HH:mm:ss"});
             ConvertUtils.register(new DateConverter(null),Date.class);
-            ConvertUtils.register(bd, java.math.BigDecimal.class);
+//            ConvertUtils.register(bd, java.math.BigDecimal.class);
+            ConvertUtils.register(new BigDecimalConverter(null), java.math.BigDecimal.class);
             ConvertUtils.register(new LongConverter(null), Long.class);
             ConvertUtils.register(new ShortConverter(null), Short.class);
             ConvertUtils.register(new IntegerConverter(null), Integer.class);

@@ -98,15 +98,14 @@ public class MovieController {
         if(null !=quota && quota.compareTo(BigDecimal.ZERO) >0){
             movie.setQuota(quota);
         }
-        if(null != returnRate && returnRate.compareTo(BigDecimal.ZERO)>0){
-            movie.setReturnRate(returnRate);
-        }
+//        if(null != returnRate && returnRate.compareTo(BigDecimal.ZERO)>0){
+//            movie.setReturnRate(returnRate);
+//        }
         if(null != movieLast && 0!=movieLast){
             movie.setMovieLast(movieLast);
         }
-        if(null != sort && sort.compareTo(BigDecimal.ZERO) >0){
-            movie.setSort(sort);
-        }
+        movie.setSort(sort);
+        movie.setReturnRate(returnRate);
         movie.setStatus(status);
         movie.setCreatedTime(new Date());
         movie.setUpdatedTime(new Date());
@@ -168,15 +167,14 @@ public class MovieController {
         if(null !=quota && quota.compareTo(BigDecimal.ZERO) >0){
             movie.setQuota(quota);
         }
-        if(null != returnRate && returnRate.compareTo(BigDecimal.ZERO)>0){
-            movie.setReturnRate(returnRate);
-        }
+//        if(null != returnRate && returnRate.compareTo(BigDecimal.ZERO)>0){
+//            movie.setReturnRate(returnRate);
+//        }
         if(null != movieLast && 0!=movieLast){
             movie.setMovieLast(movieLast);
         }
-        if(null != sort && sort.compareTo(BigDecimal.ZERO) >0){
-            movie.setSort(sort);
-        }
+        movie.setSort(sort);
+        movie.setReturnRate(returnRate);
         movie.setStatus(status);
         movie.setUpdatedTime(new Date());
         ResponseVo responseVo = movieService.update(movie,movieCoverFile);

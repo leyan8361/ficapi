@@ -90,7 +90,7 @@ public class BetScenceMovieController {
     public ResponseEntity update(@RequestParam("id") int id,
                                    @RequestParam(value = "startDay",required = false) String startDay,
                                    @RequestParam(value = "endDay",required = false) String endDay,
-                                   @RequestParam("sort") BigDecimal sort
+                                   @RequestParam(value = "sort",required = false) BigDecimal sort
     ) {
         log.debug(" update movie_scence !!!");
         BetScenceMovie scenceMovie = new BetScenceMovie();

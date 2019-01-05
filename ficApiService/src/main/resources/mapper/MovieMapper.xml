@@ -216,7 +216,7 @@
       <if test="movieLast != null and movieLast !=0">
         movie_last = #{movieLast,jdbcType=INTEGER},
       </if>
-      <if test="returnRate != null and returnRate !=0">
+      <if test="returnRate != null">
         return_rate = #{returnRate,jdbcType=DECIMAL},
       </if>
     </set>
