@@ -152,8 +152,13 @@ public class MovieController {
         movie.setDutyDescription(dutyDescription);
         movie.setBoxInfo(boxInfo);
         movie.setInvestCycle(investCycle);
-        movie.setReturnRate(returnRate);
-        movie.setMovieLast(movieLast);
+        if(null != returnRate && returnRate.compareTo(BigDecimal.ZERO)>0){
+            movie.setReturnRate(returnRate);
+        }
+        if(null != movieLast && 0!=movieLast){
+            movie.setMovieLast(movieLast);
+        }
+
         movie.setStatus(status);
         movie.setUpdatedTime(new Date());
         ResponseVo responseVo = movieService.update(movie,movieCoverFile);

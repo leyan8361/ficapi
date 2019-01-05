@@ -133,9 +133,6 @@ public class Movie {
     }
 
     public Integer getStatus() {
-        if(null == status){
-            return 1;
-        }
         return status;
     }
 
