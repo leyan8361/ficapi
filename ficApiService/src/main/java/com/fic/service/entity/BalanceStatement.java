@@ -46,7 +46,6 @@ public class BalanceStatement {
         this.amount = amount;
     }
 
-
     public Integer getType() {
         return type;
     }

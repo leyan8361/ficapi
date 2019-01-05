@@ -4,6 +4,7 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -22,6 +23,9 @@ public class TradeRecordInfoV2Vo {
     private List<TradeRecordV2Vo> items;
 
     public BigDecimal getIncome() {
+        if(null == income){
+            income = BigDecimal.ZERO;
+        }
         return income;
     }
 
@@ -30,6 +34,9 @@ public class TradeRecordInfoV2Vo {
     }
 
     public BigDecimal getExpend() {
+        if(null == expend){
+            expend = BigDecimal.ZERO;
+        }
         return expend;
     }
 
@@ -42,6 +49,9 @@ public class TradeRecordInfoV2Vo {
     }
 
     public void setItems(List<TradeRecordV2Vo> items) {
+        if(null == items){
+            items = new ArrayList<TradeRecordV2Vo>();
+        }
         this.items = items;
     }
 }

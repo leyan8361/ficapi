@@ -273,7 +273,7 @@ public class BalanceServiceImpl implements BalanceService {
                 betBingoIds.append(",").append(betUsers.get(0).getId());
                 item.setMoveName(movieName);
                 item.setAmount(balanceStatement.getAmount());
-                item.setCreatedTime(betUsers.get(0).getCreatedTime());
+                item.setCreatedTime(balanceStatement.getCreatedTime());
             }
 
             /**竞猜返还*/
@@ -291,7 +291,7 @@ public class BalanceServiceImpl implements BalanceService {
                 betReturningIds.append(",").append(betUsers.get(0).getId());
                 item.setMoveName(movieName);
                 item.setAmount(balanceStatement.getAmount());
-                item.setCreatedTime(betUsers.get(0).getCreatedTime());
+                item.setCreatedTime(balanceStatement.getCreatedTime());
             }
 
             /**投注*/
@@ -313,16 +313,25 @@ public class BalanceServiceImpl implements BalanceService {
 
             /** 连续奖励 */
             if(balanceStatement.getType() == FinanceTypeEnum.BET_REWARD_POOL.getCode()){
+                item.setAmount(balanceStatement.getAmount().setScale(0,BigDecimal.ROUND_DOWN));
+                item.setCreatedTime(balanceStatement.getCreatedTime());
+            }
+
+            /** 遗留type 为0，设置为注册奖励*/
+            if(balanceStatement.getType() == 0){
+                item.setDistributionType(TradeRecordDistributionEnum.REGISTER.getCode());
                 item.setAmount(balanceStatement.getAmount());
+                item.setCreatedTime(balanceStatement.getCreatedTime());
+                balanceStatement.setType(FinanceTypeEnum.REWARD.getCode());
             }
 
             if(balanceStatement.getWay() == FinanceWayEnum.IN.getCode()){
                 /** 收入 */
-                totalIncome = totalIncome.add(balanceStatement.getAmount());
+                totalIncome = totalIncome.add(item.getAmount());
             }
             if(balanceStatement.getWay() == FinanceWayEnum.OUT.getCode()){
                 /** 支出 */
-                totalExpend = totalExpend.add(balanceStatement.getAmount());
+                totalExpend = totalExpend.add(item.getAmount());
             }
             item.setType(balanceStatement.getType());
             item.setWay(balanceStatement.getWay());
