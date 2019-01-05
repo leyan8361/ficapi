@@ -25,7 +25,6 @@ public class BetScenceMovie {
 
     private String drawResult;
 
-
     private BigDecimal totalReservationReturning;
 
     private String guessOverUnit;
@@ -36,7 +35,7 @@ public class BetScenceMovie {
 
     private BigDecimal bingoOdds;
 
-    private int sort;
+    private BigDecimal sort;
 
     public Integer getId() {
         return id;
@@ -140,11 +139,11 @@ public class BetScenceMovie {
         this.totalReservationReturning = totalReservationReturning;
     }
 
-    public int getSort() {
+    public BigDecimal getSort() {
         return sort;
     }
 
-    public void setSort(int sort) {
+    public void setSort(BigDecimal sort) {
         this.sort = sort;
     }
 
