@@ -31,7 +31,7 @@ public interface BetMovieMapper {
 
     BetMovie getById(int id);
 
-    List<BetMovie> findAllOnByScenceId(int scenceId);
+    List<BetMovie> findAllOnByScenceId(int scenceId,String startDay);
 
     List<BetMovie> findAllOffByScenceId(int scenceId,String startDay);
 

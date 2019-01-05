@@ -223,7 +223,7 @@ public class BetScenceServiceImpl implements BetScenceService {
             BeanUtil.copy(result,betScence);
             /** 未开奖的 */
             List<BetMovieInfoVo> movieInfoList = new ArrayList<BetMovieInfoVo>();
-            List<BetMovie> movies = betMovieMapper.findAllOnByScenceId(betScence.getId());
+            List<BetMovie> movies = betMovieMapper.findAllOnByScenceId(betScence.getId(),DateUtil.dateToStrMatDay(new Date()));
             if(movies.size() == 0){
                 return new ResponseVo(ErrorCodeEnum.THE_SCENCE_HAS_NO_MOVIE,null);
             }
