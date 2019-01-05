@@ -59,7 +59,7 @@ public class ApiBetScenceController {
     @ApiImplicitParams({
             @ApiImplicitParam(dataType = "int", name = "userId", value = "用户ID",required = true),
             @ApiImplicitParam(dataType = "int", name = "scenceMovieId", value = "场次ID",required = true),
-            @ApiImplicitParam(dataType = "BigDecimal", name = "amount", value = "下注金额",required = true),
+            @ApiImplicitParam(dataType = "double", name = "amount", value = "下注金额",required = true),
             @ApiImplicitParam(dataType = "string", name = "betWhich",required = true,
                     value = "下注类型(0,猜单双，单)(1,猜单双，双)(2,猜票房能不能，能)(3,猜票房能不能，不能)(4,选择题A)(5,选择题B)(6,选择题C)(7,选择题D)(当为高级场直接填写累计票房)"),
     })

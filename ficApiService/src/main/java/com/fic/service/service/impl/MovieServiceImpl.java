@@ -435,7 +435,7 @@ public class MovieServiceImpl implements MovieService {
             throw new RuntimeException();
         }
 
-        int updateBriefCoverResult = movieDetailInfoMapper.updateBriefCoverUrl(movieId,briefNewPath);
+        int updateBriefCoverResult = movieDetailInfoMapper.updateBriefCoverUrl(movieDetailInfo.getId(),briefNewPath);
         if(updateBriefCoverResult <=0){
             log.error("update movie detail info briefcover url failed. movie detail info id :{}",movieDetailInfo.getId());
             throw new RuntimeException();
@@ -456,7 +456,7 @@ public class MovieServiceImpl implements MovieService {
             log.error(" save movie detail info plotSummaryCoverFile  失败 保存文件");
             throw new RuntimeException();
         }
-        int updatePlotCoverResult = movieDetailInfoMapper.updatePlotCoverUrl(movieId,plotNewPath);
+        int updatePlotCoverResult = movieDetailInfoMapper.updatePlotCoverUrl(movieDetailInfo.getId(),plotNewPath);
         if(updatePlotCoverResult <=0){
             log.error("update movie detail info plotSummaryCover url failed. movie detail info id :{}",movieDetailInfo.getId());
             throw new RuntimeException();

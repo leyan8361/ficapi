@@ -13,6 +13,7 @@
     <result column="show_place" jdbcType="VARCHAR" property="showPlace" />
     <result column="show_time" jdbcType="VARCHAR" property="showTime" />
     <result column="status" jdbcType="TINYINT" property="status" />
+    <result column="sort" jdbcType="DECIMAL" property="sort" />
     <result column="duty_description" jdbcType="VARCHAR" property="dutyDescription" />
     <result column="box_info" jdbcType="VARCHAR" property="boxInfo" />
     <result column="invest_cycle" jdbcType="INTEGER" property="investCycle" />
@@ -22,7 +23,7 @@
   </resultMap>
   <sql id="Base_Column_List">
     movie_id, movie_name, created_time, updated_time, movie_type, budget, quota, movie_cover_url,
-    show_place, show_time, status, duty_description, box_info, invest_cycle, invest_count,
+    show_place, show_time, status, sort,duty_description, box_info, invest_cycle, invest_count,
     movie_last, return_rate
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
@@ -39,13 +40,13 @@
     insert into movie (movie_id, movie_name, created_time,
       updated_time, movie_type, budget,
       quota, movie_cover_url, show_place,
-      show_time, status, duty_description,
+      show_time, status,sort duty_description,
       box_info, invest_cycle, invest_count,
       movie_last, return_rate)
     values (#{movieId,jdbcType=INTEGER}, #{movieName,jdbcType=VARCHAR}, #{createdTime,jdbcType=TIMESTAMP},
       #{updatedTime,jdbcType=TIMESTAMP}, #{movieType,jdbcType=VARCHAR}, #{budget,jdbcType=DECIMAL},
       #{quota,jdbcType=DECIMAL}, #{movieCoverUrl,jdbcType=VARCHAR}, #{showPlace,jdbcType=VARCHAR},
-      #{showTime,jdbcType=VARCHAR}, #{status,jdbcType=TINYINT}, #{dutyDescription,jdbcType=VARCHAR},
+      #{showTime,jdbcType=VARCHAR}, #{status,jdbcType=TINYINT}, #{sort,jdbcType=DECIMAL},#{dutyDescription,jdbcType=VARCHAR},
       #{boxInfo,jdbcType=VARCHAR}, #{investCycle,jdbcType=INTEGER}, #{investCount,jdbcType=INTEGER},
       #{movieLast,jdbcType=INTEGER}, #{returnRate,jdbcType=DECIMAL})
   </insert>
@@ -84,6 +85,9 @@
       </if>
       <if test="status != null">
         status,
+      </if>
+      <if test="sort != null">
+        sort,
       </if>
       <if test="dutyDescription != null">
         duty_description,
@@ -138,6 +142,9 @@
       <if test="status != null">
         #{status,jdbcType=TINYINT},
       </if>
+      <if test="sort != null">
+        #{sort,jdbcType=DECIMAL},
+      </if>
       <if test="dutyDescription != null">
         #{dutyDescription,jdbcType=VARCHAR},
       </if>
@@ -191,6 +198,9 @@
       <if test="status != null">
         status = #{status,jdbcType=TINYINT},
       </if>
+      <if test="sort != null">
+        sort = #{sort,jdbcType=DECIMAL},
+      </if>
       <if test="dutyDescription != null">
         duty_description = #{dutyDescription,jdbcType=VARCHAR},
       </if>
@@ -224,6 +234,7 @@
       show_place = #{showPlace,jdbcType=VARCHAR},
       show_time = #{showTime,jdbcType=VARCHAR},
       status = #{status,jdbcType=TINYINT},
+      sort = #{sort,jdbcType=DECIMAL},
       duty_description = #{dutyDescription,jdbcType=VARCHAR},
       box_info = #{boxInfo,jdbcType=VARCHAR},
       invest_cycle = #{investCycle,jdbcType=INTEGER},
@@ -244,6 +255,7 @@
       show_place = #{showPlace,jdbcType=VARCHAR},
       show_time = #{showTime,jdbcType=VARCHAR},
       status = #{status,jdbcType=TINYINT},
+      sort = #{sort,jdbcType=DECIMAL},
       duty_description = #{dutyDescription,jdbcType=VARCHAR},
       box_info = #{boxInfo,jdbcType=VARCHAR},
       invest_cycle = #{investCycle,jdbcType=INTEGER},
@@ -256,10 +268,10 @@
     select * from movie where 1=1;
   </select>
   <select id="findAllByPageDividend" resultMap="BaseResultMap">
-    select * from movie where status = 2 or status = 3 limit #{offset},10;
+    select * from movie where status = 2 or status = 3 order by sort asc limit #{offset},10;
   </select>
   <select id="findAllByPage" resultMap="BaseResultMap">
-    select * from movie where status = 0 or status = 1 limit #{offset},10;
+    select * from movie where status = 0 or status = 1  order by sort asc limit #{offset},10;
   </select>
   <select id="checkIfExistById" resultType="int">
     select movie_id from movie where movie_id = #{movidId};

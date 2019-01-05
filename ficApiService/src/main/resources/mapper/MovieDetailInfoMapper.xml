@@ -101,7 +101,7 @@
     where id = #{id,jdbcType=INTEGER}
   </update>
   <update id="updateBriefCoverUrl">
-    update movie_detail_info set  brief_url = #{briefCoverUrl,jdbcType=VARCHAR}, plot_summary_url = #{plotCoverUrl,jdbcType=VARCHAR} where id = #{id,jdbcType=INTEGER}
+    update movie_detail_info set  brief_url = #{briefCoverUrl,jdbcType=VARCHAR} where id = #{id,jdbcType=INTEGER}
   </update>
   <update id="updatePlotCoverUrl">
     update movie_detail_info set  plot_summary_url = #{plotCoverUrl,jdbcType=VARCHAR} where id = #{id,jdbcType=INTEGER}
