@@ -10,6 +10,9 @@ public class PageVo {
     private int pageNum;
 
     public int getPageNum() {
+        if(pageNum>0){
+            return pageNum-1;
+        }
         return pageNum;
     }
 

@@ -6,6 +6,7 @@ import org.apache.ibatis.annotations.Mapper;
 import org.springframework.stereotype.Repository;
 
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -56,9 +57,11 @@ public interface BetUserMapper {
 
     List<BetUser> findAllWithoutStatusByScenceMovieId(int scenceMovieId);
 
-    List<BetUser> findByBingoPriceAndUserId(BigDecimal bingoPrice,int userId,String startDay,String endDay,String ids);
+    List<BetUser> findByBingoPriceAndUserId(BigDecimal bingoPrice,int userId,String startDay,String endDay,String... ids);
 
-    List<BetUser> findByReturningAndUserId(BigDecimal returning,int userId,String startDay,String endDay,String ids);
+    List<BetUser> findByReturningAndUserId(BigDecimal returning,int userId,String startDay,String endDay,String... ids);
+
+    BetUser findByBetAmountAndUserIdAndCreatedTime(BigDecimal amount, int userId, String createdTime);
 
     String findMovieNameById(int id);
 }

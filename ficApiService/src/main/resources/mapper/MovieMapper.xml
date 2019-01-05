@@ -255,6 +255,9 @@
   <select id="findAll" resultMap="BaseResultMap">
     select * from movie where 1=1;
   </select>
+  <select id="findAllByPage" resultMap="BaseResultMap">
+    select * from movie where 1=1 limit #{offset},10;
+  </select>
   <select id="checkIfExistById" resultType="int">
     select movie_id from movie where movie_id = #{movidId};
   </select>

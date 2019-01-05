@@ -20,11 +20,11 @@ public interface MovieMapper {
 
     int updateByPrimaryKeySelective(Movie record);
 
-    int updateByPrimaryKeyWithBLOBs(Movie record);
-
     int updateByPrimaryKey(Movie record);
 
     List<Movie> findAll();
+
+    List<Movie> findAllByPage(int offset);
 
     Integer checkIfExistById(Integer movieId);
 

@@ -386,15 +386,23 @@
   </select>
 
   <select id="findByBingoPriceAndUserId" resultMap="BaseResultMap">
-    select u.* from bet_user u where u.bingo_price = #{bingoPrice} and u.user_id = #{userId} and u.created_time between #{startDay} and #{endDay} and u.id not in (#{ids});
+    select u.* from bet_user u where u.bingo_price = #{bingoPrice} and u.user_id = #{userId} and u.created_time between #{startDay} and #{endDay}
+    and u.id not in
+    <foreach item="id" index="index" collection="ids" open="(" separator="," close=")">
+       #{id}
+    </foreach>
   </select>
 
   <select id="findByReturningAndUserId" resultMap="BaseResultMap">
-    select u.* from bet_user u where u.close_with_returning = #{returning} and u.user_id = #{userId} and u.created_time between #{startDay} and #{endDay} and u.id not in (#{ids});
+    select u.* from bet_user u where u.close_with_returning = #{returning} and u.user_id = #{userId} and u.created_time between #{startDay} and #{endDay}
+    and u.id not in
+    <foreach item="id" index="index" collection="ids" open="(" separator="," close=")">
+      #{id}
+    </foreach>
   </select>
 
-  <select id="findByBetAmountAndUserId" resultMap="BaseResultMap">
-    select u.* from bet_user u where u.bet_amount = #{amount} and u.user_id = #{userId} and u.created_time between #{startDay} and #{endDay} and u.id not in (#{ids});
+  <select id="findByBetAmountAndUserIdAndCreatedTime" resultMap="BaseResultMap">
+    select u.* from bet_user u where u.bet_amount = #{amount} and u.user_id = #{userId} and u.created_time = #{createdTime};
   </select>
 
   <select id="findMovieNameById" resultType="string">

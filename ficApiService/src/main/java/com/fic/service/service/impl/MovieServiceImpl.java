@@ -574,10 +574,13 @@ public class MovieServiceImpl implements MovieService {
      * App v2 首页电影列表
      */
     @Override
-    public ResponseVo getMoviesV2() {
+    public ResponseVo getMoviesV2(int pageNum) {
         List<MovieInvestVo> resultList = new ArrayList<MovieInvestVo>();
         List<MovieDividendVo> dividendList = new ArrayList<MovieDividendVo>();
-        List<Movie> movieList = movieMapper.findAll();
+        PageVo pageVo = new PageVo();
+        pageVo.setPageNum(pageNum);
+        int offset = pageVo.getPageNum()*10;
+        List<Movie> movieList = movieMapper.findAllByPage(offset);
         if(movieList.size() <=0 )return new ResponseVo(ErrorCodeEnum.MOVIE_NOT_FOUND,new MovieVo());
         for(Movie movie: movieList){
             movie.setMovieCoverUrl(uploadProperties.getUrl(movie.getMovieCoverUrl()));

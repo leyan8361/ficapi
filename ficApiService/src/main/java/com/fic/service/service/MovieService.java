@@ -13,7 +13,7 @@ public interface MovieService {
 
     ResponseVo getMovies();
 
-    ResponseVo getMoviesV2();
+    ResponseVo getMoviesV2(int pageNum);
 
     ResponseVo getMovieInfo(Integer userId,Integer movieId);
 

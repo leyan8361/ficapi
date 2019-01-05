@@ -169,10 +169,8 @@ public class BalanceServiceImpl implements BalanceService {
         List<TradeRecordV2Vo> items = new ArrayList<TradeRecordV2Vo>();
         StringBuilder betBingoIds = new StringBuilder();
         StringBuilder betReturningIds = new StringBuilder();
-        StringBuilder betIds = new StringBuilder();
         betBingoIds.append("0");
         betReturningIds.append("0");
-        betIds.append("0");
         for(BalanceStatement balanceStatement: findResult){
             BigDecimal amount = balanceStatement.getAmount();
             TradeRecordV2Vo item = new TradeRecordV2Vo();
@@ -184,7 +182,7 @@ public class BalanceServiceImpl implements BalanceService {
                     continue;
                 }
                 BigDecimal inviteOne = null!=distribution.getInviteRewardOne()?distribution.getInviteRewardOne():BigDecimal.ZERO;//300
-                BigDecimal inviteTwo = null!=distribution.getInviteRewardTwo()?distribution.getInviteRewardOne():BigDecimal.ZERO;//100
+                BigDecimal inviteTwo = null!=distribution.getInviteRewardTwo()?distribution.getInviteRewardTwo():BigDecimal.ZERO;//100
                 BigDecimal investOne = null!=distribution.getInvestRewardOne()?distribution.getInvestRewardOne():BigDecimal.ZERO;//1000
                 BigDecimal investTwo = null!=distribution.getInvestRewardTwo()?distribution.getInvestRewardTwo():BigDecimal.ZERO;//300
 
@@ -207,7 +205,7 @@ public class BalanceServiceImpl implements BalanceService {
                         /** 只有一条 300 必定是一级注册*/
                         item.setDistributionType(TradeRecordDistributionEnum.INVITE_ONE.getCode());
                     }
-
+                    item.setCreatedTime(balanceStatement.getCreatedTime());
                 }
                 if(amount.compareTo(investOne) == 0){
                     /** 1000 判断是自己注册 or 一级投资 时间前的是注册*/
@@ -228,6 +226,7 @@ public class BalanceServiceImpl implements BalanceService {
                         /** 只有一条 1000 必定是自己注册*/
                         item.setDistributionType(TradeRecordDistributionEnum.REGISTER.getCode());
                     }
+                    item.setCreatedTime(balanceStatement.getCreatedTime());
                 }
 
                 if(amount.compareTo(inviteTwo) == 0){
@@ -237,10 +236,9 @@ public class BalanceServiceImpl implements BalanceService {
                 if(null == item.getDistributionType()){
                     log.error(" 查询交易明细 无对应分销记录, balance id :{}, distribution id :{}",balanceStatement.getId(),distribution.getId());
                     continue;
-                }else{
-                    item.setAmount(amount);
                 }
-
+                item.setAmount(amount);
+                item.setCreatedTime(balanceStatement.getCreatedTime());
             }
 
             /** 投资 */
@@ -257,11 +255,12 @@ public class BalanceServiceImpl implements BalanceService {
                 }
                 item.setMoveName(movie.getMovieName());
                 item.setAmount(detail.getAmount());
+                item.setCreatedTime(balanceStatement.getCreatedTime());
             }
 
             /** 竞猜奖励 */
             if(balanceStatement.getType() == FinanceTypeEnum.BET_REWARD.getCode()){
-                List<BetUser> betUsers = betUserMapper.findByBingoPriceAndUserId(balanceStatement.getAmount(),balanceStatement.getUserId(),startDay,endDay,betBingoIds.toString());
+                List<BetUser> betUsers = betUserMapper.findByBingoPriceAndUserId(balanceStatement.getAmount(),balanceStatement.getUserId(),startDay,endDay,betBingoIds.toString().split(","));
                 if(betUsers.size() == 0){
                     log.error(" 查询交易明细失败，竞猜记录异常，无相差竞猜记录 bet amount :{},userId :{},startDay :{},endDay:{},ids:{}",balanceStatement.getAmount(),balanceStatement.getUserId(),startDay,endDay,betBingoIds.toString());
                     continue;
@@ -274,13 +273,14 @@ public class BalanceServiceImpl implements BalanceService {
                 betBingoIds.append(",").append(betUsers.get(0).getId());
                 item.setMoveName(movieName);
                 item.setAmount(balanceStatement.getAmount());
+                item.setCreatedTime(betUsers.get(0).getCreatedTime());
             }
 
             /**竞猜返还*/
             if(balanceStatement.getType() == FinanceTypeEnum.BET_RETURNING.getCode()){
-                List<BetUser> betUsers = betUserMapper.findByReturningAndUserId(balanceStatement.getAmount(),balanceStatement.getUserId(),startDay,endDay,betReturningIds.toString());
+                List<BetUser> betUsers = betUserMapper.findByReturningAndUserId(balanceStatement.getAmount(),balanceStatement.getUserId(),startDay,endDay,betReturningIds.toString().split(","));
                 if(betUsers.size() == 0){
-                    log.error(" 查询交易明细失败，竞猜记录异常，无相差竞猜返还记录 bet amount :{},userId :{},startDay :{},endDay:{},ids:{}",balanceStatement.getAmount(),balanceStatement.getUserId(),startDay,endDay,betReturningIds.toString());
+                    log.error(" 查询交易明细失败，竞猜记录异常，无相关竞猜返还记录 bet amount :{},userId :{},startDay :{},endDay:{},ids:{}",balanceStatement.getAmount(),balanceStatement.getUserId(),startDay,endDay,betReturningIds.toString());
                     continue;
                 }
                 String movieName = betUserMapper.findMovieNameById(betUsers.get(0).getId());
@@ -291,23 +291,24 @@ public class BalanceServiceImpl implements BalanceService {
                 betReturningIds.append(",").append(betUsers.get(0).getId());
                 item.setMoveName(movieName);
                 item.setAmount(balanceStatement.getAmount());
+                item.setCreatedTime(betUsers.get(0).getCreatedTime());
             }
 
             /**投注*/
             if(balanceStatement.getType() == FinanceTypeEnum.BET.getCode()){
-                List<BetUser> betUsers = betUserMapper.findByReturningAndUserId(balanceStatement.getAmount(),balanceStatement.getUserId(),startDay,endDay,betIds.toString());
-                if(betUsers.size() == 0){
-                    log.error(" 查询交易明细失败，竞猜记录异常，无相关竞猜投注记录 bet amount :{},userId :{},startDay :{},endDay:{},ids:{}",balanceStatement.getAmount(),balanceStatement.getUserId(),startDay,endDay,betIds.toString());
+                BetUser betUser = betUserMapper.findByBetAmountAndUserIdAndCreatedTime(balanceStatement.getAmount(),balanceStatement.getUserId(),DateUtil.dateToStrMatSec(balanceStatement.getCreatedTime()));
+                if(null == betUser){
+                    log.error(" 查询交易明细失败，竞猜记录异常，无相关竞猜投注记录 bet amount :{},userId :{},createdTime :{}",balanceStatement.getAmount(),balanceStatement.getUserId(),DateUtil.dateToStrMatSec(balanceStatement.getCreatedTime()));
                     continue;
                 }
-                String movieName = betUserMapper.findMovieNameById(betUsers.get(0).getId());
+                String movieName = betUserMapper.findMovieNameById(betUser.getId());
                 if(StringUtils.isEmpty(movieName)){
-                    log.error("查询交易明细失败，竞猜记录异常，无相关电影 bet scence movie id :{}",betUsers.get(0).getBetScenceMovieId());
+                    log.error("查询交易明细失败，竞猜记录异常，无相关电影 bet scence movie id :{}",betUser.getBetScenceMovieId());
                     continue;
                 }
-                betIds.append(",").append(betUsers.get(0).getId());
                 item.setMoveName(movieName);
                 item.setAmount(balanceStatement.getAmount());
+                item.setCreatedTime(balanceStatement.getCreatedTime());
             }
 
             /** 连续奖励 */
@@ -325,7 +326,7 @@ public class BalanceServiceImpl implements BalanceService {
             }
             item.setType(balanceStatement.getType());
             item.setWay(balanceStatement.getWay());
-            item.setCreatedTime(balanceStatement.getCreatedTime());
+
             items.add(item);
         }
 
@@ -333,6 +334,6 @@ public class BalanceServiceImpl implements BalanceService {
         result.setIncome(totalIncome);
         result.setExpend(totalExpend);
 
-        return new ResponseVo(ErrorCodeEnum.SUCCESS,items);
+        return new ResponseVo(ErrorCodeEnum.SUCCESS,result);
     }
 }

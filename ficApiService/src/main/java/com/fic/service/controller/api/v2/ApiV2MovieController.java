@@ -32,13 +32,16 @@ public class ApiV2MovieController {
 
     @GetMapping("/getMovies")
     @ApiOperation("Api-获取电影列表")
+    @ApiImplicitParams({
+            @ApiImplicitParam(dataType = "int", name = "pageNum", value = "页码", required = true)
+    })
     @ApiResponses({
             @ApiResponse(code = 4000, message = "MOVIE NOT FOUND"),
             @ApiResponse(code = 200, message = "SUCCESS",response = MovieVo.class)
     })
-    public ResponseEntity getMovies() {
+    public ResponseEntity getMovies(@RequestParam int pageNum) {
         log.debug(" Api get Movie List !!!");
-        ResponseVo result = movieService.getMoviesV2();
+        ResponseVo result = movieService.getMoviesV2(pageNum);
         return ResponseEntity.ok(result);
     }
 

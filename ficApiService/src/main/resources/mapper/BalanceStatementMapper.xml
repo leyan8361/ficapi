@@ -148,7 +148,7 @@
     select sum(b.amount) from balance_statement b where b.created_time BETWEEN #{startDay} and #{endDay} and b.user_id = #{userId} and b.type = 9;
   </select>
   <select id="findByCondition" resultMap="BaseResultMap">
-    select b.* from balance_statement b where b.created_time between #{startDay} and #{endDay} and b.user_id = #{param.userId} limit #{offset},10;
+    select b.* from balance_statement b where b.created_time between #{startDay} and #{endDay} and b.user_id = #{param.userId} order by b.created_time desc limit #{offset},10;
   </select>
   <select id="findAllSameAmountWithUserDis" resultMap="BaseResultMap">
     select b.* from balance_statement b where b.amount = #{amount} and b.user_id = #{userId} and b.distribution_id = #{distributionId} and b.id != #{balanceSelfId};
