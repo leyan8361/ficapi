@@ -34,7 +34,7 @@ public class ApiV2MoneyController {
     @PostMapping("/tradeRecord")
     @ApiOperation("Api-交易记录")
     @ApiResponses({
-            @ApiResponse(code = 200, message = "SUCCESS",response = TradeRecordInfoVo.class)
+            @ApiResponse(code = 200, message = "SUCCESS",response = TradeRecordInfoV2Vo.class)
     })
     public ResponseEntity tradeRecord(@RequestBody TradeRecordRequestVo recordInfoV2Vo) {
         log.debug(" Api tradeRecord V2 Action !!!");

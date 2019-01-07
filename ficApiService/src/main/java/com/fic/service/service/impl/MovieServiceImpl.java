@@ -627,4 +627,38 @@ public class MovieServiceImpl implements MovieService {
         movieVo.setInvestList(resultList);
         return new ResponseVo(ErrorCodeEnum.SUCCESS,movieVo);
     }
+
+    @Override
+    @Transactional(isolation= Isolation.READ_COMMITTED,propagation= Propagation.REQUIRED,rollbackFor = Exception.class)
+    public ResponseVo deleteActorInfo(int actorId) {
+        int result = actorInfoMapper.deleteByPrimaryKey(actorId);
+        if(result <=0){
+            log.error(" 删除 演员失败 ,id:{}",actorId);
+            throw new RuntimeException();
+        }
+        return new ResponseVo(ErrorCodeEnum.SUCCESS,null);
+    }
+
+    @Override
+    @Transactional(isolation= Isolation.READ_COMMITTED,propagation= Propagation.REQUIRED,rollbackFor = Exception.class)
+    public ResponseVo deleteBrief(int briefId) {
+        int result = movieDetailInfoMapper.deleteByPrimaryKey(briefId);
+        if(result <=0){
+            log.error(" 删除 项目简介失败 ,id:{}",briefId);
+            throw new RuntimeException();
+        }
+        return new ResponseVo(ErrorCodeEnum.SUCCESS,null);
+    }
+
+    @Override
+    public ResponseVo getAllActorInfoByMovie(int movieId) {
+        List<ActorInfo> result = actorInfoMapper.findAllByMovieId(movieId);
+        return new ResponseVo(ErrorCodeEnum.SUCCESS,result);
+    }
+
+    @Override
+    public ResponseVo getAllMovieDetailInfoByMovie(int movieId) {
+        MovieDetailInfo resulList = movieDetailInfoMapper.findByMovieId(movieId);
+        return new ResponseVo(ErrorCodeEnum.SUCCESS,resulList);
+    }
 }

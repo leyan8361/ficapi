@@ -25,6 +25,10 @@ public interface MovieService {
 
     ResponseVo getAll();
 
+    ResponseVo getAllActorInfoByMovie(int movieId);
+
+    ResponseVo getAllMovieDetailInfoByMovie(int movieId);
+
     ResponseVo add(Movie movie,MultipartFile movieCoverFile);
 
     ResponseVo update(Movie movie,MultipartFile movieCoverFile);
@@ -36,5 +40,9 @@ public interface MovieService {
     ResponseVo addBrief(int movieId,String brief,String plotSummary,MultipartFile briefCoverFile,MultipartFile plotSummaryCoverFile);
 
     ResponseVo updateBrief(int briefId,String brief,String plotSummary,MultipartFile briefCoverFile,MultipartFile plotSummaryCoverFile);
+
+    ResponseVo deleteActorInfo(int actorId);
+
+    ResponseVo deleteBrief(int briefId);
 
 }

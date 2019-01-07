@@ -47,6 +47,34 @@ public class MovieController {
         return ResponseEntity.ok(result);
     }
 
+    @GetMapping("/getAllActorInfoByMovie")
+    @ApiOperation("查看某个电影的所有演员")
+    @ApiImplicitParams({
+            @ApiImplicitParam(dataType = "int", name = "movieId", value = "电影ID", required = true)
+    })
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "SUCCESS",response = Movie.class)
+    })
+    public ResponseEntity getAllActorInfo(@RequestParam int movieId) {
+        log.debug(" getAllActorInfo Action !!!");
+        ResponseVo result = movieService.getAllActorInfoByMovie(movieId);
+        return ResponseEntity.ok(result);
+    }
+
+    @GetMapping("/getAllMovieDetailInfoByMovie")
+    @ApiOperation("查看某个电影的项目简介")
+    @ApiImplicitParams({
+            @ApiImplicitParam(dataType = "int", name = "movieId", value = "电影ID", required = true)
+    })
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "SUCCESS",response = Movie.class)
+    })
+    public ResponseEntity getAllMovieDetailInfoByMovie(int movieId) {
+        log.debug(" getAllMovieDetailInfoByMovie Action !!!");
+        ResponseVo result = movieService.getAllMovieDetailInfoByMovie(movieId);
+        return ResponseEntity.ok(result);
+    }
+
     @PostMapping(value = "/add")
     @ApiOperation("新增电影")
     @ApiImplicitParams({
@@ -217,6 +245,36 @@ public class MovieController {
                                        @ApiParam(required = false) MultipartFile movieCoverFile) {
         log.debug(" update actor info Action !!!");
         ResponseVo responseVo = movieService.updateActorInfo(actorId,role,roleName,movieCoverFile);
+        return ResponseEntity.ok(responseVo);
+    }
+
+    @DeleteMapping(value = "/deleteBrief")
+    @ApiOperation("删除项目简介")
+    @ApiImplicitParams({
+            @ApiImplicitParam(dataType = "int", name = "briefId", value = "项目简介 ID", required = true),
+    })
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "SUCCESS")
+    })
+    public ResponseEntity deleteBrief(
+            @RequestParam int briefId) {
+        log.debug(" delete brief Action !!!");
+        ResponseVo responseVo = movieService.deleteBrief(briefId);
+        return ResponseEntity.ok(responseVo);
+    }
+
+    @DeleteMapping(value = "/deleteActorInfo")
+    @ApiOperation("删除演员")
+    @ApiImplicitParams({
+            @ApiImplicitParam(dataType = "int", name = "actorId", value = "演员ID", required = true),
+    })
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "SUCCESS")
+    })
+    public ResponseEntity deleteActorInfo(
+            @RequestParam int actorId) {
+        log.debug(" delete actor info Action !!!");
+        ResponseVo responseVo = movieService.deleteActorInfo(actorId);
         return ResponseEntity.ok(responseVo);
     }
 

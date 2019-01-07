@@ -285,7 +285,4 @@
   <select id="checkIfExistByName" resultType="int">
     select count(*) from movie where movie_name = #{movieName};
   </select>
-  <update id="updateActorInfo">
-    update movie set actor_list = #{actorInfoStr} where id = #{movieId}
-  </update>
 </mapper>
