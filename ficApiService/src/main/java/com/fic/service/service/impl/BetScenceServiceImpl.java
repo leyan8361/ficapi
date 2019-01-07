@@ -223,7 +223,7 @@ public class BetScenceServiceImpl implements BetScenceService {
             BeanUtil.copy(result,betScence);
             /** 未开奖的 */
             List<BetMovieInfoVo> movieInfoList = new ArrayList<BetMovieInfoVo>();
-            List<BetMovie> movies = betMovieMapper.findAllOnByScenceId(betScence.getId());
+            List<BetMovie> movies = betMovieMapper.findAllOnByScenceId(betScence.getId(),DateUtil.dateToStrMatDay(new Date()));
             if(movies.size() == 0){
                 return new ResponseVo(ErrorCodeEnum.THE_SCENCE_HAS_NO_MOVIE,null);
             }
@@ -326,8 +326,8 @@ public class BetScenceServiceImpl implements BetScenceService {
         /** 连续投注 ，奖池*/
         result.setTotalJasckpot(betScence.getTotalReservation().multiply(new BigDecimal("0.5")).setScale(0,BigDecimal.ROUND_DOWN));
         Date now  = new Date();
-        String endDay = DateUtil.endDay(now);
-        String startDay = DateUtil.getThisWeekMonDay(now);
+        String endDay = DateUtil.getThisWeekMonDay(now);
+        String startDay = DateUtil.getThisWeekSunDay();
         List<BetUser> betUsers = betUserMapper.findlastWeekAlreadyBetByUserId(startDay,endDay,userId);
 
         if(betUsers.size() == 0){
@@ -451,6 +451,14 @@ public class BetScenceServiceImpl implements BetScenceService {
             case 0:
                 /** 当猜单双时 */
                 BetOddEvenVo oddEvenVo = betUserMapper.countOddEven(scenceId,movieId);
+                if(null == oddEvenVo){
+                    oddEvenVo = new BetOddEvenVo();
+                    oddEvenVo.setOddCount(188);
+                    oddEvenVo.setEvenCount(199);
+                }else{
+                    oddEvenVo.setEvenCount(oddEvenVo.getEvenCount()+199);
+                    oddEvenVo.setOddCount(oddEvenVo.getOddCount()+188);
+                }
                 result.setBetCountVo(oddEvenVo);
                 break;
             case 1:
@@ -562,8 +570,8 @@ public class BetScenceServiceImpl implements BetScenceService {
         }
         result.setItems(recordVos);
         Date now  = new Date();
-        String endDay = DateUtil.endDay(now);
-        String startDay = DateUtil.startDay(now,7);
+        String endDay = DateUtil.getThisWeekMonDayEnd(now);
+        String startDay = DateUtil.getThisWeekMonDayBegin(now);
         BigDecimal continueReward = balanceStatementMapper.sumContinueReward(userId,startDay,endDay);
         result.setContinueBetReward(null != continueReward ? continueReward.setScale(0,BigDecimal.ROUND_DOWN):BigDecimal.ZERO);
         return new ResponseVo(ErrorCodeEnum.SUCCESS,result);
