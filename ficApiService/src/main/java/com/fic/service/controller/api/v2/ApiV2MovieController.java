@@ -4,7 +4,10 @@ import com.fic.service.Vo.MovieDetailInfoVo;
 import com.fic.service.Vo.MovieInfoVo;
 import com.fic.service.Vo.MovieVo;
 import com.fic.service.Vo.ResponseVo;
+import com.fic.service.entity.BalanceStatement;
+import com.fic.service.mapper.BalanceStatementMapper;
 import com.fic.service.service.MovieService;
+import com.fic.service.utils.DateUtil;
 import io.swagger.annotations.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,6 +17,12 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  *   @Author Xie
@@ -29,6 +38,8 @@ public class ApiV2MovieController {
 
     @Autowired
     MovieService movieService;
+    @Autowired
+    BalanceStatementMapper balanceStatementMapper;
 
     @GetMapping("/getMovies")
     @ApiOperation("Api-获取电影列表")
@@ -44,6 +55,49 @@ public class ApiV2MovieController {
         ResponseVo result = movieService.getMoviesV2(pageNum);
         return ResponseEntity.ok(result);
     }
+
+//    @GetMapping("/test")
+//    @ApiOperation("Api-test")
+//    public ResponseEntity test() {
+//        List<BalanceStatement> result = balanceStatementMapper.findAll();
+//        Map<String,List<BalanceStatement>> sorted  = new HashMap<>();
+//        for(BalanceStatement balanceStatement: result){
+//            if(sorted.containsKey(balanceStatement.getUserId())){
+//                sorted.get(balanceStatement.getUserId()+"").add(balanceStatement);
+//            }else{
+//                List<BalanceStatement> currentB = new ArrayList<BalanceStatement>();
+//                currentB.add(balanceStatement);
+//                sorted.put(balanceStatement.getUserId()+"",currentB);
+//            }
+//        }
+//
+//        for(Map.Entry<String,List<BalanceStatement>> map: sorted.entrySet()) {
+//            List<BalanceStatement> needSorted = map.getValue();
+//            for(BalanceStatement balanceStatement_1 : needSorted){
+//                for(BalanceStatement balanceStatement_2: needSorted){
+//                    if(balanceStatement_1.getId() != balanceStatement_2.getId()){
+//                        BalanceStatement temp = null;
+//                        if(balanceStatement_1.getCreatedTime().compareTo(balanceStatement_2.getCreatedTime()) > 0){
+//                            temp = balanceStatement_2;
+//                            balanceStatement_2 = balanceStatement_1;
+//                            balanceStatement_1 = temp;
+//                        }
+//                    }
+//                }
+//            }
+//            if(null!= needSorted.get(0).getAmount() && needSorted.get(0).getAmount().compareTo(new BigDecimal("1000"))<0){
+//                System.out.println("id: " +needSorted.get(0).getId()+"用户ID :"+needSorted.get(0).getUserId()+" amount :" + needSorted.get(0).getAmount()
+//                        +" type : "+ needSorted.get(0).getType() +" created_time : "+ DateUtil.dateToStrMatSec(needSorted.get(0).getCreatedTime())
+//                );
+//            }
+//
+//        }
+//
+//
+//
+//        return ResponseEntity.ok().build();
+//    }
+
 
     @GetMapping("/getMovieDetail")
     @ApiOperation("Api-获取电影详情")

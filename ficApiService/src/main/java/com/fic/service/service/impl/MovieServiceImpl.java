@@ -48,7 +48,8 @@ public class MovieServiceImpl implements MovieService {
     ActorInfoMapper actorInfoMapper;
     @Autowired
     MovieDetailInfoMapper movieDetailInfoMapper;
-
+    @Autowired
+    ExchangeRateMapper exchangeRateMapper;
 
     /**
      * App v1 首页电影列表
@@ -570,13 +571,17 @@ public class MovieServiceImpl implements MovieService {
             movie.setMovieDetailInfo(movieDetailInfo);
         }
 
-
         movie.setMovieCoverUrl(uploadProperties.getUrl(movie.getMovieCoverUrl()));
         BeanUtil.copy(detailInfoVo,movie);
         detailInfoVo.setInvestCount(investDetailMapper.countInvestPeople(movie.getMovieId()).size());
         BigDecimal totalAmount = investDetailMapper.sumTotalInvestByMovieId(movie.getMovieId());
         detailInfoVo.setInvestTotalAmount(null != totalAmount ? totalAmount : BigDecimal.ZERO);
 
+        ExchangeRate exchangeRate = exchangeRateMapper.findFicExchangeCny();
+        BigDecimal quotaResult = movie.getQuota().divide(exchangeRate.getRate()).setScale(0,BigDecimal.ROUND_DOWN);
+        detailInfoVo.setQuota(quotaResult);
+        BigDecimal totalAmountResult = totalAmount.divide(exchangeRate.getRate()).setScale(0,BigDecimal.ROUND_DOWN);
+        detailInfoVo.setInvestTotalAmount(totalAmountResult);
         return new ResponseVo(ErrorCodeEnum.SUCCESS,detailInfoVo);
     }
 

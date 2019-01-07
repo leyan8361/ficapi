@@ -30,4 +30,6 @@ public interface BalanceStatementMapper {
     List<BalanceStatement> findByCondition(String startDay,String endDay,TradeRecordRequestVo param,int offset);
 
     List<BalanceStatement> findAllSameAmountWithUserDis(BigDecimal amount,int userId,int distributionId,int balanceSelfId);
+
+    List<BalanceStatement> findAll();
 }
