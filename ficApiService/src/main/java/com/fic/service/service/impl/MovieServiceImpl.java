@@ -1,8 +1,6 @@
 package com.fic.service.service.impl;
 
 import com.fic.service.Enum.ErrorCodeEnum;
-import com.fic.service.Enum.MovieStatusEnum;
-import com.fic.service.Enum.ShelfStatusEnum;
 import com.fic.service.Vo.*;
 import com.fic.service.constants.Constants;
 import com.fic.service.constants.UploadProperties;
@@ -13,13 +11,7 @@ import com.fic.service.utils.BeanUtil;
 import com.fic.service.utils.DateUtil;
 import com.fic.service.utils.FileUtil;
 import com.fic.service.utils.RegexUtil;
-import com.google.gson.Gson;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonParser;
-import net.bytebuddy.asm.Advice;
 import org.apache.commons.lang3.StringUtils;
-import org.json.JSONArray;
-import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

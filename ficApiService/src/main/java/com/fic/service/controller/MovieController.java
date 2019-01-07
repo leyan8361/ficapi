@@ -1,15 +1,8 @@
 package com.fic.service.controller;
 
-import com.fic.service.Enum.ErrorCodeEnum;
-import com.fic.service.Vo.BannerInfoVo;
-import com.fic.service.Vo.MoiveAddInfoVo;
-import com.fic.service.Vo.MovieInfoVo;
 import com.fic.service.Vo.ResponseVo;
-import com.fic.service.entity.ActorInfo;
 import com.fic.service.entity.Movie;
-import com.fic.service.mapper.MovieMapper;
 import com.fic.service.service.MovieService;
-import com.fic.service.utils.DateUtil;
 import io.swagger.annotations.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,9 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.math.BigDecimal;
-import java.sql.Types;
 import java.util.Date;
-import java.util.List;
 
 @RestController
 @RequestMapping("/backend/movie")
