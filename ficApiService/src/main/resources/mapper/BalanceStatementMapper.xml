@@ -144,7 +144,4 @@
   <select id="sumContinueReward" resultType="java.math.BigDecimal">
     select sum(b.amount) from balance_statement b where b.created_time BETWEEN #{startDay} and #{endDay} and b.user_id = #{userId} and b.type = 9;
   </select>
-  <select id="sumContinueRewardByMonDay" resultType="java.math.BigDecimal">
-    select sum(b.amount) from balance_statement b where b.created_time BETWEEN #{startDay} and #{endDay} and b.user_id = #{userId} and b.type = 9;
-  </select>
 </mapper>

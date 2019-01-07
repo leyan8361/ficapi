@@ -326,8 +326,8 @@ public class BetScenceServiceImpl implements BetScenceService {
         /** 连续投注 ，奖池*/
         result.setTotalJasckpot(betScence.getTotalReservation().multiply(new BigDecimal("0.5")).setScale(0,BigDecimal.ROUND_DOWN));
         Date now  = new Date();
-        String endDay = DateUtil.endDay(now);
-        String startDay = DateUtil.getThisWeekMonDay(now);
+        String endDay = DateUtil.getLastWeekSunDay();
+        String startDay = DateUtil.getLastWeekMonDay();
         List<BetUser> betUsers = betUserMapper.findlastWeekAlreadyBetByUserId(startDay,endDay,userId);
 
         if(betUsers.size() == 0){
@@ -570,8 +570,8 @@ public class BetScenceServiceImpl implements BetScenceService {
         }
         result.setItems(recordVos);
         Date now  = new Date();
-        String endDay = DateUtil.endDay(now);
-        String startDay = DateUtil.startDay(now,7);
+        String endDay = DateUtil.getThisWeekMonDayEnd(now);
+        String startDay = DateUtil.getThisWeekMonDayBegin(now);
         BigDecimal continueReward = balanceStatementMapper.sumContinueReward(userId,startDay,endDay);
         result.setContinueBetReward(null != continueReward ? continueReward.setScale(0,BigDecimal.ROUND_DOWN):BigDecimal.ZERO);
         return new ResponseVo(ErrorCodeEnum.SUCCESS,result);
