@@ -326,8 +326,8 @@ public class BetScenceServiceImpl implements BetScenceService {
         /** 连续投注 ，奖池*/
         result.setTotalJasckpot(betScence.getTotalReservation().multiply(new BigDecimal("0.5")).setScale(0,BigDecimal.ROUND_DOWN));
         Date now  = new Date();
-        String endDay = DateUtil.getLastWeekSunDay();
-        String startDay = DateUtil.getLastWeekMonDay();
+        String endDay = DateUtil.getThisWeekMonDay(now);
+        String startDay = DateUtil.getThisWeekSunDay();
         List<BetUser> betUsers = betUserMapper.findlastWeekAlreadyBetByUserId(startDay,endDay,userId);
 
         if(betUsers.size() == 0){
