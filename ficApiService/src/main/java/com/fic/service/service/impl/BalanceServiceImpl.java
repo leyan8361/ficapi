@@ -233,6 +233,11 @@ public class BalanceServiceImpl implements BalanceService {
                     item.setDistributionType(TradeRecordDistributionEnum.INVEST_TWO.getCode());
                 }
 
+                if(balanceStatement.getType() == FinanceTypeEnum.REWARD.getCode() && investOne.compareTo(BigDecimal.ZERO) == 0){
+                    /** 无分销情况 的reward  只会是注册 */
+                    item.setDistributionType(TradeRecordDistributionEnum.REGISTER.getCode());
+                }
+
                 if(null == item.getDistributionType()){
                     log.error(" 查询交易明细 无对应分销记录, balance id :{}, distribution id :{}",balanceStatement.getId(),distribution.getId());
                     continue;

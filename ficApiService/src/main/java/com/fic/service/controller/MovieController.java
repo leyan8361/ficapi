@@ -90,7 +90,8 @@ public class MovieController {
             @ApiImplicitParam(dataType = "int", name = "movieLast", value = "影片时长", required = true,example = "120"),
             @ApiImplicitParam(dataType = "int", name = "status", value = "(0，已杀青)(1，待开机)(2,已分红)(3,待分红)", required = true,example = "1"),
             @ApiImplicitParam(dataType = "double", name = "sort", value = "排序，小的在前面", required = true,example = "0.1 or 1"),
-            @ApiImplicitParam(dataType = "double", name = "returnRate", value = "回报率(%)", required = true,example = "125")
+            @ApiImplicitParam(dataType = "double", name = "returnRate", value = "回报率(%)", required = true,example = "125"),
+            @ApiImplicitParam(dataType = "int", name = "investCount", value = "参投人数,数字", required = true),
     })
     @ApiResponses({
             @ApiResponse(code = 1018, message = "ERROR PIC TYPE (png|jpg|bmp|jpeg)"),
@@ -109,6 +110,7 @@ public class MovieController {
                               @RequestParam(name = "movieLast",defaultValue = "影片时长") Integer movieLast,
                               @RequestParam(name = "status",defaultValue = "(0，已杀青)(1，待开机)(2,已分红)(3,待分红)") int status,
                               @RequestParam(name = "sort",defaultValue = "排序，小的在前面") BigDecimal sort,
+                              @RequestParam(name = "investCount",defaultValue = "参投人数") Integer investCount,
                               @RequestParam(name = "movieCoverFile",defaultValue = "电影封面") MultipartFile movieCoverFile
                               ) {
         log.debug(" movie add Action !!!");
@@ -135,6 +137,7 @@ public class MovieController {
         movie.setSort(sort);
         movie.setReturnRate(returnRate);
         movie.setStatus(status);
+        movie.setInvestCount(investCount);
         movie.setCreatedTime(new Date());
         movie.setUpdatedTime(new Date());
         ResponseVo responseVo = movieService.add(movie,movieCoverFile);
@@ -157,7 +160,8 @@ public class MovieController {
             @ApiImplicitParam(dataType = "int", name = "movieLast", value = "影片时长"),
             @ApiImplicitParam(dataType = "int", name = "status", value = "(0，已杀青)(1，待开机)(2,已分红)(3,待分红)"),
             @ApiImplicitParam(dataType = "double", name = "sort", value = "排序，小的在前面", example = "0.1 or 1"),
-            @ApiImplicitParam(dataType = "double", name = "returnRate", value = "回报率(%)")
+            @ApiImplicitParam(dataType = "double", name = "returnRate", value = "回报率(%)"),
+            @ApiImplicitParam(dataType = "int", name = "investCount", value = "参投人数,数字")
     })
     @ApiResponses({
             @ApiResponse(code = 1018, message = "ERROR PIC TYPE (png|jpg|bmp|jpeg)"),
@@ -177,6 +181,7 @@ public class MovieController {
                                  @RequestParam(required = false) Integer movieLast,
                                  @RequestParam(required = false) Integer status,
                                  @RequestParam(required = false) BigDecimal sort,
+                                 @RequestParam(required = false) Integer investCount,
                                  @ApiParam MultipartFile movieCoverFile){
         log.debug(" movie update Action !!!");
         Movie movie = new Movie();
@@ -201,6 +206,7 @@ public class MovieController {
         if(null != movieLast && 0!=movieLast){
             movie.setMovieLast(movieLast);
         }
+        movie.setInvestCount(investCount);
         movie.setSort(sort);
         movie.setReturnRate(returnRate);
         movie.setStatus(status);
