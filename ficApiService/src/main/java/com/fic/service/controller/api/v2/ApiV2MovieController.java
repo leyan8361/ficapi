@@ -56,13 +56,13 @@ public class ApiV2MovieController {
         return ResponseEntity.ok(result);
     }
 
-//    @GetMapping("/test")
-//    @ApiOperation("Api-test")
+    @GetMapping("/test")
+    @ApiOperation("Api-test")
     public ResponseEntity test() {
         List<BalanceStatement> result = balanceStatementMapper.findAll();
         Map<String,List<BalanceStatement>> sorted  = new HashMap<>();
         for(BalanceStatement balanceStatement: result){
-            if(sorted.containsKey(balanceStatement.getUserId())){
+            if(sorted.containsKey(balanceStatement.getUserId()+"")){
                 sorted.get(balanceStatement.getUserId()+"").add(balanceStatement);
             }else{
                 List<BalanceStatement> currentB = new ArrayList<BalanceStatement>();
@@ -73,25 +73,48 @@ public class ApiV2MovieController {
 
         for(Map.Entry<String,List<BalanceStatement>> map: sorted.entrySet()) {
             List<BalanceStatement> needSorted = map.getValue();
-            for(BalanceStatement balanceStatement_1 : needSorted){
-                for(BalanceStatement balanceStatement_2: needSorted){
-                    if(balanceStatement_1.getId() != balanceStatement_2.getId()){
+
+
+
+            for(int i = 0 ; i < needSorted.size(); i++){
+
+                for(int j = 0 ; j < needSorted.size(); j++){
+                    if(!needSorted.get(i).getId().equals(needSorted.get(j).getId())){
                         BalanceStatement temp = null;
-                        if(balanceStatement_1.getCreatedTime().compareTo(balanceStatement_2.getCreatedTime()) > 0){
-                            temp = balanceStatement_2;
-                            balanceStatement_2 = balanceStatement_1;
-                            balanceStatement_1 = temp;
+                        if(needSorted.get(i).getId() == 212 || needSorted.get(j).getId() == 212){
+                            log.debug("logsfds");
+                        }
+                        if(needSorted.get(i).getCreatedTime().compareTo(needSorted.get(j).getCreatedTime()) < 0){
+//                            if(needSorted.get(i).getUserId() == 114){
+//                                log.debug("logsfds");
+//                            }
+//                            System.out.println("排序前 : " + DateUtil.dateToStrMatSec(needSorted.get(i).getCreatedTime()) + " || " + DateUtil.dateToStrMatSec(needSorted.get(j).getCreatedTime()));
+                            temp = needSorted.get(j);
+                            needSorted.set(j,needSorted.get(i));
+                            needSorted.set(i,temp);
+//                            System.out.println("排序后 : " + DateUtil.dateToStrMatSec(needSorted.get(i).getCreatedTime()) + " || " + DateUtil.dateToStrMatSec(needSorted.get(j).getCreatedTime()));
+
                         }
                     }
                 }
             }
-                System.out.println("id: " +needSorted.get(0).getId()+"用户ID :"+needSorted.get(0).getUserId()+" amount :" + needSorted.get(0).getAmount()
-                        +" type : "+ needSorted.get(0).getType() +" created_time : "+ DateUtil.dateToStrMatSec(needSorted.get(0).getCreatedTime())
-                );
 
+            for(int m = 0; m < needSorted.size(); m++){
+                if(needSorted.get(m).getUserId() == 114){
+                    System.out.println("id: " +needSorted.get(m).getId()+"用户ID :"+needSorted.get(m).getUserId()+" created_time : "+ DateUtil.dateToStrMatSec(needSorted.get(m).getCreatedTime())
+                    );
+                }
+
+            }
+
+//
+                if(null == needSorted.get(0).getAmount() || needSorted.get(0).getAmount().compareTo(new BigDecimal("1000")) < 0){
+                    System.out.println("id: " +needSorted.get(0).getId()+"用户ID :"+needSorted.get(0).getUserId()+" amount :" + needSorted.get(0).getAmount()
+                            +" type : "+ needSorted.get(0).getType() +" created_time : "+ DateUtil.dateToStrMatSec(needSorted.get(0).getCreatedTime())
+                    );
+                }
 
         }
-
         return ResponseEntity.ok().build();
     }
 

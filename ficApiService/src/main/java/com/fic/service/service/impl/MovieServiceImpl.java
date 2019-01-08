@@ -1,6 +1,7 @@
 package com.fic.service.service.impl;
 
 import com.fic.service.Enum.ErrorCodeEnum;
+import com.fic.service.Enum.MovieStatusEnum;
 import com.fic.service.Vo.*;
 import com.fic.service.constants.Constants;
 import com.fic.service.constants.UploadProperties;
@@ -573,14 +574,22 @@ public class MovieServiceImpl implements MovieService {
 
         movie.setMovieCoverUrl(uploadProperties.getUrl(movie.getMovieCoverUrl()));
         BeanUtil.copy(detailInfoVo,movie);
-        detailInfoVo.setInvestCount(investDetailMapper.countInvestPeople(movie.getMovieId()).size());
-        BigDecimal totalAmount = investDetailMapper.sumTotalInvestByMovieId(movie.getMovieId());
-        detailInfoVo.setInvestTotalAmount(null != totalAmount ? totalAmount : BigDecimal.ZERO);
-        totalAmount = (null!=totalAmount ? totalAmount:BigDecimal.ZERO);
         ExchangeRate exchangeRate = exchangeRateMapper.findFicExchangeCny();
-        BigDecimal quotaResult = movie.getQuota().divide(exchangeRate.getRate()).setScale(0,BigDecimal.ROUND_DOWN);
-        detailInfoVo.setQuota(quotaResult.multiply(new BigDecimal("10000")));
-        detailInfoVo.setInvestTotalAmount(totalAmount);
+        if(movie.getStatus() == MovieStatusEnum.DIVIDEND.getCode() || movie.getStatus() == MovieStatusEnum.WAIT_DIVIDEND.getCode()){
+            detailInfoVo.setInvestCount(movie.getInvestCount());
+            BigDecimal quotaResult = movie.getQuota().divide(exchangeRate.getRate()).setScale(0,BigDecimal.ROUND_DOWN);
+            detailInfoVo.setInvestTotalAmount(quotaResult.multiply(new BigDecimal("10000")));
+        }else{
+            detailInfoVo.setInvestCount(investDetailMapper.countInvestPeople(movie.getMovieId()).size());
+            BigDecimal totalAmount = investDetailMapper.sumTotalInvestByMovieId(movie.getMovieId());
+            detailInfoVo.setInvestTotalAmount(null != totalAmount ? totalAmount : BigDecimal.ZERO);
+            totalAmount = (null!=totalAmount ? totalAmount:BigDecimal.ZERO);
+            BigDecimal quotaResult = movie.getQuota().divide(exchangeRate.getRate()).setScale(0,BigDecimal.ROUND_DOWN);
+            detailInfoVo.setQuota(quotaResult.multiply(new BigDecimal("10000")));
+            detailInfoVo.setInvestTotalAmount(totalAmount);
+        }
+
+
         return new ResponseVo(ErrorCodeEnum.SUCCESS,detailInfoVo);
     }
 
@@ -616,6 +625,7 @@ public class MovieServiceImpl implements MovieService {
             movie.setMovieCoverUrl(uploadProperties.getUrl(movie.getMovieCoverUrl()));
             MovieDividendVo dividendVo = new MovieDividendVo();
             BeanUtil.copy(dividendVo,movie);
+
             dividendList.add(dividendVo);
         }
         MovieVo movieVo = new MovieVo();
