@@ -161,7 +161,7 @@
     order by b.created_time desc limit #{offset},10;
   </select>
   <select id="findAllSameAmountWithUserDis" resultMap="BaseResultMap">
-    select b.* from balance_statement b where b.amount = #{amount} and b.user_id = #{userId} and b.distribution_id = #{distributionId} and b.id != #{balanceSelfId};
+    select b.* from balance_statement b where b.amount = #{amount} and b.user_id = #{userId} and b.distribution_id = #{distributionId} and b.id != #{balanceSelfId} order by b.created_time asc;
   </select>
   <select id="findAll" resultMap="BaseResultMap">
     select * from balance_statement;
