@@ -576,12 +576,11 @@ public class MovieServiceImpl implements MovieService {
         detailInfoVo.setInvestCount(investDetailMapper.countInvestPeople(movie.getMovieId()).size());
         BigDecimal totalAmount = investDetailMapper.sumTotalInvestByMovieId(movie.getMovieId());
         detailInfoVo.setInvestTotalAmount(null != totalAmount ? totalAmount : BigDecimal.ZERO);
-
+        totalAmount = (null!=totalAmount ? totalAmount:BigDecimal.ZERO);
         ExchangeRate exchangeRate = exchangeRateMapper.findFicExchangeCny();
         BigDecimal quotaResult = movie.getQuota().divide(exchangeRate.getRate()).setScale(0,BigDecimal.ROUND_DOWN);
         detailInfoVo.setQuota(quotaResult.multiply(new BigDecimal("10000")));
-        BigDecimal totalAmountResult = totalAmount.divide(exchangeRate.getRate()).setScale(0,BigDecimal.ROUND_DOWN);
-        detailInfoVo.setInvestTotalAmount(totalAmountResult.multiply(new BigDecimal("10000")));
+        detailInfoVo.setInvestTotalAmount(totalAmount);
         return new ResponseVo(ErrorCodeEnum.SUCCESS,detailInfoVo);
     }
 

@@ -58,45 +58,42 @@ public class ApiV2MovieController {
 
 //    @GetMapping("/test")
 //    @ApiOperation("Api-test")
-//    public ResponseEntity test() {
-//        List<BalanceStatement> result = balanceStatementMapper.findAll();
-//        Map<String,List<BalanceStatement>> sorted  = new HashMap<>();
-//        for(BalanceStatement balanceStatement: result){
-//            if(sorted.containsKey(balanceStatement.getUserId())){
-//                sorted.get(balanceStatement.getUserId()+"").add(balanceStatement);
-//            }else{
-//                List<BalanceStatement> currentB = new ArrayList<BalanceStatement>();
-//                currentB.add(balanceStatement);
-//                sorted.put(balanceStatement.getUserId()+"",currentB);
-//            }
-//        }
-//
-//        for(Map.Entry<String,List<BalanceStatement>> map: sorted.entrySet()) {
-//            List<BalanceStatement> needSorted = map.getValue();
-//            for(BalanceStatement balanceStatement_1 : needSorted){
-//                for(BalanceStatement balanceStatement_2: needSorted){
-//                    if(balanceStatement_1.getId() != balanceStatement_2.getId()){
-//                        BalanceStatement temp = null;
-//                        if(balanceStatement_1.getCreatedTime().compareTo(balanceStatement_2.getCreatedTime()) > 0){
-//                            temp = balanceStatement_2;
-//                            balanceStatement_2 = balanceStatement_1;
-//                            balanceStatement_1 = temp;
-//                        }
-//                    }
-//                }
-//            }
-//            if(null!= needSorted.get(0).getAmount() && needSorted.get(0).getAmount().compareTo(new BigDecimal("1000"))<0){
-//                System.out.println("id: " +needSorted.get(0).getId()+"用户ID :"+needSorted.get(0).getUserId()+" amount :" + needSorted.get(0).getAmount()
-//                        +" type : "+ needSorted.get(0).getType() +" created_time : "+ DateUtil.dateToStrMatSec(needSorted.get(0).getCreatedTime())
-//                );
-//            }
-//
-//        }
-//
-//
-//
-//        return ResponseEntity.ok().build();
-//    }
+    public ResponseEntity test() {
+        List<BalanceStatement> result = balanceStatementMapper.findAll();
+        Map<String,List<BalanceStatement>> sorted  = new HashMap<>();
+        for(BalanceStatement balanceStatement: result){
+            if(sorted.containsKey(balanceStatement.getUserId())){
+                sorted.get(balanceStatement.getUserId()+"").add(balanceStatement);
+            }else{
+                List<BalanceStatement> currentB = new ArrayList<BalanceStatement>();
+                currentB.add(balanceStatement);
+                sorted.put(balanceStatement.getUserId()+"",currentB);
+            }
+        }
+
+        for(Map.Entry<String,List<BalanceStatement>> map: sorted.entrySet()) {
+            List<BalanceStatement> needSorted = map.getValue();
+            for(BalanceStatement balanceStatement_1 : needSorted){
+                for(BalanceStatement balanceStatement_2: needSorted){
+                    if(balanceStatement_1.getId() != balanceStatement_2.getId()){
+                        BalanceStatement temp = null;
+                        if(balanceStatement_1.getCreatedTime().compareTo(balanceStatement_2.getCreatedTime()) > 0){
+                            temp = balanceStatement_2;
+                            balanceStatement_2 = balanceStatement_1;
+                            balanceStatement_1 = temp;
+                        }
+                    }
+                }
+            }
+                System.out.println("id: " +needSorted.get(0).getId()+"用户ID :"+needSorted.get(0).getUserId()+" amount :" + needSorted.get(0).getAmount()
+                        +" type : "+ needSorted.get(0).getType() +" created_time : "+ DateUtil.dateToStrMatSec(needSorted.get(0).getCreatedTime())
+                );
+
+
+        }
+
+        return ResponseEntity.ok().build();
+    }
 
 
     @GetMapping("/getMovieDetail")
