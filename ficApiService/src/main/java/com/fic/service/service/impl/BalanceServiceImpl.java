@@ -180,10 +180,10 @@ public class BalanceServiceImpl implements BalanceService {
             /** 分销奖励 */
             if(balanceStatement.getType() == FinanceTypeEnum.REWARD.getCode()){
                 Distribution distribution = distributionMapper.selectByPrimaryKey(balanceStatement.getDistributionId());
-                if(null == distribution) {
-                    log.error(" 查询交易明细失败，分销奖励结果为空 distribution id :{}", balanceStatement.getDistributionId());
-                    continue;
-                }
+//                if(null == distribution && balanceStatement.getAmount().compareTo(new BigDecimal("1000"))) {
+//                    log.error(" 查询交易明细失败，分销奖励结果为空 distribution id :{}", balanceStatement.getDistributionId());
+//                    continue;
+//                }
 
                 if(amount.compareTo(reward.getInviteRewardFirst()) == 0){
                     /** 300 判断是一级注册 or 二级投资 时间前的是注册*/
