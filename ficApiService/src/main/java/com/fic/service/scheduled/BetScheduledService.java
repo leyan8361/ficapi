@@ -308,6 +308,7 @@ public class BetScheduledService {
                     }
                     totalFee = totalFee.add(currentRe);
                 }
+                BigDecimal resultReward = BigDecimal.ZERO;
                 if(totalFee.compareTo(BigDecimal.ZERO) >=0){
                     if(oddsReward.compareTo(totalFee) > 0){
                         betUser.setReserveFee(currentRe);
@@ -316,9 +317,12 @@ public class BetScheduledService {
                         totalReFee = totalReFee.add(currentRe);
                         betScence.setTotalJasckpot(totalJaFee);
                         betScence.setTotalReservation(totalReFee);
+                        resultReward = betAmount.add(oddsReward).subtract(currentJa).subtract(currentRe);
+                    }else{
+                        resultReward = betAmount.add(oddsReward);
                     }
                 }
-                BigDecimal resultReward = betAmount.add(oddsReward).subtract(currentJa).subtract(currentRe);
+
                 betUser.setBingoPrice(resultReward);
                 betUser.setBingo(BingoStatusEnum.BINGO.getCode().byteValue());
 
