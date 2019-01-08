@@ -58,7 +58,7 @@ public class ApiVersionController {
             return ResponseEntity.ok(new ResponseVo(ErrorCodeEnum.SUCCESS,versionInfoVo));
         }
         versionInfoVo.setLastedVersionDownloadUrl(uploadProperties.getUrl(appVersion.getDownloadUrl()));
-        if(appVersion.getDeviceType() == 1){
+        if(appVersion.getDeviceType() == 1 || appVersion.getDeviceType() == 0){
             versionInfoVo.setLastedVersionDownloadUrl("https://www.pgyer.com/taoying");
         }
         versionInfoVo.setLastedVersion(appVersion.getVersion());
