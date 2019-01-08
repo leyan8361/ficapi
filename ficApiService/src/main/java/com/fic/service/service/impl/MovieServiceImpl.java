@@ -2,7 +2,6 @@ package com.fic.service.service.impl;
 
 import com.fic.service.Enum.ErrorCodeEnum;
 import com.fic.service.Enum.MovieStatusEnum;
-import com.fic.service.Enum.ShelfStatusEnum;
 import com.fic.service.Vo.*;
 import com.fic.service.constants.Constants;
 import com.fic.service.constants.UploadProperties;
@@ -13,13 +12,7 @@ import com.fic.service.utils.BeanUtil;
 import com.fic.service.utils.DateUtil;
 import com.fic.service.utils.FileUtil;
 import com.fic.service.utils.RegexUtil;
-import com.google.gson.Gson;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonParser;
-import net.bytebuddy.asm.Advice;
 import org.apache.commons.lang3.StringUtils;
-import org.json.JSONArray;
-import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,7 +49,8 @@ public class MovieServiceImpl implements MovieService {
     ActorInfoMapper actorInfoMapper;
     @Autowired
     MovieDetailInfoMapper movieDetailInfoMapper;
-
+    @Autowired
+    ExchangeRateMapper exchangeRateMapper;
 
     /**
      * App v1 首页电影列表
@@ -192,6 +186,24 @@ public class MovieServiceImpl implements MovieService {
         List<Movie> movieList = movieMapper.findAll();
         for(Movie movie:movieList){
             movie.setMovieCoverUrl(uploadProperties.getUrl(movie.getMovieCoverUrl()));
+            List<ActorInfo> actorInfos = actorInfoMapper.findAllByMovieId(movie.getMovieId());
+            if(actorInfos.size() >0){
+                for(ActorInfo actorInfo : actorInfos){
+                    actorInfo.setRoleCoverUrl(uploadProperties.getUrl(actorInfo.getRoleCoverUrl()));
+                }
+                movie.setActorArray(actorInfos);
+            }
+
+            MovieDetailInfo movieDetailInfo = movieDetailInfoMapper.findByMovieId(movie.getMovieId());
+            if(null != movieDetailInfo){
+                if(StringUtils.isNotEmpty(movieDetailInfo.getBriefUrl())){
+                    movieDetailInfo.setBriefUrl(uploadProperties.getUrl(movieDetailInfo.getBriefUrl()));
+                }
+                if(StringUtils.isNotEmpty(movieDetailInfo.getPlotSummaryUrl())){
+                    movieDetailInfo.setPlotSummaryUrl(uploadProperties.getUrl(movieDetailInfo.getPlotSummaryUrl()));
+                }
+                movie.setMovieDetailInfo(movieDetailInfo);
+            }
         }
         return new ResponseVo(ErrorCodeEnum.SUCCESS,movieList);
     }
@@ -417,7 +429,7 @@ public class MovieServiceImpl implements MovieService {
             throw new RuntimeException();
         }
 
-        int updateBriefCoverResult = movieDetailInfoMapper.updateBriefCoverUrl(movieId,briefNewPath);
+        int updateBriefCoverResult = movieDetailInfoMapper.updateBriefCoverUrl(movieDetailInfo.getId(),briefNewPath);
         if(updateBriefCoverResult <=0){
             log.error("update movie detail info briefcover url failed. movie detail info id :{}",movieDetailInfo.getId());
             throw new RuntimeException();
@@ -438,7 +450,7 @@ public class MovieServiceImpl implements MovieService {
             log.error(" save movie detail info plotSummaryCoverFile  失败 保存文件");
             throw new RuntimeException();
         }
-        int updatePlotCoverResult = movieDetailInfoMapper.updatePlotCoverUrl(movieId,plotNewPath);
+        int updatePlotCoverResult = movieDetailInfoMapper.updatePlotCoverUrl(movieDetailInfo.getId(),plotNewPath);
         if(updatePlotCoverResult <=0){
             log.error("update movie detail info plotSummaryCover url failed. movie detail info id :{}",movieDetailInfo.getId());
             throw new RuntimeException();
@@ -560,12 +572,23 @@ public class MovieServiceImpl implements MovieService {
             movie.setMovieDetailInfo(movieDetailInfo);
         }
 
-
         movie.setMovieCoverUrl(uploadProperties.getUrl(movie.getMovieCoverUrl()));
         BeanUtil.copy(detailInfoVo,movie);
-        detailInfoVo.setInvestCount(investDetailMapper.countInvestPeople(movie.getMovieId()).size());
-        BigDecimal totalAmount = investDetailMapper.sumTotalInvestByMovieId(movie.getMovieId());
-        detailInfoVo.setInvestTotalAmount(null != totalAmount ? totalAmount : BigDecimal.ZERO);
+        ExchangeRate exchangeRate = exchangeRateMapper.findFicExchangeCny();
+        if(movie.getStatus() == MovieStatusEnum.DIVIDEND.getCode() || movie.getStatus() == MovieStatusEnum.WAIT_DIVIDEND.getCode()){
+            detailInfoVo.setInvestCount(movie.getInvestCount());
+            BigDecimal quotaResult = movie.getQuota().divide(exchangeRate.getRate()).setScale(0,BigDecimal.ROUND_DOWN);
+            detailInfoVo.setInvestTotalAmount(quotaResult.multiply(new BigDecimal("10000")));
+        }else{
+            detailInfoVo.setInvestCount(investDetailMapper.countInvestPeople(movie.getMovieId()).size());
+            BigDecimal totalAmount = investDetailMapper.sumTotalInvestByMovieId(movie.getMovieId());
+            detailInfoVo.setInvestTotalAmount(null != totalAmount ? totalAmount : BigDecimal.ZERO);
+            totalAmount = (null!=totalAmount ? totalAmount:BigDecimal.ZERO);
+            BigDecimal quotaResult = movie.getQuota().divide(exchangeRate.getRate()).setScale(0,BigDecimal.ROUND_DOWN);
+            detailInfoVo.setQuota(quotaResult.multiply(new BigDecimal("10000")));
+            detailInfoVo.setInvestTotalAmount(totalAmount);
+        }
+
 
         return new ResponseVo(ErrorCodeEnum.SUCCESS,detailInfoVo);
     }
@@ -584,11 +607,6 @@ public class MovieServiceImpl implements MovieService {
         if(movieList.size() <=0 )return new ResponseVo(ErrorCodeEnum.MOVIE_NOT_FOUND,new MovieVo());
         for(Movie movie: movieList){
             movie.setMovieCoverUrl(uploadProperties.getUrl(movie.getMovieCoverUrl()));
-            if(movie.getStatus().equals(MovieStatusEnum.WAIT_DIVIDEND.getCode()) || movie.getStatus().equals(MovieStatusEnum.DIVIDEND.getCode())){
-                MovieDividendVo dividendVo = new MovieDividendVo();
-                BeanUtil.copy(dividendVo,movie);
-                dividendList.add(dividendVo);
-            }else{
                 MovieInvestVo investVo = new MovieInvestVo();
                 BeanUtil.copy(investVo,movie);
                 if(StringUtils.isNotEmpty(movie.getDutyDescription())){
@@ -600,11 +618,53 @@ public class MovieServiceImpl implements MovieService {
                 BigDecimal totalAmount = investDetailMapper.sumTotalInvestByMovieId(movie.getMovieId());
                 investVo.setInvestTotalAmount(null != totalAmount ? totalAmount : BigDecimal.ZERO);
                 resultList.add(investVo);
-            }
+        }
+
+        List<Movie> dividendFindResult = movieMapper.findAllByPageDividend(offset);
+        for(Movie movie: dividendFindResult){
+            movie.setMovieCoverUrl(uploadProperties.getUrl(movie.getMovieCoverUrl()));
+            MovieDividendVo dividendVo = new MovieDividendVo();
+            BeanUtil.copy(dividendVo,movie);
+
+            dividendList.add(dividendVo);
         }
         MovieVo movieVo = new MovieVo();
         movieVo.setDividendList(dividendList);
         movieVo.setInvestList(resultList);
         return new ResponseVo(ErrorCodeEnum.SUCCESS,movieVo);
+    }
+
+    @Override
+    @Transactional(isolation= Isolation.READ_COMMITTED,propagation= Propagation.REQUIRED,rollbackFor = Exception.class)
+    public ResponseVo deleteActorInfo(int actorId) {
+        int result = actorInfoMapper.deleteByPrimaryKey(actorId);
+        if(result <=0){
+            log.error(" 删除 演员失败 ,id:{}",actorId);
+            throw new RuntimeException();
+        }
+        return new ResponseVo(ErrorCodeEnum.SUCCESS,null);
+    }
+
+    @Override
+    @Transactional(isolation= Isolation.READ_COMMITTED,propagation= Propagation.REQUIRED,rollbackFor = Exception.class)
+    public ResponseVo deleteBrief(int briefId) {
+        int result = movieDetailInfoMapper.deleteByPrimaryKey(briefId);
+        if(result <=0){
+            log.error(" 删除 项目简介失败 ,id:{}",briefId);
+            throw new RuntimeException();
+        }
+        return new ResponseVo(ErrorCodeEnum.SUCCESS,null);
+    }
+
+    @Override
+    public ResponseVo getAllActorInfoByMovie(int movieId) {
+        List<ActorInfo> result = actorInfoMapper.findAllByMovieId(movieId);
+        return new ResponseVo(ErrorCodeEnum.SUCCESS,result);
+    }
+
+    @Override
+    public ResponseVo getAllMovieDetailInfoByMovie(int movieId) {
+        MovieDetailInfo resulList = movieDetailInfoMapper.findByMovieId(movieId);
+        return new ResponseVo(ErrorCodeEnum.SUCCESS,resulList);
     }
 }

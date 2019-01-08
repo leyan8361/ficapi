@@ -19,6 +19,8 @@ public class InvestRecordItemInfoVo {
     private String movieName;
     @ApiModelProperty(value = "投资金额")
     private BigDecimal amount;
+    @ApiModelProperty(value = "(0，已杀青)(1，待开机)(2,已分红)(3,待分红)")
+    private int status;
     @ApiModelProperty(value = "投资时间")
     private String inTime;
     @ApiModelProperty(value = "流水号")
@@ -62,5 +64,13 @@ public class InvestRecordItemInfoVo {
 
     public void setCode(String code) {
         this.code = code;
+    }
+
+    public int getStatus() {
+        return status;
+    }
+
+    public void setStatus(int status) {
+        this.status = status;
     }
 }

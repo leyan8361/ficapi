@@ -635,6 +635,18 @@ public class BetScheduledService {
         for (BetContinueBetUserVo betCount : countUserBetContinue) {
             int userId = betCount.getUserId();
             List<BetUser> countBetTimeUser = betUserMapper.findlastWeekAlreadyBetByUserId(startDay, endDay, betCount.getUserId());
+
+            /** 去除同一天的 */
+            Map<String,BetUser> needToContinue = new HashMap<String,BetUser>();
+            List<BetUser> stored = new ArrayList<BetUser>();
+            for(BetUser betUser: countBetTimeUser){
+                int day = DateUtil.getDayOfMonth(betUser.getCreatedTime());
+                if(!needToContinue.containsKey(day+"")){
+                    needToContinue.put(day+"",betUser);
+                    stored.add(betUser);
+                }
+            }
+            countBetTimeUser = stored;
             if(countBetTimeUser.size() == 0)continue;
             /*** 统计 五次以上 连续竞猜
              *  假设 下注100 次，取2,3,4,5；隔1
@@ -645,6 +657,9 @@ public class BetScheduledService {
              */
             int betSize = countBetTimeUser.size();
             for(int i = 0 ; i < countBetTimeUser.size(); i++){
+                if(countBetTimeUser.get(i).getUserId() == 253){
+                    log.debug("");
+                }
                 if(i+1 < betSize){
                     if(DateUtil.getSubstractDay(countBetTimeUser.get(i+1).getCreatedTime(),countBetTimeUser.get(i).getCreatedTime()) == 1){
                         /** 连续两次往下 */
@@ -815,7 +830,6 @@ public class BetScheduledService {
 
         /** 清空奖池 */
         if(rewardMap.get(Constants.TWO_T).size() > 0 || rewardMap.get(Constants.THREE_T).size() > 0 || rewardMap.get(Constants.FOUR_T).size() >  0 || rewardMap.get(Constants.FIVE_T).size() > 0){
-
             int updateBetScenceResult = betScenceMapper.updateReservePool(totalRwardAmount.add(totalRwardAmount.subtract(realRewardAmount)),betScences.get(0).getId());
             if(updateBetScenceResult <=0){
                 log.error(" 更新 奖池失败 ");

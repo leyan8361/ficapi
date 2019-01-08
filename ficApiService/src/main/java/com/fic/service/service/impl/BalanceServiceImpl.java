@@ -43,6 +43,8 @@ public class BalanceServiceImpl implements BalanceService {
     AdminLogService adminLogService;
     @Autowired
     BetUserMapper betUserMapper;
+    @Autowired
+    RewardMapper rewardMapper;
 
     @Override
     public TradeRecordInfoVo getTradeRecord(Integer userId) {
@@ -171,6 +173,7 @@ public class BalanceServiceImpl implements BalanceService {
         StringBuilder betReturningIds = new StringBuilder();
         betBingoIds.append("0");
         betReturningIds.append("0");
+        Reward reward = rewardMapper.selectRulesByCurrentUserCount();
         for(BalanceStatement balanceStatement: findResult){
             BigDecimal amount = balanceStatement.getAmount();
             TradeRecordV2Vo item = new TradeRecordV2Vo();
@@ -181,12 +184,8 @@ public class BalanceServiceImpl implements BalanceService {
                     log.error(" 查询交易明细失败，分销奖励结果为空 distribution id :{}", balanceStatement.getDistributionId());
                     continue;
                 }
-                BigDecimal inviteOne = null!=distribution.getInviteRewardOne()?distribution.getInviteRewardOne():BigDecimal.ZERO;//300
-                BigDecimal inviteTwo = null!=distribution.getInviteRewardTwo()?distribution.getInviteRewardTwo():BigDecimal.ZERO;//100
-                BigDecimal investOne = null!=distribution.getInvestRewardOne()?distribution.getInvestRewardOne():BigDecimal.ZERO;//1000
-                BigDecimal investTwo = null!=distribution.getInvestRewardTwo()?distribution.getInvestRewardTwo():BigDecimal.ZERO;//300
 
-                if(amount.compareTo(inviteOne) == 0){
+                if(amount.compareTo(reward.getInviteRewardFirst()) == 0){
                     /** 300 判断是一级注册 or 二级投资 时间前的是注册*/
                     List<BalanceStatement> repeatReward = balanceStatementMapper.findAllSameAmountWithUserDis(amount,balanceStatement.getUserId(),distribution.getId(),balanceStatement.getId());
                     if(repeatReward.size() != 0){
@@ -207,30 +206,38 @@ public class BalanceServiceImpl implements BalanceService {
                     }
                     item.setCreatedTime(balanceStatement.getCreatedTime());
                 }
-                if(amount.compareTo(investOne) == 0){
+                if(amount.compareTo(reward.getInvestRewardFirst()) == 0){
                     /** 1000 判断是自己注册 or 一级投资 时间前的是注册*/
-                    List<BalanceStatement> repeatReward = balanceStatementMapper.findAllSameAmountWithUserDis(amount,balanceStatement.getUserId(),distribution.getId(),balanceStatement.getId());
-                    if(repeatReward.size() != 0){
-                        for(BalanceStatement repeatAmountBalance : repeatReward){
-                            if(balanceStatement.getCreatedTime().compareTo(repeatAmountBalance.getCreatedTime()) < 0){
-                                /**自己注册*/
-                                item.setDistributionType(TradeRecordDistributionEnum.REGISTER.getCode());
-                                break;
-                            }else{
-                                /**一级投资*/
-                                item.setDistributionType(TradeRecordDistributionEnum.INVEST_ONE.getCode());
-                                break;
-                            }
-                        }
-                    }else{
-                        /** 只有一条 1000 必定是自己注册*/
+                    if(null == balanceStatement.getInvestDetailId()){
+                        /** 没有投资ID，一定是注册*/
                         item.setDistributionType(TradeRecordDistributionEnum.REGISTER.getCode());
+                    }else{
+                        /**一级投资*/
+                        item.setDistributionType(TradeRecordDistributionEnum.INVEST_ONE.getCode());
                     }
+//                    List<BalanceStatement> repeatReward = balanceStatementMapper.findAllSameAmountWithUserDis(amount,balanceStatement.getUserId(),distribution.getId(),balanceStatement.getId());
+//                    if(repeatReward.size() != 0){
+//                        for(BalanceStatement repeatAmountBalance : repeatReward){
+//                            if(balanceStatement.getCreatedTime().compareTo(repeatAmountBalance.getCreatedTime()) < 0){
+//                                /**自己注册*/
+//                                item.setDistributionType(TradeRecordDistributionEnum.REGISTER.getCode());
+//                                break;
+//                            }else{
+//                                /**一级投资*/
+//                                item.setDistributionType(TradeRecordDistributionEnum.INVEST_ONE.getCode());
+//                                break;
+//                            }
+//                        }
+//                    }else{
+//                        /** 只有一条 1000 必定是自己注册*/
+//                        item.setDistributionType(TradeRecordDistributionEnum.REGISTER.getCode());
+//                    }
                     item.setCreatedTime(balanceStatement.getCreatedTime());
                 }
 
-                if(amount.compareTo(inviteTwo) == 0){
-                    item.setDistributionType(TradeRecordDistributionEnum.INVEST_TWO.getCode());
+                /** 100 */
+                if(amount.compareTo(reward.getInviteRewardSecond()) == 0){
+                    item.setDistributionType(TradeRecordDistributionEnum.INVITE_TWO.getCode());
                 }
 
                 if(null == item.getDistributionType()){
@@ -317,13 +324,8 @@ public class BalanceServiceImpl implements BalanceService {
                 item.setCreatedTime(balanceStatement.getCreatedTime());
             }
 
-            /** 遗留type 为0，设置为注册奖励*/
-            if(balanceStatement.getType() == 0){
-                item.setDistributionType(TradeRecordDistributionEnum.REGISTER.getCode());
-                item.setAmount(balanceStatement.getAmount());
-                item.setCreatedTime(balanceStatement.getCreatedTime());
-                balanceStatement.setType(FinanceTypeEnum.REWARD.getCode());
-            }
+            item.setType(balanceStatement.getType());
+            item.setWay(balanceStatement.getWay());
 
             if(balanceStatement.getWay() == FinanceWayEnum.IN.getCode()){
                 /** 收入 */
@@ -333,8 +335,7 @@ public class BalanceServiceImpl implements BalanceService {
                 /** 支出 */
                 totalExpend = totalExpend.add(item.getAmount());
             }
-            item.setType(balanceStatement.getType());
-            item.setWay(balanceStatement.getWay());
+
 
             items.add(item);
         }

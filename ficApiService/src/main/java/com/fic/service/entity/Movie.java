@@ -34,6 +34,8 @@ public class Movie {
     private String showTime;
     @ApiModelProperty("(0，已杀青)(1，待开机)(2,已分红)(3,待分红)")
     private Integer status;
+    @ApiModelProperty("排序")
+    private BigDecimal sort;
     @ApiModelProperty("责任描述")
     private String dutyDescription;
     @ApiModelProperty("票房")
@@ -133,9 +135,6 @@ public class Movie {
     }
 
     public Integer getStatus() {
-        if(null == status){
-            return 1;
-        }
         return status;
     }
 
@@ -208,4 +207,11 @@ public class Movie {
         this.movieDetailInfo = movieDetailInfo;
     }
 
+    public BigDecimal getSort() {
+        return sort;
+    }
+
+    public void setSort(BigDecimal sort) {
+        this.sort = sort;
+    }
 }

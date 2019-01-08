@@ -163,6 +163,7 @@ public class InvestServiceImpl implements InvestService {
             item.setInTime(DateUtil.formatSec(detail.getInTime()));
             item.setMovieName(movie.getMovieName());
             item.setInvestDetailId(detail.getInvestDetailId());
+            item.setStatus(movie.getStatus());
             list.add(item);
         }
 
