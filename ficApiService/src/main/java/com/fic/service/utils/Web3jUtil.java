@@ -7,20 +7,31 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
-import org.web3j.crypto.Credentials;
-import org.web3j.crypto.WalletUtils;
+import org.web3j.abi.FunctionEncoder;
+import org.web3j.abi.TypeReference;
+import org.web3j.abi.datatypes.Address;
+import org.web3j.abi.datatypes.Function;
+import org.web3j.abi.datatypes.Type;
+import org.web3j.abi.datatypes.generated.Uint256;
+import org.web3j.crypto.*;
 import org.web3j.protocol.Web3j;
 import org.web3j.protocol.admin.Admin;
 import org.web3j.protocol.core.DefaultBlockParameter;
+import org.web3j.protocol.core.DefaultBlockParameterName;
 import org.web3j.protocol.core.DefaultBlockParameterNumber;
 import org.web3j.protocol.core.methods.response.EthGetBalance;
+import org.web3j.protocol.core.methods.response.EthGetTransactionCount;
+import org.web3j.protocol.core.methods.response.EthSendTransaction;
 import org.web3j.protocol.http.HttpService;
+import org.web3j.utils.Numeric;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import java.io.File;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -41,29 +52,29 @@ public class Web3jUtil {
 
     @PostConstruct
     public void init(){
-//        try{
-//            if(web3j==null){
-//                synchronized (Web3jUtil.class){
-//                    if(web3j==null){
-//                        web3j = Web3j.build(new HttpService(serverProperties.getWalletUrl()));
-//                        web3j.web3ClientVersion().send();
-//                        log.debug(" Wallet Servet Connected!");
-//                    }
-//                }
-//            }
-//            if(admin==null){
-//                synchronized (Web3jUtil.class){
-//                    if(admin==null){
-//                        admin = Admin.build(new HttpService(serverProperties.getWalletUrl()));
-//                        admin.web3ClientVersion().send();
-//                        log.debug(" Wallet Server Admin Connected!");
-//                    }
-//                }
-//            }
-//        }catch(IOException e){
-//            log.error(" Wallet Servet Connected Failed !");
-//            e.printStackTrace();
-//        }
+        try{
+            if(web3j==null){
+                synchronized (Web3jUtil.class){
+                    if(web3j==null){
+                        web3j = Web3j.build(new HttpService(serverProperties.getWalletUrl()));
+                        web3j.web3ClientVersion().send();
+                        log.debug(" Wallet Servet Connected!");
+                    }
+                }
+            }
+            if(admin==null){
+                synchronized (Web3jUtil.class){
+                    if(admin==null){
+                        admin = Admin.build(new HttpService(serverProperties.getWalletUrl()));
+                        admin.web3ClientVersion().send();
+                        log.debug(" Wallet Server Admin Connected!");
+                    }
+                }
+            }
+        }catch(IOException e){
+            log.error(" Wallet Servet Connected Failed !");
+            e.printStackTrace();
+        }
     }
 
     @PreDestroy
@@ -102,10 +113,17 @@ public class Web3jUtil {
         return null;
     }
 
-//    public void doTransaction(BigDecimal amount,String password,String keyStore){
+    /**
+     *
+     * @param amount
+     * @param password
+     * @param keyStore
+     * @param toAddress
+     */
+//    public void doTransaction(BigInteger amount, String password, String keyStore,String toAddress){
 //        try{
 //            String transactionHash = "";
-//            Credentials credentials = WalletUtils.loadCredentials("钱包密码", "钱包文件");
+//            Credentials credentials = WalletUtils.loadCredentials(password, keyStore);
 //            String fromAddress = credentials.getAddress();
 //            EthGetTransactionCount ethGetTransactionCount = web3j.ethGetTransactionCount(
 //                    fromAddress, DefaultBlockParameterName.LATEST).sendAsync().get();

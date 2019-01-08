@@ -44,13 +44,13 @@ public class WalletServiceImpl implements WalletService {
     }
 
     @Override
-    public boolean rollInFic() {
+    public boolean rollIn() {
         //Web3j
         return false;
     }
 
     @Override
-    public boolean rollOutFic(Integer userId, BigDecimal amount,String toAddress) {
+    public boolean rollOut(Integer userId, BigDecimal amount,String toAddress) {
         //Web3j
         return false;
     }
