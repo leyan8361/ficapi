@@ -19,6 +19,8 @@ public class ServerProperties {
     String storeLocation;
     @Value("${server.mao.yan.url}")
     String maoYanUrl;
+    @Value("${contact.address}")
+    String contactAddress;
 
     public String getMaoYanUrl() {
         return maoYanUrl;
@@ -52,4 +54,11 @@ public class ServerProperties {
         this.prefix = prefix;
     }
 
+    public String getContactAddress() {
+        return contactAddress;
+    }
+
+    public void setContactAddress(String contactAddress) {
+        this.contactAddress = contactAddress;
+    }
 }

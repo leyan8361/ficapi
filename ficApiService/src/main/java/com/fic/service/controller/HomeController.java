@@ -11,6 +11,7 @@ import com.fic.service.service.MaoYanService;
 import com.fic.service.service.SmsService;
 import com.fic.service.service.WalletService;
 import com.fic.service.utils.DateUtil;
+import com.fic.service.utils.Web3jUtil;
 import io.swagger.annotations.*;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -22,6 +23,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.List;
 
 /**
@@ -48,6 +51,8 @@ public class HomeController {
     MaoYanService maoYanService;
     @Autowired
     BetScheduledService betScheduledService;
+    @Autowired
+    Web3jUtil web3jUtil;
 
     @GetMapping("/home")
     @ApiOperation("获取首页数据 , 拉票房，开奖")
@@ -81,6 +86,14 @@ public class HomeController {
     public ResponseEntity user() {
         log.debug(" User Page !!!");
 
+        return ResponseEntity.ok().body("success");
+    }
+
+    @GetMapping("/transaction")
+    @ApiOperation("测试转账")
+    public ResponseEntity transaction() {
+        log.debug(" transaction !!!");
+        web3jUtil.doTransaction(new BigInteger("2"),"Ss12345678","E://UTC--2019-01-09T09-53-54.960Z--7d079d609c0fc9afa943261bca0f79341e0e85d1","0x7d079d609C0Fc9afA943261bCA0F79341E0E85d1");
         return ResponseEntity.ok().body("success");
     }
 

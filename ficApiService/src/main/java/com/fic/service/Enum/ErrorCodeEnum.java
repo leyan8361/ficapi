@@ -89,6 +89,12 @@ public enum ErrorCodeEnum {
     THE_SCENCE_HAS_NO_MOVIE(5008,"THE_SCENCE_HAS_NO_MOVIE"),
     NO_BET_RECORD(5009,"NO_BET_RECORD"),
     BET_TIME_LOCK(5010,"BET_TIME_LOCK"),
+
+    /**
+     * 钱包相关
+     */
+    WALLET_NOT_EXIST(6000,"WALLET_NOT_EXIST"),
+    TRANSACTION_NOT_FOUND(6001,"TRANSACTION_NOT_FOUND"),
     /**
      * System Error
      */

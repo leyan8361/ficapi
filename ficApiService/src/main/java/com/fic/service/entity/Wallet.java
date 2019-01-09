@@ -1,5 +1,10 @@
 package com.fic.service.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+
+import java.math.BigInteger;
 import java.util.Date;
 
 /**
@@ -7,31 +12,35 @@ import java.util.Date;
  *   @Date 2018/11/21
  *   @Discription:
 **/
+@ApiModel
 public class Wallet {
-    private Integer walletId;
+    @ApiModelProperty("钱包ID")
+    private Integer id;
 
+    @ApiModelProperty("钱包ID")
     private Integer userId;
-
+    @ApiModelProperty("钱包地址")
     private String walletAddress;
-
     private String keystore;
-
-    private Long balance;
-
+    @ApiModelProperty("钱包余额")
+    private BigInteger balance;
+    @ApiModelProperty("钱包创建时间")
+    @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
     private Date createdTime;
-
     private Integer createdBy;
-
+    @ApiModelProperty("钱包最后更新时间")
+    @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
     private Date updatedTime;
-
     private Integer updatedBy;
+    @ApiModelProperty("币类型")
+    private String coinType;
 
-    public Integer getWalletId() {
-        return walletId;
+    public Integer getId() {
+        return id;
     }
 
-    public void setWalletId(Integer walletId) {
-        this.walletId = walletId;
+    public void setId(Integer id) {
+        this.id = id;
     }
 
     public Integer getUserId() {
@@ -58,11 +67,11 @@ public class Wallet {
         this.keystore = keystore;
     }
 
-    public Long getBalance() {
+    public BigInteger getBalance() {
         return balance;
     }
 
-    public void setBalance(Long balance) {
+    public void setBalance(BigInteger balance) {
         this.balance = balance;
     }
 
@@ -96,5 +105,13 @@ public class Wallet {
 
     public void setUpdatedBy(Integer updatedBy) {
         this.updatedBy = updatedBy;
+    }
+
+    public String getCoinType() {
+        return coinType;
+    }
+
+    public void setCoinType(String coinType) {
+        this.coinType = coinType;
     }
 }

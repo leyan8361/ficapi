@@ -1,5 +1,6 @@
 package com.fic.service.utils;
 
+import com.fic.service.Vo.GenerateWalletVo;
 import com.fic.service.constants.ServerProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -91,7 +92,13 @@ public class Web3jUtil {
         return null;
     }
 
-    public String createAccount(String password,String path){
+    /**
+     * 创建钱包地址
+     * @param password
+     * @param path 钱包文件存储路径  /userId/keystore.json
+     * @return
+     */
+    public GenerateWalletVo createAccount(String password,String path){
         try {
             File file = new File(path);
             if(!file.exists()){
@@ -101,58 +108,69 @@ public class Web3jUtil {
             File fileResult = new File(path+fileName);
             Credentials credentials = WalletUtils.loadCredentials(password,fileResult);
             String address = credentials.getAddress();
-            return address;
+            GenerateWalletVo result = new GenerateWalletVo();
+            result.setPath(path+fileName);
+            result.setAddress(address);
+            return result;
 //            NewAccountIdentifier newAccountIdentifier = admin.personalNewAccount(password).send();
 //            if(newAccountIdentifier!=null){
 //                String accountId = newAccountIdentifier.getAccountId();
 //                return  accountId;
 //            }
         } catch (Exception e) {
+            log.error("创建钱包地址失败 path :{}",path);
             e.printStackTrace();
         }
-        return null;
+        throw new RuntimeException();
     }
 
     /**
-     *
+     * 转出
      * @param amount
-     * @param password
-     * @param keyStore
-     * @param toAddress
+     * @param password 密码
+     * @param keyStore 钱包文件路径
+     * @param toAddress 转出地址
      */
-//    public void doTransaction(BigInteger amount, String password, String keyStore,String toAddress){
-//        try{
-//            String transactionHash = "";
-//            Credentials credentials = WalletUtils.loadCredentials(password, keyStore);
-//            String fromAddress = credentials.getAddress();
-//            EthGetTransactionCount ethGetTransactionCount = web3j.ethGetTransactionCount(
-//                    fromAddress, DefaultBlockParameterName.LATEST).sendAsync().get();
-//            BigInteger nonce = ethGetTransactionCount.getTransactionCount();
-//            Address address = new Address(toAddress);
-//            Uint256 value = new Uint256(amount);
-//            List<Type> parametersList = new ArrayList<>();
-//            parametersList.add(address);
-//            parametersList.add(value);
-//            List<TypeReference<?>> outList = new ArrayList<>();
-//            Function function = new Function("transfer", parametersList, outList);
-//            String encodedFunction = FunctionEncoder.encode(function);
+    public void doTransaction(BigInteger amount, String password, String keyStore,String toAddress){
+        try{
+            String transactionHash = "";
+            Credentials credentials = WalletUtils.loadCredentials(password, keyStore);
+            String fromAddress = credentials.getAddress();
+            EthGetTransactionCount ethGetTransactionCount = web3j.ethGetTransactionCount(
+                    fromAddress, DefaultBlockParameterName.LATEST).sendAsync().get();
+            BigInteger nonce = ethGetTransactionCount.getTransactionCount();
+            Address address = new Address(toAddress);
+            Uint256 value = new Uint256(amount);
+            List<Type> parametersList = new ArrayList<>();
+            parametersList.add(address);
+            parametersList.add(value);
+            List<TypeReference<?>> outList = new ArrayList<>();
+            Function function = new Function("transfer", parametersList, outList);
+            String encodedFunction = FunctionEncoder.encode(function);
 //            RawTransaction rawTransaction = RawTransaction.createTransaction(nonce, Gas单价,
 //                    Gas最大数量, 合约地址, encodedFunction);
-//            byte[] signedMessage = TransactionEncoder.signMessage(rawTransaction, credentials);
-//            String hexValue = Numeric.toHexString(signedMessage);
-//
-//            EthSendTransaction ethSendTransaction = web3j.ethSendRawTransaction(hexValue).sendAsync().get();
-//            transactionHash = ethSendTransaction.getTransactionHash();
-//
-//        }catch (IOException e) {
-//            e.printStackTrace();
-//        } catch (CipherException e) {
-//            e.printStackTrace();
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-//    }
+            RawTransaction rawTransaction = RawTransaction.createTransaction(nonce, new BigInteger("1"),
+                    new BigInteger("1"), serverProperties.getContactAddress(), encodedFunction);
+            byte[] signedMessage = TransactionEncoder.signMessage(rawTransaction, credentials);
+            String hexValue = Numeric.toHexString(signedMessage);
 
+            EthSendTransaction ethSendTransaction = web3j.ethSendRawTransaction(hexValue).sendAsync().get();
+            transactionHash = ethSendTransaction.getTransactionHash();
+            System.out.println(transactionHash);
+        }catch (IOException e) {
+            e.printStackTrace();
+        } catch (CipherException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * 获取钱包地址余额
+     * @param address
+     * @return
+     */
     public BigInteger getBalance(String address){
         try {
             DefaultBlockParameter defaultBlockParameter = new DefaultBlockParameterNumber(web3j.ethBlockNumber().send().getBlockNumber());
@@ -166,13 +184,13 @@ public class Web3jUtil {
         return null;
     }
 
-    public static void main(String args[]){
-        Web3jUtil web3jUtil = new Web3jUtil();
-        String result = web3jUtil.createAccount("123456","F://fic_wallet/");
-        System.out.println(result);
-        BigInteger balance = web3jUtil.getBalance(result);
-        System.out.println("余额: "+ balance);
-        web3jUtil.getAccountlist();
-    }
+//    public static void main(String args[]){
+//        Web3jUtil web3jUtil = new Web3jUtil();
+//        String result = web3jUtil.createAccount("123456","F://fic_wallet/");
+//        System.out.println(result);
+//        BigInteger balance = web3jUtil.getBalance(result);
+//        System.out.println("余额: "+ balance);
+//        web3jUtil.getAccountlist();
+//    }
 
 }
