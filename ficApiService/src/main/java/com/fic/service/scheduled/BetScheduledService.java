@@ -188,7 +188,9 @@ public class BetScheduledService {
             BigDecimal totalJaFe = betScenceMovie.getTotalReservationReturning().multiply(jaFee);
             BigDecimal totalReFe = betScenceMovie.getTotalReservationReturning().multiply(reFee);
             BigDecimal principle = betScenceMovie.getTotalReservationReturning();//本金
-            BigDecimal totalReserveReturningAmount = principle.add(principle.subtract(totalJaFe).subtract(totalReFe));
+            BigDecimal tempOddsReward = principle.multiply(new BigDecimal("2"));
+            BigDecimal totalFee = tempOddsReward.multiply(jaFee.add(reFee));
+            BigDecimal totalReserveReturningAmount = tempOddsReward.subtract(totalFee);
             boolean isEnough = false;
             /** 备用金足以赔付 */
             if (totalReserveAmount.compareTo(totalReserveReturningAmount) >= 0) {
@@ -214,18 +216,18 @@ public class BetScheduledService {
                             betFee = BigDecimal.ONE;
                             returnUser.setBetFee(betFee);
                         }else{
-                            betFee = betFee.setScale(0,BigDecimal.ROUND_DOWN);
+//                            betFee = betFee.setScale(0,BigDecimal.ROUND_DOWN);
                             returnUser.setBetFee(betFee);
                         }
                         if(reserveFee.compareTo(BigDecimal.ONE) <=0){
                             reserveFee =  BigDecimal.ONE;
                             returnUser.setReserveFee(reserveFee);
                         }else{
-                            reserveFee = reserveFee.setScale(0,BigDecimal.ROUND_DOWN);
+//                            reserveFee = reserveFee.setScale(0,BigDecimal.ROUND_DOWN);
                             returnUser.setReserveFee(reserveFee);
                         }
                         returnUser.setBingo(BingoStatusEnum.CLOSE_RETURNING.getCode().byteValue());
-                        BigDecimal returningFee = returning.subtract(betFee).subtract(reserveFee);
+                        BigDecimal returningFee = returning.subtract(totalFee);
                         totalRealReserve = totalRealReserve.add(returningFee);
                         totalBetFee = totalBetFee.add(betFee);
                         returnUser.setCloseWithReturning(returningFee);
@@ -283,31 +285,32 @@ public class BetScheduledService {
                 BigDecimal oddsReward = betAmount.multiply(odds).setScale(0,BigDecimal.ROUND_DOWN);
                 BigDecimal currentJa = BigDecimal.ZERO;
                 BigDecimal currentRe = BigDecimal.ZERO;
-                BigDecimal totalFee = BigDecimal.ZERO;
-                if (hasJa) {
+                BigDecimal totalFee = betAmount.add(oddsReward).multiply(jaFee.add(reFee)).setScale(0,BigDecimal.ROUND_DOWN);
+                BigDecimal currentJaPiece = jaFee.multiply(new BigDecimal("100"));
+                BigDecimal currentRePiece = reFee.multiply(new BigDecimal("100"));
+                currentJa = totalFee.divide(currentJaPiece.add(currentRePiece)).multiply(currentJaPiece);
+                currentRe = totalFee.divide(currentRePiece.add(currentJaPiece)).multiply(currentRePiece);
+
+//                if (hasJa) {
                     //手续费
-                    currentJa = betAmount.add(oddsReward).multiply(jaFee);
+//                    currentJa = betAmount.add(oddsReward).multiply(jaFee);
                     if(currentJa.compareTo(new BigDecimal("0.5")) >=0 && currentJa.compareTo(BigDecimal.ONE) <=0){
                         currentJa = BigDecimal.ONE;
                     }else if(currentJa.compareTo(new BigDecimal("0.5")) <0){
                         currentJa = BigDecimal.ZERO;
-                    }else{
-                        currentJa = currentJa.setScale(0,BigDecimal.ROUND_DOWN);
                     }
-                    totalFee = totalFee.add(currentJa);
-                }
-                if (hasRe) {
+//                    totalFee = totalFee.add(currentJa);
+//                }
+//                if (hasRe) {
                     //备用金手续费
-                    currentRe = betAmount.add(oddsReward).multiply(reFee);
+//                    currentRe = betAmount.add(oddsReward).multiply(reFee);
                     if(currentRe.compareTo(new BigDecimal("0.5")) >=0 && currentRe.compareTo(BigDecimal.ONE) <=0){
                         currentRe = BigDecimal.ONE;
                     }else if(currentRe.compareTo(new BigDecimal("0.5")) <=0){
                         currentRe = BigDecimal.ZERO;
-                    }else{
-                        currentRe = currentRe.setScale(0,BigDecimal.ROUND_DOWN);
                     }
-                    totalFee = totalFee.add(currentRe);
-                }
+//                    totalFee = totalFee.add(currentRe);
+//                }
                 BigDecimal resultReward = BigDecimal.ZERO;
                 if(totalFee.compareTo(BigDecimal.ZERO) >=0){
                     if(oddsReward.compareTo(totalFee) > 0){
@@ -317,9 +320,11 @@ public class BetScheduledService {
                         totalReFee = totalReFee.add(currentRe);
                         betScence.setTotalJasckpot(totalJaFee);
                         betScence.setTotalReservation(totalReFee);
-                        resultReward = betAmount.add(oddsReward).subtract(currentJa).subtract(currentRe);
+                        resultReward = betAmount.add(oddsReward).subtract(totalFee);
                     }else{
                         resultReward = betAmount.add(oddsReward);
+                        betUser.setReserveFee(BigDecimal.ZERO);
+                        betUser.setBetFee(BigDecimal.ZERO);
                     }
                 }
 
