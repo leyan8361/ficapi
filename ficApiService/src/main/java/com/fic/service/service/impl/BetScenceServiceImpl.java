@@ -566,9 +566,6 @@ public class BetScenceServiceImpl implements BetScenceService {
                 recordVo.setFee(recordVo.getAddedPrice().subtract(recordVo.getBingoPrice()));
                 recordVo.setOdds(BigDecimal.ONE);
             }
-            if(recordVo.getId() == 523){
-                recordVos.add(recordVo);
-            }
 
         }
         result.setItems(recordVos);
