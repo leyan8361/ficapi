@@ -398,8 +398,10 @@ public class BetScenceServiceImpl implements BetScenceService {
                             }
                         }
                         log.debug("连续竞猜两天 userId : {}",userId);
-                        result.setContinueBetTime(2);
-                        i = i + 2;
+                        if(result.getContinueBetTime() < 2){
+                            result.setContinueBetTime(2);
+                            i = i + 1;
+                        }
                         continue;
                     }
                 }

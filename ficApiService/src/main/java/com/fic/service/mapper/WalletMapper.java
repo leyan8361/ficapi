@@ -22,7 +22,7 @@ public interface WalletMapper {
 
     int updateByPrimaryKey(Wallet record);
 
-    Wallet findByUserIdAndAddress(int userId);
+    Wallet findByAddressByCompany(int userId);
 
     List<Wallet> findByUserId(int userId);
 

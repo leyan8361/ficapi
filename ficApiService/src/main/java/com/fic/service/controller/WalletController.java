@@ -78,4 +78,27 @@ public class WalletController {
         return ResponseEntity.ok().build();
     }
 
+    @GetMapping("/addWalletByUserId")
+    @ApiOperation("Api-给某用户生成钱包地址")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "SUCCESS")
+    })
+    public ResponseEntity addWalletByUserId(@RequestParam int userId) {
+        log.debug(" addWalletByUserId Action !!!");
+        User user = userMapper.get(userId);
+        if(null == user){
+            return ResponseEntity.ok(new ResponseVo(ErrorCodeEnum.USER_NOT_EXIST,null));
+        }
+        List<Wallet> resultList  = walletService.findByUserId(userId);
+        if(resultList.size()  == 0){
+            Wallet wallet = walletService.generateWalletAddress(userId);
+            if(null == wallet){
+                log.error("生成钱包地址失败userId :{}",userId);
+                return ResponseEntity.ok(new ResponseVo(ErrorCodeEnum.SYSTEM_EXCEPTION,null));
+            }
+            return ResponseEntity.ok(new ResponseVo(ErrorCodeEnum.SUCCESS,wallet));
+        }
+        return ResponseEntity.ok(new ResponseVo(ErrorCodeEnum.SUCCESS,resultList));
+    }
+
 }

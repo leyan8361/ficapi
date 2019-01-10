@@ -73,6 +73,7 @@ public class WalletServiceImpl implements WalletService {
         wallet.setUserId(userId);
         wallet.setCreatedTime(new Date());
         wallet.setUpdatedTime(new Date());
+        wallet.setBalance(BigInteger.ZERO);
         wallet.setCreatedBy(1);//标记为公司生成的
         int saveResult = walletMapper.insertSelective(wallet);
         if(saveResult <=0){
@@ -85,7 +86,7 @@ public class WalletServiceImpl implements WalletService {
 
     @Override
     public ResponseVo queryBalanceByUserId(int userId) {
-        Wallet wallet = walletMapper.findByUserIdAndAddress(userId);
+        Wallet wallet = walletMapper.findByAddressByCompany(userId);
         if(null == wallet){
             log.error(" 查询余额，查找钱包地址失败");
             return new ResponseVo(ErrorCodeEnum.WALLET_NOT_EXIST,null);

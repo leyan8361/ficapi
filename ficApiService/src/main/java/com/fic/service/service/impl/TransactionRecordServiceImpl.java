@@ -3,10 +3,14 @@ package com.fic.service.service.impl;
 import com.fic.service.Enum.ErrorCodeEnum;
 import com.fic.service.Enum.TransactionStatusEnum;
 import com.fic.service.Vo.ResponseVo;
+import com.fic.service.constants.ServerProperties;
 import com.fic.service.controller.WalletController;
 import com.fic.service.entity.TransactionRecord;
+import com.fic.service.entity.User;
 import com.fic.service.entity.Wallet;
 import com.fic.service.mapper.TransactionRecordMapper;
+import com.fic.service.mapper.UserMapper;
+import com.fic.service.mapper.WalletMapper;
 import com.fic.service.service.TransactionRecordService;
 import com.fic.service.service.WalletService;
 import com.fic.service.utils.Web3jUtil;
@@ -19,6 +23,9 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
+import java.math.BigInteger;
+
 @Service
 public class TransactionRecordServiceImpl implements TransactionRecordService {
 
@@ -28,6 +35,12 @@ public class TransactionRecordServiceImpl implements TransactionRecordService {
     TransactionRecordMapper transactionRecordMapper;
     @Autowired
     Web3jUtil web3jUtil;
+    @Autowired
+    WalletMapper walletMapper;
+    @Autowired
+    UserMapper userMapper;
+    @Autowired
+    ServerProperties serverProperties;
 
     @Override
     @Transactional(isolation= Isolation.READ_COMMITTED,propagation= Propagation.REQUIRED,rollbackFor = Exception.class)
@@ -58,6 +71,17 @@ public class TransactionRecordServiceImpl implements TransactionRecordService {
             log.error(" 转账审批拒绝失败，id:{}",id);
             throw new RuntimeException();
         }
+        return new ResponseVo(ErrorCodeEnum.SUCCESS,null);
+    }
+
+    @Override
+    public ResponseVo doTransaction(int userId, BigInteger amount) {
+        User user = userMapper.get(userId);
+        Wallet wallet = walletMapper.findByAddressByCompany(userId);
+        if(null == wallet){
+            log.error(" 无钱包 ");
+        }
+        web3jUtil.doTransaction(amount,user.getPayPassword(),serverProperties.getStoreLocation()+user.getId()+"/"+wallet.getKeystore(),wallet.getWalletAddress());
         return new ResponseVo(ErrorCodeEnum.SUCCESS,null);
     }
 }

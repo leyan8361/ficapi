@@ -4,11 +4,13 @@ import com.fic.service.Enum.ErrorCodeEnum;
 import com.fic.service.Vo.DistributionVo;
 import com.fic.service.Vo.ResponseVo;
 import com.fic.service.constants.ServerProperties;
+import com.fic.service.entity.TransactionRecord;
 import com.fic.service.entity.User;
 import com.fic.service.mapper.UserMapper;
 import com.fic.service.scheduled.BetScheduledService;
 import com.fic.service.service.MaoYanService;
 import com.fic.service.service.SmsService;
+import com.fic.service.service.TransactionRecordService;
 import com.fic.service.service.WalletService;
 import com.fic.service.utils.DateUtil;
 import com.fic.service.utils.Web3jUtil;
@@ -53,6 +55,8 @@ public class HomeController {
     BetScheduledService betScheduledService;
     @Autowired
     Web3jUtil web3jUtil;
+    @Autowired
+    TransactionRecordService transactionRecordService;
 
     @GetMapping("/home")
     @ApiOperation("获取首页数据 , 拉票房，开奖")
@@ -85,15 +89,16 @@ public class HomeController {
     @ApiOperation("测试普通用户权限")
     public ResponseEntity user() {
         log.debug(" User Page !!!");
-
         return ResponseEntity.ok().body("success");
     }
 
     @GetMapping("/transaction")
     @ApiOperation("测试转账")
-    public ResponseEntity transaction() {
+    public ResponseEntity transaction(@RequestParam int userId,@RequestParam BigInteger amount) {
         log.debug(" transaction !!!");
-        web3jUtil.doTransaction(new BigInteger("2"),"Ss12345678","E://UTC--2019-01-09T09-53-54.960Z--7d079d609c0fc9afa943261bca0f79341e0e85d1","0x7d079d609C0Fc9afA943261bCA0F79341E0E85d1");
+
+//        web3jUtil.getAccountlist();
+        transactionRecordService.doTransaction(userId,amount);
         return ResponseEntity.ok().body("success");
     }
 

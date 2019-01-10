@@ -153,7 +153,7 @@
   <select id="findAll" resultMap="BaseResultMap">
     select * from wallet;
   </select>
-  <select id="findByUserIdAndAddress" resultMap="BaseResultMap">
+  <select id="findByAddressByCompany" resultMap="BaseResultMap">
     select * from wallet where user_id = #{userId} and created_by = 1;
   </select>
   <select id="findByUserId" resultMap="BaseResultMap">
