@@ -367,34 +367,34 @@ public class BetScenceServiceImpl implements BetScenceService {
                                                                 /**连续竞猜七天*/
                                                                 log.debug("连续竞猜七天 userId : {}",userId);
                                                                 result.setContinueBetTime(7);
-                                                                if(i + 7 < betUsers.size()){
-                                                                    i = i + 7;
-                                                                }
+//                                                                if(i + 6 < betUsers.size()){
+//                                                                    i = i + 6;
+//                                                                }
                                                                 continue;
                                                             }
                                                         }
                                                         log.debug("连续竞猜六天 userId : {}",userId);
-                                                        i = i + 6;
+//                                                        i = i + 5;
                                                         result.setContinueBetTime(6);
-                                                        continue;
+                                                        break;
                                                     }
                                                 }
                                                 log.debug("连续竞猜五天 userId : {}",userId);
                                                 result.setContinueBetTime(5);
-                                                i = i + 5;
-                                                continue;
+//                                                i = i + 5;
+                                                break;
                                             }
                                         }
                                         log.debug("连续竞猜四天 userId : {}",userId);
                                         result.setContinueBetTime(4);
-                                        i = i + 4;
-                                        continue;
+//                                        i = i + 4;
+                                        break;
                                     }
                                 }
                                 log.debug("连续竞猜三天 userId : {}",userId);
                                 result.setContinueBetTime(3);
-                                i = i + 3;
-                                continue;
+//                                i = i + 3;
+                                break;
                             }
                         }
                         log.debug("连续竞猜两天 userId : {}",userId);
