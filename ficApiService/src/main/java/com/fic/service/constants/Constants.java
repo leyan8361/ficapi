@@ -46,7 +46,7 @@ public class Constants {
         public static final String CNY = "CNY";
         public static final String ETH = "ETH";
         public static final String BTC = "BTC";
-
+        public static final String TFC = "TFC";
         /**
          * 连续竞猜标记
          */

@@ -6,6 +6,7 @@ import com.fic.service.Enum.TransactionStatusEnum;
 import com.fic.service.Vo.DoTransactionVo;
 import com.fic.service.Vo.GenerateWalletVo;
 import com.fic.service.Vo.ResponseVo;
+import com.fic.service.constants.Constants;
 import com.fic.service.constants.ServerProperties;
 import com.fic.service.entity.TransactionRecord;
 import com.fic.service.entity.User;
@@ -74,6 +75,7 @@ public class WalletServiceImpl implements WalletService {
         wallet.setCreatedTime(new Date());
         wallet.setUpdatedTime(new Date());
         wallet.setBalance(BigInteger.ZERO);
+        wallet.setCoinType(Constants.TFC);
         wallet.setCreatedBy(1);//标记为公司生成的
         int saveResult = walletMapper.insertSelective(wallet);
         if(saveResult <=0){

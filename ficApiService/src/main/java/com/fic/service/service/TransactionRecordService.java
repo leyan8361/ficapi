@@ -3,7 +3,6 @@ package com.fic.service.service;
 import com.fic.service.Vo.ResponseVo;
 
 import java.math.BigDecimal;
-import java.math.BigInteger;
 
 /**
  *   @Author Xie
@@ -16,5 +15,5 @@ public interface TransactionRecordService{
 
     ResponseVo reject(int id,String remark);
 
-    ResponseVo doTransaction(int userId, BigInteger amount);
+    ResponseVo doTransaction(int userId, BigDecimal amount);
 }

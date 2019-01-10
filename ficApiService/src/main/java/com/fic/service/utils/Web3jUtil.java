@@ -11,6 +11,7 @@ import org.springframework.context.annotation.DependsOn;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.web3j.abi.FunctionEncoder;
+import org.web3j.abi.FunctionReturnDecoder;
 import org.web3j.abi.TypeReference;
 import org.web3j.abi.datatypes.Address;
 import org.web3j.abi.datatypes.Function;
@@ -23,11 +24,15 @@ import org.web3j.protocol.admin.methods.response.PersonalUnlockAccount;
 import org.web3j.protocol.core.DefaultBlockParameter;
 import org.web3j.protocol.core.DefaultBlockParameterName;
 import org.web3j.protocol.core.DefaultBlockParameterNumber;
+import org.web3j.protocol.core.methods.request.Transaction;
+import org.web3j.protocol.core.methods.response.EthCall;
 import org.web3j.protocol.core.methods.response.EthGetBalance;
 import org.web3j.protocol.core.methods.response.EthGetTransactionCount;
 import org.web3j.protocol.core.methods.response.EthSendTransaction;
 import org.web3j.protocol.http.HttpService;
 import org.web3j.tx.Contract;
+import org.web3j.tx.gas.DefaultGasProvider;
+import org.web3j.utils.Convert;
 import org.web3j.utils.Numeric;
 
 import javax.annotation.PostConstruct;
@@ -39,6 +44,7 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @Author Xie
@@ -85,6 +91,8 @@ public class Web3jUtil {
 
     @PreDestroy
     public void dostory(){
+        web3j.shutdown();
+        admin.shutdown();
         System.out.println("I'm  destory method ");
     }
 
@@ -105,7 +113,7 @@ public class Web3jUtil {
 
     public void unLock(String address,String password){
         try{
-            PersonalUnlockAccount personalUnlockAccount = admin.personalUnlockAccount(address, password).sendAsync().get();
+            PersonalUnlockAccount personalUnlockAccount = admin.personalUnlockAccount(address, password,BigInteger.valueOf(5)).sendAsync().get();
             if (personalUnlockAccount.accountUnlocked()) {
                 log.debug(" 解锁成功，账户地址：{}",address);
             }
@@ -161,11 +169,11 @@ public class Web3jUtil {
     /**
      * 转出
      * @param amount
-     * @param password 密码
-     * @param keyStore 钱包文件路径
+     * @param password 密码 转出来源地址密码
+     * @param keyStore 钱包文件路径 转出来源地址私钥文件
      * @param toAddress 转出地址
      */
-    public void doTransaction(BigInteger amount, String password, String keyStore,String toAddress){
+    public void doTransactionOut(BigDecimal amount, String password, String keyStore, String toAddress){
         try{
             unLock(toAddress,password);
             String transactionHash = "";
@@ -175,17 +183,22 @@ public class Web3jUtil {
                     fromAddress, DefaultBlockParameterName.LATEST).sendAsync().get();
             BigInteger nonce = ethGetTransactionCount.getTransactionCount();
             Address address = new Address(toAddress);
-            Uint256 value = new Uint256(amount);
+
             List<Type> parametersList = new ArrayList<>();
             parametersList.add(address);
+            BigInteger amountValue = Convert.toWei(amount.toString(), Convert.Unit.ETHER).toBigInteger();
+            BigInteger gasPrice = Convert.toWei("3",Convert.Unit.GWEI).toBigInteger();
+            Uint256 value = new Uint256(amountValue);
             parametersList.add(value);
             List<TypeReference<?>> outList = new ArrayList<>();
             Function function = new Function("transfer", parametersList, outList);
             String encodedFunction = FunctionEncoder.encode(function);
 //            RawTransaction rawTransaction = RawTransaction.createTransaction(nonce, Gas单价,
 //                    Gas最大数量, 合约地址, encodedFunction);
-            RawTransaction rawTransaction = RawTransaction.createTransaction(nonce, Contract.GAS_PRICE,
-                    Contract.GAS_LIMIT, serverProperties.getContactAddress(), encodedFunction);
+//            RawTransaction rawTransaction = RawTransaction.createTransaction(nonce, BigInteger.valueOf(1l),
+//                    BigInteger.valueOf(1l), serverProperties.getContactAddress(), encodedFunction);
+            RawTransaction rawTransaction = RawTransaction.createTransaction(nonce, gasPrice,
+                    BigInteger.valueOf(8000000l), serverProperties.getContactAddress(), encodedFunction);
             byte[] signedMessage = TransactionEncoder.signMessage(rawTransaction, credentials);
             String hexValue = Numeric.toHexString(signedMessage);
 
@@ -219,13 +232,10 @@ public class Web3jUtil {
         return null;
     }
 
-//    public static void main(String args[]){
-//        Web3jUtil web3jUtil = new Web3jUtil();
-//        String result = web3jUtil.createAccount("123456","F://fic_wallet/");
-//        System.out.println(result);
-//        BigInteger balance = web3jUtil.getBalance(result);
-//        System.out.println("余额: "+ balance);
-//        web3jUtil.getAccountlist();
-//    }
+    public static void main(String args[]){
+
+        BigInteger result  = Numeric.decodeQuantity("0x6b7329");
+        System.out.println("区块: "+ result.toString());
+    }
 
 }
