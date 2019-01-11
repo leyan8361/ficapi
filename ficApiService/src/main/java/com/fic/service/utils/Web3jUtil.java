@@ -4,6 +4,7 @@ import com.fic.service.Vo.GenerateWalletVo;
 import com.fic.service.Vo.WalletUnlockVo;
 import com.fic.service.constants.ServerProperties;
 import com.fic.service.entity.Wallet;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,13 +25,12 @@ import org.web3j.protocol.admin.methods.response.PersonalUnlockAccount;
 import org.web3j.protocol.core.DefaultBlockParameter;
 import org.web3j.protocol.core.DefaultBlockParameterName;
 import org.web3j.protocol.core.DefaultBlockParameterNumber;
+import org.web3j.protocol.core.Response;
 import org.web3j.protocol.core.methods.request.Transaction;
-import org.web3j.protocol.core.methods.response.EthCall;
-import org.web3j.protocol.core.methods.response.EthGetBalance;
-import org.web3j.protocol.core.methods.response.EthGetTransactionCount;
-import org.web3j.protocol.core.methods.response.EthSendTransaction;
+import org.web3j.protocol.core.methods.response.*;
 import org.web3j.protocol.http.HttpService;
 import org.web3j.tx.Contract;
+import org.web3j.tx.Transfer;
 import org.web3j.tx.gas.DefaultGasProvider;
 import org.web3j.utils.Convert;
 import org.web3j.utils.Numeric;
@@ -125,16 +125,6 @@ public class Web3jUtil {
         }
     }
 
-
-    public List<String> getAccountlist(){
-        try{
-            return admin.personalListAccounts().send().getAccountIds();
-        }catch (Exception e){
-            e.printStackTrace();
-        }
-        return null;
-    }
-
     /**
      * 创建钱包地址
      * @param password
@@ -155,11 +145,6 @@ public class Web3jUtil {
             result.setPath(fileName);
             result.setAddress(address);
             return result;
-//            NewAccountIdentifier newAccountIdentifier = admin.personalNewAccount(password).send();
-//            if(newAccountIdentifier!=null){
-//                String accountId = newAccountIdentifier.getAccountId();
-//                return  accountId;
-//            }
         } catch (Exception e) {
             log.error("创建钱包地址失败 path :{}",path);
             e.printStackTrace();
@@ -176,7 +161,7 @@ public class Web3jUtil {
      */
     public void doTransactionOut(BigDecimal amount, String password, String keyStore, String toAddress){
         try{
-//            unLock(toAddress,password);
+            unLock(toAddress,password);
             String transactionHash = "";
             Credentials credentials = WalletUtils.loadCredentials(password, keyStore);
             String fromAddress = credentials.getAddress();
@@ -191,19 +176,12 @@ public class Web3jUtil {
             BigInteger gasPrice = Convert.toWei("3",Convert.Unit.GWEI).toBigInteger();
             BigInteger gasLimit = BigInteger.valueOf(8000000l);
             Uint256 value = new Uint256(amountValue);
-//            parametersList.add(value);
-//            List<TypeReference<?>> outList = new ArrayList<>();
             Function function = new Function(
-                    "transfer",//交易的方法名称
+                    "transfer",
                     Arrays.asList(address,value),
                     Arrays.asList(new TypeReference<Address>(){},new TypeReference<Uint256>(){})
             );
-//            Function function = new Function("transfer", parametersList, outList);
             String encodedFunction = FunctionEncoder.encode(function);
-//            RawTransaction rawTransaction = RawTransaction.createTransaction(nonce, Gas单价,
-//                    Gas最大数量, 合约地址, encodedFunction);
-//            RawTransaction rawTransaction = RawTransaction.createTransaction(nonce, BigInteger.valueOf(1l),
-//                    BigInteger.valueOf(1l), serverProperties.getContactAddress(), encodedFunction);
             log.debug(" gasPrice : {} , gasLimit :{}, amount :{}",gasPrice,gasLimit,amountValue);
             RawTransaction rawTransaction = RawTransaction.createTransaction(nonce, gasPrice,
                     gasLimit, serverProperties.getContactAddress(), encodedFunction);
@@ -212,18 +190,61 @@ public class Web3jUtil {
 
             EthSendTransaction ethSendTransaction = web3j.ethSendRawTransaction(hexValue).sendAsync().get();
             if(ethSendTransaction.hasError()){
+                Response.Error err = ethSendTransaction.getError();
+                if(err.getMessage().equals("insufficient funds for gas * price + value")){
+
+                }
                 log.error("Error : " + ethSendTransaction.getError().getMessage());
                 return;
             }
             transactionHash = ethSendTransaction.getTransactionHash();
             System.out.println(transactionHash);
         }catch (IOException e) {
+            log.error("doTransactionOut e :{} ",e);
             e.printStackTrace();
         } catch (CipherException e) {
+            log.error("doTransactionOut e :{} ",e);
             e.printStackTrace();
         } catch (Exception e) {
+            log.error("doTransactionOut e :{} ",e);
             e.printStackTrace();
         }
+    }
+
+    /**
+     * 查询交易状态
+     * @param txHash
+     * @return (0,失败)(1,成功)(2,交易挂起)
+     */
+    public int queryTransactionStatus(String txHash){
+        int result = 0;
+        try {
+            EthGetTransactionReceipt ethGetTransactionReceipt = web3j.ethGetTransactionReceipt(txHash).sendAsync().get();
+           if(null == ethGetTransactionReceipt.getResult()){
+               log.debug(" transaction is pending, wait another query txHash :{}",txHash);
+               result = 2;
+               return result;
+           }
+            String status = ethGetTransactionReceipt.getTransactionReceipt().get().getStatus();
+            if (StringUtils.isNotEmpty(status)) {
+                BigInteger resultInteger  =  Numeric.decodeQuantity(status);
+                if(resultInteger.compareTo(BigInteger.ZERO) == 0){
+                    log.debug("transaction is failed txHash : {}",txHash);
+                    return result;
+                }else{
+                    result = 1;
+                    return result;
+                }
+            }
+        } catch (InterruptedException e) {
+            log.error("queryTransactionStatus e :{} ",e);
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            log.error("queryTransactionStatus e :{} ",e);
+            e.printStackTrace();
+        }
+
+        return result;
     }
 
     /**
@@ -233,34 +254,34 @@ public class Web3jUtil {
      */
     public BigInteger getBalance(String address){
         try {
+            /** 查询 ETH */
             DefaultBlockParameter defaultBlockParameter = new DefaultBlockParameterNumber(web3j.ethBlockNumber().send().getBlockNumber());
             EthGetBalance ethGetBalance =  web3j.ethGetBalance(address,defaultBlockParameter).send();
-//            if(ethGetBalance!=null){
-//                return ethGetBalance.getBalance();
-//            }
+            if(ethGetBalance!=null){
+                return ethGetBalance.getBalance();
+            }
 
+            /** 查询 TFC */
             Function function = new Function("balanceOf",
                     Arrays.asList(new Address(address)),
                     Arrays.asList(new TypeReference<Address>() {
                     }));
             String encode = FunctionEncoder.encode(function);
-
             Transaction ethCallTransaction = Transaction.createEthCallTransaction(address, serverProperties.getContactAddress(), encode);
             EthCall ethCall = web3j.ethCall(ethCallTransaction, DefaultBlockParameterName.LATEST).sendAsync().get();
             String value = ethCall.getResult();
-
-
-
+            BigInteger result = BigInteger.valueOf(Long.parseLong(value));
+            return result;
         }catch (Exception e){
+            log.error("getBalance address :{}",address);
             e.printStackTrace();
         }
         return null;
     }
 
     public static void main(String args[]){
-
         BigInteger result  = Numeric.decodeQuantity("0x0000000000000000000000000000000000000000000000000000000000002710");
-        System.out.println("区块: "+ result.toString());
+        System.out.println("结果: "+ result.toString());
     }
 
 }

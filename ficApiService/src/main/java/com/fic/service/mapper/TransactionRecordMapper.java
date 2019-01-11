@@ -24,4 +24,8 @@ public interface TransactionRecordMapper {
     List<TransactionRecord> findAllByType(int status);
 
     int updateStatus(int id,int status,String remark);
+
+    List<TransactionRecord> findAllWaitConfirm();
+
+    int updateStatusForeachList(List<TransactionRecord> recordList);
 }

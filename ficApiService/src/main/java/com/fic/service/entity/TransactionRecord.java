@@ -31,6 +31,11 @@ public class TransactionRecord {
     private Integer way;
 
     private Date createdTime;
+    private String transactionHash;
+
+    private String coinType;
+
+    private Date inComeTime;
 
     public Integer getId() {
         return id;
@@ -136,6 +141,30 @@ public class TransactionRecord {
         this.createdTime = createdTime;
     }
 
+    public String getTransactionHash() {
+        return transactionHash;
+    }
+
+    public void setTransactionHash(String transactionHash) {
+        this.transactionHash = transactionHash;
+    }
+
+    public String getCoinType() {
+        return coinType;
+    }
+
+    public void setCoinType(String coinType) {
+        this.coinType = coinType;
+    }
+
+    public Date getInComeTime() {
+        return inComeTime;
+    }
+
+    public void setInComeTime(Date inComeTime) {
+        this.inComeTime = inComeTime;
+    }
+
     @Override
     public String toString() {
         return "TransactionRecord{" +
@@ -152,6 +181,9 @@ public class TransactionRecord {
                 ", remark='" + remark + '\'' +
                 ", way=" + way +
                 ", createdTime=" + createdTime +
+                ", transactionHash='" + transactionHash + '\'' +
+                ", coinType='" + coinType + '\'' +
+                ", inComeTime=" + inComeTime +
                 '}';
     }
 }

@@ -16,4 +16,6 @@ public interface TransactionRecordService{
     ResponseVo reject(int id,String remark);
 
     ResponseVo doTransactionOut(int userId, BigDecimal amount,String toAddress);
+
+    ResponseVo confirmTranIn(int userId, String fromAddress, String txHash, String coinType, BigDecimal amount,String remark,String inComeTime);
 }

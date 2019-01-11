@@ -1,21 +1,15 @@
 package com.fic.service.controller;
 
-import com.fic.service.Enum.ErrorCodeEnum;
-import com.fic.service.Vo.DistributionVo;
-import com.fic.service.Vo.ResponseVo;
 import com.fic.service.constants.ServerProperties;
-import com.fic.service.entity.TransactionRecord;
-import com.fic.service.entity.User;
 import com.fic.service.mapper.UserMapper;
 import com.fic.service.scheduled.BetScheduledService;
 import com.fic.service.service.MaoYanService;
 import com.fic.service.service.SmsService;
 import com.fic.service.service.TransactionRecordService;
 import com.fic.service.service.WalletService;
-import com.fic.service.utils.DateUtil;
 import com.fic.service.utils.Web3jUtil;
-import io.swagger.annotations.*;
-import org.apache.commons.lang3.StringUtils;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,8 +20,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.math.BigDecimal;
-import java.math.BigInteger;
-import java.util.List;
 
 /**
  *   @Author Xie
@@ -94,11 +86,13 @@ public class HomeController {
 
     @GetMapping("/transaction")
     @ApiOperation("测试转账")
-    public ResponseEntity transaction(@RequestParam(required = false) int userId,@RequestParam(required = false) BigDecimal amount,@RequestParam(required = false) String toAddress) {
+    public ResponseEntity transaction(@RequestParam(required = false)String txHash,@RequestParam(required = false) int userId,@RequestParam(required = false) BigDecimal amount,@RequestParam(required = false) String toAddress) {
         log.debug(" transaction !!!");
 //         List<String> result = web3jUtil.getAccountlist();
 //        web3jUtil.unLock("0x937b3080025cdae1a7e9f564405ecc29beeaa181","f379eaf3c831b04de153469d1bec345e");
 //        web3jUtil.getBalance(toAddress);
+//        int result = web3jUtil.queryTransactionStatus(txHash);
+//        log.debug(" hash : {} ，状态 : {}",txHash,result);
         transactionRecordService.doTransactionOut(userId,amount,toAddress);
         return ResponseEntity.ok().body("success");
     }
@@ -110,26 +104,5 @@ public class HomeController {
         return ResponseEntity.ok().body("success");
     }
 
-//    @GetMapping(value = "/doMissingAddressMakeUp")
-//    @ApiOperation("补充钱包地址，对象为注册无钱包地址的用户")
-//    @ApiResponses({
-//            @ApiResponse(code = 200, message = "SUCCESS")
-//    })
-//    public ResponseEntity doMissingAddressMakeUp(){
-//        log.debug(" do doMissingAddressMakeUp Action !!!");
-//        List<User> userList = userMapper.findMissingAddress();
-//        String path = serverProperties.getStoreLocation();
-//        if(userList.size() > 0){
-//            for(User user : userList){
-//                //TODO address make up
-//                if(StringUtils.isEmpty(user.getWalletAddress())){
-//                    String address = we
-//                }
-//            }
-//        }
-//
-//        return ResponseEntity.ok().build();
-//
-//    }
 
 }

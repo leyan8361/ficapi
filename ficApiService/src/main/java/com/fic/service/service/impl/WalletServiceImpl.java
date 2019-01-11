@@ -127,6 +127,7 @@ public class WalletServiceImpl implements WalletService {
             log.error(" 转账申请失败，");
             throw new RuntimeException();
         }
+
         return new ResponseVo(ErrorCodeEnum.SUCCESS,null);
     }
 }

@@ -9,7 +9,7 @@ public enum TransactionStatusEnum {
 
         APPLY(0,"转账申请"),
         REJECT(1,"转账申请被拒绝"),
-        WAIT_CONFIRM(2,"转账待确认"),
+        WAIT_CONFIRM(2,"转账中"),
         SUCCESS(3,"转账成功"),
         FAILED(4,"转账失败");
 

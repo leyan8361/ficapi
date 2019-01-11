@@ -95,6 +95,7 @@ public enum ErrorCodeEnum {
      */
     WALLET_NOT_EXIST(6000,"WALLET_NOT_EXIST"),
     TRANSACTION_NOT_FOUND(6001,"TRANSACTION_NOT_FOUND"),
+    COIN_TYPE_NOT_PERMIT(6002,"WRONG COIN TYPE"),
     /**
      * System Error
      */

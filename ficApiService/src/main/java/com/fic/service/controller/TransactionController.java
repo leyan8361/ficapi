@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 /**
@@ -57,7 +58,7 @@ public class TransactionController {
     }
 
     @GetMapping("/approveTransaction")
-    @ApiOperation("Api-审核转账申请")
+    @ApiOperation("Api-审核转出申请")
     @ApiImplicitParams({
             @ApiImplicitParam(dataType = "int", name = "id", value = "转账ID", required = true),
             @ApiImplicitParam(dataType = "boolean", name = "approve", value = "(true,通过)(false,不通过)",required = true),
@@ -80,5 +81,25 @@ public class TransactionController {
             response = transactionRecordService.reject(id,remark);
         }
         return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/confirmTranIn")
+    @ApiOperation("Api-确认转入")
+    @ApiImplicitParams({
+            @ApiImplicitParam(dataType = "int", name = "userId", value = "用户ID", required = true),
+            @ApiImplicitParam(dataType = "string", name = "fromAddress", value = "转入来源地址",required = true),
+            @ApiImplicitParam(dataType = "string", name = "txHash", value = "交易合约Hash",required = true),
+            @ApiImplicitParam(dataType = "string", name = "coinType", value = "币种",required = true),
+            @ApiImplicitParam(dataType = "double", name = "amount", value = "到账数量",required = true),
+            @ApiImplicitParam(dataType = "string", name = "inComeTime", value = "到账时间,格式(yyyy-MM-dd HH:mm:ss)",required = true),
+            @ApiImplicitParam(dataType = "string", name = "remark", value = "备注",required = false),
+    })
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "SUCCESS")
+    })
+    public ResponseEntity confirmTranIn(@RequestParam int userId, @RequestParam String fromAddress, @RequestParam String txHash, @RequestParam String coinType, @RequestParam BigDecimal amount,@RequestParam String remark,@RequestParam String inComeTime) {
+        log.debug(" confirmTranIn Action !!!");
+        ResponseVo result = transactionRecordService.confirmTranIn(userId,fromAddress,txHash,coinType,amount,remark,inComeTime);
+        return ResponseEntity.ok(result);
     }
 }

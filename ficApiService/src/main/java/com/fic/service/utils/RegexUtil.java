@@ -154,9 +154,17 @@ public class RegexUtil {
         return lastNum;
     }
 
+    public static boolean isCoinType(String coinType){
+        Pattern pattern = Pattern.compile(".*(FTC|BTC|ETH|USDT|BCH|FIAT)$");
+        Matcher matcher = pattern.matcher(coinType);
+        if(matcher.matches()){
+            return true;
+        }
+        return false;
+    }
+
 
     public static void main(String args[]){
-        BigDecimal boxInfo = new BigDecimal("58713.456465");
-        RegexUtil.getLastNum(boxInfo);
+        System.out.println(RegexUtil.isCoinType("EOS"));
     }
 }
