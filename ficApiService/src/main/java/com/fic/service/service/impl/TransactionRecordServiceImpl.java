@@ -72,13 +72,13 @@ public class TransactionRecordServiceImpl implements TransactionRecordService {
     }
 
     @Override
-    public ResponseVo doTransaction(int userId, BigDecimal amount) {
+    public ResponseVo doTransactionOut(int userId, BigDecimal amount,String toAddress) {
         User user = userMapper.get(userId);
         Wallet wallet = walletMapper.findByAddressByCompany(userId);
         if(null == wallet){
             log.error(" 无钱包 ");
         }
-        web3jUtil.doTransactionOut(amount,user.getPayPassword(),serverProperties.getStoreLocation()+user.getId()+"/"+wallet.getKeystore(),wallet.getWalletAddress());
+        web3jUtil.doTransactionOut(amount,user.getPayPassword(),serverProperties.getStoreLocation()+user.getId()+"/"+wallet.getKeystore(),toAddress);
         return new ResponseVo(ErrorCodeEnum.SUCCESS,null);
     }
 }

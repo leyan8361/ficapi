@@ -42,6 +42,7 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
@@ -175,7 +176,7 @@ public class Web3jUtil {
      */
     public void doTransactionOut(BigDecimal amount, String password, String keyStore, String toAddress){
         try{
-            unLock(toAddress,password);
+//            unLock(toAddress,password);
             String transactionHash = "";
             Credentials credentials = WalletUtils.loadCredentials(password, keyStore);
             String fromAddress = credentials.getAddress();
@@ -188,21 +189,32 @@ public class Web3jUtil {
             parametersList.add(address);
             BigInteger amountValue = Convert.toWei(amount.toString(), Convert.Unit.ETHER).toBigInteger();
             BigInteger gasPrice = Convert.toWei("3",Convert.Unit.GWEI).toBigInteger();
+            BigInteger gasLimit = BigInteger.valueOf(8000000l);
             Uint256 value = new Uint256(amountValue);
-            parametersList.add(value);
-            List<TypeReference<?>> outList = new ArrayList<>();
-            Function function = new Function("transfer", parametersList, outList);
+//            parametersList.add(value);
+//            List<TypeReference<?>> outList = new ArrayList<>();
+            Function function = new Function(
+                    "transfer",//交易的方法名称
+                    Arrays.asList(address,value),
+                    Arrays.asList(new TypeReference<Address>(){},new TypeReference<Uint256>(){})
+            );
+//            Function function = new Function("transfer", parametersList, outList);
             String encodedFunction = FunctionEncoder.encode(function);
 //            RawTransaction rawTransaction = RawTransaction.createTransaction(nonce, Gas单价,
 //                    Gas最大数量, 合约地址, encodedFunction);
 //            RawTransaction rawTransaction = RawTransaction.createTransaction(nonce, BigInteger.valueOf(1l),
 //                    BigInteger.valueOf(1l), serverProperties.getContactAddress(), encodedFunction);
+            log.debug(" gasPrice : {} , gasLimit :{}, amount :{}",gasPrice,gasLimit,amountValue);
             RawTransaction rawTransaction = RawTransaction.createTransaction(nonce, gasPrice,
-                    BigInteger.valueOf(8000000l), serverProperties.getContactAddress(), encodedFunction);
+                    gasLimit, serverProperties.getContactAddress(), encodedFunction);
             byte[] signedMessage = TransactionEncoder.signMessage(rawTransaction, credentials);
             String hexValue = Numeric.toHexString(signedMessage);
 
             EthSendTransaction ethSendTransaction = web3j.ethSendRawTransaction(hexValue).sendAsync().get();
+            if(ethSendTransaction.hasError()){
+                log.error("Error : " + ethSendTransaction.getError().getMessage());
+                return;
+            }
             transactionHash = ethSendTransaction.getTransactionHash();
             System.out.println(transactionHash);
         }catch (IOException e) {
@@ -223,9 +235,22 @@ public class Web3jUtil {
         try {
             DefaultBlockParameter defaultBlockParameter = new DefaultBlockParameterNumber(web3j.ethBlockNumber().send().getBlockNumber());
             EthGetBalance ethGetBalance =  web3j.ethGetBalance(address,defaultBlockParameter).send();
-            if(ethGetBalance!=null){
-                return ethGetBalance.getBalance();
-            }
+//            if(ethGetBalance!=null){
+//                return ethGetBalance.getBalance();
+//            }
+
+            Function function = new Function("balanceOf",
+                    Arrays.asList(new Address(address)),
+                    Arrays.asList(new TypeReference<Address>() {
+                    }));
+            String encode = FunctionEncoder.encode(function);
+
+            Transaction ethCallTransaction = Transaction.createEthCallTransaction(address, serverProperties.getContactAddress(), encode);
+            EthCall ethCall = web3j.ethCall(ethCallTransaction, DefaultBlockParameterName.LATEST).sendAsync().get();
+            String value = ethCall.getResult();
+
+
+
         }catch (Exception e){
             e.printStackTrace();
         }
@@ -234,7 +259,7 @@ public class Web3jUtil {
 
     public static void main(String args[]){
 
-        BigInteger result  = Numeric.decodeQuantity("0x6b7329");
+        BigInteger result  = Numeric.decodeQuantity("0x0000000000000000000000000000000000000000000000000000000000002710");
         System.out.println("区块: "+ result.toString());
     }
 

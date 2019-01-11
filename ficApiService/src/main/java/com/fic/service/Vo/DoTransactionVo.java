@@ -16,9 +16,6 @@ public class DoTransactionVo {
     @ApiModelProperty(value = "用户ID",required = true)
     private Integer userId;
 
-    @ApiModelProperty("转入转出来源地址,当转出时，此项不用填写")
-    private String fromAddress;
-
     @ApiModelProperty("转入转出目标地址,当转入时，此项不用填写")
     private String toAddress;
 
@@ -31,14 +28,6 @@ public class DoTransactionVo {
 
     public void setUserId(Integer userId) {
         this.userId = userId;
-    }
-
-    public String getFromAddress() {
-        return fromAddress;
-    }
-
-    public void setFromAddress(String fromAddress) {
-        this.fromAddress = fromAddress;
     }
 
     public String getToAddress() {

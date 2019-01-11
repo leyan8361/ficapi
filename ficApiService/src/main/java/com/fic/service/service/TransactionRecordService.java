@@ -15,5 +15,5 @@ public interface TransactionRecordService{
 
     ResponseVo reject(int id,String remark);
 
-    ResponseVo doTransaction(int userId, BigDecimal amount);
+    ResponseVo doTransactionOut(int userId, BigDecimal amount,String toAddress);
 }

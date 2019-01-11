@@ -109,9 +109,10 @@ public class WalletServiceImpl implements WalletService {
             log.error("用户不存在");
             return new ResponseVo(ErrorCodeEnum.USER_NOT_EXIST,null);
         }
+        Wallet wallet = walletMapper.findByAddressByCompany(transactionVo.getUserId());
         TransactionRecord result = new TransactionRecord();
         result.setAmount(transactionVo.getAmount());
-        result.setFromAddress(transactionVo.getFromAddress());
+        result.setFromAddress(wallet.getWalletAddress());
         result.setToAddress(transactionVo.getToAddress());
         result.setStatus(TransactionStatusEnum.APPLY.getCode());
         result.setCreatedTime(new Date());

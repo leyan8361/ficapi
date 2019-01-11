@@ -94,11 +94,12 @@ public class HomeController {
 
     @GetMapping("/transaction")
     @ApiOperation("测试转账")
-    public ResponseEntity transaction(@RequestParam int userId,@RequestParam BigDecimal amount) {
+    public ResponseEntity transaction(@RequestParam(required = false) int userId,@RequestParam(required = false) BigDecimal amount,@RequestParam(required = false) String toAddress) {
         log.debug(" transaction !!!");
-         List<String> result = web3jUtil.getAccountlist();
+//         List<String> result = web3jUtil.getAccountlist();
 //        web3jUtil.unLock("0x937b3080025cdae1a7e9f564405ecc29beeaa181","f379eaf3c831b04de153469d1bec345e");
-//        transactionRecordService.doTransaction(userId,amount);
+//        web3jUtil.getBalance(toAddress);
+        transactionRecordService.doTransactionOut(userId,amount,toAddress);
         return ResponseEntity.ok().body("success");
     }
 
