@@ -21,6 +21,7 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
@@ -45,7 +46,7 @@ public class TransactionScheduledService {
      * 查询交易
      * status (0,失败)(1,成功)(2,交易挂起)
      */
-    @Scheduled(cron = "*/30 * * * * ?")
+//    @Scheduled(cron = "*/30 * * * * ?")
     @Transactional(isolation= Isolation.READ_COMMITTED,propagation= Propagation.REQUIRED,rollbackFor = Exception.class)
     public void doQueryTransactionStatus() {
         log.debug(" do update transaction status !");
@@ -66,11 +67,28 @@ public class TransactionScheduledService {
             }
             record.setStatus(TransactionStatusEnum.SUCCESS.getCode());
             record.setInComeTime(new Date());
+
             User user = userMapper.get(record.getUserId());
             if(null == user){
-                log.error("用户不存在， 查询交易 user id :{}",record.getUserId());
+                log.error("1.用户不存在， 查询交易 user id :{}",record.getUserId());
                 continue;
             }
+
+            Invest invest = investMapper.findByUserId(user.getId());
+            if(null == invest){
+                log.error("2.资产不存在，查询交易 user id :{}",record.getUserId());
+                continue;
+            }
+
+            if(invest.getLockBalance().compareTo(record.getAmount()) >0){
+                BigDecimal resultLockBalance = invest.getLockBalance().subtract(record.getAmount());
+                int updateLockBalance = investMapper.updateLockBalance(invest.getBalance(),resultLockBalance,invest.getUserId());
+                if(updateLockBalance <=0){
+                    log.error("3.更新资产失败，查询交易，user id :{}",record.getUserId());
+                    throw new RuntimeException();
+                }
+            }
+
             /**
              * 处理余额
              */
@@ -82,12 +100,7 @@ public class TransactionScheduledService {
             balanceStatement.setWay(FinanceWayEnum.OUT.getCode());
             int saveBalanceResult = balanceStatementMapper.insertSelective(balanceStatement);
             if(saveBalanceResult <=0){
-                log.error("转出，生成余额失败 balance statement :{}",balanceStatement.toString());
-                throw new RuntimeException();
-            }
-            int updateInvestResult = investMapper.updateBalance(record.getAmount(),record.getUserId());
-            if(updateInvestResult <=0){
-                log.error("转出，更新Invest失败，balance :{},userId:{}",record.getAmount(),record.getUserId());
+                log.error("4.转出，生成余额失败 balance statement :{}",balanceStatement.toString());
                 throw new RuntimeException();
             }
         }

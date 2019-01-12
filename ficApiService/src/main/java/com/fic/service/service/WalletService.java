@@ -36,10 +36,6 @@ public interface WalletService {
      */
     ResponseVo queryBalanceByUserId(int userId);
 
-    /**
-     * 转入 转出
-     * @return
-     */
-    ResponseVo doTransactionApply(DoTransactionVo transactionVo);
+
 
 }

@@ -16,12 +16,15 @@
     <result column="way" jdbcType="INTEGER" property="way" />
     <result column="created_time" jdbcType="TIMESTAMP" property="createdTime" />
     <result column="transaction_hash" jdbcType="VARCHAR" property="transactionHash" />
-    <result column="coin_type" jdbcType="INTEGER" property="coinType" />
+    <result column="coin_type" jdbcType="VARCHAR" property="coinType" />
     <result column="in_come_time" jdbcType="TIMESTAMP" property="inComeTime" />
+    <result column="coin_rate" jdbcType="DECIMAL" property="coinRate" />
+    <result column="coin_num" jdbcType="DECIMAL" property="coinNum" />
   </resultMap>
   <sql id="Base_Column_List">
     id, user_id, from_address, to_address, amount, gas_price, fee, transaction_address,
-    gas_limit, status, remark, way, created_time, transaction_hash, coin_type, in_come_time
+    gas_limit, status, remark, way, created_time, transaction_hash, coin_type, in_come_time,
+    coin_rate, coin_num
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
     select
@@ -39,13 +42,15 @@
       fee, transaction_address, gas_limit,
       status, remark, way,
       created_time, transaction_hash, coin_type,
-      in_come_time)
+      in_come_time, coin_rate, coin_num
+      )
     values (#{id,jdbcType=INTEGER}, #{userId,jdbcType=INTEGER}, #{fromAddress,jdbcType=VARCHAR},
       #{toAddress,jdbcType=VARCHAR}, #{amount,jdbcType=DECIMAL}, #{gasPrice,jdbcType=DECIMAL},
       #{fee,jdbcType=DECIMAL}, #{transactionAddress,jdbcType=VARCHAR}, #{gasLimit,jdbcType=DECIMAL},
       #{status,jdbcType=INTEGER}, #{remark,jdbcType=VARCHAR}, #{way,jdbcType=INTEGER},
-      #{createdTime,jdbcType=TIMESTAMP}, #{transactionHash,jdbcType=VARCHAR}, #{coinType,jdbcType=INTEGER},
-      #{inComeTime,jdbcType=TIMESTAMP})
+      #{createdTime,jdbcType=TIMESTAMP}, #{transactionHash,jdbcType=VARCHAR}, #{coinType,jdbcType=VARCHAR},
+      #{inComeTime,jdbcType=TIMESTAMP}, #{coinRate,jdbcType=DECIMAL}, #{coinNum,jdbcType=DECIMAL}
+      )
   </insert>
   <insert id="insertSelective" parameterType="com.fic.service.entity.TransactionRecord">
     insert into transaction_record
@@ -98,6 +103,12 @@
       <if test="inComeTime != null">
         in_come_time,
       </if>
+      <if test="coinRate != null">
+        coin_rate,
+      </if>
+      <if test="coinNum != null">
+        coin_num,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="id != null">
@@ -143,10 +154,16 @@
         #{transactionHash,jdbcType=VARCHAR},
       </if>
       <if test="coinType != null">
-        #{coinType,jdbcType=INTEGER},
+        #{coinType,jdbcType=VARCHAR},
       </if>
       <if test="inComeTime != null">
         #{inComeTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="coinRate != null">
+        #{coinRate,jdbcType=DECIMAL},
+      </if>
+      <if test="coinNum != null">
+        #{coinNum,jdbcType=DECIMAL},
       </if>
     </trim>
   </insert>
@@ -193,10 +210,16 @@
         transaction_hash = #{transactionHash,jdbcType=VARCHAR},
       </if>
       <if test="coinType != null">
-        coin_type = #{coinType,jdbcType=INTEGER},
+        coin_type = #{coinType,jdbcType=VARCHAR},
       </if>
       <if test="inComeTime != null">
         in_come_time = #{inComeTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="coinRate != null">
+        coin_rate = #{coinRate,jdbcType=DECIMAL},
+      </if>
+      <if test="coinNum != null">
+        coin_num = #{coinNum,jdbcType=DECIMAL},
       </if>
     </set>
     where id = #{id,jdbcType=INTEGER}
@@ -216,8 +239,10 @@
       way = #{way,jdbcType=INTEGER},
       created_time = #{createdTime,jdbcType=TIMESTAMP},
       transaction_hash = #{transactionHash,jdbcType=VARCHAR},
-      coin_type = #{coinType,jdbcType=INTEGER},
-      in_come_time = #{inComeTime,jdbcType=TIMESTAMP}
+      coin_type = #{coinType,jdbcType=VARCHAR},
+      in_come_time = #{inComeTime,jdbcType=TIMESTAMP},
+      coin_rate = #{coinRate,jdbcType=DECIMAL},
+      coin_num = #{coinNum,jdbcType=DECIMAL}
     where id = #{id,jdbcType=INTEGER}
   </update>
   <select id="findAllByType" parameterType="int">

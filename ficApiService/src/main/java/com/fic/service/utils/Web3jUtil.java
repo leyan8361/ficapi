@@ -248,19 +248,38 @@ public class Web3jUtil {
     }
 
     /**
-     * 获取钱包地址余额
+     * 查询以太坊余额
      * @param address
      * @return
      */
-    public BigInteger getBalance(String address){
-        try {
+    public BigDecimal getEthBalance(String address){
+        try{
+
             /** 查询 ETH */
             DefaultBlockParameter defaultBlockParameter = new DefaultBlockParameterNumber(web3j.ethBlockNumber().send().getBlockNumber());
             EthGetBalance ethGetBalance =  web3j.ethGetBalance(address,defaultBlockParameter).send();
             if(ethGetBalance!=null){
-                return ethGetBalance.getBalance();
+                BigInteger ethBalance = ethGetBalance.getBalance();
+                BigDecimal ethBalanceTurn = Convert.fromWei(ethBalance.toString(), Convert.Unit.ETHER);
+                log.debug("以太坊余额 : " + ethBalanceTurn.toString());
+                return ethBalanceTurn;
             }
+        } catch (IOException e) {
+            log.error("query ETH Exception :{}",e);
+            e.printStackTrace();
+            return null;
+        }
+        log.error("query ETH Exception , result is null");
+        return null;
+    }
 
+    /**
+     * 获取钱包地址余额
+     * @param address
+     * @return
+     */
+    public BigInteger getTokenBalance(String address){
+        try {
             /** 查询 TFC */
             Function function = new Function("balanceOf",
                     Arrays.asList(new Address(address)),
@@ -270,10 +289,11 @@ public class Web3jUtil {
             Transaction ethCallTransaction = Transaction.createEthCallTransaction(address, serverProperties.getContactAddress(), encode);
             EthCall ethCall = web3j.ethCall(ethCallTransaction, DefaultBlockParameterName.LATEST).sendAsync().get();
             String value = ethCall.getResult();
-            BigInteger result = BigInteger.valueOf(Long.parseLong(value));
+            BigInteger result = Numeric.decodeQuantity(value);
+            log.debug("Token address {}, balance :{} : ",address,result);
             return result;
         }catch (Exception e){
-            log.error("getBalance address :{}",address);
+            log.error("getTokenBalance address :{}",address);
             e.printStackTrace();
         }
         return null;

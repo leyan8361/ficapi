@@ -4,6 +4,7 @@ package com.fic.service.controller.api.v1;
 import com.fic.service.Enum.ErrorCodeEnum;
 import com.fic.service.Vo.DoTransactionVo;
 import com.fic.service.Vo.ResponseVo;
+import com.fic.service.service.TransactionRecordService;
 import com.fic.service.service.WalletService;
 import io.swagger.annotations.*;
 import org.slf4j.Logger;
@@ -24,6 +25,8 @@ public class ApiWalletController {
 
     @Autowired
     WalletService walletService;
+    @Autowired
+    TransactionRecordService transactionRecordService;
 
     @GetMapping("/getBalance")
     @ApiOperation("Api-查询钱包余额")
@@ -34,19 +37,19 @@ public class ApiWalletController {
             @ApiResponse(code = 200, message = "SUCCESS",response = BigInteger.class)
     })
     public ResponseEntity getBalance(@RequestParam int userId) {
-        log.debug(" do getBalance action !!");
+        log.debug(" do getTokenBalance action !!");
         ResponseVo result = walletService.queryBalanceByUserId(userId);
         return ResponseEntity.ok(new ResponseVo(ErrorCodeEnum.SUCCESS,result));
     }
 
     @PostMapping("/doTransactionOutApply")
-    @ApiOperation("Api-转出")
+    @ApiOperation("Api-申请转出")
     @ApiResponses({
             @ApiResponse(code = 200, message = "SUCCESS",response = BigInteger.class)
     })
     public ResponseEntity doTransactionOutApply(@RequestBody DoTransactionVo transactionVo) {
         log.debug(" doTransactionOutApply action !!");
-        ResponseVo result = walletService.doTransactionApply(transactionVo);
+        ResponseVo result = transactionRecordService.doTransactionApply(transactionVo);
         return ResponseEntity.ok(new ResponseVo(ErrorCodeEnum.SUCCESS,result));
     }
 }

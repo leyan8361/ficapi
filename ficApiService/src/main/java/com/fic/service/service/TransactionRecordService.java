@@ -1,5 +1,6 @@
 package com.fic.service.service;
 
+import com.fic.service.Vo.DoTransactionVo;
 import com.fic.service.Vo.ResponseVo;
 
 import java.math.BigDecimal;
@@ -15,7 +16,19 @@ public interface TransactionRecordService{
 
     ResponseVo reject(int id,String remark);
 
+    /**
+     * 转出申请
+     */
+    ResponseVo doTransactionApply(DoTransactionVo transactionVo);
+
+    /**
+     * Test
+     */
+    @Deprecated
     ResponseVo doTransactionOut(int userId, BigDecimal amount,String toAddress);
 
+    /**
+     * 确认转入
+     */
     ResponseVo confirmTranIn(int userId, String fromAddress, String txHash, String coinType, BigDecimal amount,String remark,String inComeTime);
 }

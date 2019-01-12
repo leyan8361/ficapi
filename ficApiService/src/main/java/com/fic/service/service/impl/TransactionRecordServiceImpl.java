@@ -4,6 +4,7 @@ import com.fic.service.Enum.ErrorCodeEnum;
 import com.fic.service.Enum.FinanceTypeEnum;
 import com.fic.service.Enum.FinanceWayEnum;
 import com.fic.service.Enum.TransactionStatusEnum;
+import com.fic.service.Vo.DoTransactionVo;
 import com.fic.service.Vo.ResponseVo;
 import com.fic.service.constants.ServerProperties;
 import com.fic.service.entity.*;
@@ -21,6 +22,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.Date;
 
 @Service
@@ -75,6 +77,68 @@ public class TransactionRecordServiceImpl implements TransactionRecordService {
         return new ResponseVo(ErrorCodeEnum.SUCCESS,null);
     }
 
+    @Override
+    @Transactional(isolation= Isolation.READ_COMMITTED,propagation= Propagation.REQUIRED,rollbackFor = Exception.class)
+    public ResponseVo doTransactionApply(DoTransactionVo transactionVo) {
+        User user = userMapper.get(transactionVo.getUserId());
+        if(null == user){
+            log.error("用户不存在");
+            return new ResponseVo(ErrorCodeEnum.USER_NOT_EXIST,null);
+        }
+        Invest invest = investMapper.findByUserId(transactionVo.getUserId());
+        if(null == invest){
+            log.error("资产不存在");
+            return new ResponseVo(ErrorCodeEnum.INVEST_NOT_EXIST,null);
+        }
+        if(invest.getBalance().compareTo(transactionVo.getAmount()) <0){
+            log.debug("转出申请，余额不足 invest id :{},userId:{}",invest.getInvestId(),invest.getUserId());
+            return new ResponseVo(ErrorCodeEnum.INVEST_BALANCE_NOT_ENOUGH,null);
+        }
+
+        Wallet wallet = walletMapper.findByAddressByCompany(transactionVo.getUserId());
+
+        if(null == wallet){
+            log.error("转出申请，钱包不存在");
+            return new ResponseVo(ErrorCodeEnum.WALLET_NOT_EXIST,null);
+        }
+
+        BigDecimal walletBalance = web3jUtil.getEthBalance(wallet.getWalletAddress());
+        if(BigDecimal.ZERO.compareTo(walletBalance) <= 0){
+            log.debug("转出申请不允许，钱包余额不足， wallet adderss :{}",wallet.getWalletAddress());
+            return new ResponseVo(ErrorCodeEnum.TRAN_OUT_NOT_ENOUGH_GAS,null);
+        }
+
+        TransactionRecord result = new TransactionRecord();
+        result.setAmount(transactionVo.getAmount());
+        result.setFromAddress(wallet.getWalletAddress());
+        result.setToAddress(transactionVo.getToAddress());
+        result.setStatus(TransactionStatusEnum.APPLY.getCode());
+        result.setCreatedTime(new Date());
+        result.setUserId(transactionVo.getUserId());
+        result.setTransactionAddress(serverProperties.getContactAddress());
+        result.setFee(BigDecimal.ZERO);
+        result.setWay(FinanceWayEnum.OUT.getCode());
+        result.setGasLimit(BigDecimal.ZERO);
+        result.setGasPrice(BigDecimal.ZERO);
+        result.setInComeTime(new Date());
+        int saveResult = transactionRecordMapper.insertSelective(result);
+        if(saveResult<=0){
+            log.error(" 转账申请失败，");
+            throw new RuntimeException();
+        }
+
+        BigDecimal balance = (null!=invest.getBalance()?invest.getBalance():BigDecimal.ZERO);
+        BigDecimal resultBalance = balance.subtract(transactionVo.getAmount());
+        BigDecimal lockBalance = (null!=invest.getLockBalance()?invest.getLockBalance():BigDecimal.ZERO);
+        BigDecimal resultLockBalance = lockBalance.add(transactionVo.getAmount());
+        int updateInvestResult = investMapper.updateLockBalance(resultBalance,resultLockBalance,transactionVo.getUserId());
+        if(updateInvestResult <=0){
+            log.error("转出申请，更新invest失败");
+            throw new RuntimeException();
+        }
+        return new ResponseVo(ErrorCodeEnum.SUCCESS,null);
+    }
+
     /**
      *  测试 测试测试测试测试测试测试测试测试测试 转出
      * @param userId
@@ -84,6 +148,7 @@ public class TransactionRecordServiceImpl implements TransactionRecordService {
      */
     @Override
     @Transactional(isolation= Isolation.READ_COMMITTED,propagation= Propagation.REQUIRED,rollbackFor = Exception.class)
+    @Deprecated
     public ResponseVo doTransactionOut(int userId, BigDecimal amount,String toAddress) {
         User user = userMapper.get(userId);
         Wallet wallet = walletMapper.findByAddressByCompany(userId);
@@ -131,7 +196,7 @@ public class TransactionRecordServiceImpl implements TransactionRecordService {
         /**
          * TODO 汇率
          */
-        BigDecimal resultBalance = null;
+        BigDecimal resultBalance = BigDecimal.ZERO;
 
         /**
          * 处理余额

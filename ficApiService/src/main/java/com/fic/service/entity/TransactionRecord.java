@@ -37,6 +37,10 @@ public class TransactionRecord {
 
     private Date inComeTime;
 
+    private BigDecimal coinRate;
+
+    private BigDecimal coinNum;
+
     public Integer getId() {
         return id;
     }
@@ -165,6 +169,22 @@ public class TransactionRecord {
         this.inComeTime = inComeTime;
     }
 
+    public BigDecimal getCoinRate() {
+        return coinRate;
+    }
+
+    public void setCoinRate(BigDecimal coinRate) {
+        this.coinRate = coinRate;
+    }
+
+    public BigDecimal getCoinNum() {
+        return coinNum;
+    }
+
+    public void setCoinNum(BigDecimal coinNum) {
+        this.coinNum = coinNum;
+    }
+
     @Override
     public String toString() {
         return "TransactionRecord{" +
@@ -184,6 +204,8 @@ public class TransactionRecord {
                 ", transactionHash='" + transactionHash + '\'' +
                 ", coinType='" + coinType + '\'' +
                 ", inComeTime=" + inComeTime +
+                ", coinRate=" + coinRate +
+                ", coinNum=" + coinNum +
                 '}';
     }
 }
