@@ -17,7 +17,9 @@ public enum FinanceTypeEnum {
     BET_RETURNING(7,"竞猜返还"),
     BET(8,"投注"),
     BET_REWARD_POOL(9,"连续奖励"),
-    TRANSFER_OUT(10,"转出"),
+    PRE_TRANSFER_OUT(10,"预转出"),//等待查询交易成功
+    PRE_TRANSFER_OUT_RETURN(11,"转出失败，退还"),
+    TRANSFER_OUT(12,"转出成功")
     ;
 
     private Integer code;

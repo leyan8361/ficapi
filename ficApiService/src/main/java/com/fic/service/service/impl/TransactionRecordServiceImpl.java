@@ -53,7 +53,7 @@ public class TransactionRecordServiceImpl implements TransactionRecordService {
             throw new RuntimeException();
         }
         //TODO 判断是否有ETH
-//        web3jUtil.
+
 
 
         int updateStatus = transactionRecordMapper.updateStatus(id, TransactionStatusEnum.WAIT_CONFIRM.getCode(),remark);
