@@ -3,6 +3,7 @@ package com.fic.service.controller;
 import com.fic.service.constants.ServerProperties;
 import com.fic.service.mapper.UserMapper;
 import com.fic.service.scheduled.BetScheduledService;
+import com.fic.service.scheduled.TransactionScheduledService;
 import com.fic.service.service.MaoYanService;
 import com.fic.service.service.SmsService;
 import com.fic.service.service.TransactionRecordService;
@@ -49,6 +50,8 @@ public class HomeController {
     Web3jUtil web3jUtil;
     @Autowired
     TransactionRecordService transactionRecordService;
+    @Autowired
+    TransactionScheduledService transactionScheduledService;
 
     @GetMapping("/home")
     @ApiOperation("获取首页数据 , 拉票房，开奖")
@@ -84,16 +87,24 @@ public class HomeController {
         return ResponseEntity.ok().body("success");
     }
 
+    @GetMapping("/testTranIfIn")
+    @ApiOperation("查询转出是否成功")
+    public ResponseEntity testTranIfIn(@RequestParam int tranOutId) {
+        log.debug(" testTranIfIn !!!");
+        transactionScheduledService.doQueryTransactionStatus();
+        return ResponseEntity.ok().body("success");
+    }
+
     @GetMapping("/transaction")
     @ApiOperation("测试转账")
     public ResponseEntity transaction(@RequestParam(required = false)String txHash,@RequestParam(required = false) int userId,@RequestParam(required = false) BigDecimal amount,@RequestParam(required = false) String toAddress) {
         log.debug(" transaction !!!");
 //         List<String> result = web3jUtil.getAccountlist();
 //        web3jUtil.unLock("0x937b3080025cdae1a7e9f564405ecc29beeaa181","f379eaf3c831b04de153469d1bec345e");
-        web3jUtil.getTokenBalance(toAddress);
+//        web3jUtil.getEthBalance(toAddress);
 //        int result = web3jUtil.queryTransactionStatus(txHash);
 //        log.debug(" hash : {} ，状态 : {}",txHash,result);
-//        transactionRecordService.doTransactionOut(userId,amount,toAddress);
+        transactionRecordService.doTransactionOut(userId,amount,toAddress);
         return ResponseEntity.ok().body("success");
     }
 

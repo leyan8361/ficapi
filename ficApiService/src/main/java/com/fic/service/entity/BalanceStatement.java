@@ -22,6 +22,8 @@ public class BalanceStatement {
 
     private BigDecimal balance;
 
+    private Integer traceId;
+
     public Integer getId() {
         return id;
     }
@@ -94,6 +96,14 @@ public class BalanceStatement {
         this.investDetailId = investDetailId;
     }
 
+    public Integer getTraceId() {
+        return traceId;
+    }
+
+    public void setTraceId(Integer traceId) {
+        this.traceId = traceId;
+    }
+
     @Override
     public String toString() {
         return "BalanceStatement{" +
@@ -106,6 +116,7 @@ public class BalanceStatement {
                 ", distributionId=" + distributionId +
                 ", investDetailId=" + investDetailId +
                 ", balance=" + balance +
+                ", traceId=" + traceId +
                 '}';
     }
 }

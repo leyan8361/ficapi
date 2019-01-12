@@ -12,10 +12,11 @@
     <result column="updated_time" jdbcType="TIMESTAMP" property="updatedTime" />
     <result column="updated_by" jdbcType="INTEGER" property="updatedBy" />
     <result column="coin_type" jdbcType="VARCHAR" property="coinType" />
+    <result column="password" jdbcType="VARCHAR" property="password" />
   </resultMap>
   <sql id="Base_Column_List">
     id, user_id, wallet_address, keystore, balance, created_time, created_by, updated_time,
-    updated_by, coin_type
+    updated_by, coin_type, password
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
     select
@@ -31,11 +32,11 @@
     insert into wallet (id, user_id, wallet_address,
       keystore, balance, created_time,
       created_by, updated_time, updated_by,
-      coin_type)
+      coin_type, password)
     values (#{id,jdbcType=INTEGER}, #{userId,jdbcType=INTEGER}, #{walletAddress,jdbcType=VARCHAR},
       #{keystore,jdbcType=VARCHAR}, #{balance,jdbcType=DECIMAL}, #{createdTime,jdbcType=TIMESTAMP},
       #{createdBy,jdbcType=INTEGER}, #{updatedTime,jdbcType=TIMESTAMP}, #{updatedBy,jdbcType=INTEGER},
-      #{coinType,jdbcType=VARCHAR})
+      #{coinType,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.fic.service.entity.Wallet">
     insert into wallet
@@ -70,6 +71,9 @@
       <if test="coinType != null">
         coin_type,
       </if>
+      <if test="password != null">
+        password,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="id != null">
@@ -101,6 +105,9 @@
       </if>
       <if test="coinType != null">
         #{coinType,jdbcType=VARCHAR},
+      </if>
+      <if test="password != null">
+        #{password,jdbcType=VARCHAR},
       </if>
     </trim>
   </insert>
@@ -134,6 +141,9 @@
       <if test="coinType != null">
         coin_type = #{coinType,jdbcType=VARCHAR},
       </if>
+      <if test="password != null">
+        password = #{password,jdbcType=VARCHAR},
+      </if>
     </set>
     where id = #{id,jdbcType=INTEGER}
   </update>
@@ -147,7 +157,8 @@
       created_by = #{createdBy,jdbcType=INTEGER},
       updated_time = #{updatedTime,jdbcType=TIMESTAMP},
       updated_by = #{updatedBy,jdbcType=INTEGER},
-      coin_type = #{coinType,jdbcType=VARCHAR}
+      coin_type = #{coinType,jdbcType=VARCHAR},
+      password = #{password,jdbcType=VARCHAR}
     where id = #{id,jdbcType=INTEGER}
   </update>
   <select id="findAll" resultMap="BaseResultMap">

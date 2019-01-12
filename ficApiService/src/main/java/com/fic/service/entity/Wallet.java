@@ -34,6 +34,7 @@ public class Wallet {
     private Integer updatedBy;
     @ApiModelProperty("币类型")
     private String coinType;
+    private String password;
 
     public Integer getId() {
         return id;
@@ -113,5 +114,13 @@ public class Wallet {
 
     public void setCoinType(String coinType) {
         this.coinType = coinType;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 }

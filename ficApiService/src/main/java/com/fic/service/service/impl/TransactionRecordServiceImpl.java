@@ -6,6 +6,7 @@ import com.fic.service.Enum.FinanceWayEnum;
 import com.fic.service.Enum.TransactionStatusEnum;
 import com.fic.service.Vo.DoTransactionVo;
 import com.fic.service.Vo.ResponseVo;
+import com.fic.service.Vo.TransactionOutVo;
 import com.fic.service.constants.ServerProperties;
 import com.fic.service.entity.*;
 import com.fic.service.mapper.*;
@@ -54,11 +55,22 @@ public class TransactionRecordServiceImpl implements TransactionRecordService {
             log.error(" 数据异常 无此转账申请 id:{}",id);
             throw new RuntimeException();
         }
-        //TODO 判断是否有ETH
+        BigDecimal walletBalance = web3jUtil.getEthBalance(record.getFromAddress());
+        if(BigDecimal.ZERO.compareTo(walletBalance) <= 0){
+            log.debug("审批转出申请，地址ETH余额不足，无法转出 wallet adderss :{}",record.getFromAddress());
+            return new ResponseVo(ErrorCodeEnum.TRAN_OUT_NOT_ENOUGH_GAS,"用户钱包地址无以太坊，无法转出");
+        }
+        Wallet wallet = walletMapper.findByAddressByCompany(record.getUserId());
 
-
-
-        int updateStatus = transactionRecordMapper.updateStatus(id, TransactionStatusEnum.WAIT_CONFIRM.getCode(),remark);
+        TransactionOutVo result = web3jUtil.doTransactionOut(record.getAmount(),wallet.getPassword(),wallet.getKeystore(),record.getToAddress());
+        if(!result.isSuccess()){
+            log.debug("审批转出申请，转出发送合约失败");
+            return new ResponseVo(result.getErrorCodeEnum(),null);
+        }
+        record.setTransactionHash(result.getTxHash());
+        record.setStatus(TransactionStatusEnum.WAIT_CONFIRM.getCode());
+        record.setRemark(remark);
+        int updateStatus = transactionRecordMapper.updateByPrimaryKey(record);
         if(updateStatus <=0){
             log.error(" 转账审批通过失败，id:{}",id);
             throw new RuntimeException();
@@ -157,7 +169,6 @@ public class TransactionRecordServiceImpl implements TransactionRecordService {
             return new ResponseVo(ErrorCodeEnum.WALLET_NOT_EXIST,null);
         }
         web3jUtil.doTransactionOut(amount,user.getPayPassword(),serverProperties.getStoreLocation()+user.getId()+"/"+wallet.getKeystore(),toAddress);
-
         return new ResponseVo(ErrorCodeEnum.SUCCESS,null);
     }
 

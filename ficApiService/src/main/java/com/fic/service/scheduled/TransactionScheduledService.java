@@ -98,6 +98,7 @@ public class TransactionScheduledService {
             balanceStatement.setType(FinanceTypeEnum.TRANSFER_OUT.getCode());
             balanceStatement.setAmount(record.getAmount());
             balanceStatement.setWay(FinanceWayEnum.OUT.getCode());
+            balanceStatement.setTraceId(record.getId());
             int saveBalanceResult = balanceStatementMapper.insertSelective(balanceStatement);
             if(saveBalanceResult <=0){
                 log.error("4.转出，生成余额失败 balance statement :{}",balanceStatement.toString());

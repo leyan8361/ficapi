@@ -1,6 +1,9 @@
 package com.fic.service.utils;
 
+import com.fic.service.Enum.ErrorCodeEnum;
 import com.fic.service.Vo.GenerateWalletVo;
+import com.fic.service.Vo.ResponseVo;
+import com.fic.service.Vo.TransactionOutVo;
 import com.fic.service.Vo.WalletUnlockVo;
 import com.fic.service.constants.ServerProperties;
 import com.fic.service.entity.Wallet;
@@ -97,34 +100,6 @@ public class Web3jUtil {
         System.out.println("I'm  destory method ");
     }
 
-    public void unLock(List<WalletUnlockVo> toUnLockList){
-        try{
-            for(WalletUnlockVo lockAccount : toUnLockList){
-                PersonalUnlockAccount personalUnlockAccount = admin.personalUnlockAccount(lockAccount.getAddress(), lockAccount.getPassword()).sendAsync().get();
-                if (personalUnlockAccount.accountUnlocked()) {
-                    log.debug(" 解锁成功，账户地址：{}",lockAccount.getAddress());
-                }
-            }
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void unLock(String address,String password){
-        try{
-            PersonalUnlockAccount personalUnlockAccount = admin.personalUnlockAccount(address, password,BigInteger.valueOf(5)).sendAsync().get();
-            if (personalUnlockAccount.accountUnlocked()) {
-                log.debug(" 解锁成功，账户地址：{}",address);
-            }
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        }
-    }
-
     /**
      * 创建钱包地址
      * @param password
@@ -159,9 +134,9 @@ public class Web3jUtil {
      * @param keyStore 钱包文件路径 转出来源地址私钥文件
      * @param toAddress 转出地址
      */
-    public void doTransactionOut(BigDecimal amount, String password, String keyStore, String toAddress){
+    public TransactionOutVo doTransactionOut(BigDecimal amount, String password, String keyStore, String toAddress){
+        TransactionOutVo result = new TransactionOutVo();
         try{
-            unLock(toAddress,password);
             String transactionHash = "";
             Credentials credentials = WalletUtils.loadCredentials(password, keyStore);
             String fromAddress = credentials.getAddress();
@@ -172,9 +147,8 @@ public class Web3jUtil {
 
             List<Type> parametersList = new ArrayList<>();
             parametersList.add(address);
-            BigInteger amountValue = Convert.toWei(amount.toString(), Convert.Unit.ETHER).toBigInteger();
-            BigInteger gasPrice = Convert.toWei("3",Convert.Unit.GWEI).toBigInteger();
-            BigInteger gasLimit = BigInteger.valueOf(8000000l);
+            BigInteger amountValue = Convert.toWei(amount, Convert.Unit.WEI).toBigInteger();
+            BigInteger gasLimit = DefaultGasProvider.GAS_LIMIT;
             Uint256 value = new Uint256(amountValue);
             Function function = new Function(
                     "transfer",
@@ -182,33 +156,54 @@ public class Web3jUtil {
                     Arrays.asList(new TypeReference<Address>(){},new TypeReference<Uint256>(){})
             );
             String encodedFunction = FunctionEncoder.encode(function);
+            BigInteger gasPrice = getEstimateGas();
             log.debug(" gasPrice : {} , gasLimit :{}, amount :{}",gasPrice,gasLimit,amountValue);
             RawTransaction rawTransaction = RawTransaction.createTransaction(nonce, gasPrice,
                     gasLimit, serverProperties.getContactAddress(), encodedFunction);
             byte[] signedMessage = TransactionEncoder.signMessage(rawTransaction, credentials);
             String hexValue = Numeric.toHexString(signedMessage);
-
             EthSendTransaction ethSendTransaction = web3j.ethSendRawTransaction(hexValue).sendAsync().get();
             if(ethSendTransaction.hasError()){
                 Response.Error err = ethSendTransaction.getError();
                 if(err.getMessage().equals("insufficient funds for gas * price + value")){
-
+                    log.error("Error : " + ethSendTransaction.getError().getMessage());
+                    result.setSuccess(false);
+                    result.setErrorCodeEnum(ErrorCodeEnum.TRAN_OUT_NOT_ENOUGH_GAS);
+                    return result;
                 }
-                log.error("Error : " + ethSendTransaction.getError().getMessage());
-                return;
             }
             transactionHash = ethSendTransaction.getTransactionHash();
-            System.out.println(transactionHash);
+            if(StringUtils.isEmpty(transactionHash)){
+                result.setSuccess(false);
+                result.setErrorCodeEnum(ErrorCodeEnum.TRAN_FAILED_EXCEPTION);
+                return result;
+            }
+            result.setSuccess(true);
+            result.setTxHash(transactionHash);
+            return result;
         }catch (IOException e) {
-            log.error("doTransactionOut e :{} ",e);
+            log.error("toAddress :{},doTransactionOut e :{} ",toAddress,e);
             e.printStackTrace();
         } catch (CipherException e) {
-            log.error("doTransactionOut e :{} ",e);
+            log.error("toAddress :{},doTransactionOut e :{} ",toAddress,e);
             e.printStackTrace();
         } catch (Exception e) {
-            log.error("doTransactionOut e :{} ",e);
+            log.error("toAddress :{},doTransactionOut e :{} ",toAddress,e);
             e.printStackTrace();
         }
+        result.setSuccess(false);
+        result.setErrorCodeEnum(ErrorCodeEnum.TRAN_FAILED_EXCEPTION);
+        return result;
+    }
+
+    public BigInteger getEstimateGas(){
+        try{
+            EthGasPrice  gasPrice  = web3j.ethGasPrice().send();
+            return  gasPrice.getGasPrice();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return DefaultGasProvider.GAS_PRICE;
     }
 
     /**
