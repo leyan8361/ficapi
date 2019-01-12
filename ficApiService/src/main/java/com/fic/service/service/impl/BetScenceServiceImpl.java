@@ -551,8 +551,7 @@ public class BetScenceServiceImpl implements BetScenceService {
             recordVo.setCreatedTime(betUser.getCreatedTime());
             recordVo.setDrawResult(betScenceMovie.getDrawResult());
             recordVo.setOdds(betScenceMovie.getBingoOdds());
-            BigDecimal fee = betUser.getBetFee().add(betUser.getReserveFee());
-            recordVo.setFee(fee);
+//            BigDecimal fee = betUser.getBetFee().add(betUser.getReserveFee());
             BigDecimal bingGoPrice = betUser.getBingoPrice();
             recordVo.setBingoPrice(bingGoPrice);
             if(betUser.getBingo().equals(BingoStatusEnum.CLOSE_RETURNING.getCode().byteValue())){
@@ -561,11 +560,13 @@ public class BetScenceServiceImpl implements BetScenceService {
             }
             if(betUser.getBingo().equals(BingoStatusEnum.BINGO.getCode().byteValue())){
                 recordVo.setAddedPrice((betUser.getBetAmount().add(betScenceMovie.getBingoOdds().multiply(betUser.getBetAmount()))).setScale(0,BigDecimal.ROUND_DOWN));
+                recordVo.setFee(recordVo.getAddedPrice().subtract(recordVo.getBingoPrice()));
             }else if(betUser.getBingo().equals(BingoStatusEnum.CLOSE_RETURNING.getCode().byteValue())){
                 recordVo.setAddedPrice(betUser.getBetAmount().multiply(new BigDecimal("2")).setScale(0,BigDecimal.ROUND_DOWN));
+                recordVo.setFee(recordVo.getAddedPrice().subtract(recordVo.getBingoPrice()));
                 recordVo.setOdds(BigDecimal.ONE);
             }
-            recordVos.add(recordVo);
+
         }
         result.setItems(recordVos);
         Date now  = new Date();
