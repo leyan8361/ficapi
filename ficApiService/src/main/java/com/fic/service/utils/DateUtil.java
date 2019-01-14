@@ -408,6 +408,9 @@ public class DateUtil {
         }
     }
 
+    public static String getUnixTime() {
+        return Instant.now().toString();
+    }
 
     public static void main(String args[]){
         BigDecimal test = new BigDecimal("12345678910.10987654321");

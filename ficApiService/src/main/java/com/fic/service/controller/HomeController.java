@@ -1,7 +1,9 @@
 package com.fic.service.controller;
 
+import com.fic.service.Enum.CoinUSDEnum;
 import com.fic.service.Vo.QueryTransactionResultVo;
 import com.fic.service.constants.ServerProperties;
+import com.fic.service.entity.TickerRecord;
 import com.fic.service.mapper.UserMapper;
 import com.fic.service.scheduled.BetScheduledService;
 import com.fic.service.scheduled.TransactionScheduledService;
@@ -9,6 +11,7 @@ import com.fic.service.service.MaoYanService;
 import com.fic.service.service.SmsService;
 import com.fic.service.service.TransactionRecordService;
 import com.fic.service.service.WalletService;
+import com.fic.service.utils.OkCoinUtil;
 import com.fic.service.utils.Web3jUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -53,6 +56,8 @@ public class HomeController {
     TransactionRecordService transactionRecordService;
     @Autowired
     TransactionScheduledService transactionScheduledService;
+    @Autowired
+    OkCoinUtil okCoinUtil;
 
     @GetMapping("/home")
     @ApiOperation("获取首页数据 , 拉票房，开奖")
@@ -103,9 +108,16 @@ public class HomeController {
 //         List<String> result = web3jUtil.getAccountlist();
 //        web3jUtil.unLock("0x937b3080025cdae1a7e9f564405ecc29beeaa181","f379eaf3c831b04de153469d1bec345e");
 //        web3jUtil.getEthBalance(toAddress);
-        QueryTransactionResultVo result = web3jUtil.queryTransactionStatus(txHash,new BigDecimal(0.000000004));
+//        QueryTransactionResultVo result = web3jUtil.queryTransactionStatus(txHash,new BigDecimal(0.000000004));
 //        log.debug(" hash : {} ，状态 : {}, gasFee :{}",txHash,result.getStatus(),result.getGasUsed());
 //        transactionRecordService.doTransactionOut(userId,amount,toAddress);
+        return ResponseEntity.ok().body("success");
+    }
+    @GetMapping("/testOkCoinAPi")
+    @ApiOperation("测试okCoinApi")
+    public ResponseEntity testOkCoinAPi() {
+        log.debug(" testOkCoinAPi !!!");
+        TickerRecord result = okCoinUtil.getTicker(CoinUSDEnum.USDT.code());
         return ResponseEntity.ok().body("success");
     }
 

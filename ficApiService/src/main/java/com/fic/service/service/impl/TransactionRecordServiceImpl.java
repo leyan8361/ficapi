@@ -202,10 +202,6 @@ public class TransactionRecordServiceImpl implements TransactionRecordService {
         record.setCreatedTime(DateUtil.toSecFormatDay(inComeTime));
         record.setStatus(TransactionStatusEnum.SUCCESS.getCode());
 
-        /**
-         * TODO 汇率
-         */
-        BigDecimal resultBalance = BigDecimal.ZERO;
 
         /**
          * 处理余额
@@ -214,7 +210,7 @@ public class TransactionRecordServiceImpl implements TransactionRecordService {
         balanceStatement.setUserId(userId);
         balanceStatement.setCreatedTime(DateUtil.toSecFormatDay(inComeTime));
         balanceStatement.setType(FinanceTypeEnum.RECHARGE.getCode());
-        balanceStatement.setAmount(resultBalance);
+        balanceStatement.setAmount(amount);
         balanceStatement.setWay(FinanceWayEnum.IN.getCode());
 
         int saveBalanceResult = balanceStatementMapper.insertSelective(balanceStatement);
@@ -223,7 +219,7 @@ public class TransactionRecordServiceImpl implements TransactionRecordService {
             throw new RuntimeException();
         }
 
-        BigDecimal totalBalance = invest.getBalance().add(resultBalance);
+        BigDecimal totalBalance = invest.getBalance().add(amount);
 
         int updateInvestResult = investMapper.updateBalance(totalBalance,userId);
         if(updateInvestResult <=0){
