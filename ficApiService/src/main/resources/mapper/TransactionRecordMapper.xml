@@ -7,10 +7,8 @@
     <result column="from_address" jdbcType="VARCHAR" property="fromAddress" />
     <result column="to_address" jdbcType="VARCHAR" property="toAddress" />
     <result column="amount" jdbcType="DECIMAL" property="amount" />
-    <result column="gas_price" jdbcType="DECIMAL" property="gasPrice" />
     <result column="fee" jdbcType="DECIMAL" property="fee" />
     <result column="transaction_address" jdbcType="VARCHAR" property="transactionAddress" />
-    <result column="gas_limit" jdbcType="DECIMAL" property="gasLimit" />
     <result column="status" jdbcType="INTEGER" property="status" />
     <result column="remark" jdbcType="VARCHAR" property="remark" />
     <result column="way" jdbcType="INTEGER" property="way" />
@@ -20,11 +18,12 @@
     <result column="in_come_time" jdbcType="TIMESTAMP" property="inComeTime" />
     <result column="coin_rate" jdbcType="DECIMAL" property="coinRate" />
     <result column="coin_num" jdbcType="DECIMAL" property="coinNum" />
+    <result column="gas_price" jdbcType="DECIMAL" property="gasPrice" />
   </resultMap>
   <sql id="Base_Column_List">
-    id, user_id, from_address, to_address, amount, gas_price, fee, transaction_address,
-    gas_limit, status, remark, way, created_time, transaction_hash, coin_type, in_come_time,
-    coin_rate, coin_num
+    id, user_id, from_address, to_address, amount, fee, transaction_address, status,
+    remark, way, created_time, transaction_hash, coin_type, in_come_time, coin_rate,
+    coin_num, gas_price
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
     select
@@ -38,19 +37,17 @@
   </delete>
   <insert id="insert" parameterType="com.fic.service.entity.TransactionRecord">
     insert into transaction_record (id, user_id, from_address,
-      to_address, amount, gas_price,
-      fee, transaction_address, gas_limit,
-      status, remark, way,
-      created_time, transaction_hash, coin_type,
-      in_come_time, coin_rate, coin_num
-      )
+      to_address, amount, fee,
+      transaction_address, status, remark,
+      way, created_time, transaction_hash,
+      coin_type, in_come_time, coin_rate,
+      coin_num, gas_price)
     values (#{id,jdbcType=INTEGER}, #{userId,jdbcType=INTEGER}, #{fromAddress,jdbcType=VARCHAR},
-      #{toAddress,jdbcType=VARCHAR}, #{amount,jdbcType=DECIMAL}, #{gasPrice,jdbcType=DECIMAL},
-      #{fee,jdbcType=DECIMAL}, #{transactionAddress,jdbcType=VARCHAR}, #{gasLimit,jdbcType=DECIMAL},
-      #{status,jdbcType=INTEGER}, #{remark,jdbcType=VARCHAR}, #{way,jdbcType=INTEGER},
-      #{createdTime,jdbcType=TIMESTAMP}, #{transactionHash,jdbcType=VARCHAR}, #{coinType,jdbcType=VARCHAR},
-      #{inComeTime,jdbcType=TIMESTAMP}, #{coinRate,jdbcType=DECIMAL}, #{coinNum,jdbcType=DECIMAL}
-      )
+      #{toAddress,jdbcType=VARCHAR}, #{amount,jdbcType=DECIMAL}, #{fee,jdbcType=DECIMAL},
+      #{transactionAddress,jdbcType=VARCHAR}, #{status,jdbcType=INTEGER}, #{remark,jdbcType=VARCHAR},
+      #{way,jdbcType=INTEGER}, #{createdTime,jdbcType=TIMESTAMP}, #{transactionHash,jdbcType=VARCHAR},
+      #{coinType,jdbcType=VARCHAR}, #{inComeTime,jdbcType=TIMESTAMP}, #{coinRate,jdbcType=DECIMAL},
+      #{coinNum,jdbcType=DECIMAL}, #{gasPrice,jdbcType=DECIMAL})
   </insert>
   <insert id="insertSelective" parameterType="com.fic.service.entity.TransactionRecord">
     insert into transaction_record
@@ -70,17 +67,11 @@
       <if test="amount != null">
         amount,
       </if>
-      <if test="gasPrice != null">
-        gas_price,
-      </if>
       <if test="fee != null">
         fee,
       </if>
       <if test="transactionAddress != null">
         transaction_address,
-      </if>
-      <if test="gasLimit != null">
-        gas_limit,
       </if>
       <if test="status != null">
         status,
@@ -109,6 +100,9 @@
       <if test="coinNum != null">
         coin_num,
       </if>
+      <if test="gasPrice != null">
+        gas_price,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="id != null">
@@ -126,17 +120,11 @@
       <if test="amount != null">
         #{amount,jdbcType=DECIMAL},
       </if>
-      <if test="gasPrice != null">
-        #{gasPrice,jdbcType=DECIMAL},
-      </if>
       <if test="fee != null">
         #{fee,jdbcType=DECIMAL},
       </if>
       <if test="transactionAddress != null">
         #{transactionAddress,jdbcType=VARCHAR},
-      </if>
-      <if test="gasLimit != null">
-        #{gasLimit,jdbcType=DECIMAL},
       </if>
       <if test="status != null">
         #{status,jdbcType=INTEGER},
@@ -165,6 +153,9 @@
       <if test="coinNum != null">
         #{coinNum,jdbcType=DECIMAL},
       </if>
+      <if test="gasPrice != null">
+        #{gasPrice,jdbcType=DECIMAL},
+      </if>
     </trim>
   </insert>
   <update id="updateByPrimaryKeySelective" parameterType="com.fic.service.entity.TransactionRecord">
@@ -182,17 +173,11 @@
       <if test="amount != null">
         amount = #{amount,jdbcType=DECIMAL},
       </if>
-      <if test="gasPrice != null">
-        gas_price = #{gasPrice,jdbcType=DECIMAL},
-      </if>
       <if test="fee != null">
         fee = #{fee,jdbcType=DECIMAL},
       </if>
       <if test="transactionAddress != null">
         transaction_address = #{transactionAddress,jdbcType=VARCHAR},
-      </if>
-      <if test="gasLimit != null">
-        gas_limit = #{gasLimit,jdbcType=DECIMAL},
       </if>
       <if test="status != null">
         status = #{status,jdbcType=INTEGER},
@@ -221,6 +206,9 @@
       <if test="coinNum != null">
         coin_num = #{coinNum,jdbcType=DECIMAL},
       </if>
+      <if test="gasPrice != null">
+        gas_price = #{gasPrice,jdbcType=DECIMAL},
+      </if>
     </set>
     where id = #{id,jdbcType=INTEGER}
   </update>
@@ -230,10 +218,8 @@
       from_address = #{fromAddress,jdbcType=VARCHAR},
       to_address = #{toAddress,jdbcType=VARCHAR},
       amount = #{amount,jdbcType=DECIMAL},
-      gas_price = #{gasPrice,jdbcType=DECIMAL},
       fee = #{fee,jdbcType=DECIMAL},
       transaction_address = #{transactionAddress,jdbcType=VARCHAR},
-      gas_limit = #{gasLimit,jdbcType=DECIMAL},
       status = #{status,jdbcType=INTEGER},
       remark = #{remark,jdbcType=VARCHAR},
       way = #{way,jdbcType=INTEGER},
@@ -242,7 +228,8 @@
       coin_type = #{coinType,jdbcType=VARCHAR},
       in_come_time = #{inComeTime,jdbcType=TIMESTAMP},
       coin_rate = #{coinRate,jdbcType=DECIMAL},
-      coin_num = #{coinNum,jdbcType=DECIMAL}
+      coin_num = #{coinNum,jdbcType=DECIMAL},
+      gas_price = #{gasPrice,jdbcType=DECIMAL}
     where id = #{id,jdbcType=INTEGER}
   </update>
   <select id="findAllByType" parameterType="int">

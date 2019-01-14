@@ -1,10 +1,7 @@
 package com.fic.service.utils;
 
 import com.fic.service.Enum.ErrorCodeEnum;
-import com.fic.service.Vo.GenerateWalletVo;
-import com.fic.service.Vo.ResponseVo;
-import com.fic.service.Vo.TransactionOutVo;
-import com.fic.service.Vo.WalletUnlockVo;
+import com.fic.service.Vo.*;
 import com.fic.service.constants.ServerProperties;
 import com.fic.service.entity.Wallet;
 import org.apache.commons.lang3.StringUtils;
@@ -162,22 +159,22 @@ public class Web3jUtil {
                     gasLimit, serverProperties.getContactAddress(), encodedFunction);
             byte[] signedMessage = TransactionEncoder.signMessage(rawTransaction, credentials);
             String hexValue = Numeric.toHexString(signedMessage);
-            EthSendTransaction ethSendTransaction = web3j.ethSendRawTransaction(hexValue).sendAsync().get();
-            if(ethSendTransaction.hasError()){
-                Response.Error err = ethSendTransaction.getError();
-                if(err.getMessage().equals("insufficient funds for gas * price + value")){
-                    log.error("Error : " + ethSendTransaction.getError().getMessage());
-                    result.setSuccess(false);
-                    result.setErrorCodeEnum(ErrorCodeEnum.TRAN_OUT_NOT_ENOUGH_GAS);
-                    return result;
-                }
-            }
-            transactionHash = ethSendTransaction.getTransactionHash();
-            if(StringUtils.isEmpty(transactionHash)){
-                result.setSuccess(false);
-                result.setErrorCodeEnum(ErrorCodeEnum.TRAN_FAILED_EXCEPTION);
-                return result;
-            }
+//            EthSendTransaction ethSendTransaction = web3j.ethSendRawTransaction(hexValue).sendAsync().get();
+//            if(ethSendTransaction.hasError()){
+//                Response.Error err = ethSendTransaction.getError();
+//                if(err.getMessage().equals("insufficient funds for gas * price + value")){
+//                    log.error("Error : " + ethSendTransaction.getError().getMessage());
+//                    result.setSuccess(false);
+//                    result.setErrorCodeEnum(ErrorCodeEnum.TRAN_OUT_NOT_ENOUGH_GAS);
+//                    return result;
+//                }
+//            }
+//            transactionHash = ethSendTransaction.getTransactionHash();
+//            if(StringUtils.isEmpty(transactionHash)){
+//                result.setSuccess(false);
+//                result.setErrorCodeEnum(ErrorCodeEnum.TRAN_FAILED_EXCEPTION);
+//                return result;
+//            }
             result.setSuccess(true);
             result.setTxHash(transactionHash);
             return result;
@@ -211,25 +208,41 @@ public class Web3jUtil {
      * @param txHash
      * @return (0,失败)(1,成功)(2,交易挂起)
      */
-    public int queryTransactionStatus(String txHash){
-        int result = 0;
+    public QueryTransactionResultVo queryTransactionStatus(String txHash,BigDecimal gasPrice){
+        QueryTransactionResultVo resultVo = new QueryTransactionResultVo();
+        resultVo.setTransactionHash(txHash);
+        resultVo.setSuccess(false);
         try {
             EthGetTransactionReceipt ethGetTransactionReceipt = web3j.ethGetTransactionReceipt(txHash).sendAsync().get();
            if(null == ethGetTransactionReceipt.getResult()){
                log.debug(" transaction is pending, wait another query txHash :{}",txHash);
-               result = 2;
-               return result;
+               resultVo.setStatus(2);
+               return resultVo;
            }
-            String status = ethGetTransactionReceipt.getTransactionReceipt().get().getStatus();
-            if (StringUtils.isNotEmpty(status)) {
-                BigInteger resultInteger  =  Numeric.decodeQuantity(status);
-                if(resultInteger.compareTo(BigInteger.ZERO) == 0){
-                    log.debug("transaction is failed txHash : {}",txHash);
-                    return result;
-                }else{
-                    result = 1;
-                    return result;
-                }
+            TransactionReceipt transactionReceipt = ethGetTransactionReceipt.getTransactionReceipt().get();
+            if (null == transactionReceipt || StringUtils.isEmpty(transactionReceipt.getStatus())) {
+                log.error("transaction is failed txHash : {}",txHash);
+                resultVo.setStatus(2);
+                return resultVo;
+            }
+            BigInteger statusInt =  Numeric.decodeQuantity(transactionReceipt.getStatus());
+            resultVo.setStatus(statusInt.intValue());
+            if(statusInt.compareTo(BigInteger.ZERO) == 0) {
+                log.debug(" transaction is failed, wait another query txHash :{}",txHash);
+                return resultVo;
+            }
+            if(statusInt.compareTo(BigInteger.ONE) == 0){
+                BigInteger gasUsedRaw = Numeric.decodeQuantity(transactionReceipt.getGasUsedRaw());
+                BigDecimal gasUsed = new BigDecimal(gasUsedRaw.intValue()).multiply(gasPrice).setScale(9,BigDecimal.ROUND_HALF_UP);
+                resultVo.setGasUsed(gasUsed);
+                resultVo.setFrom(transactionReceipt.getFrom());
+                resultVo.setTo(transactionReceipt.getTo());
+                log.debug(" gas used  : {}, from :{}, to :{}",resultVo.getGasUsed(),resultVo.getFrom(),resultVo.getTo());
+                return resultVo;
+            }
+            if(statusInt.compareTo(new BigInteger("2")) == 0){
+                log.debug(" transaction is pending, wait another query txHash :{}",txHash);
+                return resultVo;
             }
         } catch (InterruptedException e) {
             log.error("queryTransactionStatus e :{} ",e);
@@ -239,7 +252,7 @@ public class Web3jUtil {
             e.printStackTrace();
         }
 
-        return result;
+        return resultVo;
     }
 
     /**

@@ -130,8 +130,6 @@ public class TransactionRecordServiceImpl implements TransactionRecordService {
         result.setTransactionAddress(serverProperties.getContactAddress());
         result.setFee(BigDecimal.ZERO);
         result.setWay(FinanceWayEnum.OUT.getCode());
-        result.setGasLimit(BigDecimal.ZERO);
-        result.setGasPrice(BigDecimal.ZERO);
         result.setInComeTime(new Date());
         int saveResult = transactionRecordMapper.insertSelective(result);
         if(saveResult<=0){

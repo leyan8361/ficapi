@@ -4,6 +4,7 @@ import com.fic.service.Enum.ErrorCodeEnum;
 import com.fic.service.Enum.FinanceTypeEnum;
 import com.fic.service.Enum.FinanceWayEnum;
 import com.fic.service.Enum.TransactionStatusEnum;
+import com.fic.service.Vo.QueryTransactionResultVo;
 import com.fic.service.Vo.ResponseVo;
 import com.fic.service.entity.*;
 import com.fic.service.mapper.BalanceStatementMapper;
@@ -20,6 +21,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import org.web3j.utils.Convert;
 
 import java.math.BigDecimal;
 import java.util.Date;
@@ -57,15 +59,16 @@ public class TransactionScheduledService {
                 log.debug("the transaction record has no txHash userId:{},tranId:{}",record.getUserId(),record.getId());
                 continue;
             }
-            int status = web3jUtil.queryTransactionStatus(txHash);
-            if(status == 0){
+            QueryTransactionResultVo result  = web3jUtil.queryTransactionStatus(txHash,record.getGasPrice());
+            if(result.getStatus() == 0){
                 record.setStatus(TransactionStatusEnum.FAILED.getCode());
                 continue;
             }
-            if(status != 1){
+            if(result.getStatus() != 1){
                 continue;
             }
             record.setStatus(TransactionStatusEnum.SUCCESS.getCode());
+            record.setFee(result.getGasUsed());
             record.setInComeTime(new Date());
 
             User user = userMapper.get(record.getUserId());
@@ -111,4 +114,12 @@ public class TransactionScheduledService {
             throw new RuntimeException();
         }
     }
+
+//    @Scheduled(cron = "*/5 * * * * ?")
+//    @Transactional(isolation= Isolation.READ_COMMITTED,propagation= Propagation.REQUIRED,rollbackFor = Exception.class)
+//    public void testQuery() {
+//        log.debug(" do update transaction status !");
+//        QueryTransactionResultVo result  = web3jUtil.queryTransactionStatus("0x3f40856eae2001d1995cb77074b8f8bc11562ae40b8243f9e66c0af83739cc5d",new BigDecimal(0.000000004));
+//        log.debug(" txhash : {}  | from :{} | to :{} | gas Used :{}",result.getTransactionHash(),result.getFrom(),result.getTo(),result.getGasUsed());
+//    }
 }

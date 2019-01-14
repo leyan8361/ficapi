@@ -16,13 +16,9 @@ public class TransactionRecord {
 
     private BigDecimal amount;
 
-    private BigDecimal gasPrice;
-
     private BigDecimal fee;
 
     private String transactionAddress;
-
-    private BigDecimal gasLimit;
 
     private Integer status;
 
@@ -40,6 +36,8 @@ public class TransactionRecord {
     private BigDecimal coinRate;
 
     private BigDecimal coinNum;
+
+    private BigDecimal gasPrice;
 
     public Integer getId() {
         return id;
@@ -81,14 +79,6 @@ public class TransactionRecord {
         this.amount = amount;
     }
 
-    public BigDecimal getGasPrice() {
-        return gasPrice;
-    }
-
-    public void setGasPrice(BigDecimal gasPrice) {
-        this.gasPrice = gasPrice;
-    }
-
     public BigDecimal getFee() {
         return fee;
     }
@@ -103,14 +93,6 @@ public class TransactionRecord {
 
     public void setTransactionAddress(String transactionAddress) {
         this.transactionAddress = transactionAddress;
-    }
-
-    public BigDecimal getGasLimit() {
-        return gasLimit;
-    }
-
-    public void setGasLimit(BigDecimal gasLimit) {
-        this.gasLimit = gasLimit;
     }
 
     public Integer getStatus() {
@@ -185,6 +167,14 @@ public class TransactionRecord {
         this.coinNum = coinNum;
     }
 
+    public BigDecimal getGasPrice() {
+        return gasPrice;
+    }
+
+    public void setGasPrice(BigDecimal gasPrice) {
+        this.gasPrice = gasPrice;
+    }
+
     @Override
     public String toString() {
         return "TransactionRecord{" +
@@ -193,10 +183,8 @@ public class TransactionRecord {
                 ", fromAddress='" + fromAddress + '\'' +
                 ", toAddress='" + toAddress + '\'' +
                 ", amount=" + amount +
-                ", gasPrice=" + gasPrice +
                 ", fee=" + fee +
                 ", transactionAddress='" + transactionAddress + '\'' +
-                ", gasLimit=" + gasLimit +
                 ", status=" + status +
                 ", remark='" + remark + '\'' +
                 ", way=" + way +
@@ -206,6 +194,7 @@ public class TransactionRecord {
                 ", inComeTime=" + inComeTime +
                 ", coinRate=" + coinRate +
                 ", coinNum=" + coinNum +
+                ", gasPrice=" + gasPrice +
                 '}';
     }
 }
