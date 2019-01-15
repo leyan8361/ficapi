@@ -1,6 +1,7 @@
 package com.fic.service.controller.api.v1;
 
 import com.fic.service.Vo.ResponseVo;
+import com.fic.service.entity.UserAuth;
 import com.fic.service.mapper.UserAuthMapper;
 import com.fic.service.mapper.UserMapper;
 import com.fic.service.service.UserAuthService;
@@ -41,7 +42,7 @@ public class ApiUserAuthController {
             @ApiImplicitParam(dataType = "int", name = "userId", value = "用户ID", required = true)
     })
     @ApiResponses({
-            @ApiResponse(code = 200, message = "SUCCESS"),
+            @ApiResponse(code = 200, message = "SUCCESS",response = UserAuth.class),
             @ApiResponse(code = 1028, message = "USER_NOT_AUTH")
     })
     public ResponseEntity get(@RequestParam int userId) {
