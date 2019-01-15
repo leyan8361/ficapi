@@ -2,6 +2,7 @@ package com.fic.service.mapper;
 
 import com.fic.service.entity.TransactionRecord;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -21,9 +22,9 @@ public interface TransactionRecordMapper {
 
     int updateByPrimaryKey(TransactionRecord record);
 
-    List<TransactionRecord> findAllByType(int status);
+    List<TransactionRecord> findAllByType(@Param("condition")Integer condition);
 
-    int updateStatus(int id,int status,String remark);
+    int updateStatus(@Param("id")int id,@Param("status")int status,@Param("remark")String remark);
 
     List<TransactionRecord> findAllWaitConfirm();
 

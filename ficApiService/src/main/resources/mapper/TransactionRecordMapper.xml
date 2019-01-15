@@ -232,22 +232,22 @@
       gas_price = #{gasPrice,jdbcType=DECIMAL}
     where id = #{id,jdbcType=INTEGER}
   </update>
-  <select id="findAllByType" parameterType="int">
+  <select id="findAllByType" resultMap="BaseResultMap">
     select * from transaction_record where
-    <if test="type = 0">
+    <if test="condition == 0">
       1=1
     </if>
-    <if test="type = 1">
+    <if test="condition == 1">
       way = 0
     </if>
-    <if test="type = 2">
+    <if test="condition == 2">
       way = 1
     </if>;
   </select>
   <update id="updateStatus">
     update transaction_record set status = #{status}
     <if test="remark != null">
-      and remark = #{remark}
+      ,remark = #{remark}
     </if>
     where id = #{id}
   </update>

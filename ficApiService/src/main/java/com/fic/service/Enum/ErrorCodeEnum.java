@@ -59,7 +59,7 @@ public enum ErrorCodeEnum {
      * 常量费率相关
      */
     EXCHANGE_RATE_MISSED(3000,"EXCHANGE_RATE_MISSED"),
-
+    EXCHANGE_RATE_REPEATED(3001,"EXCHANGE_RATE_REPEATED"),
 
     /**
      * 版本，更新相关
@@ -98,6 +98,7 @@ public enum ErrorCodeEnum {
     COIN_TYPE_NOT_PERMIT(6002,"WRONG COIN TYPE"),
     TRAN_OUT_NOT_ENOUGH_GAS(6003,"TRAN_OUT_NOT_ENOUGH_GAS"),
     TRAN_FAILED_EXCEPTION(6004,"TRAN_FAILED_EXCEPTION"),
+    PAYEE_NOT_EXIST(6005,"PAYEE_NOT_EXIST"),
     /**
      * System Error
      */

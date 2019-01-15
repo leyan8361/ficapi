@@ -4,9 +4,11 @@ import com.fic.service.Enum.ErrorCodeEnum;
 import com.fic.service.Enum.FinanceTypeEnum;
 import com.fic.service.Enum.FinanceWayEnum;
 import com.fic.service.Enum.TransactionStatusEnum;
+import com.fic.service.Vo.DoTranTokenVo;
 import com.fic.service.Vo.DoTransactionVo;
 import com.fic.service.Vo.ResponseVo;
 import com.fic.service.Vo.TransactionOutVo;
+import com.fic.service.constants.Constants;
 import com.fic.service.constants.ServerProperties;
 import com.fic.service.entity.*;
 import com.fic.service.mapper.*;
@@ -14,6 +16,7 @@ import com.fic.service.service.TransactionRecordService;
 import com.fic.service.utils.DateUtil;
 import com.fic.service.utils.RegexUtil;
 import com.fic.service.utils.Web3jUtil;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -224,6 +227,180 @@ public class TransactionRecordServiceImpl implements TransactionRecordService {
         int updateInvestResult = investMapper.updateBalance(totalBalance,userId);
         if(updateInvestResult <=0){
             log.error(" 确认转入，更新Invest失败，balance :{},userId:{}",totalBalance,userId);
+            throw new RuntimeException();
+        }
+        return new ResponseVo(ErrorCodeEnum.SUCCESS,null);
+    }
+
+    @Override
+    @Transactional(isolation= Isolation.READ_COMMITTED,propagation= Propagation.REQUIRED,rollbackFor = Exception.class)
+    public ResponseVo approveForTFC(int id, String remark) {
+        TransactionRecord record = transactionRecordMapper.selectByPrimaryKey(id);
+        if(null == record) {
+            log.error(" 数据异常 无此转账申请 id:{}", id);
+            throw new RuntimeException();
+        }
+        if(StringUtils.isEmpty(record.getToAddress())){
+            log.error("确认转账TFC，收款人不存在, tran record id :{},to address:{}",id,record.getToAddress());
+            throw new RuntimeException();
+        }
+        User payee = userMapper.findByUsername(record.getToAddress());
+        if(null == payee){
+            log.error("确认转账TFC，收款人不存在, tran record id :{},to address:{}",id,record.getToAddress());
+            throw new RuntimeException();
+        }
+
+        /** 转账人 扣除转账金额 */
+        BalanceStatement outbalance = new BalanceStatement();
+        outbalance.setTraceId(record.getId());
+        outbalance.setWay(FinanceWayEnum.OUT.getCode());
+        outbalance.setAmount(record.getAmount());
+        outbalance.setType(FinanceTypeEnum.TRANSFER_OUT.getCode());
+        outbalance.setUserId(record.getUserId());
+        outbalance.setCreatedTime(new Date());
+
+        /** 收款人 增加转账金额 */
+        BalanceStatement inBalance = new BalanceStatement();
+        inBalance.setUserId(payee.getId());
+        inBalance.setType(FinanceTypeEnum.PAYEE_IN.getCode());
+        inBalance.setWay(FinanceWayEnum.IN.getCode());
+        inBalance.setAmount(record.getAmount());
+        inBalance.setTraceId(record.getId());
+        inBalance.setCreatedTime(new Date());
+
+        Invest investPayer = investMapper.findByUserId(record.getUserId());
+        if(null == investPayer){
+            log.error(" 确认转账，无对应资产记录 user id :{}",record.getUserId());
+            throw new RuntimeException();
+        }
+        Invest investPayee = investMapper.findByUserId(payee.getId());
+        if(null == investPayee){
+            log.error(" 确认转账，无对应收款人资产记录 user id :{}",payee.getId());
+            throw new RuntimeException();
+        }
+
+        if(investPayer.getLockBalance().compareTo(record.getAmount()) >=0){
+            BigDecimal resultLockBalance = investPayer.getLockBalance().subtract(record.getAmount());
+            int updateLockBalance = investMapper.updateLockBalance(investPayer.getBalance(),resultLockBalance,investPayer.getUserId());
+            if(updateLockBalance <=0){
+                log.error(" 确认转账，更新付款人资产失败 user id :{}",record.getUserId());
+                throw new RuntimeException();
+            }
+        }else{
+            log.error(" 确认转账，付款人锁定余额，不足支付转账金额 ");
+            throw new RuntimeException();
+        }
+
+        BigDecimal payeeBalance = investPayee.getBalance().add(record.getAmount());
+        int updatePayeeInvest = investMapper.updateBalance(payeeBalance,investPayee.getUserId());
+        if(updatePayeeInvest <=0){
+            log.error(" 确认转账， 更新收款人资产失败 user id :{}",investPayee.getUserId());
+            throw new RuntimeException();
+        }
+
+        int savePayer = balanceStatementMapper.insertSelective(outbalance);
+        if(savePayer <=0){
+            log.error(" 确认转账， 生成付款人余额变更记录失败");
+            throw new RuntimeException();
+        }
+        int savePayee = balanceStatementMapper.insertSelective(inBalance);
+        if(savePayee <=0){
+            log.error(" 确认转账，生成收款人余额变更记录失败");
+            throw new RuntimeException();
+        }
+
+        record.setStatus(TransactionStatusEnum.SUCCESS.getCode());
+        record.setRemark(remark);
+        int updateStatus = transactionRecordMapper.updateByPrimaryKey(record);
+        if(updateStatus <=0){
+            log.error(" 转账审批通过失败，id:{}",id);
+            throw new RuntimeException();
+        }
+        return new ResponseVo(ErrorCodeEnum.SUCCESS,null);
+    }
+
+    @Override
+    @Transactional(isolation= Isolation.READ_COMMITTED,propagation= Propagation.REQUIRED,rollbackFor = Exception.class)
+    public ResponseVo rejectForTFC(int id, String remark) {
+
+        TransactionRecord record = transactionRecordMapper.selectByPrimaryKey(id);
+        if(null == record){
+            log.error(" 拒绝转账，record id :{}",id);
+            return new ResponseVo(ErrorCodeEnum.TRANSACTION_NOT_FOUND,null);
+        }
+
+        /** 释放付款方锁定金额 */
+        Invest invest = investMapper.findByUserId(record.getUserId());
+        if(null == invest){
+            log.error(" 拒绝转账，付款方资产不存在 user id :{}",record.getUserId());
+            throw new RuntimeException();
+        }
+        BigDecimal balance = invest.getBalance();
+        BigDecimal lockBalance = invest.getLockBalance();
+        if(lockBalance.compareTo(record.getAmount()) <0){
+            log.error(" 拒绝转账，付款方锁定资产已不足以退回 user id:{}",record.getUserId());
+            throw new RuntimeException();
+        }
+        balance = balance.add(record.getAmount());
+        lockBalance = lockBalance.subtract(record.getAmount());
+        invest.setBalance(balance);
+        invest.setLockBalance(lockBalance);
+        int updateInvest = investMapper.updateByPrimaryKey(invest);
+        if(updateInvest <=0){
+            log.error(" 拒绝转账，更新付款方资产失败，user id :{}",record.getUserId());
+            throw new RuntimeException();
+        }
+        int updateStatus = transactionRecordMapper.updateStatus(id, TransactionStatusEnum.REJECT.getCode(),remark);
+        if(updateStatus <=0){
+            log.error(" 转账审批拒绝失败，id:{}",id);
+            throw new RuntimeException();
+        }
+        return new ResponseVo(ErrorCodeEnum.SUCCESS,null);
+    }
+
+    @Override
+    public ResponseVo doTransactionApply(DoTranTokenVo transactionVo) {
+        User user = userMapper.get(transactionVo.getUserId());
+        if(null == user){
+            log.error("用户不存在");
+            return new ResponseVo(ErrorCodeEnum.USER_NOT_EXIST,null);
+        }
+        Invest invest = investMapper.findByUserId(transactionVo.getUserId());
+        if(null == invest){
+            log.error("资产不存在");
+            return new ResponseVo(ErrorCodeEnum.INVEST_NOT_EXIST,null);
+        }
+        if(invest.getBalance().compareTo(transactionVo.getAmount()) <0){
+            log.debug("转出申请，余额不足 invest id :{},userId:{}",invest.getInvestId(),invest.getUserId());
+            return new ResponseVo(ErrorCodeEnum.INVEST_BALANCE_NOT_ENOUGH,null);
+        }
+        User payee = userMapper.findByUsername(transactionVo.getPayee());
+        if(null == payee){
+            log.error("收款人手机号不存在 username :{}",transactionVo.getPayee());
+            return new ResponseVo(ErrorCodeEnum.PAYEE_NOT_EXIST,null);
+        }
+        TransactionRecord result = new TransactionRecord();
+        result.setAmount(transactionVo.getAmount());
+        result.setStatus(TransactionStatusEnum.APPLY.getCode());
+        result.setCreatedTime(new Date());
+        result.setUserId(transactionVo.getUserId());
+        result.setToAddress(payee.getUserName());
+        result.setCoinType(Constants.TFC);
+        result.setFee(BigDecimal.ZERO);
+        result.setWay(FinanceWayEnum.OUT.getCode());
+        result.setInComeTime(new Date());
+        int saveResult = transactionRecordMapper.insertSelective(result);
+        if(saveResult<=0){
+            log.error(" 转账申请失败，");
+            throw new RuntimeException();
+        }
+        BigDecimal balance = (null!=invest.getBalance()?invest.getBalance():BigDecimal.ZERO);
+        BigDecimal resultBalance = balance.subtract(transactionVo.getAmount());
+        BigDecimal lockBalance = (null!=invest.getLockBalance()?invest.getLockBalance():BigDecimal.ZERO);
+        BigDecimal resultLockBalance = lockBalance.add(transactionVo.getAmount());
+        int updateInvestResult = investMapper.updateLockBalance(resultBalance,resultLockBalance,transactionVo.getUserId());
+        if(updateInvestResult <=0){
+            log.error("转出申请，更新invest失败");
             throw new RuntimeException();
         }
         return new ResponseVo(ErrorCodeEnum.SUCCESS,null);

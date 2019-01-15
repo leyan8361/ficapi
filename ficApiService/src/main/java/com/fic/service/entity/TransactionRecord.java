@@ -1,5 +1,7 @@
 package com.fic.service.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Date;
@@ -26,6 +28,7 @@ public class TransactionRecord {
 
     private Integer way;
 
+    @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
     private Date createdTime;
     private String transactionHash;
 

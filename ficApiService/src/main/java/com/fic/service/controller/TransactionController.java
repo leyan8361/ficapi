@@ -76,9 +76,9 @@ public class TransactionController {
         }
         ResponseVo response = null;
         if(approve){
-            response = transactionRecordService.approve(id,remark);
+            response = transactionRecordService.approveForTFC(id,remark);
         }else{
-            response = transactionRecordService.reject(id,remark);
+            response = transactionRecordService.rejectForTFC(id,remark);
         }
         return ResponseEntity.ok(response);
     }
@@ -97,6 +97,7 @@ public class TransactionController {
     @ApiResponses({
             @ApiResponse(code = 200, message = "SUCCESS")
     })
+    //TODO
     public ResponseEntity confirmTranIn(@RequestParam int userId, @RequestParam String fromAddress, @RequestParam String txHash, @RequestParam String coinType, @RequestParam BigDecimal amount,@RequestParam String remark,@RequestParam String inComeTime) {
         log.debug(" confirmTranIn Action !!!");
         ResponseVo result = transactionRecordService.confirmTranIn(userId,fromAddress,txHash,coinType,amount,remark,inComeTime);

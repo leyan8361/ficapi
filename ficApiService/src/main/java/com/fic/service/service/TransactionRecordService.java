@@ -1,5 +1,6 @@
 package com.fic.service.service;
 
+import com.fic.service.Vo.DoTranTokenVo;
 import com.fic.service.Vo.DoTransactionVo;
 import com.fic.service.Vo.ResponseVo;
 
@@ -12,14 +13,24 @@ import java.math.BigDecimal;
 **/
 public interface TransactionRecordService{
 
+    //TODO
     ResponseVo approve(int id,String remark);
-
+    //TODO
     ResponseVo reject(int id,String remark);
 
+    ResponseVo approveForTFC(int id,String remark);
+
+    ResponseVo rejectForTFC(int id,String remark);
     /**
      * 转出申请
      */
+    //TODO
     ResponseVo doTransactionApply(DoTransactionVo transactionVo);
+
+    /**
+     * 转出申请For TFC
+     */
+    ResponseVo doTransactionApply(DoTranTokenVo transactionVo);
 
     /**
      * Test
