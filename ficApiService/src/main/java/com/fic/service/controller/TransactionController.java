@@ -67,7 +67,7 @@ public class TransactionController {
     @ApiResponses({
             @ApiResponse(code = 200, message = "SUCCESS")
     })
-    public ResponseEntity approveTransaction(@RequestParam int id,@RequestParam boolean approve,@RequestParam String remark) {
+    public ResponseEntity approveTransaction(@RequestParam int id,@RequestParam boolean approve,@RequestParam(required = false) String remark) {
         log.debug(" approveTransaction Action !!!");
         TransactionRecord result = transactionRecordMapper.selectByPrimaryKey(id);
         if(null == result){

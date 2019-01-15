@@ -35,6 +35,9 @@ public class Constants {
         public static final String MOVIE_COVER="movie/cover/";
         public static final String BOOT_PAGE_COVER="bootpage/";
         public static final String HEAD_CUT_PATH="user/";
+        public static final String USER_AUTH_PATH="user/auth/";
+        public static final String USER_AUTH_FRONT_PATH="front/";
+        public static final String USER_AUTH_BACK_PATH="back/";
         public static final String BET_MOVIE_COVER_PATH="/bet/movie/";
         public static final String BANNER_URL_PATH ="banner/";
         public static final String APP_FILE_PATH="app/";
@@ -46,6 +49,8 @@ public class Constants {
         public static final String CNY = "CNY";
         public static final String ETH = "ETH";
         public static final String BTC = "BTC";
+        public static final String BCH = "BCH";
+        public static final String USDT = "USDT";
         public static final String TFC = "TFC";
         /**
          * 连续竞猜标记

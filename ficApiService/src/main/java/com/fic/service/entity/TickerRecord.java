@@ -1,5 +1,9 @@
 package com.fic.service.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
+import java.util.Date;
+
 public class TickerRecord {
     private Integer id;
 
@@ -18,6 +22,11 @@ public class TickerRecord {
     private String timestamp;
 
     private String last;
+
+    @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
+    private Date createdTime;
+
+    private String coinType;
 
     public Integer getId() {
         return id;
@@ -89,5 +98,21 @@ public class TickerRecord {
 
     public void setLast(String last) {
         this.last = last;
+    }
+
+    public Date getCreatedTime() {
+        return createdTime;
+    }
+
+    public void setCreatedTime(Date createdTime) {
+        this.createdTime = createdTime;
+    }
+
+    public String getCoinType() {
+        return coinType;
+    }
+
+    public void setCoinType(String coinType) {
+        this.coinType = coinType;
     }
 }

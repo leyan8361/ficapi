@@ -117,7 +117,7 @@ public class HomeController {
     @ApiOperation("测试okCoinApi")
     public ResponseEntity testOkCoinAPi() {
         log.debug(" testOkCoinAPi !!!");
-        TickerRecord result = okCoinUtil.getTicker(CoinUSDEnum.USDT.code());
+        TickerRecord result = okCoinUtil.getTicker(CoinUSDEnum.USDT);
         return ResponseEntity.ok().body("success");
     }
 

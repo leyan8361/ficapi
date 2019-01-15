@@ -62,6 +62,6 @@ public class ApiWalletController {
     public ResponseEntity doTransactionOutApply(@RequestBody DoTranTokenVo transactionVo) {
         log.debug(" doTransactionOutApply action !!");
         ResponseVo result = transactionRecordService.doTransactionApply(transactionVo);
-        return ResponseEntity.ok(new ResponseVo(ErrorCodeEnum.SUCCESS,result));
+        return ResponseEntity.ok(result);
     }
 }
