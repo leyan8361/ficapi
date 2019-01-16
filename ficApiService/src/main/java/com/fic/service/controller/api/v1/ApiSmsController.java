@@ -74,7 +74,7 @@ public class ApiSmsController {
     @GetMapping("/checkCode")
     @ApiOperation("Api-Check验证码")
     @ApiImplicitParams({
-            @ApiImplicitParam(dataType = "string", name = "telephone", value = "手机号", required = true),
+            @ApiImplicitParam(dataType = "string", name = "telephone", value = "手机号 or Email", required = true),
             @ApiImplicitParam(dataType = "string", name = "code", value = "验证码", required = true)
     })
     @ApiResponses({

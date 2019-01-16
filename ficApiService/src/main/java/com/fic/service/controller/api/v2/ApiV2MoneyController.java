@@ -1,18 +1,22 @@
 package com.fic.service.controller.api.v2;
 
-import com.fic.service.Enum.ErrorCodeEnum;
 import com.fic.service.Vo.ResponseVo;
 import com.fic.service.Vo.TradeRecordInfoV2Vo;
-import com.fic.service.Vo.TradeRecordInfoVo;
 import com.fic.service.Vo.TradeRecordRequestVo;
 import com.fic.service.mapper.UserMapper;
 import com.fic.service.service.BalanceService;
-import io.swagger.annotations.*;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 /**
  *   @Author Xie
