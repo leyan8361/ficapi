@@ -275,5 +275,20 @@ public class ApiAccountController {
         return ResponseEntity.ok(new ResponseVo(ErrorCodeEnum.SUCCESS,resultList));
     }
 
+//    @GetMapping(value = "/updateTelephone")
+//    @ApiOperation("Api-修改手机号")
+//    @ApiImplicitParams({
+//            @ApiImplicitParam(dataType = "int", name = "userId", value = "用户ID", required = true),
+//            @ApiImplicitParam(dataType = "string", name = "telephone", value = "手机", required = true)
+//    })
+//    @ApiResponses({
+//            @ApiResponse(code = 200, message = "SUCCESS")
+//    })
+    public ResponseEntity updateTelephone(@RequestParam int userId,@RequestParam String telephone){
+        log.debug(" do updateTelephone Action !!!");
+        ResponseVo result = accountService.updateUserName(userId,telephone);
+        return ResponseEntity.ok(result);
+    }
+
 
 }

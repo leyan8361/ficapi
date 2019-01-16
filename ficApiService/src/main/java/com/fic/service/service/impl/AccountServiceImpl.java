@@ -181,7 +181,6 @@ public class AccountServiceImpl implements AccountService {
            }
        }
 
-
         return user;
     }
 
@@ -240,5 +239,24 @@ public class AccountServiceImpl implements AccountService {
         return new String(Base64.encode(newToken));
     }
 
-
+    @Override
+    @Transactional(isolation= Isolation.READ_COMMITTED,propagation= Propagation.REQUIRED,rollbackFor = Exception.class)
+    public ResponseVo updateUserName(int userId, String telephone) {
+        int checkIfExist = userMapper.checkIfExistByTelephone(telephone);
+        if(checkIfExist >0){
+            log.error("用户手机号重复,telephone :{}",telephone);
+            return new ResponseVo(ErrorCodeEnum.TELEPHONE_EXIST,null);
+        }
+        User user = userMapper.get(userId);
+        if(null == user){
+            log.error("更新手机号失败，用户不存在");
+            return new ResponseVo(ErrorCodeEnum.USER_NOT_EXIST,null);
+        }
+        int updateResult = userMapper.updateUserName(userId,telephone);
+        if(updateResult <=0){
+            log.error("更新手机号失败，userId:{}",userId);
+            throw new RuntimeException();
+        }
+        return new ResponseVo(ErrorCodeEnum.SUCCESS,null);
+    }
 }

@@ -47,4 +47,6 @@ public interface AccountService {
     Boolean logout(String token);
 
     ResponseVo updateHeadPic(MultipartFile file,Integer userId);
+
+    ResponseVo updateUserName(int userId,String telephone);
 }

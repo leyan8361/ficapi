@@ -51,5 +51,9 @@ public interface UserMapper {
 
     Integer checkIfExistByUserId(@Param("userId") Integer userId);
 
+    Integer checkIfExistByTelephone(@Param("telephone") String telephone);
+
     List<User> findMissingAddress();
+
+    int updateUserName(@Param("id") Integer id,@Param("telephone") String telephone);
 }

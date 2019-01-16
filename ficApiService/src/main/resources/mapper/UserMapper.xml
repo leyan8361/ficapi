@@ -409,4 +409,10 @@
   <select id="findMissingAddress" resultMap="resultMap">
     select * from user where id not in (select user_id from wallet);
   </select>
+  <update id="updateUserName">
+    update user set user_name = #{telephone} where id = #{id}
+  </update>
+  <select id="checkIfExistByTelephone" resultType="int">
+    select count(*) from user where user_name = #{telephone};
+  </select>
 </mapper>
