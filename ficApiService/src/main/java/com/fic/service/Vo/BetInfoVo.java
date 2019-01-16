@@ -4,7 +4,6 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
 import java.math.BigDecimal;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -68,6 +67,12 @@ public class BetInfoVo {
 
     @ApiModelProperty(value = "竞猜电影列表(开奖了的)")
     private List<BetMovieDrawVo> drawMovieItem;
+
+    @ApiModelProperty(value = "连续天数，整型array，(0,未投注)(1,有投注)")
+    private int betTimeArray[];
+
+    @ApiModelProperty(value = "播报 last 10")
+    private List<BetBroadcastBetPriceVo> broadcasts;
 
     public List<BetMovieInfoVo> getMovieItem() {
         return movieItem;
@@ -205,11 +210,27 @@ public class BetInfoVo {
 //    }
 
 
+    public int[] getBetTimeArray() {
+        return betTimeArray;
+    }
+
+    public void setBetTimeArray(int[] betTimeArray) {
+        this.betTimeArray = betTimeArray;
+    }
+
     public BigDecimal getContinueBetReward() {
         return continueBetReward;
     }
 
     public void setContinueBetReward(BigDecimal continueBetReward) {
         this.continueBetReward = continueBetReward;
+    }
+
+    public List<BetBroadcastBetPriceVo> getBroadcasts() {
+        return broadcasts;
+    }
+
+    public void setBroadcasts(List<BetBroadcastBetPriceVo> broadcasts) {
+        this.broadcasts = broadcasts;
     }
 }

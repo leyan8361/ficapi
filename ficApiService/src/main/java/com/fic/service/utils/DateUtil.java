@@ -412,6 +412,14 @@ public class DateUtil {
         return Instant.now().toString();
     }
 
+    public static int getWeekDay(Date date){
+        Instant instant = date.toInstant();
+        ZoneId zoneId = ZoneId.systemDefault();
+        LocalDateTime localDate = instant.atZone(zoneId).toLocalDateTime();
+        int nowDay = localDate.getDayOfWeek().getValue();
+        return nowDay;
+    }
+
     public static void main(String args[]){
         BigDecimal test = new BigDecimal("12345678910.10987654321");
         System.out.println(test.toString());

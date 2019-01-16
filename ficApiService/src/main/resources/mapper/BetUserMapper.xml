@@ -411,4 +411,7 @@
     left join bet_movie m on sb.bet_movie_id = m.id
     where u.id = #{id};
   </select>
+  <select id="findLastWinner" resultMap="BaseResultMap">
+    select * from bet_user where bingo = 1 order by created_time desc limit 0,10;
+  </select>
 </mapper>

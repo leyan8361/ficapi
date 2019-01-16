@@ -325,9 +325,20 @@ public class BetScenceServiceImpl implements BetScenceService {
         /** 连续投注 ，奖池*/
         result.setTotalJasckpot(betScence.getTotalReservation().multiply(new BigDecimal("0.5")).setScale(0,BigDecimal.ROUND_DOWN));
         Date now  = new Date();
-        String endDay = DateUtil.getThisWeekMonDay(now);
-        String startDay = DateUtil.getThisWeekSunDay();
+        String endDay = DateUtil.getThisWeekSunDay();
+        String startDay = DateUtil.getThisWeekMonDay(now);
         List<BetUser> betUsers = betUserMapper.findlastWeekAlreadyBetByUserId(startDay,endDay,userId);
+
+        int []betTimeArray = new int[7];
+        betTimeArray[0] = 0;
+        betTimeArray[1] = 0;
+        betTimeArray[2] = 0;
+        betTimeArray[3] = 0;
+        betTimeArray[4] = 0;
+        betTimeArray[5] = 0;
+        betTimeArray[6] = 0;
+
+        result.setBetTimeArray(betTimeArray);
 
         if(betUsers.size() == 0){
             result.setContinueBetTime(0);
@@ -343,6 +354,13 @@ public class BetScenceServiceImpl implements BetScenceService {
                     stored.add(betUser);
                 }
             }
+
+            /** 本周投注标记 */
+            for(BetUser betUser: stored){
+                int day = DateUtil.getWeekDay(betUser.getCreatedTime());
+                betTimeArray[day-1] = 1;
+            }
+            result.setBetTimeArray(betTimeArray);
             betUsers = stored;
             boolean isContinue = false;
             for(int i = 0 ; i < betUsers.size(); i++){
@@ -414,6 +432,18 @@ public class BetScenceServiceImpl implements BetScenceService {
         String monDayEnd = DateUtil.getThisWeekMonDayEnd(now);
         BigDecimal continueReward = balanceStatementMapper.sumContinueReward(userId,monDayBegin,monDayEnd);
         result.setContinueBetReward(null != continueReward ? continueReward.setScale(0,BigDecimal.ROUND_DOWN):BigDecimal.ZERO);
+
+        /** 播报 */
+        List<BetUser> lastWinner = betUserMapper.findLastWinner();
+        List<BetBroadcastBetPriceVo> broadcastBetPriceVoList = new ArrayList<BetBroadcastBetPriceVo>();
+        for(BetUser betUser : lastWinner){
+            String telephone = userMapper.findTelephoneById(betUser.getUserId());
+            BetBroadcastBetPriceVo broad = new BetBroadcastBetPriceVo();
+            broad.setTelephone(RegexUtil.replaceTelephone(telephone));
+            broad.setPrice(betUser.getBingoPrice().setScale(0,BigDecimal.ROUND_DOWN).toString());
+            broadcastBetPriceVoList.add(broad);
+        }
+        result.setBroadcasts(broadcastBetPriceVoList);
         return new ResponseVo(ErrorCodeEnum.SUCCESS,result);
     }
 
