@@ -91,7 +91,7 @@ public class TransactionController {
             @ApiImplicitParam(dataType = "string", name = "fromAddress", value = "转入来源地址"),
             @ApiImplicitParam(dataType = "string", name = "txHash", value = "交易合约Hash"),
 //            @ApiImplicitParam(dataType = "string", name = "coinType", value = "币种",required = true),
-            @ApiImplicitParam(dataType = "int", name = "amount", value = "到账数量"),
+            @ApiImplicitParam(dataType = "int", name = "amount", value = "到账数量",required = true),
             @ApiImplicitParam(dataType = "string", name = "inComeTime", value = "到账时间,格式(yyyy-MM-dd HH:mm:ss)",required = true,example = "2019-01-16 12:00:00"),
             @ApiImplicitParam(dataType = "string", name = "remark", value = "备注",required = false),
     })
