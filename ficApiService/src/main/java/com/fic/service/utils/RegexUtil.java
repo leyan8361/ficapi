@@ -155,7 +155,7 @@ public class RegexUtil {
     }
 
     public static boolean isCoinType(String coinType){
-        Pattern pattern = Pattern.compile(".*(FTC|BTC|ETH|USDT|BCH|FIAT)$");
+        Pattern pattern = Pattern.compile(".*(FTC|TFC|BTC|ETH|USDT|BCH|FIAT)$");
         Matcher matcher = pattern.matcher(coinType);
         if(matcher.matches()){
             return true;

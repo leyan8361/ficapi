@@ -10,6 +10,9 @@ import java.util.Date;
 @ApiModel
 public class ExchangeRate {
 
+    @ApiModelProperty(value = "id")
+    private int id;
+
     @ApiModelProperty(value = "换算结果单位(BTC,BCH,ETH,TFC)",example = "TFC")
     private String coin1;
 
@@ -83,5 +86,13 @@ public class ExchangeRate {
 
     public void setUpdatedBy(Integer updatedBy) {
         this.updatedBy = updatedBy;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 }

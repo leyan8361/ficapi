@@ -126,7 +126,7 @@
     where id = #{id,jdbcType=INTEGER}
   </update>
   <select id="findFicExchangeCny" resultMap="BaseResultMap">
-    select * from exchange_rate where coin2 = 'FIC' and coin1 = 'CNY';
+    select * from exchange_rate where coin2 = 'TFC' and coin1 = 'CNY';
   </select>
   <select id="findAll" resultMap="BaseResultMap">
     select * from exchange_rate order by createdTime desc;

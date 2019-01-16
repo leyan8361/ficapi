@@ -33,7 +33,7 @@ public class TransactionRecord {
     private String transactionHash;
 
     private String coinType;
-
+    @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
     private Date inComeTime;
 
     private BigDecimal coinRate;

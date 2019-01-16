@@ -202,9 +202,15 @@ public class TransactionRecordServiceImpl implements TransactionRecordService {
         record.setAmount(amount);
         record.setWay(FinanceWayEnum.IN.getCode());
         record.setRemark(remark);
-        record.setCreatedTime(DateUtil.toSecFormatDay(inComeTime));
+        record.setInComeTime(DateUtil.toSecFormatDay(inComeTime));
+        record.setCreatedTime(new Date());
         record.setStatus(TransactionStatusEnum.SUCCESS.getCode());
 
+        int saveRecordResult = transactionRecordMapper.insertSelective(record);
+        if(saveRecordResult <=0){
+            log.error("保存转账信息失败，record :{}",record.toString());
+            throw new RuntimeException();
+        }
 
         /**
          * 处理余额
@@ -215,6 +221,8 @@ public class TransactionRecordServiceImpl implements TransactionRecordService {
         balanceStatement.setType(FinanceTypeEnum.RECHARGE.getCode());
         balanceStatement.setAmount(amount);
         balanceStatement.setWay(FinanceWayEnum.IN.getCode());
+        balanceStatement.setCreatedTime(new Date());
+        balanceStatement.setTraceId(record.getId());
 
         int saveBalanceResult = balanceStatementMapper.insertSelective(balanceStatement);
         if(saveBalanceResult <=0){

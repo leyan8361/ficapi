@@ -324,6 +324,19 @@ public class BalanceServiceImpl implements BalanceService {
                 item.setCreatedTime(balanceStatement.getCreatedTime());
             }
 
+
+            /** 转出 */
+            if(balanceStatement.getType() == FinanceTypeEnum.TRANSFER_OUT.getCode()){
+                item.setAmount(balanceStatement.getAmount().setScale(0,BigDecimal.ROUND_DOWN));
+                item.setCreatedTime(balanceStatement.getCreatedTime());
+            }
+
+            /** 转入 */
+            if(balanceStatement.getType() == FinanceTypeEnum.PAYEE_IN.getCode()){
+                item.setAmount(balanceStatement.getAmount().setScale(0,BigDecimal.ROUND_DOWN));
+                item.setCreatedTime(balanceStatement.getCreatedTime());
+            }
+
             item.setType(balanceStatement.getType());
             item.setWay(balanceStatement.getWay());
 
@@ -335,7 +348,6 @@ public class BalanceServiceImpl implements BalanceService {
                 /** 支出 */
                 totalExpend = totalExpend.add(item.getAmount());
             }
-
 
             items.add(item);
         }

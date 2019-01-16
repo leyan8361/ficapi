@@ -49,7 +49,7 @@
       #{coinType,jdbcType=VARCHAR}, #{inComeTime,jdbcType=TIMESTAMP}, #{coinRate,jdbcType=DECIMAL},
       #{coinNum,jdbcType=DECIMAL}, #{gasPrice,jdbcType=DECIMAL})
   </insert>
-  <insert id="insertSelective" parameterType="com.fic.service.entity.TransactionRecord">
+  <insert id="insertSelective" parameterType="com.fic.service.entity.TransactionRecord" useGeneratedKeys="true" keyProperty="id">
     insert into transaction_record
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="id != null">
