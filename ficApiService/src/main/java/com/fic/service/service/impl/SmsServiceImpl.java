@@ -137,7 +137,8 @@ public class SmsServiceImpl implements SmsService {
             log.error(" save sms failed! ");
             return ErrorCodeEnum.SYSTEM_EXCEPTION;
         }
-        emailUtil.send(email,sms.getCode());
+        String content = "您的验证码是："+sms.getCode();
+        emailUtil.send(email,content);
         return ErrorCodeEnum.SUCCESS;
     }
 }
