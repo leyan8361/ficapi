@@ -43,7 +43,6 @@ public class SmsServiceImpl implements SmsService {
     @Override
     @Transactional(isolation= Isolation.READ_COMMITTED,propagation= Propagation.REQUIRED,rollbackFor = Exception.class)
     public ErrorCodeEnum send(String telephone) {
-
         SmsQueue sms = new SmsQueue();
         sms.setCode(RandomUtil.generateSmsCode());
         sms.setTelephone(telephone);
@@ -137,8 +136,11 @@ public class SmsServiceImpl implements SmsService {
             log.error(" save sms failed! ");
             return ErrorCodeEnum.SYSTEM_EXCEPTION;
         }
-        String content = "您的验证码是："+sms.getCode();
-        emailUtil.send(email,content);
+
+        StringBuilder content = new StringBuilder("尊敬的用户您好! \r\n");
+        content.append("您正在淘影APP绑定邮箱。验证码：").append(sms.getCode());
+        content.append("，验证码有效时间：5分钟。请勿向任何人包括客服提供验证码。");
+        emailUtil.send(email,content.toString());
         return ErrorCodeEnum.SUCCESS;
     }
 }

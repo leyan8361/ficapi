@@ -75,7 +75,7 @@ public class ApiSmsController {
     @ApiOperation("Api-Check验证码")
     @ApiImplicitParams({
             @ApiImplicitParam(dataType = "string", name = "telephone", value = "手机号", required = true),
-            @ApiImplicitParam(dataType = "string", name = "code", value = "手机号", required = true)
+            @ApiImplicitParam(dataType = "string", name = "code", value = "验证码", required = true)
     })
     @ApiResponses({
             @ApiResponse(code = 1013, message = "VALIDATE_CODE_INVALID"),

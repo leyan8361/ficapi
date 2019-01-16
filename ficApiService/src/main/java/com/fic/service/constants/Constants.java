@@ -69,6 +69,7 @@ public class Constants {
         public static final String RESET_PASSWORD_PATH = "/api/v1/resetPassword";
         public static final String RESOURCE_PATH = "/api/v1/static/**";
         public static final String SMS_PATH = "/api/v1/sendSms";
+        public static final String EMAIL_PATH = "/api/v1/sendEmail";
         public static final String CHECK_CODE_PATH = "/api/v1/checkCode";//验证码
         public static final String VERSION_CHECK_PATH = "/api/v1/checkVersion";//版本号
         public static final String BANNER_PATH = "/api/v1/banner/**";//版本号
@@ -87,5 +88,6 @@ public class Constants {
                 pathMatchFilterMap.put(BANNER_PATH,BANNER_PATH);
                 pathMatchFilterMap.put(LOG_OUT_PATH,LOG_OUT_PATH);
                 pathMatchFilterMap.put(BOOT_PAGE_PATH,BOOT_PAGE_PATH);
+                pathMatchFilterMap.put(EMAIL_PATH,EMAIL_PATH);
         }
 }
