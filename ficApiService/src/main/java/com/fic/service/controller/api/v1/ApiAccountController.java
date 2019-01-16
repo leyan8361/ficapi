@@ -290,15 +290,15 @@ public class ApiAccountController {
         return ResponseEntity.ok(result);
     }
 
-    @GetMapping(value = "/updateEmail")
-    @ApiOperation("Api-修改邮箱")
-    @ApiImplicitParams({
-            @ApiImplicitParam(dataType = "int", name = "userId", value = "用户ID", required = true),
-            @ApiImplicitParam(dataType = "string", name = "email", value = "邮箱地址", required = true)
-    })
-    @ApiResponses({
-            @ApiResponse(code = 200, message = "SUCCESS")
-    })
+//    @GetMapping(value = "/updateEmail")
+//    @ApiOperation("Api-修改邮箱")
+//    @ApiImplicitParams({
+//            @ApiImplicitParam(dataType = "int", name = "userId", value = "用户ID", required = true),
+//            @ApiImplicitParam(dataType = "string", name = "email", value = "邮箱地址", required = true)
+//    })
+//    @ApiResponses({
+//            @ApiResponse(code = 200, message = "SUCCESS")
+//    })
     public ResponseEntity updateEmail(@RequestParam int userId,@RequestParam String email){
         log.debug(" do updateTelephone Action !!!");
         ResponseVo result = accountService.updateEmail(userId,email);
