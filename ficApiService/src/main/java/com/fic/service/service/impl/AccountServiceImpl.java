@@ -267,7 +267,7 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     @Transactional(isolation= Isolation.READ_COMMITTED,propagation= Propagation.REQUIRED,rollbackFor = Exception.class)
-    public ResponseVo updateEmail(int userId, String email) {
+    public ResponseVo updateEmail(int userId, String email,String password) {
         User user = userMapper.get(userId);
         if(null == user){
             log.error("更新邮箱失败，用户不存在");
@@ -281,6 +281,11 @@ public class AccountServiceImpl implements AccountService {
         if(checkIfExist >0){
             log.error("用户邮箱重复,telephone :{}",email);
             return new ResponseVo(ErrorCodeEnum.EMAIL_EXIST,null);
+        }
+
+        if(!user.getPassword().equals(password)){
+            log.debug("绑定邮箱，登录密码错误");
+            return new ResponseVo(ErrorCodeEnum.PASSWORD_NOT_MATCH,null);
         }
 
         int updateResult = userMapper.updateEmail(userId,email);
