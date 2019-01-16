@@ -168,6 +168,9 @@
       and (type = 6 or type = 7 or type = 8 or type = 9)
     </if>
     <if test="param.type == 3">
+      and type not in (10,11)
+    </if>
+    <if test="param.type == 4">
       and type not in (4,6,7,8,9)
     </if>
     order by b.created_time desc limit #{offset},10;
