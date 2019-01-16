@@ -1,20 +1,25 @@
 package com.fic.service.service.impl;
 
 import com.fic.service.Enum.ErrorCodeEnum;
+import com.fic.service.Vo.ResponseVo;
 import com.fic.service.constants.SmsProperties;
 import com.fic.service.entity.SmsQueue;
 import com.fic.service.mapper.SmsQueueMapper;
 import com.fic.service.service.SmsService;
 import com.fic.service.utils.DateUtil;
+import com.fic.service.utils.EmailUtil;
 import com.fic.service.utils.RandomUtil;
+import com.fic.service.utils.RegexUtil;
 import com.github.qcloudsms.SmsSingleSender;
 import com.github.qcloudsms.SmsSingleSenderResult;
 import com.github.qcloudsms.httpclient.HTTPException;
+import okhttp3.internal.http2.ErrorCode;
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
@@ -32,6 +37,8 @@ public class SmsServiceImpl implements SmsService {
     SmsProperties smsProperties;
     @Autowired
     SmsQueueMapper smsQueueMapper;
+    @Autowired
+    EmailUtil emailUtil;
 
     @Override
     @Transactional(isolation= Isolation.READ_COMMITTED,propagation= Propagation.REQUIRED,rollbackFor = Exception.class)
@@ -111,6 +118,26 @@ public class SmsServiceImpl implements SmsService {
         if(result <= 0 ){
             return ErrorCodeEnum.SYSTEM_EXCEPTION;
         }
+        return ErrorCodeEnum.SUCCESS;
+    }
+
+    @Override
+    @Transactional(isolation= Isolation.READ_COMMITTED,propagation= Propagation.REQUIRED,rollbackFor = Exception.class)
+    public ErrorCodeEnum sendMail(String email) {
+        boolean isEmail = RegexUtil.isEmail(email);
+        if(!isEmail)return ErrorCodeEnum.NOT_A_EMAIL;
+
+        SmsQueue sms = new SmsQueue();
+        sms.setCode(RandomUtil.generateSmsCode());
+        sms.setTelephone(email);
+        sms.setCreatedTime(new Date());
+        sms.setExpiredTime(DateUtil.plusMin(new Date(),smsProperties.getExpired()));
+        int smsResult = smsQueueMapper.insert(sms);
+        if(smsResult <= 0){
+            log.error(" save sms failed! ");
+            return ErrorCodeEnum.SYSTEM_EXCEPTION;
+        }
+        emailUtil.send(email,sms.getCode());
         return ErrorCodeEnum.SUCCESS;
     }
 }

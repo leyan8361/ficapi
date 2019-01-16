@@ -412,7 +412,13 @@
   <update id="updateUserName">
     update user set user_name = #{telephone} where id = #{id}
   </update>
+  <update id="updateEmail">
+    update user set email = #{email} where id = #{id}
+  </update>
   <select id="checkIfExistByTelephone" resultType="int">
     select count(*) from user where user_name = #{telephone};
+  </select>
+  <select id="checkIfExistByEmail" resultType="int">
+    select count(*) from user where email = #{email};
   </select>
 </mapper>

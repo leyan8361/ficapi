@@ -53,7 +53,11 @@ public interface UserMapper {
 
     Integer checkIfExistByTelephone(@Param("telephone") String telephone);
 
+    Integer checkIfExistByEmail(@Param("email") String email);
+
     List<User> findMissingAddress();
 
     int updateUserName(@Param("id") Integer id,@Param("telephone") String telephone);
+
+    int updateEmail(@Param("id") Integer id,@Param("email") String email);
 }

@@ -11,6 +11,7 @@ import com.fic.service.service.MaoYanService;
 import com.fic.service.service.SmsService;
 import com.fic.service.service.TransactionRecordService;
 import com.fic.service.service.WalletService;
+import com.fic.service.utils.EmailUtil;
 import com.fic.service.utils.OkCoinUtil;
 import com.fic.service.utils.Web3jUtil;
 import io.swagger.annotations.Api;
@@ -58,6 +59,8 @@ public class HomeController {
     TransactionScheduledService transactionScheduledService;
     @Autowired
     OkCoinUtil okCoinUtil;
+    @Autowired
+    EmailUtil emailUtil;
 
     @GetMapping("/home")
     @ApiOperation("获取首页数据 , 拉票房，开奖")

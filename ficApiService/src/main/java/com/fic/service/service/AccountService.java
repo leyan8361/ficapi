@@ -49,4 +49,6 @@ public interface AccountService {
     ResponseVo updateHeadPic(MultipartFile file,Integer userId);
 
     ResponseVo updateUserName(int userId,String telephone);
+
+    ResponseVo updateEmail(int userId,String email);
 }

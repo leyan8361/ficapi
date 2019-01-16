@@ -242,19 +242,50 @@ public class AccountServiceImpl implements AccountService {
     @Override
     @Transactional(isolation= Isolation.READ_COMMITTED,propagation= Propagation.REQUIRED,rollbackFor = Exception.class)
     public ResponseVo updateUserName(int userId, String telephone) {
-        int checkIfExist = userMapper.checkIfExistByTelephone(telephone);
-        if(checkIfExist >0){
-            log.error("用户手机号重复,telephone :{}",telephone);
-            return new ResponseVo(ErrorCodeEnum.TELEPHONE_EXIST,null);
-        }
         User user = userMapper.get(userId);
         if(null == user){
             log.error("更新手机号失败，用户不存在");
             return new ResponseVo(ErrorCodeEnum.USER_NOT_EXIST,null);
         }
+        String existTel = user.getUserName();
+        if(telephone.equals(existTel)){
+            return new ResponseVo(ErrorCodeEnum.TELEPHONE_IS_BEING_USED,null);
+        }
+        int checkIfExist = userMapper.checkIfExistByTelephone(telephone);
+        if(checkIfExist >0){
+            log.error("用户手机号重复,telephone :{}",telephone);
+            return new ResponseVo(ErrorCodeEnum.TELEPHONE_EXIST,null);
+        }
+
         int updateResult = userMapper.updateUserName(userId,telephone);
         if(updateResult <=0){
             log.error("更新手机号失败，userId:{}",userId);
+            throw new RuntimeException();
+        }
+        return new ResponseVo(ErrorCodeEnum.SUCCESS,null);
+    }
+
+    @Override
+    @Transactional(isolation= Isolation.READ_COMMITTED,propagation= Propagation.REQUIRED,rollbackFor = Exception.class)
+    public ResponseVo updateEmail(int userId, String email) {
+        User user = userMapper.get(userId);
+        if(null == user){
+            log.error("更新邮箱失败，用户不存在");
+            return new ResponseVo(ErrorCodeEnum.USER_NOT_EXIST,null);
+        }
+        String existEmail = user.getEmail();
+        if(email.equals(existEmail)){
+            return new ResponseVo(ErrorCodeEnum.EMAIL_IS_BEING_USED,null);
+        }
+        int checkIfExist = userMapper.checkIfExistByEmail(email);
+        if(checkIfExist >0){
+            log.error("用户邮箱重复,telephone :{}",email);
+            return new ResponseVo(ErrorCodeEnum.EMAIL_EXIST,null);
+        }
+
+        int updateResult = userMapper.updateEmail(userId,email);
+        if(updateResult <=0){
+            log.error("更新邮箱失败，userId:{}",userId);
             throw new RuntimeException();
         }
         return new ResponseVo(ErrorCodeEnum.SUCCESS,null);

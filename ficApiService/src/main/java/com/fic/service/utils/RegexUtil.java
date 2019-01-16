@@ -41,6 +41,13 @@ public class RegexUtil {
         }
     }
 
+    public static boolean isEmail(String email) {
+        String regex = "\\s*\\w+(?:\\.{0,1}[\\w-]+)*@[a-zA-Z0-9]+(?:[-.][a-zA-Z0-9]+)*\\.[a-zA-Z]+\\s*$";
+        Pattern p = Pattern.compile(regex);
+        Matcher m = p.matcher(email);
+        boolean isMatch = m.matches();
+        return isMatch;
+    }
     public static boolean isPic(String fileName){
         Pattern pattern = Pattern.compile(".*(.png|.jpg|.bmp.|jpeg)$",Pattern.CASE_INSENSITIVE);
         Matcher matcher = pattern.matcher(fileName);
@@ -165,6 +172,6 @@ public class RegexUtil {
 
 
     public static void main(String args[]){
-        System.out.println(RegexUtil.isCoinType("EOS"));
+        System.out.println(RegexUtil.isEmail("11@163.com"));
     }
 }
