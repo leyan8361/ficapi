@@ -58,7 +58,7 @@ public class UserAuthServiceImpl implements UserAuthService {
     public ResponseVo findByUserId(int userId) {
         UserAuth result = userAuthMapper.findByUserId(userId);
         if(null == result){
-            return new ResponseVo(ErrorCodeEnum.USER_NOT_AUTH,null);
+            return new ResponseVo(ErrorCodeEnum.SUCCESS,null);
         }
         result.setFrontFaceUrl(uploadProperties.getUrl(result.getFrontFaceUrl()));
         result.setBackFaceUrl(uploadProperties.getUrl(result.getBackFaceUrl()));
