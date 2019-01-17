@@ -337,6 +337,12 @@ public class BalanceServiceImpl implements BalanceService {
                 item.setCreatedTime(balanceStatement.getCreatedTime());
             }
 
+            /** 抽奖 */
+            if(balanceStatement.getType() == FinanceTypeEnum.DRAW.getCode()){
+                item.setAmount(balanceStatement.getAmount().setScale(0,BigDecimal.ROUND_DOWN));
+                item.setCreatedTime(balanceStatement.getCreatedTime());
+            }
+
             item.setType(balanceStatement.getType());
             item.setWay(balanceStatement.getWay());
 

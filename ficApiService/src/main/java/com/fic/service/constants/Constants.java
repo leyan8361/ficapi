@@ -34,6 +34,7 @@ public class Constants {
         public static final String MEDIA_PREFIX_PLOT="movie/media/plot/";
         public static final String MOVIE_COVER="movie/cover/";
         public static final String BOOT_PAGE_COVER="bootpage/";
+        public static final String LUCK_COVER_PATH="lucky";
         public static final String HEAD_CUT_PATH="user/";
         public static final String USER_AUTH_PATH="user/auth/";
         public static final String USER_AUTH_FRONT_PATH="front/";
