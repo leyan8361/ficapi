@@ -14,9 +14,6 @@ public class LuckTurntableInfoVo {
     @ApiModelProperty("奖品项")
     private List<LuckTurntablePriceVo> priceList;
 
-    @ApiModelProperty("播报")
-    private List<LuckTurntableBroadcastVo> broadcastList;
-
     public String getCoverUrl() {
         return coverUrl;
     }
@@ -33,11 +30,4 @@ public class LuckTurntableInfoVo {
         this.priceList = priceList;
     }
 
-    public List<LuckTurntableBroadcastVo> getBroadcastList() {
-        return broadcastList;
-    }
-
-    public void setBroadcastList(List<LuckTurntableBroadcastVo> broadcastList) {
-        this.broadcastList = broadcastList;
-    }
 }

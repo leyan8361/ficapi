@@ -16,7 +16,7 @@ public class LuckTurntableRecordVo {
     private String priceName;
 
     @ApiModelProperty("中奖时间")
-    @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd")
     private Date bingoTime;
 
     @ApiModelProperty("领取状态(0，未领取)(1,已兑换)")

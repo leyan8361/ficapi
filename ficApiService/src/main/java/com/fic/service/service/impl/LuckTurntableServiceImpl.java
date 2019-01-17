@@ -79,6 +79,10 @@ public class LuckTurntableServiceImpl implements LuckTurntableService {
     @Override
     @Transactional(isolation= Isolation.READ_COMMITTED,propagation= Propagation.REQUIRED,rollbackFor = Exception.class)
     public ResponseVo add(LuckTurntableAddVo luckTurntableAddVo) {
+        BigDecimal existTotalProbability = luckyTurntableMapper.sumProbability(0);
+        if(luckTurntableAddVo.getProbability().add(existTotalProbability).compareTo(new BigDecimal("100")) >0){
+            return new ResponseVo(ErrorCodeEnum.LUCK_PROBABILITY_OVER_100,null);
+        }
         LuckyTurntable luckyTurntable = new LuckyTurntable();
         luckyTurntable.setPriceName(luckTurntableAddVo.getPriceName());
         luckyTurntable.setPriceType(luckTurntableAddVo.getPriceType());
@@ -99,6 +103,10 @@ public class LuckTurntableServiceImpl implements LuckTurntableService {
         if(null == luckyTurntable){
             log.error("更新奖品失败，查无此奖品 id :{}",luckTurntableUpdateVo.getId());
             return new ResponseVo(ErrorCodeEnum.SYSTEM_EXCEPTION,null);
+        }
+        BigDecimal existTotalProbability = luckyTurntableMapper.sumProbability(luckTurntableUpdateVo.getId());
+        if(luckTurntableUpdateVo.getProbability().add(existTotalProbability).compareTo(new BigDecimal("100")) >0){
+            return new ResponseVo(ErrorCodeEnum.LUCK_PROBABILITY_OVER_100,null);
         }
         if(StringUtils.isNotEmpty(luckTurntableUpdateVo.getPriceName())){
             luckyTurntable.setPriceName(luckTurntableUpdateVo.getPriceName());
@@ -123,6 +131,10 @@ public class LuckTurntableServiceImpl implements LuckTurntableService {
     @Override
     @Transactional(isolation= Isolation.READ_COMMITTED,propagation= Propagation.REQUIRED,rollbackFor = Exception.class)
     public ResponseVo delete(int id) {
+        int checkIfBeingUsingByRecord = luckyRecordMapper.countByBingoPrice(id);
+        if(checkIfBeingUsingByRecord >0){
+            return new ResponseVo(ErrorCodeEnum.LUCK_TURNTABLE_IS_BEING_USING,null);
+        }
         int deleteResult = luckyTurntableMapper.deleteByPrimaryKey(id);
         if(deleteResult <=0){
             log.error("删除奖品失败，无此奖品 id :{}",id);
@@ -136,7 +148,6 @@ public class LuckTurntableServiceImpl implements LuckTurntableService {
         List<LuckyTurntable> findResult = luckyTurntableMapper.findAll();
         LuckTurntableInfoVo result = new LuckTurntableInfoVo();
         List<LuckTurntablePriceVo> resultList = new ArrayList<>();
-        List<LuckTurntableBroadcastVo> broadcasts = new ArrayList<>();
         String luckCover = "";
         for(LuckyTurntable luckyTurntable : findResult){
             LuckTurntablePriceVo price = new LuckTurntablePriceVo();
@@ -148,28 +159,8 @@ public class LuckTurntableServiceImpl implements LuckTurntableService {
             }
             resultList.add(price);
         }
-
-        List<LuckyRecord> luckyRecords = luckyRecordMapper.findLastTen();
-        for(LuckyRecord record : luckyRecords){
-            LuckTurntableBroadcastVo broadcastVo = new LuckTurntableBroadcastVo();
-            for(LuckyTurntable luckyTurntable : findResult){
-                if(luckyTurntable.getId().equals(record.getBingoPrice())){
-                    broadcastVo.setPriceName(luckyTurntable.getPriceName());
-                    break;
-                }
-            }
-            User user = userMapper.get(record.getUserId());
-            if(null == user){
-                log.error("getPrice 查找用户查询 id :{}",record.getUserId());
-                throw new RuntimeException();
-            }
-            broadcastVo.setTelephone(RegexUtil.replaceTelephone(user.getUserName()));
-            broadcasts.add(broadcastVo);
-        }
-
         result.setCoverUrl(luckCover);
         result.setPriceList(resultList);
-        result.setBroadcastList(broadcasts);
         return new ResponseVo(ErrorCodeEnum.SUCCESS,result);
     }
 
@@ -183,7 +174,7 @@ public class LuckTurntableServiceImpl implements LuckTurntableService {
             return new ResponseVo(ErrorCodeEnum.USER_NOT_EXIST,null);
         }
         List<LuckTurntableRecordVo> resultList = new ArrayList<>();
-        List<LuckyRecord> findByUserId = luckyRecordMapper.findByUserIdWithPage(userId,pageVo.getPageNum());
+        List<LuckyRecord> findByUserId = luckyRecordMapper.findByUserIdWithPage(userId,pageVo.getPageNum()*10);
         for(LuckyRecord findResult: findByUserId){
             LuckTurntableRecordVo result = new LuckTurntableRecordVo();
             if(null != findResult.getBingoPrice()){
@@ -193,10 +184,9 @@ public class LuckTurntableServiceImpl implements LuckTurntableService {
                 }
                 result.setPriceName(luckyTurntable.getPriceName());
             }
-
             result.setRecordId(findResult.getId());
             result.setBingoTime(findResult.getCreatedTime());
-            result.setIsReceive(findResult.getStatus());
+            result.setIsReceive(findResult.getIsReceive());
             resultList.add(result);
         }
         return new ResponseVo(ErrorCodeEnum.SUCCESS,resultList);
@@ -260,20 +250,23 @@ public class LuckTurntableServiceImpl implements LuckTurntableService {
             log.error("抽奖失败, 余额不足");
             return new ResponseVo(ErrorCodeEnum.INVEST_BALANCE_NOT_ENOUGH,null);
         }
-        if(balance.compareTo(fee) <0){
-            BigDecimal restBalance = rewardBalance.subtract(fee);
-            int updateInvestResult = investMapper.updateRewardBalance(restBalance,userId);
-            if(updateInvestResult <=0){
-                log.error("更新奖励余额失败");
-                throw new RuntimeException();
-            }
+
+        if(balance.compareTo(fee) >= 0){
+            balance = balance.subtract(fee);
         }else{
-            BigDecimal restBalance = balance.subtract(fee);
-            int updateInvestResult = investMapper.updateBalance(restBalance,userId);
-            if(updateInvestResult <=0){
-                log.error("更新余额失败");
-                throw new RuntimeException();
+            if(rewardBalance.compareTo(fee)>=0){//余额不足，用奖励减
+                BigDecimal restAmount = rewardBalance.subtract(fee);
+                rewardBalance = restAmount;
+            }else{//奖励不足，先减奖励
+                BigDecimal restAmount = fee.subtract(rewardBalance);
+                rewardBalance = BigDecimal.ZERO;
+                balance = balance.subtract(restAmount);
             }
+        }
+        int updateInvestResult = investMapper.updateBalanceAndRewardBalance(balance,rewardBalance,userId);
+        if(updateInvestResult <=0){
+            log.error("更新奖励余额失败");
+            throw new RuntimeException();
         }
 
         return new ResponseVo(ErrorCodeEnum.SUCCESS,null);
@@ -291,6 +284,10 @@ public class LuckTurntableServiceImpl implements LuckTurntableService {
         if(null == record){
             log.error("领取,查询抽奖记录失败，turntable id :{}",recordId);
             return new ResponseVo(ErrorCodeEnum.LUCK_RECORD_NOT_FOUND,null);
+        }
+        if(null == record.getBingoPrice()){
+            log.error("领取，该抽奖未中奖");
+            return new ResponseVo(ErrorCodeEnum.LUCK_TURNTABLE_IS_UN_BINGO,null);
         }
         LuckyTurntable luckyTurntable = luckyTurntableMapper.get(record.getBingoPrice());
         if(null == luckyTurntable){
@@ -314,13 +311,19 @@ public class LuckTurntableServiceImpl implements LuckTurntableService {
 
             Invest invest = investMapper.findByUserId(userId);
             if(null == invest){
-                log.error("领取，更新余额失败 user id :{}",userId);
+                log.error("领取，查询资产失败 user id :{}",userId);
+                throw new RuntimeException();
+            }
+            BigDecimal balance = invest.getBalance();
+            balance = balance.add(balanceStatement.getAmount());
+            int updateInvest = investMapper.updateBalance(balance,userId);
+            if(updateInvest <=0){
+                log.error("领取，更新资产失败，user id :{}",userId);
                 throw new RuntimeException();
             }
         }
 
         record.setIsReceive(BooleanStatusEnum.YES.code());
-
         int updateRecord = luckyRecordMapper.updateByPrimaryKey(record);
         if(updateRecord <=0){
             log.error("领取，更新抽奖记录失败");

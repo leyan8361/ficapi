@@ -38,6 +38,9 @@ public class LuckTurntableAddVo {
     }
 
     public BigDecimal getProbability() {
+        if(null == probability){
+            return BigDecimal.ZERO;
+        }
         return probability;
     }
 

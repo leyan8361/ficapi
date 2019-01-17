@@ -9,6 +9,7 @@ import com.fic.service.service.BetScenceService;
 import com.fic.service.utils.BeanUtil;
 import com.fic.service.utils.DateUtil;
 import com.fic.service.utils.RegexUtil;
+import okhttp3.internal.http2.ErrorCode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -329,21 +330,9 @@ public class BetScenceServiceImpl implements BetScenceService {
         String startDay = DateUtil.getThisWeekMonDay(now);
         List<BetUser> betUsers = betUserMapper.findlastWeekAlreadyBetByUserId(startDay,endDay,userId);
 
-        int []betTimeArray = new int[7];
-        betTimeArray[0] = 0;
-        betTimeArray[1] = 0;
-        betTimeArray[2] = 0;
-        betTimeArray[3] = 0;
-        betTimeArray[4] = 0;
-        betTimeArray[5] = 0;
-        betTimeArray[6] = 0;
-
-        result.setBetTimeArray(betTimeArray);
-
         if(betUsers.size() == 0){
             result.setContinueBetTime(0);
         }else{
-
             /** 去除同一天的 */
             Map<String,BetUser> needToContinue = new HashMap<String,BetUser>();
             List<BetUser> stored = new ArrayList<BetUser>();
@@ -354,13 +343,6 @@ public class BetScenceServiceImpl implements BetScenceService {
                     stored.add(betUser);
                 }
             }
-
-            /** 本周投注标记 */
-            for(BetUser betUser: stored){
-                int day = DateUtil.getWeekDay(betUser.getCreatedTime());
-                betTimeArray[day-1] = 1;
-            }
-            result.setBetTimeArray(betTimeArray);
             betUsers = stored;
             boolean isContinue = false;
             for(int i = 0 ; i < betUsers.size(); i++){
@@ -385,33 +367,27 @@ public class BetScenceServiceImpl implements BetScenceService {
                                                                 /**连续竞猜七天*/
                                                                 log.debug("连续竞猜七天 userId : {}",userId);
                                                                 result.setContinueBetTime(7);
-//                                                                if(i + 6 < betUsers.size()){
-//                                                                    i = i + 6;
-//                                                                }
+                                                                i = i + 6;
                                                                 continue;
                                                             }
                                                         }
                                                         log.debug("连续竞猜六天 userId : {}",userId);
-//                                                        i = i + 5;
                                                         result.setContinueBetTime(6);
                                                         break;
                                                     }
                                                 }
                                                 log.debug("连续竞猜五天 userId : {}",userId);
                                                 result.setContinueBetTime(5);
-//                                                i = i + 5;
                                                 break;
                                             }
                                         }
                                         log.debug("连续竞猜四天 userId : {}",userId);
                                         result.setContinueBetTime(4);
-//                                        i = i + 4;
                                         break;
                                     }
                                 }
                                 log.debug("连续竞猜三天 userId : {}",userId);
                                 result.setContinueBetTime(3);
-//                                i = i + 3;
                                 break;
                             }
                         }
@@ -432,18 +408,6 @@ public class BetScenceServiceImpl implements BetScenceService {
         String monDayEnd = DateUtil.getThisWeekMonDayEnd(now);
         BigDecimal continueReward = balanceStatementMapper.sumContinueReward(userId,monDayBegin,monDayEnd);
         result.setContinueBetReward(null != continueReward ? continueReward.setScale(0,BigDecimal.ROUND_DOWN):BigDecimal.ZERO);
-
-        /** 播报 */
-        List<BetUser> lastWinner = betUserMapper.findLastWinner();
-        List<BetBroadcastBetPriceVo> broadcastBetPriceVoList = new ArrayList<BetBroadcastBetPriceVo>();
-        for(BetUser betUser : lastWinner){
-            String telephone = userMapper.findTelephoneById(betUser.getUserId());
-            BetBroadcastBetPriceVo broad = new BetBroadcastBetPriceVo();
-            broad.setTelephone(RegexUtil.replaceTelephone(telephone));
-            broad.setPrice(betUser.getBingoPrice().setScale(0,BigDecimal.ROUND_DOWN).toString());
-            broadcastBetPriceVoList.add(broad);
-        }
-        result.setBroadcasts(broadcastBetPriceVoList);
         return new ResponseVo(ErrorCodeEnum.SUCCESS,result);
     }
 
@@ -516,9 +480,7 @@ public class BetScenceServiceImpl implements BetScenceService {
 
     @Override
     public ResponseVo getMyBetRecord(int userId) {
-
         BetRecordInfoVo result = new BetRecordInfoVo();
-
         int checkUserExist = userMapper.checkIfExistByUserId(userId);
         if(checkUserExist <=0){
             return new ResponseVo(ErrorCodeEnum.USER_NOT_EXIST,null);
@@ -598,7 +560,6 @@ public class BetScenceServiceImpl implements BetScenceService {
                 recordVo.setFee(recordVo.getAddedPrice().subtract(recordVo.getBingoPrice()));
                 recordVo.setOdds(BigDecimal.ONE);
             }
-
         }
         result.setItems(recordVos);
         Date now  = new Date();
@@ -612,6 +573,53 @@ public class BetScenceServiceImpl implements BetScenceService {
     @Override
     public ResponseVo getAll() {
         List<BetScence> result = betScenceMapper.findAllOnLine();
+        return new ResponseVo(ErrorCodeEnum.SUCCESS,result);
+    }
+
+    @Override
+    public ResponseVo getSignData(int userId) {
+
+        BetSignVo result = new BetSignVo();
+
+        Date now  = new Date();
+        String endDay = DateUtil.getThisWeekSunDay();
+        String startDay = DateUtil.getThisWeekMonDay(now);
+        List<BetUser> betUsers = betUserMapper.findlastWeekAlreadyBetByUserId(startDay,endDay,userId);
+
+        int []betTimeArray = new int[7];
+        betTimeArray[0] = 0;
+        betTimeArray[1] = 0;
+        betTimeArray[2] = 0;
+        betTimeArray[3] = 0;
+        betTimeArray[4] = 0;
+        betTimeArray[5] = 0;
+        betTimeArray[6] = 0;
+
+        result.setBetTime(betTimeArray);
+
+        /** 去除同一天的 */
+        Map<String,BetUser> needToContinue = new HashMap<String,BetUser>();
+        List<BetUser> stored = new ArrayList<BetUser>();
+        for(BetUser betUser: betUsers){
+            int day = DateUtil.getDayOfMonth(betUser.getCreatedTime());
+            if(!needToContinue.containsKey(day+"")){
+                needToContinue.put(day+"",betUser);
+                stored.add(betUser);
+            }
+        }
+
+        /** 本周投注标记 */
+        for(BetUser betUser: stored){
+            int day = DateUtil.getWeekDay(betUser.getCreatedTime());
+            betTimeArray[day-1] = 1;
+        }
+
+        String monDayBegin = DateUtil.getThisWeekMonDayBegin(now);
+        String monDayEnd = DateUtil.getThisWeekMonDayEnd(now);
+        BigDecimal continueReward = balanceStatementMapper.sumContinueReward(userId,monDayBegin,monDayEnd);
+        result.setContinueBetReward(null != continueReward ? continueReward.setScale(0,BigDecimal.ROUND_DOWN):BigDecimal.ZERO);
+
+        result.setBetTime(betTimeArray);
         return new ResponseVo(ErrorCodeEnum.SUCCESS,result);
     }
 }

@@ -178,4 +178,7 @@
   <select id="findAll" resultMap="BaseResultMap">
     select * from balance_statement;
   </select>
+  <select id="sumByWayAndTime" resultType="java.math.BigDecimal">
+    select sum(amount) from balance_statement where user_id = #{userId} and way = #{way} and created_time BETWEEN #{startDay} and #{endDay};
+  </select>
 </mapper>

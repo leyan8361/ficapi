@@ -155,12 +155,15 @@ public class BalanceServiceImpl implements BalanceService {
         return tradeRecordVoList;
     }
 
-
     @Override
     public ResponseVo getTradeRecordV2(TradeRecordRequestVo condition) {
         TradeRecordInfoV2Vo result = new TradeRecordInfoV2Vo();
         String startDay = DateUtil.getThisMonthBegin(condition.getMonth());
         String endDay = DateUtil.getThisMonthEnd(condition.getMonth());
+
+        BigDecimal sumWayIn = balanceStatementMapper.sumByWayAndTime(condition.getUserId(),FinanceWayEnum.IN.getCode(),startDay,endDay);
+        BigDecimal sumWayOut = balanceStatementMapper.sumByWayAndTime(condition.getUserId(),FinanceWayEnum.OUT.getCode(),startDay,endDay);
+
         int offset = condition.getPageNum()*10;
         List<BalanceStatement> findResult = balanceStatementMapper.findByCondition(startDay,endDay,condition,offset);
         if(findResult.size() == 0){
@@ -343,6 +346,12 @@ public class BalanceServiceImpl implements BalanceService {
                 item.setCreatedTime(balanceStatement.getCreatedTime());
             }
 
+            /** 充值 */
+            if(balanceStatement.getType() == FinanceTypeEnum.RECHARGE.getCode()){
+                item.setAmount(balanceStatement.getAmount().setScale(0,BigDecimal.ROUND_DOWN));
+                item.setCreatedTime(balanceStatement.getCreatedTime());
+            }
+
             item.setType(balanceStatement.getType());
             item.setWay(balanceStatement.getWay());
 
@@ -359,8 +368,9 @@ public class BalanceServiceImpl implements BalanceService {
         }
 
         result.setItems(items);
-        result.setIncome(totalIncome);
-        result.setExpend(totalExpend);
+
+        result.setIncome(sumWayIn.setScale(0,BigDecimal.ROUND_DOWN));
+        result.setExpend(sumWayOut.setScale(0,BigDecimal.ROUND_DOWN));
 
         return new ResponseVo(ErrorCodeEnum.SUCCESS,result);
     }

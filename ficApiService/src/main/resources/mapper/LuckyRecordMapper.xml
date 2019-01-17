@@ -104,9 +104,12 @@
     where id = #{id,jdbcType=INTEGER}
   </update>
   <select id="findLastTen" resultMap="BaseResultMap">
-    select * from lucky_record order by created_time desc limit 0,10;
+    select * from lucky_record where status = 1 order by created_time desc limit 0,10;
   </select>
   <select id="findByUserIdWithPage" resultMap="BaseResultMap">
     select * from lucky_record where user_id = #{userId} and status = 1 order by created_time desc limit #{offset},10;
+  </select>
+  <select id="countByBingoPrice" resultType="int">
+    select count(*) from lucky_record where bingo_price = #{bingoPrice};
   </select>
 </mapper>

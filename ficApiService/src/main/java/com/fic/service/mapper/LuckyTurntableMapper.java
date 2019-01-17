@@ -4,6 +4,7 @@ import com.fic.service.entity.LuckyTurntable;
 import org.apache.ibatis.annotations.Mapper;
 import org.springframework.stereotype.Repository;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Mapper
@@ -26,4 +27,6 @@ public interface LuckyTurntableMapper {
     LuckyTurntable get(int id);
 
     int updateCover(String coverUrl);
+
+    BigDecimal sumProbability(int exceptId);
 }

@@ -173,4 +173,7 @@
   <update id="updateLockBalance">
     update invest set balance = #{balance},lock_balance = #{lockBalance} where user_id = #{userId}
   </update>
+  <update id="updateBalanceAndRewardBalance">
+    update invest set balance = #{balance},reward_balance = #{rewardBalance} where user_id = #{userId}
+  </update>
 </mapper>

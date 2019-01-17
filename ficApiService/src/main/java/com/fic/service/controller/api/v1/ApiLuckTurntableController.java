@@ -64,6 +64,8 @@ public class ApiLuckTurntableController {
             @ApiImplicitParam(dataType = "int", name = "recordId", value = "记录ID", required = true)
     })
     @ApiResponses({
+            @ApiResponse(code = 5012, message = "LUCK_RECORD_NOT_FOUND"),
+            @ApiResponse(code = 5014, message = "LUCK_RECORD_IS_UN_BINGO"),
             @ApiResponse(code = 200, message = "SUCCESS")
     })
     public ResponseEntity receive(@RequestParam Integer userId,@RequestParam Integer recordId){
