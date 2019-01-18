@@ -622,4 +622,27 @@ public class BetScenceServiceImpl implements BetScenceService {
         result.setBetTime(betTimeArray);
         return new ResponseVo(ErrorCodeEnum.SUCCESS,result);
     }
+
+    @Override
+    public ResponseVo getBetRanking() {
+        List<BetRankingVo> resultList = new ArrayList<>();
+        String thisWeekStartDay = DateUtil.getThisWeekMonDay(new Date());
+        String thisWeekSunDay = DateUtil.getThisWeekSunDay();
+        /**查找本周竞猜*/
+        List<Integer> findResult = betUserMapper.findBetRanking(thisWeekStartDay,thisWeekSunDay);
+        if(findResult.size() == 0){
+            return new ResponseVo(ErrorCodeEnum.SUCCESS,resultList);
+        }
+        for(BetUser betUser: findResult){
+            BetRankingVo result = new BetRankingVo();
+            User user = userMapper.get(betUser.getUserId());
+            if(null == user){
+                log.error("获取竞猜排名，查询无此用户,user ID :{}",betUser.getUserId());
+                continue;
+            }
+
+        }
+
+        return null;
+    }
 }

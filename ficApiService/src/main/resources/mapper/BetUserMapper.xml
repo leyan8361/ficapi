@@ -414,4 +414,7 @@
   <select id="findLastWinner" resultMap="BaseResultMap">
     select * from bet_user where bingo = 1 order by created_time desc limit 0,10;
   </select>
+  <select id="findBetRanking" resultMap="BaseResultMap">
+    select user_id from bet_user where bingo = 1 and created_time between #{startDay} and #{endDay}  group by user_id;
+  </select>
 </mapper>

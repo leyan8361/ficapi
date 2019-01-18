@@ -66,4 +66,6 @@ public interface BetUserMapper {
     String findMovieNameById(int id);
 
     List<BetUser> findLastWinner();
+
+    List<Integer> findBetRanking(String startDay,String endDay);
 }
