@@ -62,6 +62,8 @@ public class AccountServiceImpl implements AccountService {
     WalletService walletService;
     @Autowired
     DeviceMapper deviceMapper;
+    @Autowired
+    UserAuthMapper userAuthMapper;
 
     @Override
     @Transactional(isolation= Isolation.READ_COMMITTED,propagation= Propagation.REQUIRED,rollbackFor = Exception.class)
@@ -297,5 +299,33 @@ public class AccountServiceImpl implements AccountService {
             throw new RuntimeException();
         }
         return new ResponseVo(ErrorCodeEnum.SUCCESS,null);
+    }
+
+    @Override
+    public ResponseVo getUserInfo(int userId) {
+        LoginUserInfoVo result = new LoginUserInfoVo();
+        User user = userMapper.get(userId);
+        if(null == user){
+            log.error("查找用户信息失败 user id :{}",userId);
+            return new ResponseVo(ErrorCodeEnum.USER_NOT_EXIST,null);
+        }
+        UserAuth userAuth = userAuthMapper.findByUserId(userId);
+        result.setUserId(userId);
+        if(null == userAuth){
+            result.setAuth(false);
+        }else{
+            result.setAuth(true);
+        }
+        if(StringUtils.isEmpty(user.getPayPassword())){
+            result.setSetPayPassword(false);
+        }else{
+            result.setSetPayPassword(true);
+        }
+        result.setEmail(user.getEmail());
+        result.setNickName(user.getNickName());
+        result.setHimageUrl(uploadProperties.getUrl(user.getHimageUrl()));
+        result.setMyInviteCode(user.getUserInviteCode());
+        result.setUsername(user.getUserName());
+        return new ResponseVo(ErrorCodeEnum.SUCCESS,result);
     }
 }

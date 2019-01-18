@@ -310,4 +310,19 @@ public class ApiAccountController {
         return ResponseEntity.ok(result);
     }
 
+
+    @GetMapping(value = "/getUserInfo")
+    @ApiOperation("Api-获取用户信息")
+    @ApiImplicitParams({
+            @ApiImplicitParam(dataType = "int", name = "userId", value = "用户ID", required = true)
+    })
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "SUCCESS")
+    })
+    public ResponseEntity getUserInfo(@RequestParam int userId){
+        log.debug(" do getUserInfo Action !!!");
+        ResponseVo result = accountService.getUserInfo(userId);
+        return ResponseEntity.ok(result);
+    }
+
 }

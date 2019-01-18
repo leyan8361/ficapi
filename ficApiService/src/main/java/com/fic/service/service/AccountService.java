@@ -51,4 +51,6 @@ public interface AccountService {
     ResponseVo updateUserName(int userId,String telephone);
 
     ResponseVo updateEmail(int userId,String email,String password);
+
+    ResponseVo getUserInfo(int userId);
 }
