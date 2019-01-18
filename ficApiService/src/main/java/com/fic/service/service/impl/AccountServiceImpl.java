@@ -73,6 +73,9 @@ public class AccountServiceImpl implements AccountService {
         loginUserInfoVo.setUsername(user.getUserName());
         loginUserInfoVo.setNickName(user.getNickName());
         loginUserInfoVo.setEmail(user.getEmail());
+        if(StringUtils.isNotEmpty(user.getPayPassword())){
+            loginUserInfoVo.setAuth(true);
+        }
         String userAgent = request.getHeader("User-Agent");
         String ipAddress = request.getRemoteAddr();
         TokenBase token = this.saveToken(user,userAgent,ipAddress);

@@ -25,6 +25,8 @@ public class LoginUserInfoVo {
     private String nickName;
     @ApiModelProperty(value = "邮箱")
     private String email;
+    @ApiModelProperty(value = "是否实名，true已实名，false未实名")
+    private boolean isAuth = false;
 
     public String getNickName() {
         return nickName;
@@ -80,5 +82,13 @@ public class LoginUserInfoVo {
 
     public void setMyInviteCode(String myInviteCode) {
         this.myInviteCode = myInviteCode;
+    }
+
+    public boolean isAuth() {
+        return isAuth;
+    }
+
+    public void setAuth(boolean auth) {
+        isAuth = auth;
     }
 }
