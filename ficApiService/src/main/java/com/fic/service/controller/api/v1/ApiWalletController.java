@@ -57,6 +57,9 @@ public class ApiWalletController {
     @PostMapping("/doTransactionOutApply")
     @ApiOperation("Api-申请转出")
     @ApiResponses({
+            @ApiResponse(code = 6005, message = "PAYEE_NOT_EXIST"),
+            @ApiResponse(code = 6006, message = "TRAN_CAN_NOT_TO_SELF"),
+            @ApiResponse(code = 2001, message = "INVEST_BALANCE_NOT_ENOUGH"),
             @ApiResponse(code = 200, message = "SUCCESS",response = BigInteger.class)
     })
     public ResponseEntity doTransactionOutApply(@RequestBody DoTranTokenVo transactionVo) {

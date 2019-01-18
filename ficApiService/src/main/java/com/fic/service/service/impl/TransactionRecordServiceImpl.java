@@ -373,6 +373,10 @@ public class TransactionRecordServiceImpl implements TransactionRecordService {
             log.error("用户不存在");
             return new ResponseVo(ErrorCodeEnum.USER_NOT_EXIST,null);
         }
+        if(user.getUserName().equals(transactionVo.getPayee())){
+            return new ResponseVo(ErrorCodeEnum.TRAN_CAN_NOT_TO_SELF,null);
+        }
+
         Invest invest = investMapper.findByUserId(transactionVo.getUserId());
         if(null == invest){
             log.error("资产不存在");
