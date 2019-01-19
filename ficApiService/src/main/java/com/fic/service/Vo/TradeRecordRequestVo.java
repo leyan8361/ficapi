@@ -9,7 +9,7 @@ public class TradeRecordRequestVo extends PageVo{
     @ApiModelProperty(value = "用户ID",required = true)
     private Integer userId;
 
-    @ApiModelProperty(value = "查询月份",required = true,example = "2019-01")
+    @ApiModelProperty(value = "查询月份",required = false,example = "2019-01")
     private String month;
 
     @ApiModelProperty(value = "类型(0,全部)(1,投资)(2,竞猜)(3,转账)(4,其它)",required = true)

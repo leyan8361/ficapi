@@ -372,6 +372,12 @@ public class DateUtil {
         return false;
     }
 
+    public static String getTheMaxStartDay(){
+        return "1970-01-01 01:00:00";
+    }
+    public static String getTheMaxEndDay(){
+        return "2500-12-31 23:59:00";
+    }
 
     public static int getSubstractDay(Date date1,Date date2)
     {

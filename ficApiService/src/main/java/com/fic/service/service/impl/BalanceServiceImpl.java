@@ -159,8 +159,12 @@ public class BalanceServiceImpl implements BalanceService {
     @Override
     public ResponseVo getTradeRecordV2(TradeRecordRequestVo condition) {
         TradeRecordInfoV2Vo result = new TradeRecordInfoV2Vo();
-        String startDay = DateUtil.getThisMonthBegin(condition.getMonth());
-        String endDay = DateUtil.getThisMonthEnd(condition.getMonth());
+        String startDay = DateUtil.getTheMaxStartDay();
+        String endDay = DateUtil.getTheMaxEndDay();
+        if(StringUtils.isNotEmpty(condition.getMonth())){
+            startDay = DateUtil.getThisMonthBegin(condition.getMonth());
+            endDay = DateUtil.getThisMonthEnd(condition.getMonth());
+        }
         int offset = condition.getPageNum()*10;
         List<BalanceStatement> findResult = balanceStatementMapper.findByCondition(startDay,endDay,condition,offset);
         if(findResult.size() == 0){
