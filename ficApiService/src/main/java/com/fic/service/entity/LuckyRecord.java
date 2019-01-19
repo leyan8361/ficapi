@@ -15,6 +15,8 @@ public class LuckyRecord {
 
     private Date createdTime;
 
+    private Integer trace;
+
     public Integer getId() {
         return id;
     }
@@ -61,5 +63,13 @@ public class LuckyRecord {
 
     public void setCreatedTime(Date createdTime) {
         this.createdTime = createdTime;
+    }
+
+    public Integer getTrace() {
+        return trace;
+    }
+
+    public void setTrace(Integer trace) {
+        this.trace = trace;
     }
 }

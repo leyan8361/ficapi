@@ -45,34 +45,35 @@ public class ApiLuckTurntableController {
     @ApiOperation("Api-记录抽奖结果")
     @ApiImplicitParams({
             @ApiImplicitParam(dataType = "int", name = "userId", value = "用户ID", required = true),
-            @ApiImplicitParam(dataType = "int", name = "priceId", value = "奖品ID，中奖时传入此参数", required = false),
+            @ApiImplicitParam(dataType = "int", name = "priceId", value = "奖品ID", required = true),
+            @ApiImplicitParam(dataType = "string", name = "word", value = "中奖金句时传入金句", required = false),
             @ApiImplicitParam(dataType = "int", name = "status", value = "(0,未中奖)(1,中奖)", required = true),
     })
     @ApiResponses({
             @ApiResponse(code = 200, message = "SUCCESS")
     })
-    public ResponseEntity draw(@RequestParam Integer userId,@RequestParam(required = false) Integer priceId,@RequestParam Integer status){
+    public ResponseEntity draw(@RequestParam Integer userId,@RequestParam Integer priceId,@RequestParam(required = false) String word,@RequestParam Integer status){
         log.debug(" do draw action !!");
-        ResponseVo result = luckTurntableService.draw(userId,priceId,status);
+        ResponseVo result = luckTurntableService.draw(userId,priceId,status,word);
         return ResponseEntity.ok(result);
     }
 
-    @GetMapping("/receive")
-    @ApiOperation("Api-领取")
-    @ApiImplicitParams({
-            @ApiImplicitParam(dataType = "int", name = "userId", value = "用户ID", required = true),
-            @ApiImplicitParam(dataType = "int", name = "recordId", value = "记录ID", required = true)
-    })
-    @ApiResponses({
-            @ApiResponse(code = 5012, message = "LUCK_RECORD_NOT_FOUND"),
-            @ApiResponse(code = 5014, message = "LUCK_RECORD_IS_UN_BINGO"),
-            @ApiResponse(code = 200, message = "SUCCESS")
-    })
-    public ResponseEntity receive(@RequestParam Integer userId,@RequestParam Integer recordId){
-        log.debug(" do receive action !!");
-        ResponseVo result = luckTurntableService.receive(userId,recordId);
-        return ResponseEntity.ok(result);
-    }
+//    @GetMapping("/receive")
+//    @ApiOperation("Api-领取")
+//    @ApiImplicitParams({
+//            @ApiImplicitParam(dataType = "int", name = "userId", value = "用户ID", required = true),
+//            @ApiImplicitParam(dataType = "int", name = "recordId", value = "记录ID", required = true)
+//    })
+//    @ApiResponses({
+//            @ApiResponse(code = 5012, message = "LUCK_RECORD_NOT_FOUND"),
+//            @ApiResponse(code = 5014, message = "LUCK_RECORD_IS_UN_BINGO"),
+//            @ApiResponse(code = 200, message = "SUCCESS")
+//    })
+//    public ResponseEntity receive(@RequestParam Integer userId,@RequestParam Integer recordId){
+//        log.debug(" do receive action !!");
+//        ResponseVo result = luckTurntableService.receive(userId,recordId);
+//        return ResponseEntity.ok(result);
+//    }
 
     @GetMapping("/getBingoRecord")
     @ApiOperation("Api-获取中奖记录")

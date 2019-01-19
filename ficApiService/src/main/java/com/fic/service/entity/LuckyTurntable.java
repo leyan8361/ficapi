@@ -21,6 +21,8 @@ public class LuckyTurntable {
 
     private BigDecimal amount;
 
+    private int status;
+
     public Integer getId() {
         return id;
     }
@@ -75,5 +77,13 @@ public class LuckyTurntable {
 
     public void setAmount(BigDecimal amount) {
         this.amount = amount;
+    }
+
+    public int getStatus() {
+        return status;
+    }
+
+    public void setStatus(int status) {
+        this.status = status;
     }
 }

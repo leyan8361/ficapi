@@ -8,12 +8,13 @@
     <result column="status" jdbcType="INTEGER" property="status" />
     <result column="is_receive" jdbcType="INTEGER" property="isReceive" />
     <result column="created_time" jdbcType="TIMESTAMP" property="createdTime" />
+    <result column="trace" jdbcType="INTEGER" property="trace" />
   </resultMap>
   <sql id="Base_Column_List">
-    id, user_id, bingo_price, status, is_receive, created_time
+    id, user_id, bingo_price, status, is_receive, created_time, trace
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
-    select 
+    select
     <include refid="Base_Column_List" />
     from lucky_record
     where id = #{id,jdbcType=INTEGER}
@@ -23,12 +24,12 @@
     where id = #{id,jdbcType=INTEGER}
   </delete>
   <insert id="insert" parameterType="com.fic.service.entity.LuckyRecord">
-    insert into lucky_record (id, user_id, bingo_price, 
-      status, is_receive, created_time
-      )
-    values (#{id,jdbcType=INTEGER}, #{userId,jdbcType=INTEGER}, #{bingoPrice,jdbcType=INTEGER}, 
-      #{status,jdbcType=INTEGER}, #{isReceive,jdbcType=INTEGER}, #{createdTime,jdbcType=TIMESTAMP}
-      )
+    insert into lucky_record (id, user_id, bingo_price,
+      status, is_receive, created_time,
+      trace)
+    values (#{id,jdbcType=INTEGER}, #{userId,jdbcType=INTEGER}, #{bingoPrice,jdbcType=INTEGER},
+      #{status,jdbcType=INTEGER}, #{isReceive,jdbcType=INTEGER}, #{createdTime,jdbcType=TIMESTAMP},
+      #{trace,jdbcType=INTEGER})
   </insert>
   <insert id="insertSelective" parameterType="com.fic.service.entity.LuckyRecord">
     insert into lucky_record
@@ -51,6 +52,9 @@
       <if test="createdTime != null">
         created_time,
       </if>
+      <if test="trace != null">
+        trace,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="id != null">
@@ -70,6 +74,9 @@
       </if>
       <if test="createdTime != null">
         #{createdTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="trace != null">
+        #{trace,jdbcType=INTEGER},
       </if>
     </trim>
   </insert>
@@ -91,6 +98,9 @@
       <if test="createdTime != null">
         created_time = #{createdTime,jdbcType=TIMESTAMP},
       </if>
+      <if test="trace != null">
+        trace = #{trace,jdbcType=INTEGER},
+      </if>
     </set>
     where id = #{id,jdbcType=INTEGER}
   </update>
@@ -100,7 +110,8 @@
       bingo_price = #{bingoPrice,jdbcType=INTEGER},
       status = #{status,jdbcType=INTEGER},
       is_receive = #{isReceive,jdbcType=INTEGER},
-      created_time = #{createdTime,jdbcType=TIMESTAMP}
+      created_time = #{createdTime,jdbcType=TIMESTAMP},
+      trace = #{trace,jdbcType=INTEGER}
     where id = #{id,jdbcType=INTEGER}
   </update>
   <select id="findLastTen" resultMap="BaseResultMap">

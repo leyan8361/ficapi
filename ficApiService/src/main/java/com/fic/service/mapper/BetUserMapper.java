@@ -68,4 +68,6 @@ public interface BetUserMapper {
     List<BetUser> findLastWinner();
 
     List<Integer> findBetRanking(String startDay,String endDay);
+
+    List<BetUser> findAllByUserIdAndCreatedTime(int userId,String startDay,String endDay);
 }

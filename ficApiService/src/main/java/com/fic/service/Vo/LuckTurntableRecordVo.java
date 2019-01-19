@@ -12,8 +12,11 @@ public class LuckTurntableRecordVo {
     @ApiModelProperty("抽奖记录ID")
     private Integer recordId;
 
-    @ApiModelProperty("奖品名称")
+    @ApiModelProperty("奖品内容")
     private String priceName;
+
+    @ApiModelProperty("奖品类型(0,谢谢参与)(1,影视金句)(2,微信号)(3,礼品)(4,电影票)(5,50TFC)(6,200TFC)(7,5000TFC)")
+    private int priceType;
 
     @ApiModelProperty("中奖时间")
     @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd")
@@ -52,5 +55,13 @@ public class LuckTurntableRecordVo {
 
     public void setRecordId(Integer recordId) {
         this.recordId = recordId;
+    }
+
+    public int getPriceType() {
+        return priceType;
+    }
+
+    public void setPriceType(int priceType) {
+        this.priceType = priceType;
     }
 }

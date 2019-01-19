@@ -1,6 +1,5 @@
 package com.fic.service.controller;
 
-import com.fic.service.Enum.ErrorCodeEnum;
 import com.fic.service.Vo.LuckTurntableAddVo;
 import com.fic.service.Vo.LuckTurntableUpdateVo;
 import com.fic.service.Vo.ResponseVo;
@@ -72,5 +71,20 @@ public class LuckyTurntableController {
         return ResponseEntity.ok(result);
     }
 
+    @GetMapping("/onShelf")
+    @ApiOperation("上架")
+    public ResponseEntity onShelf(@RequestBody MultipartFile coverFile) {
+        log.debug(" lucky uploadCover!!!");
+        ResponseVo result = luckTurntableService.uploadCoverFile(coverFile);
+        return ResponseEntity.ok(result);
+    }
+
+    @GetMapping("/offShelf")
+    @ApiOperation("下架")
+    public ResponseEntity offShelf(@RequestBody MultipartFile coverFile) {
+        log.debug(" lucky uploadCover!!!");
+        ResponseVo result = luckTurntableService.uploadCoverFile(coverFile);
+        return ResponseEntity.ok(result);
+    }
 
 }

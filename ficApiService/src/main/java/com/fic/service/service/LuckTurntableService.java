@@ -25,7 +25,7 @@ public interface LuckTurntableService {
     ResponseVo getBingoRecord(int userId,int pageNum);
 
     /** api */
-    ResponseVo draw(Integer userId,Integer priceId,Integer status);
+    ResponseVo draw(Integer userId,Integer priceId,Integer status,String word);
 
     /** api */
     ResponseVo receive(Integer userId,Integer recordId);

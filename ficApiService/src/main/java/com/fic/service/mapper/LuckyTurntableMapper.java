@@ -24,6 +24,8 @@ public interface LuckyTurntableMapper {
 
     List<LuckyTurntable> findAll();
 
+    List<LuckyTurntable> findAllOnShelf();
+
     LuckyTurntable get(int id);
 
     int updateCover(String coverUrl);

@@ -9,6 +9,7 @@ import com.fic.service.mapper.*;
 import com.fic.service.service.LuckTurntableService;
 import com.fic.service.utils.DateUtil;
 import com.fic.service.utils.FileUtil;
+import com.fic.service.utils.RandomUtil;
 import com.fic.service.utils.RegexUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -79,16 +80,19 @@ public class LuckTurntableServiceImpl implements LuckTurntableService {
     @Override
     @Transactional(isolation= Isolation.READ_COMMITTED,propagation= Propagation.REQUIRED,rollbackFor = Exception.class)
     public ResponseVo add(LuckTurntableAddVo luckTurntableAddVo) {
-        BigDecimal existTotalProbability = luckyTurntableMapper.sumProbability(0);
-        if(luckTurntableAddVo.getProbability().add(existTotalProbability).compareTo(new BigDecimal("100")) >0){
-            return new ResponseVo(ErrorCodeEnum.LUCK_PROBABILITY_OVER_100,null);
-        }
         LuckyTurntable luckyTurntable = new LuckyTurntable();
-        luckyTurntable.setPriceName(luckTurntableAddVo.getPriceName());
+        if(luckTurntableAddVo.getPriceType() == PriceTypeEnum.WORD.code()){
+            String words[] = luckTurntableAddVo.getPriceName().split(",");
+            if(words.length < 1){
+                return new ResponseVo(ErrorCodeEnum.LUCK_WORD_MISSED,null);
+            }
+        }
         luckyTurntable.setPriceType(luckTurntableAddVo.getPriceType());
+        luckyTurntable.setPriceName(luckTurntableAddVo.getPriceName());
         luckyTurntable.setProbability(luckTurntableAddVo.getProbability());
         luckyTurntable.setAmount(luckTurntableAddVo.getAmount());
         luckyTurntable.setCreatedTime(new Date());
+        luckyTurntable.setStatus(ShelfStatusEnum.ON_SHELF.getCode());
         int saveResult = luckyTurntableMapper.insertSelective(luckyTurntable);
         if(saveResult <=0){
             log.error(" 保存奖品失败 ");
@@ -104,14 +108,16 @@ public class LuckTurntableServiceImpl implements LuckTurntableService {
             log.error("更新奖品失败，查无此奖品 id :{}",luckTurntableUpdateVo.getId());
             return new ResponseVo(ErrorCodeEnum.SYSTEM_EXCEPTION,null);
         }
-        BigDecimal existTotalProbability = luckyTurntableMapper.sumProbability(luckTurntableUpdateVo.getId());
-        if(luckTurntableUpdateVo.getProbability().add(existTotalProbability).compareTo(new BigDecimal("100")) >0){
-            return new ResponseVo(ErrorCodeEnum.LUCK_PROBABILITY_OVER_100,null);
-        }
         if(StringUtils.isNotEmpty(luckTurntableUpdateVo.getPriceName())){
             luckyTurntable.setPriceName(luckTurntableUpdateVo.getPriceName());
         }
         if(null != luckTurntableUpdateVo.getPriceType()){
+            if(luckTurntableUpdateVo.getPriceType() == PriceTypeEnum.WORD.code()){
+                String words[] = luckTurntableUpdateVo.getPriceName().split(",");
+                if(words.length < 1){
+                    return new ResponseVo(ErrorCodeEnum.LUCK_WORD_MISSED,null);
+                }
+            }
             luckyTurntable.setPriceType(luckTurntableUpdateVo.getPriceType());
         }
         if(null != luckTurntableUpdateVo.getProbability() && luckTurntableUpdateVo.getProbability().compareTo(BigDecimal.ZERO) > 0){
@@ -145,14 +151,24 @@ public class LuckTurntableServiceImpl implements LuckTurntableService {
 
     @Override
     public ResponseVo getPrice() {
-        List<LuckyTurntable> findResult = luckyTurntableMapper.findAll();
+        List<LuckyTurntable> findResult = luckyTurntableMapper.findAllOnShelf();
         LuckTurntableInfoVo result = new LuckTurntableInfoVo();
         List<LuckTurntablePriceVo> resultList = new ArrayList<>();
         String luckCover = "";
         for(LuckyTurntable luckyTurntable : findResult){
             LuckTurntablePriceVo price = new LuckTurntablePriceVo();
             price.setPriceId(luckyTurntable.getId());
-            price.setPriceName(luckyTurntable.getPriceName());
+            if(luckyTurntable.getPriceType() == PriceTypeEnum.WORD.code()){
+                String [] words = luckyTurntable.getPriceName().split(",");
+                if(words.length < 1){
+                    log.error("获取转盘数据，金句miss");
+                    throw new RuntimeException();
+                }
+                String word = words[RandomUtil.getRandomNum(words.length)];
+                price.setPriceName(word);
+            }else{
+                price.setPriceName(luckyTurntable.getPriceName());
+            }
             price.setProbability(luckyTurntable.getProbability());
             if(StringUtils.isEmpty(luckCover)){
                 luckCover = uploadProperties.getUrl(luckyTurntable.getPriceUrl());
@@ -182,6 +198,7 @@ public class LuckTurntableServiceImpl implements LuckTurntableService {
                 if(null == luckyTurntable){
                     log.error("获取记录异常，奖励已不存在");
                 }
+                result.setPriceType(luckyTurntable.getPriceType());
                 result.setPriceName(luckyTurntable.getPriceName());
             }
             result.setRecordId(findResult.getId());
@@ -194,7 +211,7 @@ public class LuckTurntableServiceImpl implements LuckTurntableService {
 
     @Override
     @Transactional(isolation= Isolation.READ_COMMITTED,propagation= Propagation.REQUIRED,rollbackFor = Exception.class)
-    public ResponseVo draw(Integer userId, Integer priceId, Integer status) {
+    public ResponseVo draw(Integer userId, Integer priceId, Integer status,String word) {
         BigDecimal fee = new BigDecimal("20");
         LuckyRecord luckyRecord = new LuckyRecord();
         User user = userMapper.get(userId);
@@ -202,22 +219,42 @@ public class LuckTurntableServiceImpl implements LuckTurntableService {
             log.error("查询用户不存在 user id :{}",userId);
             return new ResponseVo(ErrorCodeEnum.USER_NOT_EXIST,null);
         }
-        if(null == status){
+        if(null == status) {
             log.error("状态参数丢失，抽奖");
-        }else{
-            LuckyTurntable luckyTurntable = luckyTurntableMapper.get(priceId);
-            if(null == luckyTurntable){
-                log.error("查询奖品失败，turntable id :{}",priceId);
-                return new ResponseVo(ErrorCodeEnum.LUCK_TURNTABLE_NOT_EXIST,null);
+            throw new RuntimeException();
+        }
+        LuckyTurntable luckyTurntable = luckyTurntableMapper.get(priceId);
+        if(null == luckyTurntable){
+            log.error("查询奖品失败，turntable id :{}",priceId);
+            return new ResponseVo(ErrorCodeEnum.LUCK_TURNTABLE_NOT_EXIST,null);
+        }
+        luckyRecord.setBingoPrice(priceId);
+        luckyRecord.setStatus(BingoStatusEnum.BINGO.getCode());
+        luckyRecord.setCreatedTime(new Date());
+        if(luckyTurntable.getPriceType() == PriceTypeEnum.WORD.code()){
+            if(StringUtils.isEmpty(word)){
+                log.error("中奖金句，缺失金句");
+                return new ResponseVo(ErrorCodeEnum.LUCK_WORD_MISSED,null);
             }
-            if(status == DrawStatusEnum.BINGO.code()){
-                /** 中奖 */
-                luckyRecord.setBingoPrice(priceId);
+            String words[] = luckyTurntable.getPriceName().split(",");
+            for(int i = 0 ; i < words.length; i++){
+                if(word.equals(words[i])){
+                    luckyRecord.setTrace(i);
+                    break;
+                }
+            }
+            if(null == luckyRecord.getTrace()){
+                log.error("金句异常,无匹配金句");
+                throw new RuntimeException();
             }
         }
-        luckyRecord.setStatus(status);
-        luckyRecord.setCreatedTime(new Date());
-        luckyRecord.setIsReceive(BooleanStatusEnum.NO.code());
+        if(luckyTurntable.getPriceType() == PriceTypeEnum.WORD.code() ||
+            luckyTurntable.getPriceType() == PriceTypeEnum.THANK.code() ||
+                luckyTurntable.getPriceType() == PriceTypeEnum.WE_CHAT.code()){
+            luckyRecord.setIsReceive(BooleanStatusEnum.YES.code());
+        }else{
+            luckyRecord.setIsReceive(BooleanStatusEnum.NO.code());
+        }
         luckyRecord.setUserId(userId);
         int saveResult = luckyRecordMapper.insertSelective(luckyRecord);
         if(saveResult <=0){
@@ -269,6 +306,32 @@ public class LuckTurntableServiceImpl implements LuckTurntableService {
             throw new RuntimeException();
         }
 
+        /** 币 */
+        if(luckyTurntable.getPriceType() == PriceTypeEnum.FIFTY.code() ||
+                luckyTurntable.getPriceType() == PriceTypeEnum.FIVE_THOUSAND.code() ||
+                luckyTurntable.getPriceType() == PriceTypeEnum.TWO_HUNDRED.code()
+        ){
+            BalanceStatement wonBalanceStatement = new BalanceStatement();
+            wonBalanceStatement.setType(FinanceTypeEnum.DRAW.getCode());
+            wonBalanceStatement.setAmount(luckyTurntable.getAmount());
+            wonBalanceStatement.setWay(FinanceWayEnum.IN.getCode());
+            wonBalanceStatement.setCreatedTime(new Date());
+            wonBalanceStatement.setUserId(userId);
+            int saveBalance = balanceStatementMapper.insertSelective(wonBalanceStatement);
+            if(saveBalance <=0){
+                log.error("领取，保存余额变更失败");
+                throw new RuntimeException();
+            }
+
+            BigDecimal wonBalance = balance;
+            wonBalance = wonBalance.add(wonBalanceStatement.getAmount());
+            int updateInvest = investMapper.updateBalance(wonBalance,userId);
+            if(updateInvest <=0){
+                log.error("领取，更新资产失败，user id :{}",userId);
+                throw new RuntimeException();
+            }
+        }
+
         return new ResponseVo(ErrorCodeEnum.SUCCESS,null);
     }
 
@@ -289,40 +352,14 @@ public class LuckTurntableServiceImpl implements LuckTurntableService {
             log.error("领取，该抽奖未中奖");
             return new ResponseVo(ErrorCodeEnum.LUCK_TURNTABLE_IS_UN_BINGO,null);
         }
+        if(record.getIsReceive() == BooleanStatusEnum.YES.code()){
+            return new ResponseVo(ErrorCodeEnum.LUCK_ALREADY_RECEIVE,null);
+        }
         LuckyTurntable luckyTurntable = luckyTurntableMapper.get(record.getBingoPrice());
         if(null == luckyTurntable){
             log.error("查询奖品失败，turntable id :{}",record.getBingoPrice());
             return new ResponseVo(ErrorCodeEnum.LUCK_TURNTABLE_NOT_EXIST,null);
         }
-
-        if(luckyTurntable.getPriceType() == PriceTypeEnum.COIN.code()){
-            /** 币 */
-            BalanceStatement balanceStatement = new BalanceStatement();
-            balanceStatement.setType(FinanceTypeEnum.DRAW.getCode());
-            balanceStatement.setAmount(luckyTurntable.getAmount());
-            balanceStatement.setWay(FinanceWayEnum.IN.getCode());
-            balanceStatement.setCreatedTime(new Date());
-            balanceStatement.setUserId(userId);
-            int saveBalance = balanceStatementMapper.insertSelective(balanceStatement);
-            if(saveBalance <=0){
-                log.error("领取，保存余额变更失败");
-                throw new RuntimeException();
-            }
-
-            Invest invest = investMapper.findByUserId(userId);
-            if(null == invest){
-                log.error("领取，查询资产失败 user id :{}",userId);
-                throw new RuntimeException();
-            }
-            BigDecimal balance = invest.getBalance();
-            balance = balance.add(balanceStatement.getAmount());
-            int updateInvest = investMapper.updateBalance(balance,userId);
-            if(updateInvest <=0){
-                log.error("领取，更新资产失败，user id :{}",userId);
-                throw new RuntimeException();
-            }
-        }
-
         record.setIsReceive(BooleanStatusEnum.YES.code());
         int updateRecord = luckyRecordMapper.updateByPrimaryKey(record);
         if(updateRecord <=0){

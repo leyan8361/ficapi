@@ -633,13 +633,44 @@ public class BetScenceServiceImpl implements BetScenceService {
         if(findResult.size() == 0){
             return new ResponseVo(ErrorCodeEnum.SUCCESS,resultList);
         }
-        for(BetUser betUser: findResult){
+        for(Integer betUserId: findResult){
             BetRankingVo result = new BetRankingVo();
-            User user = userMapper.get(betUser.getUserId());
+            User user = userMapper.get(betUserId);
             if(null == user){
-                log.error("获取竞猜排名，查询无此用户,user ID :{}",betUser.getUserId());
+                log.error("获取竞猜排名，查询无此用户,user ID :{}",betUserId);
                 continue;
             }
+            /** 头像 */
+            result.setHimageUrl(uploadProperties.getUrl(user.getHimageUrl()));
+            /** 昵称 */
+            result.setNickName(user.getNickName());
+            /** 胜率 */
+            List<BetUser> betTimes = betUserMapper.findAllByUserIdAndCreatedTime(betUserId,thisWeekStartDay,thisWeekSunDay);
+            BigDecimal winRate = BigDecimal.ZERO;
+            if(betTimes.size()  > 0){
+                BigDecimal winTime = BigDecimal.ZERO;
+                BigDecimal loseTime = BigDecimal.ZERO;
+                for(BetUser betUser : betTimes){
+                    if(betUser.getBingo() == BingoStatusEnum.BINGO.getCode().byteValue() || betUser.getBingo() == BingoStatusEnum.CLOSE_RETURNING.getCode().byteValue()){
+                        /** 中奖 */
+                        winTime = winTime.add(BigDecimal.ONE);
+                    }
+                    if(betUser.getBingo() == BingoStatusEnum.UN_BINGO.getCode().byteValue()){
+                        /** 未中奖*/
+                        loseTime = loseTime.add(BigDecimal.ONE);
+                    }
+                }
+                winRate = winTime.divide((winTime.add(loseTime))).setScale(0,BigDecimal.ROUND_DOWN).multiply(new BigDecimal("100"));
+                if(winRate.compareTo(BigDecimal.ONE) < 0){
+                    /** 胜率过低 */
+                    log.debug(" 竞猜排名 胜率过低 winRate : {}",winRate);
+                    continue;
+                }
+                result.setWinRate(winRate);
+            }
+            /** 本周参与天数 */
+            //TODO
+//            List<BetUser> thisWeekBetTimes =  betUserMapper.find
 
         }
 
