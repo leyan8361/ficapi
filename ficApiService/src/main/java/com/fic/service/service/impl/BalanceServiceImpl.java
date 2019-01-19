@@ -165,6 +165,8 @@ public class BalanceServiceImpl implements BalanceService {
             startDay = DateUtil.getThisMonthBegin(condition.getMonth());
             endDay = DateUtil.getThisMonthEnd(condition.getMonth());
         }
+        BigDecimal sumWayIn = balanceStatementMapper.sumByWayAndTime(condition.getUserId(),FinanceWayEnum.IN.getCode(),condition.getType(),startDay,endDay);
+        BigDecimal sumWayOut = balanceStatementMapper.sumByWayAndTime(condition.getUserId(),FinanceWayEnum.OUT.getCode(),condition.getType(),startDay,endDay);
         int offset = condition.getPageNum()*10;
         List<BalanceStatement> findResult = balanceStatementMapper.findByCondition(startDay,endDay,condition,offset);
         if(findResult.size() == 0){
@@ -363,8 +365,8 @@ public class BalanceServiceImpl implements BalanceService {
         }
 
         result.setItems(items);
-        result.setIncome(totalIncome);
-        result.setExpend(totalExpend);
+        result.setIncome(sumWayIn.setScale(0,BigDecimal.ROUND_DOWN));
+        result.setExpend(sumWayOut.setScale(0,BigDecimal.ROUND_DOWN));
 
         return new ResponseVo(ErrorCodeEnum.SUCCESS,result);
     }

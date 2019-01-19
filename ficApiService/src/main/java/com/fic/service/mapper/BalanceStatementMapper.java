@@ -32,4 +32,6 @@ public interface BalanceStatementMapper {
     List<BalanceStatement> findAllSameAmountWithUserDis(BigDecimal amount,int userId,int distributionId,int balanceSelfId);
 
     List<BalanceStatement> findAll();
+
+    BigDecimal sumByWayAndTime(int userId,int way,int type,String startDay,String endDay);
 }

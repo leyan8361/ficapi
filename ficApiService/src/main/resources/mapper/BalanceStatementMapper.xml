@@ -175,6 +175,22 @@
     </if>
     order by b.created_time desc limit #{offset},10;
   </select>
+  <select id="sumByWayAndTime" resultType="java.math.BigDecimal">
+    select sum(amount) from balance_statement where user_id = #{userId} and way = #{way} and created_time BETWEEN #{startDay} and #{endDay}
+    <if test="type == 1">
+      and type = 4
+    </if>
+    <if test="type == 2">
+      and (type = 6 or type = 7 or type = 8 or type = 9)
+    </if>
+    <if test="type == 3">
+      and type in (10,11)
+    </if>
+    <if test="type == 4">
+      and type not in (4,6,7,8,9)
+    </if>
+    ;
+  </select>
   <select id="findAllSameAmountWithUserDis" resultMap="BaseResultMap">
     select b.* from balance_statement b where b.amount = #{amount} and b.user_id = #{userId} and b.distribution_id = #{distributionId} and b.id != #{balanceSelfId};
   </select>
