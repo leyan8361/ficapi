@@ -369,8 +369,8 @@ public class BalanceServiceImpl implements BalanceService {
 
         result.setItems(items);
 
-        result.setIncome(sumWayIn.setScale(0,BigDecimal.ROUND_DOWN));
-        result.setExpend(sumWayOut.setScale(0,BigDecimal.ROUND_DOWN));
+        result.setIncome(null!=sumWayIn?sumWayIn.setScale(0,BigDecimal.ROUND_DOWN):BigDecimal.ZERO);
+        result.setExpend(null!=sumWayOut?sumWayOut.setScale(0,BigDecimal.ROUND_DOWN):BigDecimal.ZERO);
 
         return new ResponseVo(ErrorCodeEnum.SUCCESS,result);
     }
