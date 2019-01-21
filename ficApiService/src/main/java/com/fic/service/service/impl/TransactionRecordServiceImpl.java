@@ -477,6 +477,8 @@ public class TransactionRecordServiceImpl implements TransactionRecordService {
             result.setWay(find.getWay());
             result.setCreatedTime(find.getCreatedTime());
             result.setAmount(find.getAmount());
+            result.setStatus(find.getStatus());
+            result.setRemark(find.getRemark());
             resultList.add(result);
         }
 
