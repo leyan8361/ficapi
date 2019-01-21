@@ -247,7 +247,7 @@ public class LuckTurntableServiceImpl implements LuckTurntableService {
             String words[] = luckyTurntable.getPriceName().split(Constants.WORDS_CUT);
             for(int i = 0 ; i < words.length; i++){
                 if(word.equals(words[i])){
-                    luckyRecord.setTrace(i);
+                    luckyRecord.setTrace(i-1);
                     break;
                 }
             }
