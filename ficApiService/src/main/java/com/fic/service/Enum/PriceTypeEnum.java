@@ -15,6 +15,7 @@ public enum PriceTypeEnum {
     FIFTY(5),//500TFC
     TWO_HUNDRED(6),//200TFC
     FIVE_THOUSAND(7),//5000TFC
+    COVER(100)//封面
     ;
 
     private Integer code;

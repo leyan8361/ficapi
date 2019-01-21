@@ -134,8 +134,11 @@
   <select id="get" resultMap="BaseResultMap">
     select * from lucky_turntable where id = #{id};
   </select>
+  <select id="selectCover" resultMap="BaseResultMap">
+    select * from lucky_turntable where price_type = 100;
+  </select>
   <update id="updateCover">
-    update lucky_turntable set price_url = #{coverUrl}
+    update lucky_turntable set price_url = #{coverUrl} where price_type = 100
   </update>
   <select id="sumProbability" resultType="java.math.BigDecimal">
     select sum(probability) from lucky_turntable and id != #{exceptId};

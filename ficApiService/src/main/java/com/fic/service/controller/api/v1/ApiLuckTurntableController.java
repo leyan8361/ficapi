@@ -46,15 +46,14 @@ public class ApiLuckTurntableController {
     @ApiImplicitParams({
             @ApiImplicitParam(dataType = "int", name = "userId", value = "用户ID", required = true),
             @ApiImplicitParam(dataType = "int", name = "priceId", value = "奖品ID", required = true),
-            @ApiImplicitParam(dataType = "string", name = "word", value = "中奖金句时传入金句", required = false),
-            @ApiImplicitParam(dataType = "int", name = "status", value = "(0,未中奖)(1,中奖)", required = true),
+            @ApiImplicitParam(dataType = "string", name = "word", value = "中奖金句时传入金句", required = false)
     })
     @ApiResponses({
             @ApiResponse(code = 200, message = "SUCCESS")
     })
-    public ResponseEntity draw(@RequestParam Integer userId,@RequestParam Integer priceId,@RequestParam(required = false) String word,@RequestParam Integer status){
+    public ResponseEntity draw(@RequestParam Integer userId,@RequestParam Integer priceId,@RequestParam(required = false) String word){
         log.debug(" do draw action !!");
-        ResponseVo result = luckTurntableService.draw(userId,priceId,status,word);
+        ResponseVo result = luckTurntableService.draw(userId,priceId,word);
         return ResponseEntity.ok(result);
     }
 

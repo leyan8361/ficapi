@@ -26,6 +26,8 @@ public class Constants {
         /**默认头像*/
         public static final String DEFAULT_HEAD_PATH = "/user/default.png";
 
+        /**金句分割符*/
+        public static final String WORDS_CUT = "\\|";
         /**
          * 文件类型
          */

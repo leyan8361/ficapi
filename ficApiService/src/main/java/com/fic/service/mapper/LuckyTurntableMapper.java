@@ -28,6 +28,8 @@ public interface LuckyTurntableMapper {
 
     LuckyTurntable get(int id);
 
+    LuckyTurntable selectCover();
+
     int updateCover(String coverUrl);
 
     BigDecimal sumProbability(int exceptId);
