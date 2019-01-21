@@ -209,6 +209,7 @@ public class LuckTurntableServiceImpl implements LuckTurntableService {
                 LuckyTurntable luckyTurntable = luckyTurntableMapper.get(findResult.getBingoPrice());
                 if(null == luckyTurntable){
                     log.error("获取记录异常，奖励已不存在");
+                    throw new RuntimeException();
                 }
                 result.setPriceType(luckyTurntable.getPriceType());
                 result.setPriceName(luckyTurntable.getPriceName());
