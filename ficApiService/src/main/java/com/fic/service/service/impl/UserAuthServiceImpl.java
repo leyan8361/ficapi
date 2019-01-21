@@ -179,6 +179,8 @@ public class UserAuthServiceImpl implements UserAuthService {
         if(StringUtils.isNotEmpty(name)){
             userAuth.setName(name);
         }
+        userAuth.setRemark("");
+        userAuth.setStatus(UserAuthStatusEnum.WAIT_APPROVE.code());
         int saveResult = userAuthMapper.updateByPrimaryKey(userAuth);
         if(saveResult <=0){
             log.error("更新实名认证，保存失败 user auth id :{}",userAuth.getId());
