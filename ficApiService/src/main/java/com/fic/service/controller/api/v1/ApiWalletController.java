@@ -69,7 +69,7 @@ public class ApiWalletController {
         return ResponseEntity.ok(result);
     }
 
-    @PostMapping("/getTransactionRecord")
+    @GetMapping("/getTransactionRecord")
     @ApiOperation("Api-获取转账记录")
     @ApiImplicitParams({
             @ApiImplicitParam(dataType = "int", name = "userId", value = "用户ID", required = true),
