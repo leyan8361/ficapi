@@ -392,7 +392,6 @@ public class TransactionRecordServiceImpl implements TransactionRecordService {
         if(user.getUserName().equals(transactionVo.getPayee())){
             return new ResponseVo(ErrorCodeEnum.TRAN_CAN_NOT_TO_SELF,null);
         }
-
         Invest invest = investMapper.findByUserId(transactionVo.getUserId());
         if(null == invest){
             log.error("资产不存在");
@@ -461,7 +460,6 @@ public class TransactionRecordServiceImpl implements TransactionRecordService {
                     continue;
                 }
                 result.setTelephone(RegexUtil.replaceTelephone(payee.getUserName()));
-
             }
             if(find.getWay() == FinanceWayEnum.IN.getCode()){
                 if(StringUtils.isEmpty(find.getFromAddress())){
