@@ -267,6 +267,7 @@ public class TransactionRecordServiceImpl implements TransactionRecordService {
         payeeRecord.setAmount(record.getAmount());
         payeeRecord.setCreatedTime(new Date());
         payeeRecord.setCoinType(Constants.TFC);
+        payeeRecord.setRemark(record.getRemark());
         int savePayeeRecord = transactionRecordMapper.insertSelective(payeeRecord);
         if(savePayeeRecord <=0){
             log.error(" 确认转账, 生成收款人收账记录 tran id  :{}",record.getId());
@@ -274,7 +275,11 @@ public class TransactionRecordServiceImpl implements TransactionRecordService {
         }
 
         /** 转账人 扣除转账金额 */
-        BalanceStatement outbalance = new BalanceStatement();
+        BalanceStatement outbalance = balanceStatementMapper.findByUserIdAndTransfing(record.getUserId(),record.getId());
+        if(null == outbalance){
+            log.error(" 确认转账，查询转账人余额转账中失败 user id : {},trans record id :{}",record.getUserId(),record.getId());
+            throw new RuntimeException();
+        }
         outbalance.setTraceId(record.getId());
         outbalance.setWay(FinanceWayEnum.OUT.getCode());
         outbalance.setAmount(record.getAmount());
@@ -321,7 +326,7 @@ public class TransactionRecordServiceImpl implements TransactionRecordService {
             throw new RuntimeException();
         }
 
-        int savePayer = balanceStatementMapper.insertSelective(outbalance);
+        int savePayer = balanceStatementMapper.updateByPrimaryKeySelective(outbalance);
         if(savePayer <=0){
             log.error(" 确认转账， 生成付款人余额变更记录失败");
             throw new RuntimeException();
@@ -379,6 +384,20 @@ public class TransactionRecordServiceImpl implements TransactionRecordService {
             log.error(" 转账审批拒绝失败，id:{}",id);
             throw new RuntimeException();
         }
+
+        /** 恢复转账中的余额变更 */
+        BalanceStatement recoverBalance = balanceStatementMapper.findByUserIdAndTransfing(record.getUserId(),record.getId());
+        if(null == recoverBalance){
+            log.error("拒绝转账失败，转账中的余额变更记录丢失 user id :{},transfer record id :{}",record.getUserId(),record.getId());
+            throw new RuntimeException();
+        }
+
+        int deleteBalanceState = balanceStatementMapper.deleteByPrimaryKey(recoverBalance.getId());
+        if(deleteBalanceState <=0){
+            log.error("拒绝转账失败，转账中的余额变更记录失败，balance state id :{}",recoverBalance.getId());
+            throw new RuntimeException();
+        }
+
         return new ResponseVo(ErrorCodeEnum.SUCCESS,null);
     }
 
@@ -428,6 +447,20 @@ public class TransactionRecordServiceImpl implements TransactionRecordService {
         int updateInvestResult = investMapper.updateLockBalance(resultBalance,resultLockBalance,transactionVo.getUserId());
         if(updateInvestResult <=0){
             log.error("转出申请，更新invest失败");
+            throw new RuntimeException();
+        }
+
+        BalanceStatement transferRecord = new BalanceStatement();
+        transferRecord.setTraceId(result.getId());
+        transferRecord.setCreatedTime(new Date());
+        transferRecord.setUserId(transactionVo.getUserId());
+        transferRecord.setWay(FinanceWayEnum.OUT.getCode());
+        transferRecord.setAmount(transactionVo.getAmount());
+        transferRecord.setType(FinanceTypeEnum.TRANSFERING.getCode());
+
+        int saveBalanceResult = balanceStatementMapper.insertSelective(transferRecord);
+        if(saveBalanceResult <=0){
+            log.error("转出申请，生成余额变更记录失败");
             throw new RuntimeException();
         }
         return new ResponseVo(ErrorCodeEnum.SUCCESS,null);

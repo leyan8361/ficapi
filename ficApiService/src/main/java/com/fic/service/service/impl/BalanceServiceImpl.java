@@ -45,6 +45,8 @@ public class BalanceServiceImpl implements BalanceService {
     BetUserMapper betUserMapper;
     @Autowired
     RewardMapper rewardMapper;
+    @Autowired
+    TransactionRecordMapper transactionRecordMapper;
 
     @Override
     public TradeRecordInfoVo getTradeRecord(Integer userId) {
@@ -330,9 +332,14 @@ public class BalanceServiceImpl implements BalanceService {
                 item.setCreatedTime(balanceStatement.getCreatedTime());
             }
 
-
             /** 转出 */
             if(balanceStatement.getType() == FinanceTypeEnum.TRANSFER_OUT.getCode()){
+                item.setAmount(balanceStatement.getAmount().setScale(0,BigDecimal.ROUND_DOWN));
+                item.setCreatedTime(balanceStatement.getCreatedTime());
+            }
+
+            /** 转账中 */
+            if(balanceStatement.getType() == FinanceTypeEnum.TRANSFERING.getCode()){
                 item.setAmount(balanceStatement.getAmount().setScale(0,BigDecimal.ROUND_DOWN));
                 item.setCreatedTime(balanceStatement.getCreatedTime());
             }

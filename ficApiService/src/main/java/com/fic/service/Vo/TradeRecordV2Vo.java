@@ -14,7 +14,7 @@ import java.util.Date;
 @ApiModel
 public class TradeRecordV2Vo {
 
-    @ApiModelProperty(value = "(0，充值)(1,收益)(2,分红)(3，提现)(4，投资)(5,奖励[分销(注册，投资)])(6,竞猜奖励)(7,竞猜返还)(8，投注)(9,连续奖励)(10,转出成功)(11,转入成功)")
+    @ApiModelProperty(value = "(0，充值)(1,收益)(2,分红)(3，提现)(4，投资)(5,奖励[分销(注册，投资)])(6,竞猜奖励)(7,竞猜返还)(8，投注)(9,连续奖励)(10,转出成功)(11,转入成功)(12,转账中)")
     private Integer type;
     @ApiModelProperty(value = "电影名")
     private String moveName;
