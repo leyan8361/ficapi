@@ -227,8 +227,8 @@ public class BetScheduledService {
                             returnUser.setReserveFee(reserveFee);
                         }
                         returnUser.setBingo(BingoStatusEnum.CLOSE_RETURNING.getCode().byteValue());
-                        BigDecimal returningFee = returning.subtract(totalFee);
-                        totalRealReserve = totalRealReserve.add(returningFee);
+                        BigDecimal returningFee = returning.subtract(betFee.add(reserveFee));
+                        totalRealReserve = totalRealReserve.add(reserveFee);
                         totalBetFee = totalBetFee.add(betFee);
                         returnUser.setCloseWithReturning(returningFee);
                         generateBalanceAndUpdateInvest(returnUser.getUserId(), returningFee, FinanceTypeEnum.BET_RETURNING.getCode());
