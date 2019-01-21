@@ -317,7 +317,7 @@ public class ApiAccountController {
             @ApiImplicitParam(dataType = "int", name = "userId", value = "用户ID", required = true)
     })
     @ApiResponses({
-            @ApiResponse(code = 200, message = "SUCCESS")
+            @ApiResponse(code = 200, message = "SUCCESS",response = LoginUserInfoVo.class)
     })
     public ResponseEntity getUserInfo(@RequestParam int userId){
         log.debug(" do getUserInfo Action !!!");
