@@ -10,6 +10,7 @@ import com.fic.service.constants.ServerProperties;
 import com.fic.service.entity.*;
 import com.fic.service.mapper.*;
 import com.fic.service.service.TransactionRecordService;
+import com.fic.service.utils.BeanUtil;
 import com.fic.service.utils.DateUtil;
 import com.fic.service.utils.RegexUtil;
 import com.fic.service.utils.Web3jUtil;
@@ -47,6 +48,24 @@ public class TransactionRecordServiceImpl implements TransactionRecordService {
     BalanceStatementMapper balanceStatementMapper;
     @Autowired
     InvestMapper investMapper;
+
+    @Override
+    public ResponseVo getAllTransaction(int type) {
+        List<TransactionRecord> findResult = transactionRecordMapper.findAllByType(type);
+        List<OmTransactionRecordVo> resultList = new ArrayList<OmTransactionRecordVo>();
+        for(TransactionRecord record : findResult){
+            OmTransactionRecordVo result = new OmTransactionRecordVo();
+            User userExist = userMapper.get(record.getUserId());
+            if(null == userExist){
+                log.error("查询所有转账记录失败,申请转账用户不存 user id :{}",result.getUserId());
+                continue;
+            }
+            BeanUtil.copy(result,record);
+            result.setTelephone(userExist.getUserName());
+            resultList.add(result);
+        }
+        return new ResponseVo(ErrorCodeEnum.SUCCESS,resultList);
+    }
 
     @Override
     @Transactional(isolation= Isolation.READ_COMMITTED,propagation= Propagation.REQUIRED,rollbackFor = Exception.class)

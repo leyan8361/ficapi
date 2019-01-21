@@ -13,6 +13,8 @@ import java.math.BigDecimal;
 **/
 public interface TransactionRecordService{
 
+    ResponseVo getAllTransaction(int type);
+
     //TODO
     ResponseVo approve(int id,String remark);
     //TODO

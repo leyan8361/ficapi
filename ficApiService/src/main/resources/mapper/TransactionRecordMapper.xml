@@ -238,10 +238,10 @@
       1=1
     </if>
     <if test="condition == 1">
-      way = 0
+      (status = 0 or status = 2)
     </if>
     <if test="condition == 2">
-      way = 1
+      status not in (0,2)
     </if>;
   </select>
   <update id="updateStatus">
