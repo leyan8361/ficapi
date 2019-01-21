@@ -4,10 +4,7 @@ import com.fic.service.Enum.ErrorCodeEnum;
 import com.fic.service.Enum.FinanceTypeEnum;
 import com.fic.service.Enum.FinanceWayEnum;
 import com.fic.service.Enum.TransactionStatusEnum;
-import com.fic.service.Vo.DoTranTokenVo;
-import com.fic.service.Vo.DoTransactionVo;
-import com.fic.service.Vo.ResponseVo;
-import com.fic.service.Vo.TransactionOutVo;
+import com.fic.service.Vo.*;
 import com.fic.service.constants.Constants;
 import com.fic.service.constants.ServerProperties;
 import com.fic.service.entity.*;
@@ -27,7 +24,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 @Service
 public class TransactionRecordServiceImpl implements TransactionRecordService {
@@ -252,9 +251,25 @@ public class TransactionRecordServiceImpl implements TransactionRecordService {
             log.error("确认转账TFC，收款人不存在, tran record id :{},to address:{}",id,record.getToAddress());
             throw new RuntimeException();
         }
-        User payee = userMapper.findByUsername(record.getToAddress());
+        User payee = userMapper.get(Integer.valueOf(record.getToAddress()));
         if(null == payee){
             log.error("确认转账TFC，收款人不存在, tran record id :{},to address:{}",id,record.getToAddress());
+            throw new RuntimeException();
+        }
+
+        /** 生成收款人收账记录 */
+        TransactionRecord payeeRecord = new TransactionRecord();
+        payeeRecord.setUserId(payee.getId());
+        payeeRecord.setInComeTime(new Date());
+        payeeRecord.setStatus(TransactionStatusEnum.SUCCESS.getCode());
+        payeeRecord.setWay(FinanceWayEnum.IN.getCode());
+        payeeRecord.setFromAddress(record.getUserId().toString());
+        payeeRecord.setAmount(record.getAmount());
+        payeeRecord.setCreatedTime(new Date());
+        payeeRecord.setCoinType(Constants.TFC);
+        int savePayeeRecord = transactionRecordMapper.insertSelective(payeeRecord);
+        if(savePayeeRecord <=0){
+            log.error(" 确认转账, 生成收款人收账记录 tran id  :{}",record.getId());
             throw new RuntimeException();
         }
 
@@ -275,7 +290,7 @@ public class TransactionRecordServiceImpl implements TransactionRecordService {
         inBalance.setAmount(record.getAmount());
         inBalance.setTraceId(record.getId());
         inBalance.setCreatedTime(new Date());
-
+        inBalance.setTraceId(payeeRecord.getId());
         Invest investPayer = investMapper.findByUserId(record.getUserId());
         if(null == investPayer){
             log.error(" 确认转账，无对应资产记录 user id :{}",record.getUserId());
@@ -324,6 +339,7 @@ public class TransactionRecordServiceImpl implements TransactionRecordService {
             log.error(" 转账审批通过失败，id:{}",id);
             throw new RuntimeException();
         }
+
         return new ResponseVo(ErrorCodeEnum.SUCCESS,null);
     }
 
@@ -396,7 +412,7 @@ public class TransactionRecordServiceImpl implements TransactionRecordService {
         result.setStatus(TransactionStatusEnum.APPLY.getCode());
         result.setCreatedTime(new Date());
         result.setUserId(transactionVo.getUserId());
-        result.setToAddress(payee.getUserName());
+        result.setToAddress(payee.getId()+"");
         result.setCoinType(Constants.TFC);
         result.setFee(BigDecimal.ZERO);
         result.setWay(FinanceWayEnum.OUT.getCode());
@@ -416,5 +432,54 @@ public class TransactionRecordServiceImpl implements TransactionRecordService {
             throw new RuntimeException();
         }
         return new ResponseVo(ErrorCodeEnum.SUCCESS,null);
+    }
+
+    @Override
+    public ResponseVo getTransactionRecord(Integer userId, Integer pageNum) {
+        List<AppTransactionRecordVo> resultList = new ArrayList<>();
+        User user = userMapper.get(userId);
+        if(null == user){
+            log.error("查询转账记录失败，用户不存在");
+            return new ResponseVo(ErrorCodeEnum.USER_NOT_EXIST,null);
+        }
+        PageVo page = new PageVo();
+        page.setPageNum(pageNum);
+        int offset = page.getPageNum()*10;
+        List<TransactionRecord> findResult = transactionRecordMapper.findAllByUserIdAndPage(userId,offset);
+        if(findResult.size() == 0){
+            return new ResponseVo(ErrorCodeEnum.SUCCESS,resultList);
+        }
+        for(TransactionRecord find: findResult){
+            AppTransactionRecordVo result = new AppTransactionRecordVo();
+            if(find.getWay() == FinanceWayEnum.OUT.getCode()){
+                if(StringUtils.isEmpty(find.getToAddress())){
+                    continue;
+                }
+                User payee = userMapper.get(Integer.valueOf(find.getToAddress()));
+                if(null == payee){
+                    log.debug("获取转账记录， 收款人查询失败 user id :{}",find.getToAddress());
+                    continue;
+                }
+                result.setTelephone(RegexUtil.replaceTelephone(payee.getUserName()));
+
+            }
+            if(find.getWay() == FinanceWayEnum.IN.getCode()){
+                if(StringUtils.isEmpty(find.getFromAddress())){
+                    continue;
+                }
+                User payer = userMapper.get(Integer.valueOf(find.getFromAddress()));
+                if(null == payer){
+                    log.debug("获取转账记录，付款人查询失败 user id :{}",find.getFromAddress());
+                    continue;
+                }
+                result.setTelephone(RegexUtil.replaceTelephone(payer.getUserName()));
+            }
+            result.setWay(find.getWay());
+            result.setCreatedTime(find.getCreatedTime());
+            result.setAmount(find.getAmount());
+            resultList.add(result);
+        }
+
+        return new ResponseVo(ErrorCodeEnum.SUCCESS,resultList);
     }
 }

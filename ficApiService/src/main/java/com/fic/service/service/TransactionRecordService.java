@@ -42,4 +42,9 @@ public interface TransactionRecordService{
      * 确认转入
      */
     ResponseVo confirmTranIn(int userId, String fromAddress, String txHash, String coinType, BigDecimal amount,String remark,String inComeTime);
+
+    /**
+     * 转账记录
+     */
+    ResponseVo getTransactionRecord(Integer userId,Integer pageNum);
 }

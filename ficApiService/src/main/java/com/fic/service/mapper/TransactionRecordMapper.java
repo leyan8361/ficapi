@@ -24,6 +24,8 @@ public interface TransactionRecordMapper {
 
     List<TransactionRecord> findAllByType(@Param("condition")Integer condition);
 
+    List<TransactionRecord> findAllByUserIdAndPage(@Param("userId")Integer userId,@Param("offset")Integer offset);
+
     int updateStatus(@Param("id")int id,@Param("status")int status,@Param("remark")String remark);
 
     List<TransactionRecord> findAllWaitConfirm();

@@ -2,6 +2,7 @@ package com.fic.service.controller.api.v1;
 
 
 import com.fic.service.Enum.ErrorCodeEnum;
+import com.fic.service.Vo.AppTransactionRecordVo;
 import com.fic.service.Vo.DoTranTokenVo;
 import com.fic.service.Vo.DoTransactionVo;
 import com.fic.service.Vo.ResponseVo;
@@ -65,6 +66,21 @@ public class ApiWalletController {
     public ResponseEntity doTransactionOutApply(@RequestBody DoTranTokenVo transactionVo) {
         log.debug(" doTransactionOutApply action !!");
         ResponseVo result = transactionRecordService.doTransactionApply(transactionVo);
+        return ResponseEntity.ok(result);
+    }
+
+    @PostMapping("/getTransactionRecord")
+    @ApiOperation("Api-获取转账记录")
+    @ApiImplicitParams({
+            @ApiImplicitParam(dataType = "int", name = "userId", value = "用户ID", required = true),
+            @ApiImplicitParam(dataType = "int", name = "pageNum", value = "页码", required = true)
+    })
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "SUCCESS",response = AppTransactionRecordVo.class)
+    })
+    public ResponseEntity getTransactionRecord(@RequestParam Integer userId,@RequestParam int pageNum) {
+        log.debug(" doTransactionOutApply action !!");
+        ResponseVo result = transactionRecordService.getTransactionRecord(userId,pageNum);
         return ResponseEntity.ok(result);
     }
 }

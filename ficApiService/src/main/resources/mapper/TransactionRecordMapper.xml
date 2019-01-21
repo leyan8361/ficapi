@@ -263,4 +263,7 @@
       where id = ${item.id}
     </foreach>
   </update>
+  <select id="findAllByUserIdAndPage" resultMap="BaseResultMap">
+    select * from transaction_record where user_id = #{userId} order by created_time desc limit #{offset},10;
+  </select>
 </mapper>
