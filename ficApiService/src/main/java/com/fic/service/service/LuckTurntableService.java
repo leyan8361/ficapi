@@ -19,7 +19,7 @@ public interface LuckTurntableService {
     ResponseVo uploadCoverFile(MultipartFile coverFile);
 
     /** api */
-    ResponseVo getPrice();
+    ResponseVo getPrice(int userId);
 
     /** api */
     ResponseVo getBingoRecord(int userId,int pageNum);

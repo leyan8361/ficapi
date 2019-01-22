@@ -9,6 +9,7 @@ import com.fic.service.service.BetScenceService;
 import com.fic.service.utils.BeanUtil;
 import com.fic.service.utils.DateUtil;
 import com.fic.service.utils.RegexUtil;
+import com.fic.service.utils.SortUtil;
 import okhttp3.internal.http2.ErrorCode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -646,6 +647,11 @@ public class BetScenceServiceImpl implements BetScenceService {
             result.setNickName(user.getNickName());
             /** 胜率 */
             List<BetUser> betTimes = betUserMapper.findAllByUserIdAndCreatedTime(betUserId,thisWeekStartDay,thisWeekSunDay);
+            /** 5场起 */
+            if(betTimes.size() < 5){
+                continue;
+            }
+
             BigDecimal winRate = BigDecimal.ZERO;
             if(betTimes.size()  > 0){
                 BigDecimal winTime = BigDecimal.ZERO;
@@ -660,7 +666,17 @@ public class BetScenceServiceImpl implements BetScenceService {
                         loseTime = loseTime.add(BigDecimal.ONE);
                     }
                 }
-                winRate = winTime.divide((winTime.add(loseTime))).setScale(0,BigDecimal.ROUND_DOWN).multiply(new BigDecimal("100"));
+                BigDecimal hundredPer = new BigDecimal("100");
+                winRate = winTime.divide(winTime.add(loseTime),2,BigDecimal.ROUND_DOWN).multiply(hundredPer);
+                /** 内部人员测试 胜率增加 30% */
+                if(betUserId == 61 || betUserId == 62 || betUserId == 65 || betUserId == 66 || betUserId == 167 || betUserId == 67){
+                    if(winRate.compareTo(hundredPer) < 0){
+                        winRate = winRate.add(winRate.multiply(new BigDecimal("0.3"))).setScale(0,BigDecimal.ROUND_DOWN);
+                    }
+                    if(winRate.compareTo(hundredPer) >0){
+                        winRate = hundredPer;
+                    }
+                }
                 if(winRate.compareTo(BigDecimal.ONE) < 0){
                     /** 胜率过低 */
                     log.debug(" 竞猜排名 胜率过低 winRate : {}",winRate);
@@ -669,10 +685,94 @@ public class BetScenceServiceImpl implements BetScenceService {
                 result.setWinRate(winRate);
             }
             /** 本周参与天数 */
-//            List<BetUser> thisWeekBetTimes =  betUserMapper
-
+            List<BetUser> thisWeekBetTimes =  betUserMapper.findlastWeekAlreadyBetByUserId(thisWeekStartDay,thisWeekSunDay,betUserId);
+            if(thisWeekBetTimes.size() < 1){
+                log.debug("竞猜排名 无竞猜记录");
+                continue;
+            }
+            /** 去除同一天的 */
+            Map<String,BetUser> needToContinue = new HashMap<String,BetUser>();
+            List<BetUser> stored = new ArrayList<BetUser>();
+            for(BetUser betUser: thisWeekBetTimes){
+                int day = DateUtil.getDayOfMonth(betUser.getCreatedTime());
+                if(!needToContinue.containsKey(day+"")){
+                    needToContinue.put(day+"",betUser);
+                    stored.add(betUser);
+                }
+            }
+            thisWeekBetTimes = stored;
+            boolean isContinue = false;
+                for(int i = 0 ; i < thisWeekBetTimes.size(); i++){
+                    if(i+1 < thisWeekBetTimes.size()){
+                        if(DateUtil.getSubstractDay(thisWeekBetTimes.get(i+1).getCreatedTime(),thisWeekBetTimes.get(i).getCreatedTime()) == 1){
+                            /** 连续竞猜两天 */
+                            isContinue = true;
+                            if(i+2 < thisWeekBetTimes.size()){
+                                if(DateUtil.getSubstractDay(thisWeekBetTimes.get(i+2).getCreatedTime(),thisWeekBetTimes.get(i+1).getCreatedTime()) == 1){
+                                    /** 连续竞猜三天 */
+                                    if(i+3 < thisWeekBetTimes.size()){
+                                        if(DateUtil.getSubstractDay(thisWeekBetTimes.get(i+3).getCreatedTime(),thisWeekBetTimes.get(i+2).getCreatedTime()) == 1){
+                                            /** 连续竞猜四天 */
+                                            if(i+4 < thisWeekBetTimes.size()){
+                                                if(DateUtil.getSubstractDay(thisWeekBetTimes.get(i+4).getCreatedTime(),thisWeekBetTimes.get(i+3).getCreatedTime()) == 1){
+                                                    /** 连续竞猜五天*/
+                                                    if(i+5 < thisWeekBetTimes.size()){
+                                                        if(DateUtil.getSubstractDay(thisWeekBetTimes.get(i+5).getCreatedTime(),thisWeekBetTimes.get(i+4).getCreatedTime()) == 1){
+                                                            /**连续竞猜六天*/
+                                                            if(i+6 < thisWeekBetTimes.size()){
+                                                                if(DateUtil.getSubstractDay(thisWeekBetTimes.get(i+6).getCreatedTime(),thisWeekBetTimes.get(i+5).getCreatedTime()) == 1){
+                                                                    /**连续竞猜七天*/
+                                                                    log.debug("连续竞猜七天 userId : {}",thisWeekBetTimes.get(i).getUserId());
+                                                                    result.setPlayInDay(7);
+                                                                    i = i + 6;
+                                                                    continue;
+                                                                }
+                                                            }
+                                                            log.debug("连续竞猜六天 userId : {}",thisWeekBetTimes.get(i).getUserId());
+                                                            result.setPlayInDay(6);
+                                                            break;
+                                                        }
+                                                    }
+                                                    log.debug("连续竞猜五天 userId : {}",thisWeekBetTimes.get(i).getUserId());
+                                                    result.setPlayInDay(5);
+                                                    break;
+                                                }
+                                            }
+                                            log.debug("连续竞猜四天 userId : {}",thisWeekBetTimes.get(i).getUserId());
+                                            result.setPlayInDay(4);
+                                            break;
+                                        }
+                                    }
+                                    log.debug("连续竞猜三天 userId : {}",thisWeekBetTimes.get(i).getUserId());
+                                    result.setPlayInDay(3);
+                                    break;
+                                }
+                            }
+                            log.debug("连续竞猜两天 userId : {}",thisWeekBetTimes.get(i).getUserId());
+                            if(result.getPlayInDay() < 2){
+                                result.setPlayInDay(2);
+                                i = i + 1;
+                            }
+                            continue;
+                        }
+                    }
+                }
+                if(!isContinue){
+                    result.setPlayInDay(1);
+                }
+            /** 今日竞猜 */
+            String toDay = DateUtil.getToDayStart();
+            /** 今天下注的，过滤了同部电影*/
+            List<BetRankingRecordVo> todayBetRecord = betUserMapper.findToDayRecord(betUserId,toDay);
+            result.setUserId(betUserId);
+            result.setPlayRecord(todayBetRecord);
+            resultList.add(result);
         }
-
-        return null;
+        /** 胜率排序 */
+        SortUtil.quickSortForRanking(resultList, 0, resultList.size() - 1);
+        return new ResponseVo(ErrorCodeEnum.SUCCESS,resultList);
     }
+
+
+
 }

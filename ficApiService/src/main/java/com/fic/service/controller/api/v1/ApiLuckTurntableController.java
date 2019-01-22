@@ -32,12 +32,15 @@ public class ApiLuckTurntableController {
 
     @GetMapping("/getData")
     @ApiOperation("Api-获取转盘奖品、概率、封面等数据")
+    @ApiImplicitParams({
+            @ApiImplicitParam(dataType = "int", name = "userId", value = "用户ID", required = true)
+    })
     @ApiResponses({
             @ApiResponse(code = 200, message = "SUCCESS",response = LuckTurntableInfoVo.class)
     })
-    public ResponseEntity getPrice(){
+    public ResponseEntity getData(int userId){
         log.debug(" do getPrice action !!");
-        ResponseVo result = luckTurntableService.getPrice();
+        ResponseVo result = luckTurntableService.getPrice(userId);
         return ResponseEntity.ok(result);
     }
 

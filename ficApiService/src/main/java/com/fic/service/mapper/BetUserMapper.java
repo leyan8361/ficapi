@@ -69,5 +69,7 @@ public interface BetUserMapper {
 
     List<Integer> findBetRanking(String startDay,String endDay);
 
+    List<BetRankingRecordVo> findToDayRecord(int userId,String today);
+
     List<BetUser> findAllByUserIdAndCreatedTime(int userId,String startDay,String endDay);
 }

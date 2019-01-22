@@ -3,6 +3,7 @@ package com.fic.service.Vo;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @ApiModel
@@ -10,6 +11,9 @@ public class LuckTurntableInfoVo {
 
     @ApiModelProperty("转盘封面")
     private String coverUrl;
+
+    @ApiModelProperty("用户余额")
+    private BigDecimal balance;
 
     @ApiModelProperty("奖品项")
     private List<LuckTurntablePriceVo> priceList;
@@ -30,4 +34,11 @@ public class LuckTurntableInfoVo {
         this.priceList = priceList;
     }
 
+    public BigDecimal getBalance() {
+        return balance;
+    }
+
+    public void setBalance(BigDecimal balance) {
+        this.balance = balance;
+    }
 }

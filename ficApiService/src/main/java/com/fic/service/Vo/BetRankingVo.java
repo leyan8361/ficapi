@@ -20,8 +20,8 @@ public class BetRankingVo {
     @ApiModelProperty("昵称")
     private String nickName;
 
-    @ApiModelProperty("级别")
-    private int level;
+//    @ApiModelProperty("级别")
+//    private int level;
 
     @ApiModelProperty("胜率")
     private BigDecimal winRate;
@@ -56,13 +56,13 @@ public class BetRankingVo {
         this.nickName = nickName;
     }
 
-    public int getLevel() {
-        return level;
-    }
-
-    public void setLevel(int level) {
-        this.level = level;
-    }
+//    public int getLevel() {
+//        return level;
+//    }
+//
+//    public void setLevel(int level) {
+//        this.level = level;
+//    }
 
     public BigDecimal getWinRate() {
         return winRate;

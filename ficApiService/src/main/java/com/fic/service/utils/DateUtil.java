@@ -129,6 +129,17 @@ public class DateUtil {
         return result;
     }
 
+    public static String getToDayStart(){
+        Date date = new Date();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        Instant instant = date.toInstant();
+        ZoneId zoneId = ZoneId.systemDefault();
+        LocalDateTime localDate = instant.atZone(zoneId).toLocalDateTime();
+        localDate = localDate.withHour(0).withMinute(0).withSecond(02);
+        String result = formatter.format(localDate);
+        return result;
+    }
+
     public static String getThisWeekMonDay(){
         Date date = new Date();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
@@ -428,8 +439,12 @@ public class DateUtil {
     }
 
     public static void main(String args[]){
-        BigDecimal test = new BigDecimal("12345678910.10987654321");
-        System.out.println(test.toString());
+//        boxInfo.setScale(0,BigDecimal.ROUND_DOWN).remainder(new BigDecimal("2")).compareTo(BigDecimal.ZERO) == 0
+//        BigDecimal test = new BigDecimal("7");
+//        BigDecimal test1 = new BigDecimal("9");
+//        System.out.println(test.divide(test1,2,BigDecimal.ROUND_DOWN));
     }
+
+
 
 }
