@@ -64,11 +64,9 @@ public class BroadcastServiceImpl implements BroadcastService {
                         luckyTurntable.getPriceType() == PriceTypeEnum.FIVE_THOUSAND.code() ||
                         luckyTurntable.getPriceType() == PriceTypeEnum.TWO_HUNDRED.code()){
                     broadcastVo.setPrice(luckyTurntable.getAmount().setScale(0,BigDecimal.ROUND_DOWN).toString() + "TFC");
+                }else{
+                    broadcastVo.setPrice(luckyTurntable.getPriceName());
                 }
-                //TODO 其他奖品显示
-//                if(luckyTurntable.getPriceType() == PriceTypeEnum.STUFF.code()){
-//                    broadcastVo.setPrice(luckyTurntable.getPriceName());
-//                }
                 String telephone = userMapper.findTelephoneById(record.getUserId());
                 if(StringUtils.isEmpty(telephone)){
                     continue;

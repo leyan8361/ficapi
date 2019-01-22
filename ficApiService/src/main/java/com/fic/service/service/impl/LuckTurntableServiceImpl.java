@@ -105,6 +105,7 @@ public class LuckTurntableServiceImpl implements LuckTurntableService {
         luckyTurntable.setAmount(luckTurntableAddVo.getAmount());
         luckyTurntable.setCreatedTime(new Date());
         luckyTurntable.setStatus(ShelfStatusEnum.ON_SHELF.getCode());
+        luckyTurntable.setSort(luckTurntableAddVo.getSort());
         int saveResult = luckyTurntableMapper.insertSelective(luckyTurntable);
         if(saveResult <=0){
             log.error(" 保存奖品失败 ");
@@ -131,13 +132,15 @@ public class LuckTurntableServiceImpl implements LuckTurntableService {
                     return new ResponseVo(ErrorCodeEnum.LUCK_WORD_MISSED,null);
                 }
             }
-            luckyTurntable.setPriceName(luckTurntableUpdateVo.getPriceName());
         }
         if(null != luckTurntableUpdateVo.getProbability() && luckTurntableUpdateVo.getProbability().compareTo(BigDecimal.ZERO) > 0){
             luckyTurntable.setProbability(luckTurntableUpdateVo.getProbability());
         }
         if(null !=luckTurntableUpdateVo.getAmount() && luckTurntableUpdateVo.getAmount().compareTo(BigDecimal.ZERO) >0){
             luckyTurntable.setAmount(luckTurntableUpdateVo.getAmount());
+        }
+        if(null !=luckTurntableUpdateVo.getSort() && luckTurntableUpdateVo.getSort().compareTo(BigDecimal.ZERO) >0){
+            luckyTurntable.setSort(luckTurntableUpdateVo.getSort());
         }
         int saveResult = luckyTurntableMapper.updateByPrimaryKeySelective(luckyTurntable);
         if(saveResult <=0){
@@ -211,8 +214,16 @@ public class LuckTurntableServiceImpl implements LuckTurntableService {
                     log.error("获取记录异常，奖励已不存在");
                     throw new RuntimeException();
                 }
-                result.setPriceType(luckyTurntable.getPriceType());
                 result.setPriceName(luckyTurntable.getPriceName());
+                if(luckyTurntable.getPriceType() == PriceTypeEnum.WORD.code()){
+                    String words[] = luckyTurntable.getPriceName().split(Constants.WORDS_CUT);
+                    if(words.length < 1){
+                        continue;
+                    }
+                    String word = words[RandomUtil.getRandomNum(words.length)];
+                    result.setPriceName(word);
+                }
+                result.setPriceType(luckyTurntable.getPriceType());
             }
             result.setRecordId(findResult.getId());
             result.setBingoTime(findResult.getCreatedTime());
@@ -246,24 +257,24 @@ public class LuckTurntableServiceImpl implements LuckTurntableService {
                 return new ResponseVo(ErrorCodeEnum.LUCK_WORD_MISSED,null);
             }
             String words[] = luckyTurntable.getPriceName().split(Constants.WORDS_CUT);
-//            for(int i = 0 ; i < words.length; i++){
-//                if(word.equals(words[i])){
-//                    luckyRecord.setTrace(i-1);
-//                    break;
-//                }
-//            }
+            for(int i = 0; i < words.length; i++){
+                if(word.equals(words[i])){
+                    luckyRecord.setTrace(i);
+                    break;
+                }
+            }
             if(null == luckyRecord.getTrace()){
                 log.error("金句异常,无匹配金句");
                 throw new RuntimeException();
             }
         }
-        if(luckyTurntable.getPriceType() == PriceTypeEnum.WORD.code() ||
-            luckyTurntable.getPriceType() == PriceTypeEnum.THANK.code() ||
-                luckyTurntable.getPriceType() == PriceTypeEnum.WE_CHAT.code()){
+//        if(luckyTurntable.getPriceType() == PriceTypeEnum.WORD.code() ||
+//            luckyTurntable.getPriceType() == PriceTypeEnum.THANK.code() ||
+//                luckyTurntable.getPriceType() == PriceTypeEnum.WE_CHAT.code()){
             luckyRecord.setIsReceive(BooleanStatusEnum.YES.code());
-        }else{
-            luckyRecord.setIsReceive(BooleanStatusEnum.NO.code());
-        }
+//        }else{
+//            luckyRecord.setIsReceive(BooleanStatusEnum.NO.code());
+//        }
         luckyRecord.setUserId(userId);
         int saveResult = luckyRecordMapper.insertSelective(luckyRecord);
         if(saveResult <=0){

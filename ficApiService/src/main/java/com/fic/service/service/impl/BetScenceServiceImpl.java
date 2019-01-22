@@ -327,7 +327,7 @@ public class BetScenceServiceImpl implements BetScenceService {
         result.setTotalJasckpot(betScence.getTotalReservation().multiply(new BigDecimal("0.5")).setScale(0,BigDecimal.ROUND_DOWN));
         Date now  = new Date();
         String endDay = DateUtil.getThisWeekSunDay();
-        String startDay = DateUtil.getThisWeekMonDay(now);
+        String startDay = DateUtil.getThisWeekMonDay();
         List<BetUser> betUsers = betUserMapper.findlastWeekAlreadyBetByUserId(startDay,endDay,userId);
 
         if(betUsers.size() == 0){
@@ -583,7 +583,7 @@ public class BetScenceServiceImpl implements BetScenceService {
 
         Date now  = new Date();
         String endDay = DateUtil.getThisWeekSunDay();
-        String startDay = DateUtil.getThisWeekMonDay(now);
+        String startDay = DateUtil.getThisWeekMonDay();
         List<BetUser> betUsers = betUserMapper.findlastWeekAlreadyBetByUserId(startDay,endDay,userId);
 
         int []betTimeArray = new int[7];
@@ -626,7 +626,7 @@ public class BetScenceServiceImpl implements BetScenceService {
     @Override
     public ResponseVo getBetRanking() {
         List<BetRankingVo> resultList = new ArrayList<>();
-        String thisWeekStartDay = DateUtil.getThisWeekMonDay(new Date());
+        String thisWeekStartDay = DateUtil.getThisWeekMonDay();
         String thisWeekSunDay = DateUtil.getThisWeekSunDay();
         /**查找本周竞猜*/
         List<Integer> findResult = betUserMapper.findBetRanking(thisWeekStartDay,thisWeekSunDay);
@@ -651,10 +651,6 @@ public class BetScenceServiceImpl implements BetScenceService {
                 BigDecimal winTime = BigDecimal.ZERO;
                 BigDecimal loseTime = BigDecimal.ZERO;
                 for(BetUser betUser : betTimes){
-
-
-
-
                     if(betUser.getBingo() == BingoStatusEnum.BINGO.getCode().byteValue() || betUser.getBingo() == BingoStatusEnum.CLOSE_RETURNING.getCode().byteValue()){
                         /** 中奖 */
                         winTime = winTime.add(BigDecimal.ONE);

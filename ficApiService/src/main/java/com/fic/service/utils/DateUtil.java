@@ -129,7 +129,8 @@ public class DateUtil {
         return result;
     }
 
-    public static String getThisWeekMonDay(Date date){
+    public static String getThisWeekMonDay(){
+        Date date = new Date();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         Instant instant = date.toInstant();
         ZoneId zoneId = ZoneId.systemDefault();

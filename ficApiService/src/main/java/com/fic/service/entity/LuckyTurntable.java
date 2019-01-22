@@ -23,6 +23,8 @@ public class LuckyTurntable {
 
     private int status;
 
+    private BigDecimal sort;
+
     public Integer getId() {
         return id;
     }
@@ -85,5 +87,13 @@ public class LuckyTurntable {
 
     public void setStatus(int status) {
         this.status = status;
+    }
+
+    public BigDecimal getSort() {
+        return sort;
+    }
+
+    public void setSort(BigDecimal sort) {
+        this.sort = sort;
     }
 }

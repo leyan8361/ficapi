@@ -3,16 +3,17 @@
 <mapper namespace="com.fic.service.mapper.LuckyTurntableMapper">
   <resultMap id="BaseResultMap" type="com.fic.service.entity.LuckyTurntable">
     <id column="id" jdbcType="INTEGER" property="id" />
-    <result column="price_name" jdbcType="VARCHAR" property="priceName" />
+    <result column="price_name" jdbcType="LONGVARCHAR" property="priceName" />
     <result column="price_url" jdbcType="VARCHAR" property="priceUrl" />
     <result column="price_type" jdbcType="INTEGER" property="priceType" />
     <result column="probability" jdbcType="DECIMAL" property="probability" />
     <result column="created_time" jdbcType="TIMESTAMP" property="createdTime" />
     <result column="amount" jdbcType="DECIMAL" property="amount" />
     <result column="status" jdbcType="INTEGER" property="status" />
+    <result column="sort" jdbcType="DECIMAL" property="sort" />
   </resultMap>
   <sql id="Base_Column_List">
-    id, price_name, price_url, price_type, probability, created_time, amount, status
+    id,price_name, price_url, price_type, probability, created_time, amount, status, sort
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
     select
@@ -25,12 +26,14 @@
     where id = #{id,jdbcType=INTEGER}
   </delete>
   <insert id="insert" parameterType="com.fic.service.entity.LuckyTurntable">
-    insert into lucky_turntable (id, price_name, price_url,
-      price_type, probability, created_time,
-      amount, status)
-    values (#{id,jdbcType=INTEGER}, #{priceName,jdbcType=VARCHAR}, #{priceUrl,jdbcType=VARCHAR},
-      #{priceType,jdbcType=INTEGER}, #{probability,jdbcType=DECIMAL}, #{createdTime,jdbcType=TIMESTAMP},
-      #{amount,jdbcType=DECIMAL}, #{status,jdbcType=INTEGER})
+    insert into lucky_turntable (id, price_name,price_url, price_type,
+      probability, created_time, amount,
+      status, sort, price_name
+      )
+    values (#{id,jdbcType=INTEGER}, #{priceName,jdbcType=LONGVARCHAR},#{priceUrl,jdbcType=VARCHAR}, #{priceType,jdbcType=INTEGER},
+      #{probability,jdbcType=DECIMAL}, #{createdTime,jdbcType=TIMESTAMP}, #{amount,jdbcType=DECIMAL},
+      #{status,jdbcType=INTEGER}, #{sort,jdbcType=DECIMAL}, #{priceName,jdbcType=LONGVARCHAR}
+      )
   </insert>
   <insert id="insertSelective" parameterType="com.fic.service.entity.LuckyTurntable">
     insert into lucky_turntable
@@ -38,11 +41,11 @@
       <if test="id != null">
         id,
       </if>
-      <if test="priceName != null">
-        price_name,
-      </if>
       <if test="priceUrl != null">
         price_url,
+      </if>
+      <if test="priceName != null">
+        price_name,
       </if>
       <if test="priceType != null">
         price_type,
@@ -59,13 +62,19 @@
       <if test="status != null">
         status,
       </if>
+      <if test="sort != null">
+        sort,
+      </if>
+      <if test="priceName != null">
+        price_name,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="id != null">
         #{id,jdbcType=INTEGER},
       </if>
       <if test="priceName != null">
-        #{priceName,jdbcType=VARCHAR},
+        #{priceName,jdbcType=LONGVARCHAR},
       </if>
       <if test="priceUrl != null">
         #{priceUrl,jdbcType=VARCHAR},
@@ -85,16 +94,22 @@
       <if test="status != null">
         #{status,jdbcType=INTEGER},
       </if>
+      <if test="sort != null">
+        #{sort,jdbcType=DECIMAL},
+      </if>
+      <if test="priceName != null">
+        #{priceName,jdbcType=LONGVARCHAR},
+      </if>
     </trim>
   </insert>
   <update id="updateByPrimaryKeySelective" parameterType="com.fic.service.entity.LuckyTurntable">
     update lucky_turntable
     <set>
-      <if test="priceName != null">
-        price_name = #{priceName,jdbcType=VARCHAR},
-      </if>
       <if test="priceUrl != null">
         price_url = #{priceUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="priceName != null">
+        price_name = #{priceName,jdbcType=LONGVARCHAR},
       </if>
       <if test="priceType != null">
         price_type = #{priceType,jdbcType=INTEGER},
@@ -111,18 +126,22 @@
       <if test="status != null">
         status = #{status,jdbcType=INTEGER},
       </if>
+      <if test="sort != null">
+        sort = #{sort,jdbcType=DECIMAL},
+      </if>
     </set>
     where id = #{id,jdbcType=INTEGER}
   </update>
   <update id="updateByPrimaryKey" parameterType="com.fic.service.entity.LuckyTurntable">
     update lucky_turntable
-    set price_name = #{priceName,jdbcType=VARCHAR},
+    set price_name = #{priceName,jdbcType=LONGVARCHAR},
       price_url = #{priceUrl,jdbcType=VARCHAR},
       price_type = #{priceType,jdbcType=INTEGER},
       probability = #{probability,jdbcType=DECIMAL},
       created_time = #{createdTime,jdbcType=TIMESTAMP},
       amount = #{amount,jdbcType=DECIMAL},
-      status = #{status,jdbcType=INTEGER}
+      status = #{status,jdbcType=INTEGER},
+      sort = #{sort,jdbcType=DECIMAL}
     where id = #{id,jdbcType=INTEGER}
   </update>
   <select id="findAll" resultMap="BaseResultMap">

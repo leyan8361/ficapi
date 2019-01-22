@@ -47,7 +47,7 @@ public class LuckyTurntableController {
         return ResponseEntity.ok(result);
     }
 
-    @PutMapping("/update")
+    @PostMapping("/update")
     @ApiOperation("更新")
     public ResponseEntity update(@RequestBody LuckTurntableUpdateVo luckTurntableUpdateVo) {
         log.debug(" lucky update!!!");
