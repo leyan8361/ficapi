@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fic.service.mapper.LuckyRecordMapper">
+  <resultMap id="BaseResultMap" type="com.fic.service.entity.LuckyRecord">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="user_id" jdbcType="INTEGER" property="userId" />
+    <result column="bingo_price" jdbcType="INTEGER" property="bingoPrice" />
+    <result column="status" jdbcType="INTEGER" property="status" />
+    <result column="is_receive" jdbcType="INTEGER" property="isReceive" />
+    <result column="created_time" jdbcType="TIMESTAMP" property="createdTime" />
+    <result column="trace" jdbcType="INTEGER" property="trace" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, user_id, bingo_price, status, is_receive, created_time, trace
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from lucky_record
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from lucky_record
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.fic.service.entity.LuckyRecord">
+    insert into lucky_record (id, user_id, bingo_price,
+      status, is_receive, created_time,
+      trace)
+    values (#{id,jdbcType=INTEGER}, #{userId,jdbcType=INTEGER}, #{bingoPrice,jdbcType=INTEGER},
+      #{status,jdbcType=INTEGER}, #{isReceive,jdbcType=INTEGER}, #{createdTime,jdbcType=TIMESTAMP},
+      #{trace,jdbcType=INTEGER})
+  </insert>
+  <insert id="insertSelective" parameterType="com.fic.service.entity.LuckyRecord">
+    insert into lucky_record
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="userId != null">
+        user_id,
+      </if>
+      <if test="bingoPrice != null">
+        bingo_price,
+      </if>
+      <if test="status != null">
+        status,
+      </if>
+      <if test="isReceive != null">
+        is_receive,
+      </if>
+      <if test="createdTime != null">
+        created_time,
+      </if>
+      <if test="trace != null">
+        trace,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="userId != null">
+        #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="bingoPrice != null">
+        #{bingoPrice,jdbcType=INTEGER},
+      </if>
+      <if test="status != null">
+        #{status,jdbcType=INTEGER},
+      </if>
+      <if test="isReceive != null">
+        #{isReceive,jdbcType=INTEGER},
+      </if>
+      <if test="createdTime != null">
+        #{createdTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="trace != null">
+        #{trace,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.fic.service.entity.LuckyRecord">
+    update lucky_record
+    <set>
+      <if test="userId != null">
+        user_id = #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="bingoPrice != null">
+        bingo_price = #{bingoPrice,jdbcType=INTEGER},
+      </if>
+      <if test="status != null">
+        status = #{status,jdbcType=INTEGER},
+      </if>
+      <if test="isReceive != null">
+        is_receive = #{isReceive,jdbcType=INTEGER},
+      </if>
+      <if test="createdTime != null">
+        created_time = #{createdTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="trace != null">
+        trace = #{trace,jdbcType=INTEGER},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.fic.service.entity.LuckyRecord">
+    update lucky_record
+    set user_id = #{userId,jdbcType=INTEGER},
+      bingo_price = #{bingoPrice,jdbcType=INTEGER},
+      status = #{status,jdbcType=INTEGER},
+      is_receive = #{isReceive,jdbcType=INTEGER},
+      created_time = #{createdTime,jdbcType=TIMESTAMP},
+      trace = #{trace,jdbcType=INTEGER}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <select id="findLastTen" resultMap="BaseResultMap">
+    select * from lucky_record where status = 1 order by created_time desc limit 0,10;
+  </select>
+  <select id="findByUserIdWithPage" resultMap="BaseResultMap">
+    select * from lucky_record where user_id = #{userId} and status = 1 order by created_time desc limit #{offset},10;
+  </select>
+  <select id="countByBingoPrice" resultType="int">
+    select count(*) from lucky_record where bingo_price = #{bingoPrice};
+  </select>
+</mapper>

@@ -31,12 +31,12 @@ public class ApiBetScenceController {
             @ApiImplicitParam(dataType = "int", name = "userId", value = "用户ID"),
     })
     @ApiResponses({
-            @ApiResponse(code = 200, message = "SUCCESS",response = BetInfoVo.class)
+            @ApiResponse(code = 200, message = "SUCCESS", response = BetInfoVo.class)
     })
     @ApiOperation("获取竞猜项目列表信息(包含当前项目涵盖的电影信息&票房信息")
-    public ResponseEntity getAllByBetType(@RequestParam("betType")int betType,@RequestParam("userId")int userId) {
+    public ResponseEntity getAllByBetType(@RequestParam("betType") int betType, @RequestParam("userId") int userId) {
         log.debug("Api getScence!!!");
-        ResponseVo result = betScenceService.getScence(betType,userId);
+        ResponseVo result = betScenceService.getScence(betType, userId);
         return ResponseEntity.ok(result);
     }
 
@@ -45,10 +45,10 @@ public class ApiBetScenceController {
             @ApiImplicitParam(dataType = "int", name = "scenceMovieId", value = "场次ID"),
     })
     @ApiResponses({
-            @ApiResponse(code = 200, message = "SUCCESS",response = BetMovieInfoVo.class)
+            @ApiResponse(code = 200, message = "SUCCESS", response = BetMovieInfoVo.class)
     })
     @ApiOperation("获取某个场次信息")
-    public ResponseEntity getByScenceMovieId(@RequestParam("scenceMovieId")int scenceMovieId) {
+    public ResponseEntity getByScenceMovieId(@RequestParam("scenceMovieId") int scenceMovieId) {
         log.debug("Api get scence movie by ID!!!");
         ResponseVo result = betScenceService.getScenceMovie(scenceMovieId);
         return ResponseEntity.ok(result);
@@ -57,10 +57,10 @@ public class ApiBetScenceController {
 
     @GetMapping("/bet")
     @ApiImplicitParams({
-            @ApiImplicitParam(dataType = "int", name = "userId", value = "用户ID",required = true),
-            @ApiImplicitParam(dataType = "int", name = "scenceMovieId", value = "场次ID",required = true),
-            @ApiImplicitParam(dataType = "double", name = "amount", value = "下注金额",required = true),
-            @ApiImplicitParam(dataType = "string", name = "betWhich",required = true,
+            @ApiImplicitParam(dataType = "int", name = "userId", value = "用户ID", required = true),
+            @ApiImplicitParam(dataType = "int", name = "scenceMovieId", value = "场次ID", required = true),
+            @ApiImplicitParam(dataType = "double", name = "amount", value = "下注金额", required = true),
+            @ApiImplicitParam(dataType = "string", name = "betWhich", required = true,
                     value = "下注类型(0,猜单双，单)(1,猜单双，双)(2,猜票房能不能，能)(3,猜票房能不能，不能)(4,选择题A)(5,选择题B)(6,选择题C)(7,选择题D)(当为高级场直接填写累计票房)"),
     })
     @ApiResponses({
@@ -75,32 +75,57 @@ public class ApiBetScenceController {
             @ApiResponse(code = 200, message = "SUCCESS")
     })
     @ApiOperation("下注")
-    public ResponseEntity bet(@RequestParam("userId")int userId,
-                              @RequestParam("scenceMovieId")int scenceMovieId,
+    public ResponseEntity bet(@RequestParam("userId") int userId,
+                              @RequestParam("scenceMovieId") int scenceMovieId,
                               @RequestParam("amount") BigDecimal amount,
                               @RequestParam("betWhich") String betWhich
     ) {
         log.debug("Api bet!!!");
-        if(DateUtil.betLockTime()){
-            return ResponseEntity.ok(new ResponseVo(ErrorCodeEnum.BET_TIME_LOCK,null));
+        if (DateUtil.betLockTime()) {
+            return ResponseEntity.ok(new ResponseVo(ErrorCodeEnum.BET_TIME_LOCK, null));
         }
-        ResponseVo result = betScenceService.bet(userId,scenceMovieId,amount,betWhich);
+        ResponseVo result = betScenceService.bet(userId, scenceMovieId, amount, betWhich);
         return ResponseEntity.ok(result);
     }
 
     @GetMapping("/getMyBetRecord")
     @ApiImplicitParams({
-            @ApiImplicitParam(dataType = "int", name = "userId", value = "用户ID",required = true)
+            @ApiImplicitParam(dataType = "int", name = "userId", value = "用户ID", required = true)
     })
     @ApiResponses({
             @ApiResponse(code = 5009, message = "NO_BET_RECORD"),
-            @ApiResponse(code = 200, message = "SUCCESS",response = BetRecordInfoVo.class)
+            @ApiResponse(code = 200, message = "SUCCESS", response = BetRecordInfoVo.class)
     })
     @ApiOperation("获取我的竞猜记录")
-    public ResponseEntity getMyBetRecord(@RequestParam("userId")int userId
+    public ResponseEntity getMyBetRecord(@RequestParam("userId") int userId
     ) {
         log.debug("Api get bet record !!!");
         ResponseVo result = betScenceService.getMyBetRecord(userId);
+        return ResponseEntity.ok(result);
+    }
+
+//    @GetMapping("/getBetRanking")
+//    @ApiResponses({
+//            @ApiResponse(code = 200, message = "SUCCESS", response = BetRecordInfoVo.class)
+//    })
+//    @ApiOperation("getBetRanking")
+//    public ResponseEntity getBetRanking() {
+//        log.debug("Api get bet record !!!");
+//        ResponseVo result = betScenceService.getBetRanking();
+//        return ResponseEntity.ok(result);
+//    }
+
+    @GetMapping("/getSignData")
+    @ApiImplicitParams({
+            @ApiImplicitParam(dataType = "int", name = "userId", value = "用户ID", required = true)
+    })
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "SUCCESS",response = BetSignVo.class)
+    })
+    @ApiOperation("获取签到记录")
+    public ResponseEntity getSignData(@RequestParam("userId") int userId) {
+        log.debug("Api get bet record !!!");
+        ResponseVo result = betScenceService.getSignData(userId);
         return ResponseEntity.ok(result);
     }
 }

@@ -9,6 +9,7 @@ import com.fic.service.service.BetScenceService;
 import com.fic.service.utils.BeanUtil;
 import com.fic.service.utils.DateUtil;
 import com.fic.service.utils.RegexUtil;
+import okhttp3.internal.http2.ErrorCode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -332,7 +333,6 @@ public class BetScenceServiceImpl implements BetScenceService {
         if(betUsers.size() == 0){
             result.setContinueBetTime(0);
         }else{
-
             /** 去除同一天的 */
             Map<String,BetUser> needToContinue = new HashMap<String,BetUser>();
             List<BetUser> stored = new ArrayList<BetUser>();
@@ -367,33 +367,27 @@ public class BetScenceServiceImpl implements BetScenceService {
                                                                 /**连续竞猜七天*/
                                                                 log.debug("连续竞猜七天 userId : {}",userId);
                                                                 result.setContinueBetTime(7);
-//                                                                if(i + 6 < betUsers.size()){
-//                                                                    i = i + 6;
-//                                                                }
+                                                                i = i + 6;
                                                                 continue;
                                                             }
                                                         }
                                                         log.debug("连续竞猜六天 userId : {}",userId);
-//                                                        i = i + 5;
                                                         result.setContinueBetTime(6);
                                                         break;
                                                     }
                                                 }
                                                 log.debug("连续竞猜五天 userId : {}",userId);
                                                 result.setContinueBetTime(5);
-//                                                i = i + 5;
                                                 break;
                                             }
                                         }
                                         log.debug("连续竞猜四天 userId : {}",userId);
                                         result.setContinueBetTime(4);
-//                                        i = i + 4;
                                         break;
                                     }
                                 }
                                 log.debug("连续竞猜三天 userId : {}",userId);
                                 result.setContinueBetTime(3);
-//                                i = i + 3;
                                 break;
                             }
                         }
@@ -486,9 +480,7 @@ public class BetScenceServiceImpl implements BetScenceService {
 
     @Override
     public ResponseVo getMyBetRecord(int userId) {
-
         BetRecordInfoVo result = new BetRecordInfoVo();
-
         int checkUserExist = userMapper.checkIfExistByUserId(userId);
         if(checkUserExist <=0){
             return new ResponseVo(ErrorCodeEnum.USER_NOT_EXIST,null);
@@ -568,7 +560,6 @@ public class BetScenceServiceImpl implements BetScenceService {
                 recordVo.setFee(recordVo.getAddedPrice().subtract(recordVo.getBingoPrice()));
                 recordVo.setOdds(BigDecimal.ONE);
             }
-
         }
         result.setItems(recordVos);
         Date now  = new Date();
@@ -583,5 +574,110 @@ public class BetScenceServiceImpl implements BetScenceService {
     public ResponseVo getAll() {
         List<BetScence> result = betScenceMapper.findAllOnLine();
         return new ResponseVo(ErrorCodeEnum.SUCCESS,result);
+    }
+
+    @Override
+    public ResponseVo getSignData(int userId) {
+
+        BetSignVo result = new BetSignVo();
+
+        Date now  = new Date();
+        String endDay = DateUtil.getThisWeekSunDay();
+        String startDay = DateUtil.getThisWeekMonDay(now);
+        List<BetUser> betUsers = betUserMapper.findlastWeekAlreadyBetByUserId(startDay,endDay,userId);
+
+        int []betTimeArray = new int[7];
+        betTimeArray[0] = 0;
+        betTimeArray[1] = 0;
+        betTimeArray[2] = 0;
+        betTimeArray[3] = 0;
+        betTimeArray[4] = 0;
+        betTimeArray[5] = 0;
+        betTimeArray[6] = 0;
+
+        result.setBetTime(betTimeArray);
+
+        /** 去除同一天的 */
+        Map<String,BetUser> needToContinue = new HashMap<String,BetUser>();
+        List<BetUser> stored = new ArrayList<BetUser>();
+        for(BetUser betUser: betUsers){
+            int day = DateUtil.getDayOfMonth(betUser.getCreatedTime());
+            if(!needToContinue.containsKey(day+"")){
+                needToContinue.put(day+"",betUser);
+                stored.add(betUser);
+            }
+        }
+
+        /** 本周投注标记 */
+        for(BetUser betUser: stored){
+            int day = DateUtil.getWeekDay(betUser.getCreatedTime());
+            betTimeArray[day-1] = 1;
+        }
+
+        String monDayBegin = DateUtil.getThisWeekMonDayBegin(now);
+        String monDayEnd = DateUtil.getThisWeekMonDayEnd(now);
+        BigDecimal continueReward = balanceStatementMapper.sumContinueReward(userId,monDayBegin,monDayEnd);
+        result.setContinueBetReward(null != continueReward ? continueReward.setScale(0,BigDecimal.ROUND_DOWN):BigDecimal.ZERO);
+
+        result.setBetTime(betTimeArray);
+        return new ResponseVo(ErrorCodeEnum.SUCCESS,result);
+    }
+
+    @Override
+    public ResponseVo getBetRanking() {
+        List<BetRankingVo> resultList = new ArrayList<>();
+        String thisWeekStartDay = DateUtil.getThisWeekMonDay(new Date());
+        String thisWeekSunDay = DateUtil.getThisWeekSunDay();
+        /**查找本周竞猜*/
+        List<Integer> findResult = betUserMapper.findBetRanking(thisWeekStartDay,thisWeekSunDay);
+        if(findResult.size() == 0){
+            return new ResponseVo(ErrorCodeEnum.SUCCESS,resultList);
+        }
+        for(Integer betUserId: findResult){
+            BetRankingVo result = new BetRankingVo();
+            User user = userMapper.get(betUserId);
+            if(null == user){
+                log.error("获取竞猜排名，查询无此用户,user ID :{}",betUserId);
+                continue;
+            }
+            /** 头像 */
+            result.setHimageUrl(uploadProperties.getUrl(user.getHimageUrl()));
+            /** 昵称 */
+            result.setNickName(user.getNickName());
+            /** 胜率 */
+            List<BetUser> betTimes = betUserMapper.findAllByUserIdAndCreatedTime(betUserId,thisWeekStartDay,thisWeekSunDay);
+            BigDecimal winRate = BigDecimal.ZERO;
+            if(betTimes.size()  > 0){
+                BigDecimal winTime = BigDecimal.ZERO;
+                BigDecimal loseTime = BigDecimal.ZERO;
+                for(BetUser betUser : betTimes){
+
+
+
+
+                    if(betUser.getBingo() == BingoStatusEnum.BINGO.getCode().byteValue() || betUser.getBingo() == BingoStatusEnum.CLOSE_RETURNING.getCode().byteValue()){
+                        /** 中奖 */
+                        winTime = winTime.add(BigDecimal.ONE);
+                    }
+                    if(betUser.getBingo() == BingoStatusEnum.UN_BINGO.getCode().byteValue()){
+                        /** 未中奖*/
+                        loseTime = loseTime.add(BigDecimal.ONE);
+                    }
+                }
+                winRate = winTime.divide((winTime.add(loseTime))).setScale(0,BigDecimal.ROUND_DOWN).multiply(new BigDecimal("100"));
+                if(winRate.compareTo(BigDecimal.ONE) < 0){
+                    /** 胜率过低 */
+                    log.debug(" 竞猜排名 胜率过低 winRate : {}",winRate);
+                    continue;
+                }
+                result.setWinRate(winRate);
+            }
+            /** 本周参与天数 */
+            //TODO
+//            List<BetUser> thisWeekBetTimes =  betUserMapper.find
+
+        }
+
+        return null;
     }
 }

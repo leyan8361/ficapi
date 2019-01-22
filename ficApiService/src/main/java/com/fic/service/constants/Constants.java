@@ -26,6 +26,8 @@ public class Constants {
         /**默认头像*/
         public static final String DEFAULT_HEAD_PATH = "/user/default.png";
 
+        /**金句分割符*/
+        public static final String WORDS_CUT = "\\|";
         /**
          * 文件类型
          */
@@ -34,6 +36,7 @@ public class Constants {
         public static final String MEDIA_PREFIX_PLOT="movie/media/plot/";
         public static final String MOVIE_COVER="movie/cover/";
         public static final String BOOT_PAGE_COVER="bootpage/";
+        public static final String LUCK_COVER_PATH="lucky";
         public static final String HEAD_CUT_PATH="user/";
         public static final String USER_AUTH_PATH="user/auth/";
         public static final String USER_AUTH_FRONT_PATH="front/";

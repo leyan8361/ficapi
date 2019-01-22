@@ -129,7 +129,7 @@
     select * from exchange_rate where coin2 = 'TFC' and coin1 = 'CNY';
   </select>
   <select id="findAll" resultMap="BaseResultMap">
-    select * from exchange_rate order by createdTime desc;
+    select * from exchange_rate order by created_time desc;
   </select>
   <select id="findIfExistSame">
     select count(*) from exchange_rate where coin1 like CONCAT('%',#{coin1},'%') and coin2 like CONCAT('%',#{coin2},'%')

@@ -411,4 +411,13 @@
     left join bet_movie m on sb.bet_movie_id = m.id
     where u.id = #{id};
   </select>
+  <select id="findLastWinner" resultMap="BaseResultMap">
+    select * from bet_user where bingo = 1 order by created_time desc limit 0,10;
+  </select>
+  <select id="findBetRanking" resultMap="BaseResultMap">
+    select user_id from bet_user where bingo = 1 and created_time between #{startDay} and #{endDay}  group by user_id;
+  </select>
+  <select id="findAllByUserIdAndCreatedTime" resultMap="BaseResultMap">
+    select * from bet_user where user_id = #{userId} and bingo in (1,2,3) and created_time between #{startDay} and #{endDay};
+  </select>
 </mapper>

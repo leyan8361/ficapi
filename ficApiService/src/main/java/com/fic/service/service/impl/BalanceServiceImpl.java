@@ -157,7 +157,6 @@ public class BalanceServiceImpl implements BalanceService {
         return tradeRecordVoList;
     }
 
-
     @Override
     public ResponseVo getTradeRecordV2(TradeRecordRequestVo condition) {
         TradeRecordInfoV2Vo result = new TradeRecordInfoV2Vo();
@@ -346,6 +345,12 @@ public class BalanceServiceImpl implements BalanceService {
 
             /** 转入 */
             if(balanceStatement.getType() == FinanceTypeEnum.PAYEE_IN.getCode()){
+                item.setAmount(balanceStatement.getAmount().setScale(0,BigDecimal.ROUND_DOWN));
+                item.setCreatedTime(balanceStatement.getCreatedTime());
+            }
+
+            /** 抽奖 */
+            if(balanceStatement.getType() == FinanceTypeEnum.DRAW.getCode()){
                 item.setAmount(balanceStatement.getAmount().setScale(0,BigDecimal.ROUND_DOWN));
                 item.setCreatedTime(balanceStatement.getCreatedTime());
             }

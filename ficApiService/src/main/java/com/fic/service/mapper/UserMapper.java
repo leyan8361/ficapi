@@ -60,4 +60,6 @@ public interface UserMapper {
     int updateUserName(@Param("id") Integer id,@Param("telephone") String telephone);
 
     int updateEmail(@Param("id") Integer id,@Param("email") String email);
+
+    String findTelephoneById(@Param("id") Integer id);
 }

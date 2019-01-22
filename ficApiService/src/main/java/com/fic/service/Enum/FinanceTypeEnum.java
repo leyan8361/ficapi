@@ -20,6 +20,7 @@ public enum FinanceTypeEnum {
     TRANSFER_OUT(10,"转出成功"),
     PAYEE_IN(11,"转入成功"),
     TRANSFERING(12,"转账中")
+    DRAW(13,"抽奖"),
     ;
 
     private Integer code;

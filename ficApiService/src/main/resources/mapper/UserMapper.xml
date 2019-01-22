@@ -421,4 +421,7 @@
   <select id="checkIfExistByEmail" resultType="int">
     select count(*) from user where email = #{email};
   </select>
+  <select id="findTelephoneById" resultType="string">
+    select user_name from user where id = #{id}
+  </select>
 </mapper>

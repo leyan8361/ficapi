@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fic.service.mapper.LuckyTurntableMapper">
+  <resultMap id="BaseResultMap" type="com.fic.service.entity.LuckyTurntable">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="price_name" jdbcType="VARCHAR" property="priceName" />
+    <result column="price_url" jdbcType="VARCHAR" property="priceUrl" />
+    <result column="price_type" jdbcType="INTEGER" property="priceType" />
+    <result column="probability" jdbcType="DECIMAL" property="probability" />
+    <result column="created_time" jdbcType="TIMESTAMP" property="createdTime" />
+    <result column="amount" jdbcType="DECIMAL" property="amount" />
+    <result column="status" jdbcType="INTEGER" property="status" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, price_name, price_url, price_type, probability, created_time, amount, status
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from lucky_turntable
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from lucky_turntable
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.fic.service.entity.LuckyTurntable">
+    insert into lucky_turntable (id, price_name, price_url,
+      price_type, probability, created_time,
+      amount, status)
+    values (#{id,jdbcType=INTEGER}, #{priceName,jdbcType=VARCHAR}, #{priceUrl,jdbcType=VARCHAR},
+      #{priceType,jdbcType=INTEGER}, #{probability,jdbcType=DECIMAL}, #{createdTime,jdbcType=TIMESTAMP},
+      #{amount,jdbcType=DECIMAL}, #{status,jdbcType=INTEGER})
+  </insert>
+  <insert id="insertSelective" parameterType="com.fic.service.entity.LuckyTurntable">
+    insert into lucky_turntable
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="priceName != null">
+        price_name,
+      </if>
+      <if test="priceUrl != null">
+        price_url,
+      </if>
+      <if test="priceType != null">
+        price_type,
+      </if>
+      <if test="probability != null">
+        probability,
+      </if>
+      <if test="createdTime != null">
+        created_time,
+      </if>
+      <if test="amount != null">
+        amount,
+      </if>
+      <if test="status != null">
+        status,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="priceName != null">
+        #{priceName,jdbcType=VARCHAR},
+      </if>
+      <if test="priceUrl != null">
+        #{priceUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="priceType != null">
+        #{priceType,jdbcType=INTEGER},
+      </if>
+      <if test="probability != null">
+        #{probability,jdbcType=DECIMAL},
+      </if>
+      <if test="createdTime != null">
+        #{createdTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="amount != null">
+        #{amount,jdbcType=DECIMAL},
+      </if>
+      <if test="status != null">
+        #{status,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.fic.service.entity.LuckyTurntable">
+    update lucky_turntable
+    <set>
+      <if test="priceName != null">
+        price_name = #{priceName,jdbcType=VARCHAR},
+      </if>
+      <if test="priceUrl != null">
+        price_url = #{priceUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="priceType != null">
+        price_type = #{priceType,jdbcType=INTEGER},
+      </if>
+      <if test="probability != null">
+        probability = #{probability,jdbcType=DECIMAL},
+      </if>
+      <if test="createdTime != null">
+        created_time = #{createdTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="amount != null">
+        amount = #{amount,jdbcType=DECIMAL},
+      </if>
+      <if test="status != null">
+        status = #{status,jdbcType=INTEGER},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.fic.service.entity.LuckyTurntable">
+    update lucky_turntable
+    set price_name = #{priceName,jdbcType=VARCHAR},
+      price_url = #{priceUrl,jdbcType=VARCHAR},
+      price_type = #{priceType,jdbcType=INTEGER},
+      probability = #{probability,jdbcType=DECIMAL},
+      created_time = #{createdTime,jdbcType=TIMESTAMP},
+      amount = #{amount,jdbcType=DECIMAL},
+      status = #{status,jdbcType=INTEGER}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <select id="findAll" resultMap="BaseResultMap">
+    select * from lucky_turntable;
+  </select>
+  <select id="findAllOnShelf" resultMap="BaseResultMap">
+    select * from lucky_turntable where status = 1;
+  </select>
+  <select id="get" resultMap="BaseResultMap">
+    select * from lucky_turntable where id = #{id};
+  </select>
+  <select id="selectCover" resultMap="BaseResultMap">
+    select * from lucky_turntable where price_type = 100;
+  </select>
+  <update id="updateCover">
+    update lucky_turntable set price_url = #{coverUrl} where price_type = 100
+  </update>
+  <select id="sumProbability" resultType="java.math.BigDecimal">
+    select sum(probability) from lucky_turntable and id != #{exceptId};
+  </select>
+</mapper>

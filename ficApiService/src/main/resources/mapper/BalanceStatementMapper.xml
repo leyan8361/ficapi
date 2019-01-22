@@ -199,5 +199,5 @@
   </select>
   <select id="findByUserIdAndTransfing" resultMap="BaseResultMap">
     select * from balance_statement where user_id = #{userId} and trace_id = #{traceId};
-  </select>  
+  </select>
 </mapper>
