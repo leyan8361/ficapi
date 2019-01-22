@@ -148,7 +148,7 @@
     select * from lucky_turntable;
   </select>
   <select id="findAllOnShelf" resultMap="BaseResultMap">
-    select * from lucky_turntable where status = 1 order by sort asc;
+    select * from lucky_turntable where status = 1 order by sort ASC ;
   </select>
   <select id="get" resultMap="BaseResultMap">
     select * from lucky_turntable where id = #{id};

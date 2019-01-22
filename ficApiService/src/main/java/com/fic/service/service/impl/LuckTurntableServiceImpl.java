@@ -189,6 +189,7 @@ public class LuckTurntableServiceImpl implements LuckTurntableService {
                 price.setPriceName(luckyTurntable.getPriceName());
             }
             price.setProbability(luckyTurntable.getProbability());
+            System.out.println(luckyTurntable.getId() + " | " + luckyTurntable.getSort());
             resultList.add(price);
         }
         result.setPriceList(resultList);

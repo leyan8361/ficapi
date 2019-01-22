@@ -669,8 +669,7 @@ public class BetScenceServiceImpl implements BetScenceService {
                 result.setWinRate(winRate);
             }
             /** 本周参与天数 */
-            //TODO
-//            List<BetUser> thisWeekBetTimes =  betUserMapper.find
+//            List<BetUser> thisWeekBetTimes =  betUserMapper
 
         }
 
