@@ -6,6 +6,7 @@ import org.apache.commons.beanutils.converters.*;
 
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.Date;
 
 /**
@@ -19,6 +20,7 @@ public class BeanUtil {
 
         try{
             BigDecimalConverter bd = new BigDecimalConverter(BigDecimal.ZERO);
+            BigIntegerConverter bi = new BigIntegerConverter(BigInteger.ZERO);
             DateConverter dateConverter = new DateConverter();
             dateConverter.setPatterns(new String[]{"yyyy-MM-dd","yyyy-MM-dd HH:mm:ss"});
             ConvertUtils.register(new DateConverter(null),Date.class);
@@ -28,6 +30,7 @@ public class BeanUtil {
             ConvertUtils.register(new ShortConverter(null), Short.class);
             ConvertUtils.register(new IntegerConverter(null), Integer.class);
             ConvertUtils.register(new DoubleConverter(null), Double.class);
+            ConvertUtils.register(new BigIntegerConverter(null),java.math.BigInteger.class);
 //        ConvertUtils.register(dateConverter, Date.class);
             BeanUtils.copyProperties(destObj,source);
         } catch (IllegalAccessException e) {

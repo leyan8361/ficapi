@@ -5,19 +5,21 @@
     <id column="invest_id" jdbcType="INTEGER" property="investId" />
     <result column="user_id" jdbcType="INTEGER" property="userId" />
     <result column="balance" jdbcType="DECIMAL" property="balance" />
-    <result column="reward_balance" jdbcType="DECIMAL" property="rewardBalance" />
-    <result column="status" jdbcType="TINYINT" property="status" />
     <result column="qty" jdbcType="TINYINT" property="qty" />
     <result column="created_time" jdbcType="TIMESTAMP" property="createdTime" />
     <result column="created_by" jdbcType="INTEGER" property="createdBy" />
     <result column="updated_time" jdbcType="TIMESTAMP" property="updatedTime" />
     <result column="updated_by" jdbcType="INTEGER" property="updatedBy" />
+    <result column="reward_balance" jdbcType="DECIMAL" property="rewardBalance" />
+    <result column="status" jdbcType="TINYINT" property="status" />
+    <result column="lock_balance" jdbcType="DECIMAL" property="lockBalance" />
   </resultMap>
   <sql id="Base_Column_List">
-    invest_id, user_id, balance, reward_balance,qty,status,created_time, created_by, updated_time, updated_by
+    invest_id, user_id, balance, qty, created_time, created_by, updated_time, updated_by,
+    reward_balance, status, lock_balance
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
-    select 
+    select
     <include refid="Base_Column_List" />
     from invest
     where invest_id = #{investId,jdbcType=INTEGER}
@@ -27,12 +29,14 @@
     where invest_id = #{investId,jdbcType=INTEGER}
   </delete>
   <insert id="insert" parameterType="com.fic.service.entity.Invest">
-    insert into invest (invest_id, user_id, balance, reward_balance,status,
-      qty, created_time, created_by, 
-      updated_time, updated_by)
-    values (#{investId,jdbcType=INTEGER}, #{userId,jdbcType=INTEGER}, #{balance,jdbcType=DECIMAL}, #{rewardBalance,jdbcType=DECIMAL}, #{status,jdbcType=TINYINT},
-      #{qty,jdbcType=TINYINT}, #{createdTime,jdbcType=TIMESTAMP}, #{createdBy,jdbcType=INTEGER}, 
-      #{updatedTime,jdbcType=TIMESTAMP}, #{updatedBy,jdbcType=INTEGER})
+    insert into invest (invest_id, user_id, balance,
+      qty, created_time, created_by,
+      updated_time, updated_by, reward_balance,
+      status, lock_balance)
+    values (#{investId,jdbcType=INTEGER}, #{userId,jdbcType=INTEGER}, #{balance,jdbcType=DECIMAL},
+      #{qty,jdbcType=TINYINT}, #{createdTime,jdbcType=TIMESTAMP}, #{createdBy,jdbcType=INTEGER},
+      #{updatedTime,jdbcType=TIMESTAMP}, #{updatedBy,jdbcType=INTEGER}, #{rewardBalance,jdbcType=DECIMAL},
+      #{status,jdbcType=TINYINT}, #{lockBalance,jdbcType=DECIMAL})
   </insert>
   <insert id="insertSelective" parameterType="com.fic.service.entity.Invest">
     insert into invest
@@ -45,12 +49,6 @@
       </if>
       <if test="balance != null">
         balance,
-      </if>
-      <if test="rewardBalance != null">
-        reward_balance,
-      </if>
-      <if test="status != null">
-        status,
       </if>
       <if test="qty != null">
         qty,
@@ -67,6 +65,15 @@
       <if test="updatedBy != null">
         updated_by,
       </if>
+      <if test="rewardBalance != null">
+        reward_balance,
+      </if>
+      <if test="status != null">
+        status,
+      </if>
+      <if test="lockBalance != null">
+        lock_balance,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="investId != null">
@@ -77,12 +84,6 @@
       </if>
       <if test="balance != null">
         #{balance,jdbcType=DECIMAL},
-      </if>
-      <if test="rewardBalance != null">
-        #{reward_balance,jdbcType=DECIMAL},
-      </if>
-      <if test="status != null">
-        #{status,jdbcType=TINYINT},
       </if>
       <if test="qty != null">
         #{qty,jdbcType=TINYINT},
@@ -99,6 +100,15 @@
       <if test="updatedBy != null">
         #{updatedBy,jdbcType=INTEGER},
       </if>
+      <if test="rewardBalance != null">
+        #{rewardBalance,jdbcType=DECIMAL},
+      </if>
+      <if test="status != null">
+        #{status,jdbcType=TINYINT},
+      </if>
+      <if test="lockBalance != null">
+        #{lockBalance,jdbcType=DECIMAL},
+      </if>
     </trim>
   </insert>
   <update id="updateByPrimaryKeySelective" parameterType="com.fic.service.entity.Invest">
@@ -109,12 +119,6 @@
       </if>
       <if test="balance != null">
         balance = #{balance,jdbcType=DECIMAL},
-      </if>
-      <if test="rewardBalance != null">
-        reward_balance = #{rewardBalance,jdbcType=DECIMAL},
-      </if>
-      <if test="status != null">
-        status = #{status,jdbcType=TINYINT},
       </if>
       <if test="qty != null">
         qty = #{qty,jdbcType=TINYINT},
@@ -131,21 +135,30 @@
       <if test="updatedBy != null">
         updated_by = #{updatedBy,jdbcType=INTEGER},
       </if>
+      <if test="rewardBalance != null">
+        reward_balance = #{rewardBalance,jdbcType=DECIMAL},
+      </if>
+      <if test="status != null">
+        status = #{status,jdbcType=TINYINT},
+      </if>
+      <if test="lockBalance != null">
+        lock_balance = #{lockBalance,jdbcType=DECIMAL},
+      </if>
     </set>
     where invest_id = #{investId,jdbcType=INTEGER}
   </update>
   <update id="updateByPrimaryKey" parameterType="com.fic.service.entity.Invest">
-
     update invest
     set user_id = #{userId,jdbcType=INTEGER},
       balance = #{balance,jdbcType=DECIMAL},
-      reward_balance = #{rewardBalance,jdbcType=DECIMAL},
-      status = #{status,jdbcType=TINYINT},
       qty = #{qty,jdbcType=TINYINT},
       created_time = #{createdTime,jdbcType=TIMESTAMP},
       created_by = #{createdBy,jdbcType=INTEGER},
       updated_time = #{updatedTime,jdbcType=TIMESTAMP},
-      updated_by = #{updatedBy,jdbcType=INTEGER}
+      updated_by = #{updatedBy,jdbcType=INTEGER},
+      reward_balance = #{rewardBalance,jdbcType=DECIMAL},
+      status = #{status,jdbcType=TINYINT},
+      lock_balance = #{lockBalance,jdbcType=DECIMAL}
     where invest_id = #{investId,jdbcType=INTEGER}
   </update>
   <select id="findByUserId" resultMap="BaseResultMap">
@@ -156,5 +169,8 @@
   </update>
   <update id="updateRewardBalance">
     update invest set reward_balance = #{balance} where user_id = #{userId}
+  </update>
+  <update id="updateLockBalance">
+    update invest set balance = #{balance},lock_balance = #{lockBalance} where user_id = #{userId}
   </update>
 </mapper>

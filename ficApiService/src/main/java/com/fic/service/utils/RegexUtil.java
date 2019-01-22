@@ -41,6 +41,13 @@ public class RegexUtil {
         }
     }
 
+    public static boolean isEmail(String email) {
+        String regex = "\\s*\\w+(?:\\.{0,1}[\\w-]+)*@[a-zA-Z0-9]+(?:[-.][a-zA-Z0-9]+)*\\.[a-zA-Z]+\\s*$";
+        Pattern p = Pattern.compile(regex);
+        Matcher m = p.matcher(email);
+        boolean isMatch = m.matches();
+        return isMatch;
+    }
     public static boolean isPic(String fileName){
         Pattern pattern = Pattern.compile(".*(.png|.jpg|.bmp.|jpeg)$",Pattern.CASE_INSENSITIVE);
         Matcher matcher = pattern.matcher(fileName);
@@ -154,9 +161,17 @@ public class RegexUtil {
         return lastNum;
     }
 
+    public static boolean isCoinType(String coinType){
+        Pattern pattern = Pattern.compile(".*(FTC|TFC|BTC|ETH|USDT|BCH|FIAT)$");
+        Matcher matcher = pattern.matcher(coinType);
+        if(matcher.matches()){
+            return true;
+        }
+        return false;
+    }
+
 
     public static void main(String args[]){
-        BigDecimal boxInfo = new BigDecimal("58713.456465");
-        RegexUtil.getLastNum(boxInfo);
+        System.out.println(RegexUtil.isEmail("11@163.com"));
     }
 }

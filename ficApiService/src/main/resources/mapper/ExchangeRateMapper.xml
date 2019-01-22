@@ -2,6 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.fic.service.mapper.ExchangeRateMapper">
   <resultMap id="BaseResultMap" type="com.fic.service.entity.ExchangeRate">
+    <id column="id" jdbcType="INTEGER" property="id" />
     <result column="coin1" jdbcType="VARCHAR" property="coin1" />
     <result column="coin2" jdbcType="VARCHAR" property="coin2" />
     <result column="rate" jdbcType="DECIMAL" property="rate" />
@@ -10,17 +11,33 @@
     <result column="updated_time" jdbcType="TIMESTAMP" property="updatedTime" />
     <result column="updated_by" jdbcType="INTEGER" property="updatedBy" />
   </resultMap>
+  <sql id="Base_Column_List">
+    id, coin1, coin2, rate, created_time, created_by, updated_time, updated_by
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from exchange_rate
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from exchange_rate
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
   <insert id="insert" parameterType="com.fic.service.entity.ExchangeRate">
-    insert into exchange_rate (coin1, coin2, rate, 
-      created_time, created_by, updated_time, 
-      updated_by)
-    values (#{coin1,jdbcType=VARCHAR}, #{coin2,jdbcType=VARCHAR}, #{rate,jdbcType=DECIMAL}, 
-      #{createdTime,jdbcType=TIMESTAMP}, #{createdBy,jdbcType=INTEGER}, #{updatedTime,jdbcType=TIMESTAMP}, 
-      #{updatedBy,jdbcType=INTEGER})
+    insert into exchange_rate (id, coin1, coin2,
+      rate, created_time, created_by,
+      updated_time, updated_by)
+    values (#{id,jdbcType=INTEGER}, #{coin1,jdbcType=VARCHAR}, #{coin2,jdbcType=VARCHAR},
+      #{rate,jdbcType=DECIMAL}, #{createdTime,jdbcType=TIMESTAMP}, #{createdBy,jdbcType=INTEGER},
+      #{updatedTime,jdbcType=TIMESTAMP}, #{updatedBy,jdbcType=INTEGER})
   </insert>
   <insert id="insertSelective" parameterType="com.fic.service.entity.ExchangeRate">
     insert into exchange_rate
     <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
       <if test="coin1 != null">
         coin1,
       </if>
@@ -44,6 +61,9 @@
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=INTEGER},
+      </if>
       <if test="coin1 != null">
         #{coin1,jdbcType=VARCHAR},
       </if>
@@ -67,7 +87,51 @@
       </if>
     </trim>
   </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.fic.service.entity.ExchangeRate">
+    update exchange_rate
+    <set>
+      <if test="coin1 != null">
+        coin1 = #{coin1,jdbcType=VARCHAR},
+      </if>
+      <if test="coin2 != null">
+        coin2 = #{coin2,jdbcType=VARCHAR},
+      </if>
+      <if test="rate != null">
+        rate = #{rate,jdbcType=DECIMAL},
+      </if>
+      <if test="createdTime != null">
+        created_time = #{createdTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createdBy != null">
+        created_by = #{createdBy,jdbcType=INTEGER},
+      </if>
+      <if test="updatedTime != null">
+        updated_time = #{updatedTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updatedBy != null">
+        updated_by = #{updatedBy,jdbcType=INTEGER},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.fic.service.entity.ExchangeRate">
+    update exchange_rate
+    set coin1 = #{coin1,jdbcType=VARCHAR},
+      coin2 = #{coin2,jdbcType=VARCHAR},
+      rate = #{rate,jdbcType=DECIMAL},
+      created_time = #{createdTime,jdbcType=TIMESTAMP},
+      created_by = #{createdBy,jdbcType=INTEGER},
+      updated_time = #{updatedTime,jdbcType=TIMESTAMP},
+      updated_by = #{updatedBy,jdbcType=INTEGER}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
   <select id="findFicExchangeCny" resultMap="BaseResultMap">
-    select * from exchange_rate where coin2 = 'FIC' and coin1 = 'CNY';
+    select * from exchange_rate where coin2 = 'TFC' and coin1 = 'CNY';
+  </select>
+  <select id="findAll" resultMap="BaseResultMap">
+    select * from exchange_rate order by createdTime desc;
+  </select>
+  <select id="findIfExistSame">
+    select count(*) from exchange_rate where coin1 like CONCAT('%',#{coin1},'%') and coin2 like CONCAT('%',#{coin2},'%')
   </select>
 </mapper>

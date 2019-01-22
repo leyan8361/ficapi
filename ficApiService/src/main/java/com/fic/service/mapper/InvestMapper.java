@@ -27,4 +27,6 @@ public interface InvestMapper {
     int updateBalance(BigDecimal balance,Integer userId);
 
     int updateRewardBalance(BigDecimal balance,Integer userId);
+
+    int updateLockBalance(BigDecimal balance,BigDecimal lockBalance,Integer userId);
 }

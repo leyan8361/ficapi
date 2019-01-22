@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fic.service.mapper.TickerRecordMapper">
+  <resultMap id="BaseResultMap" type="com.fic.service.entity.TickerRecord">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="instrument_id" jdbcType="VARCHAR" property="instrumentId" />
+    <result column="best_ask" jdbcType="VARCHAR" property="bestAsk" />
+    <result column="best_bid" jdbcType="VARCHAR" property="bestBid" />
+    <result column="open_24h" jdbcType="VARCHAR" property="open24h" />
+    <result column="high_24h" jdbcType="VARCHAR" property="high24h" />
+    <result column="low_24h" jdbcType="VARCHAR" property="low24h" />
+    <result column="timestamp" jdbcType="VARCHAR" property="timestamp" />
+    <result column="last" jdbcType="VARCHAR" property="last" />
+    <result column="created_time" jdbcType="TIMESTAMP" property="createdTime" />
+    <result column="coin_type" jdbcType="VARCHAR" property="coinType" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, instrument_id, best_ask, best_bid, open_24h, high_24h, low_24h, timestamp, last,
+    created_time, coin_type
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from ticker_record
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from ticker_record
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.fic.service.entity.TickerRecord">
+    insert into ticker_record (id, instrument_id, best_ask,
+      best_bid, open_24h, high_24h,
+      low_24h, timestamp, last,
+      created_time, coin_type)
+    values (#{id,jdbcType=INTEGER}, #{instrumentId,jdbcType=VARCHAR}, #{bestAsk,jdbcType=VARCHAR},
+      #{bestBid,jdbcType=VARCHAR}, #{open24h,jdbcType=VARCHAR}, #{high24h,jdbcType=VARCHAR},
+      #{low24h,jdbcType=VARCHAR}, #{timestamp,jdbcType=VARCHAR}, #{last,jdbcType=VARCHAR},
+      #{createdTime,jdbcType=TIMESTAMP}, #{coinType,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.fic.service.entity.TickerRecord">
+    insert into ticker_record
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="instrumentId != null">
+        instrument_id,
+      </if>
+      <if test="bestAsk != null">
+        best_ask,
+      </if>
+      <if test="bestBid != null">
+        best_bid,
+      </if>
+      <if test="open24h != null">
+        open_24h,
+      </if>
+      <if test="high24h != null">
+        high_24h,
+      </if>
+      <if test="low24h != null">
+        low_24h,
+      </if>
+      <if test="timestamp != null">
+        timestamp,
+      </if>
+      <if test="last != null">
+        last,
+      </if>
+      <if test="createdTime != null">
+        created_time,
+      </if>
+      <if test="coinType != null">
+        coin_type,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="instrumentId != null">
+        #{instrumentId,jdbcType=VARCHAR},
+      </if>
+      <if test="bestAsk != null">
+        #{bestAsk,jdbcType=VARCHAR},
+      </if>
+      <if test="bestBid != null">
+        #{bestBid,jdbcType=VARCHAR},
+      </if>
+      <if test="open24h != null">
+        #{open24h,jdbcType=VARCHAR},
+      </if>
+      <if test="high24h != null">
+        #{high24h,jdbcType=VARCHAR},
+      </if>
+      <if test="low24h != null">
+        #{low24h,jdbcType=VARCHAR},
+      </if>
+      <if test="timestamp != null">
+        #{timestamp,jdbcType=VARCHAR},
+      </if>
+      <if test="last != null">
+        #{last,jdbcType=VARCHAR},
+      </if>
+      <if test="createdTime != null">
+        #{createdTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="coinType != null">
+        #{coinType,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.fic.service.entity.TickerRecord">
+    update ticker_record
+    <set>
+      <if test="instrumentId != null">
+        instrument_id = #{instrumentId,jdbcType=VARCHAR},
+      </if>
+      <if test="bestAsk != null">
+        best_ask = #{bestAsk,jdbcType=VARCHAR},
+      </if>
+      <if test="bestBid != null">
+        best_bid = #{bestBid,jdbcType=VARCHAR},
+      </if>
+      <if test="open24h != null">
+        open_24h = #{open24h,jdbcType=VARCHAR},
+      </if>
+      <if test="high24h != null">
+        high_24h = #{high24h,jdbcType=VARCHAR},
+      </if>
+      <if test="low24h != null">
+        low_24h = #{low24h,jdbcType=VARCHAR},
+      </if>
+      <if test="timestamp != null">
+        timestamp = #{timestamp,jdbcType=VARCHAR},
+      </if>
+      <if test="last != null">
+        last = #{last,jdbcType=VARCHAR},
+      </if>
+      <if test="createdTime != null">
+        created_time = #{createdTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="coinType != null">
+        coin_type = #{coinType,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.fic.service.entity.TickerRecord">
+    update ticker_record
+    set instrument_id = #{instrumentId,jdbcType=VARCHAR},
+      best_ask = #{bestAsk,jdbcType=VARCHAR},
+      best_bid = #{bestBid,jdbcType=VARCHAR},
+      open_24h = #{open24h,jdbcType=VARCHAR},
+      high_24h = #{high24h,jdbcType=VARCHAR},
+      low_24h = #{low24h,jdbcType=VARCHAR},
+      timestamp = #{timestamp,jdbcType=VARCHAR},
+      last = #{last,jdbcType=VARCHAR},
+      created_time = #{createdTime,jdbcType=TIMESTAMP},
+      coin_type = #{coinType,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

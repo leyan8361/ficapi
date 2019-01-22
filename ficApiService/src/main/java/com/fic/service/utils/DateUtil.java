@@ -372,6 +372,12 @@ public class DateUtil {
         return false;
     }
 
+    public static String getTheMaxStartDay(){
+        return "1970-01-01 01:00:00";
+    }
+    public static String getTheMaxEndDay(){
+        return "2500-12-31 23:59:00";
+    }
 
     public static int getSubstractDay(Date date1,Date date2)
     {
@@ -408,34 +414,13 @@ public class DateUtil {
         }
     }
 
+    public static String getUnixTime() {
+        return Instant.now().toString();
+    }
 
-    public static void main(String args[]) throws ParseException {
-//        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-//        LocalDateTime date = LocalDateTime.of(2019,1,2,00,19,59);
-//        LocalDateTime zeroTime = LocalDateTime.of(date.getYear(),date.getMonth(),date.getDayOfMonth(),00,00,00);
-//        LocalDateTime endLock= LocalDateTime.of(date.getYear(),date.getMonth(),date.getDayOfMonth(),00,20,00);
-//        LocalDateTime startLock  = LocalDateTime.of(date.getYear(),date.getMonth(),date.getDayOfMonth(),23,50,00);
-//        /** 开奖(23:50:00 - 00:20:00)，不允许下注*/
-//        if(date.compareTo(zeroTime) >=0 && date.compareTo(endLock) <= 0){
-//            /** 00:00:00 <= bet Time < 00:20:00*/
-//            System.out.println("00:00:00 <= bet Time < 00:20:00");
-//        }
-//        if(date.compareTo(startLock) >=0 && date.compareTo(zeroTime) >= 0){
-//            /** 23:50:00 <= bet Time < 00:00:00*/
-//            System.out.println("23:50:00 <= bet Time < 00:00:00");
-//        }
-//        //        if(date.compareTo(startLock) <=0){
-////            return true;
-////        }
-////        if(date.compareTo(endLock) >=0){
-////            return true;
-////        }
-//        System.out.println("start lock time : " + formatter.format(startLock));
-//        System.out.println("end lock time : " + formatter.format(endLock));
-//        System.out.println("now time : " + formatter.format(date));
-        Date now = new Date();
-        System.out.println(DateUtil.getThisWeekMonDayBegin(now));
-        System.out.println(DateUtil.getThisWeekMonDayEnd(now));
+    public static void main(String args[]){
+        BigDecimal test = new BigDecimal("12345678910.10987654321");
+        System.out.println(test.toString());
     }
 
 }
