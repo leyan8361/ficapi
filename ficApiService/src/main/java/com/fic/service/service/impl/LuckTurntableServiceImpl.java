@@ -246,12 +246,12 @@ public class LuckTurntableServiceImpl implements LuckTurntableService {
                 return new ResponseVo(ErrorCodeEnum.LUCK_WORD_MISSED,null);
             }
             String words[] = luckyTurntable.getPriceName().split(Constants.WORDS_CUT);
-            for(int i = 0 ; i < words.length; i++){
-                if(word.equals(words[i])){
-                    luckyRecord.setTrace(i-1);
-                    break;
-                }
-            }
+//            for(int i = 0 ; i < words.length; i++){
+//                if(word.equals(words[i])){
+//                    luckyRecord.setTrace(i-1);
+//                    break;
+//                }
+//            }
             if(null == luckyRecord.getTrace()){
                 log.error("金句异常,无匹配金句");
                 throw new RuntimeException();

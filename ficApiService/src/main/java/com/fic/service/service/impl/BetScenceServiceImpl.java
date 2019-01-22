@@ -651,6 +651,10 @@ public class BetScenceServiceImpl implements BetScenceService {
                 BigDecimal winTime = BigDecimal.ZERO;
                 BigDecimal loseTime = BigDecimal.ZERO;
                 for(BetUser betUser : betTimes){
+
+
+
+
                     if(betUser.getBingo() == BingoStatusEnum.BINGO.getCode().byteValue() || betUser.getBingo() == BingoStatusEnum.CLOSE_RETURNING.getCode().byteValue()){
                         /** 中奖 */
                         winTime = winTime.add(BigDecimal.ONE);

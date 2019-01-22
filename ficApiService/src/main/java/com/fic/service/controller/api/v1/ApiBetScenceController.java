@@ -104,16 +104,16 @@ public class ApiBetScenceController {
         return ResponseEntity.ok(result);
     }
 
-    @GetMapping("/getBetRanking")
-    @ApiResponses({
-            @ApiResponse(code = 200, message = "SUCCESS", response = BetRecordInfoVo.class)
-    })
-    @ApiOperation("getBetRanking")
-    public ResponseEntity getBetRanking(@RequestParam("userId") int userId) {
-        log.debug("Api get bet record !!!");
-        ResponseVo result = betScenceService.getMyBetRecord(userId);
-        return ResponseEntity.ok(result);
-    }
+//    @GetMapping("/getBetRanking")
+//    @ApiResponses({
+//            @ApiResponse(code = 200, message = "SUCCESS", response = BetRecordInfoVo.class)
+//    })
+//    @ApiOperation("getBetRanking")
+//    public ResponseEntity getBetRanking() {
+//        log.debug("Api get bet record !!!");
+//        ResponseVo result = betScenceService.getBetRanking();
+//        return ResponseEntity.ok(result);
+//    }
 
     @GetMapping("/getSignData")
     @ApiImplicitParams({
