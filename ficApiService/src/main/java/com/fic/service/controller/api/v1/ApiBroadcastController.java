@@ -1,12 +1,10 @@
 package com.fic.service.controller.api.v1;
 
+import com.fic.service.Vo.BetBroadcastVo;
 import com.fic.service.Vo.ResponseVo;
 import com.fic.service.controller.BootPageController;
 import com.fic.service.service.BroadcastService;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +28,9 @@ public class ApiBroadcastController {
     @ApiOperation("根据类型获取播报信息最新10条")
     @ApiImplicitParams({
             @ApiImplicitParam(dataType = "int", name = "type", value = "播报类型(0,竞猜）(1,抽奖)"),
+    })
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "SUCCESS",response = BetBroadcastVo.class)
     })
     public ResponseEntity getByType(@RequestParam int type) {
         log.debug(" get broadcast !!!");
