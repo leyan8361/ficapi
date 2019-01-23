@@ -156,6 +156,28 @@ public class DateUtil {
         return result;
     }
 
+    public static String getLastSevenDayStart(){
+        Date date = new Date();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        Instant instant = date.toInstant();
+        ZoneId zoneId = ZoneId.systemDefault();
+        LocalDateTime localDate = instant.atZone(zoneId).toLocalDateTime();
+        localDate = localDate.minusDays(7).withHour(0).withMinute(0).withSecond(01);
+        String result = formatter.format(localDate);
+        return result;
+    }
+
+    public static String getTodayDayEnd(){
+        Date date = new Date();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        Instant instant = date.toInstant();
+        ZoneId zoneId = ZoneId.systemDefault();
+        LocalDateTime localDate = instant.atZone(zoneId).toLocalDateTime();
+        localDate = localDate.withHour(23).withMinute(59).withSecond(58);
+        String result = formatter.format(localDate);
+        return result;
+    }
+
     public static String getThisWeekMonDayBegin(Date date){
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         Instant instant = date.toInstant();
