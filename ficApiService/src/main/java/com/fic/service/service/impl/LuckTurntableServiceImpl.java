@@ -7,10 +7,7 @@ import com.fic.service.constants.UploadProperties;
 import com.fic.service.entity.*;
 import com.fic.service.mapper.*;
 import com.fic.service.service.LuckTurntableService;
-import com.fic.service.utils.DateUtil;
-import com.fic.service.utils.FileUtil;
-import com.fic.service.utils.RandomUtil;
-import com.fic.service.utils.RegexUtil;
+import com.fic.service.utils.*;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -58,7 +55,6 @@ public class LuckTurntableServiceImpl implements LuckTurntableService {
     @Override
     @Transactional(isolation= Isolation.READ_COMMITTED,propagation= Propagation.REQUIRED,rollbackFor = Exception.class)
     public ResponseVo uploadCoverFile(MultipartFile coverFile) {
-
         LuckyTurntable exist = luckyTurntableMapper.selectCover();
         String fileType = "";
         String fileName = coverFile.getOriginalFilename();
@@ -84,6 +80,57 @@ public class LuckTurntableServiceImpl implements LuckTurntableService {
         }
         if(saveResult <=0){
             log.error("上传转盘封面失败，奖品无数据");
+            throw new RuntimeException();
+        }
+        return new ResponseVo(ErrorCodeEnum.SUCCESS,null);
+    }
+
+
+    @Override
+    public ResponseVo getLuckRecord(int condition) {
+        List<LuckyRecord> findResult = luckyRecordMapper.findAllByReceive(condition);
+        List<OmLuckyRecordVo> resultList = new ArrayList<>();
+        for(LuckyRecord find: findResult){
+            OmLuckyRecordVo result = new OmLuckyRecordVo();
+            BeanUtil.copy(result,find);
+            String telephone = userMapper.getUserNameByUserId(find.getUserId());
+            if(StringUtils.isNotEmpty(telephone)){
+                result.setTelephone(telephone);
+            }
+            resultList.add(result);
+        }
+        return new ResponseVo(ErrorCodeEnum.SUCCESS,resultList);
+    }
+
+    @Override
+    @Transactional(isolation= Isolation.READ_COMMITTED,propagation= Propagation.REQUIRED,rollbackFor = Exception.class)
+    public ResponseVo approveReceive(int recordId) {
+        int updateResult = luckyRecordMapper.updateReceiveById(recordId);
+        if(updateResult <=0){
+            log.error("审核抽奖数据兑换失败");
+            throw new RuntimeException();
+        }
+        return new ResponseVo(ErrorCodeEnum.SUCCESS,null);
+    }
+
+
+    @Override
+    @Transactional(isolation= Isolation.READ_COMMITTED,propagation= Propagation.REQUIRED,rollbackFor = Exception.class)
+    public ResponseVo onShelf(int id) {
+        int updateResult = luckyTurntableMapper.updateStatusById(id,ShelfStatusEnum.ON_SHELF.getCode());
+        if(updateResult <=0){
+            log.error("上架礼品失败");
+            throw new RuntimeException();
+        }
+        return new ResponseVo(ErrorCodeEnum.SUCCESS,null);
+    }
+
+    @Override
+    @Transactional(isolation= Isolation.READ_COMMITTED,propagation= Propagation.REQUIRED,rollbackFor = Exception.class)
+    public ResponseVo shelf(int id) {
+        int updateResult = luckyTurntableMapper.updateStatusById(id,ShelfStatusEnum.SHELF.getCode());
+        if(updateResult <=0){
+            log.error("下架礼品失败");
             throw new RuntimeException();
         }
         return new ResponseVo(ErrorCodeEnum.SUCCESS,null);

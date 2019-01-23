@@ -2,6 +2,7 @@ package com.fic.service.mapper;
 
 import com.fic.service.entity.LuckyRecord;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -26,4 +27,8 @@ public interface LuckyRecordMapper {
     List<LuckyRecord> findByUserIdWithPage(int userId,int offset);
 
     int countByBingoPrice(int bingoPrice);
+
+    List<LuckyRecord> findAllByReceive(@Param("whichType") int whichType);
+
+    int updateReceiveById(int id);
 }

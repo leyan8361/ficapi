@@ -18,6 +18,14 @@ public interface LuckTurntableService {
 
     ResponseVo uploadCoverFile(MultipartFile coverFile);
 
+    ResponseVo approveReceive(int recordId);
+
+    ResponseVo getLuckRecord(int condition);
+
+    ResponseVo onShelf(int id);
+
+    ResponseVo shelf(int id);
+
     /** api */
     ResponseVo getPrice(int userId);
 

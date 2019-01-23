@@ -162,4 +162,7 @@
   <select id="sumProbability" resultType="java.math.BigDecimal">
     select sum(probability) from lucky_turntable and id != #{exceptId};
   </select>
+  <update id="updateStatusById">
+    update lucky_turntable set status = #{status} where id = #{id}
+  </update>
 </mapper>

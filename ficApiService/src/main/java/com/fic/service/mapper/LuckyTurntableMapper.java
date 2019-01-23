@@ -33,4 +33,6 @@ public interface LuckyTurntableMapper {
     int updateCover(String coverUrl);
 
     BigDecimal sumProbability(int exceptId);
+
+    int updateStatusById(int id,int status);
 }

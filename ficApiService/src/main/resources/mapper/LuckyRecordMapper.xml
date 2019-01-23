@@ -123,4 +123,20 @@
   <select id="countByBingoPrice" resultType="int">
     select count(*) from lucky_record where bingo_price = #{bingoPrice};
   </select>
+  <select id="findAllByReceive" resultMap="BaseResultMap">
+    select * from lucky_record where
+    <if test="whichType == 0">
+      1=1
+    </if>
+    <if test="whichType == 1">
+      is_receive = 0
+    </if>
+    <if test="whichType == 2">
+      is_receive = 1
+    </if>
+    ;
+  </select>
+  <update id="updateReceiveById">
+    update lucky_record set is_receive = 1 where id = #{id} and status = 1
+  </update>
 </mapper>
