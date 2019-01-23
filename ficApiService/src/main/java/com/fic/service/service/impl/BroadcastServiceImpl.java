@@ -5,6 +5,7 @@ import com.fic.service.Enum.ErrorCodeEnum;
 import com.fic.service.Enum.PriceTypeEnum;
 import com.fic.service.Vo.BetBroadcastVo;
 import com.fic.service.Vo.ResponseVo;
+import com.fic.service.constants.Constants;
 import com.fic.service.entity.BetUser;
 import com.fic.service.entity.LuckyRecord;
 import com.fic.service.entity.LuckyTurntable;
@@ -60,10 +61,17 @@ public class BroadcastServiceImpl implements BroadcastService {
                 if(null == luckyTurntable.getPriceType()){
                     continue;
                 }
-                if(luckyTurntable.getPriceType() == PriceTypeEnum.FIFTY.code() ||
+                if(luckyTurntable.getPriceType() == PriceTypeEnum.TEN.code() ||
+                        luckyTurntable.getPriceType() == PriceTypeEnum.FIFTY.code() ||
                         luckyTurntable.getPriceType() == PriceTypeEnum.FIVE_THOUSAND.code() ||
                         luckyTurntable.getPriceType() == PriceTypeEnum.TWO_HUNDRED.code()){
                     broadcastVo.setPrice(luckyTurntable.getAmount().setScale(0,BigDecimal.ROUND_DOWN).toString() + "TFC");
+                }else if(luckyTurntable.getPriceType() == PriceTypeEnum.WORD.code()){
+                    String words[] = luckyTurntable.getPriceName().split(Constants.WORDS_CUT);
+                    if(words.length >= record.getTrace()){
+                        String word = words[record.getTrace()];
+                        broadcastVo.setPrice("淘影说：" +word);
+                    }
                 }else{
                     broadcastVo.setPrice(luckyTurntable.getPriceName());
                 }
