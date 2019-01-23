@@ -701,7 +701,7 @@ public class BetScenceServiceImpl implements BetScenceService {
                 }
             }
             thisWeekBetTimes = stored;
-            result.setPlayInDay(thisWeekBetTimes.size());
+            result.setPlayInDay(thisWeekBetTimes.size()-1);
             /** 今日竞猜 */
             String toDay = DateUtil.getToDayStart();
             /** 今天下注的，过滤了同部电影*/

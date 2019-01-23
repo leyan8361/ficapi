@@ -430,6 +430,18 @@
     LEFT JOIN bet_movie m ON m.id = bm.bet_movie_id
     WHERE
         b.user_id = #{userId}
-    AND b.created_time >= #{today} group by m.bet_movie_name
+    AND b.created_time >= #{today}
   </select>
+   <!-- <select id="fin2dToDayRecord" resultType="com.fic.service.Vo.BetRankingRecordVo">
+    SELECT
+	m.bet_movie_name as movieName,
+	b.bet_which as betWhich
+    FROM
+        bet_user b
+    LEFT JOIN bet_scence_movie bm ON bm.id = b.bet_scence_movie_id
+    LEFT JOIN bet_movie m ON m.id = bm.bet_movie_id
+    WHERE
+        b.user_id = #{userId}
+    AND b.created_time >= #{today} group by m.bet_movie_name
+  </select>-->
 </mapper>

@@ -104,16 +104,16 @@ public class ApiBetScenceController {
         return ResponseEntity.ok(result);
     }
 
-//    @GetMapping("/getBetRanking")
-//    @ApiResponses({
-//            @ApiResponse(code = 200, message = "SUCCESS", response = BetRankingVo.class)
-//    })
-//    @ApiOperation("获取竞猜排行榜")
-//    public ResponseEntity getBetRanking() {
-//        log.debug("Api getBetRanking !!!");
-//        ResponseVo result = betScenceService.getBetRanking();
-//        return ResponseEntity.ok(result);
-//    }
+    @GetMapping("/getBetRanking")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "SUCCESS", response = BetRankingVo.class)
+    })
+    @ApiOperation("获取竞猜排行榜")
+    public ResponseEntity getBetRanking() {
+        log.debug("Api getBetRanking !!!");
+        ResponseVo result = betScenceService.getBetRanking();
+        return ResponseEntity.ok(result);
+    }
 
     @GetMapping("/getSignData")
     @ApiImplicitParams({
