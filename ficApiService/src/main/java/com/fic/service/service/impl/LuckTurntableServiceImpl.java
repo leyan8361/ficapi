@@ -268,15 +268,19 @@ public class LuckTurntableServiceImpl implements LuckTurntableService {
                     log.error("获取记录异常，奖励已不存在");
                     throw new RuntimeException();
                 }
-                result.setPriceName(luckyTurntable.getPriceName());
                 if(luckyTurntable.getPriceType() == PriceTypeEnum.WORD.code()){
-                    String words[] = luckyTurntable.getPriceName().split(Constants.WORDS_CUT);
-                    if(words.length < 1){
-                        continue;
-                    }
-                    String word = words[RandomUtil.getRandomNum(words.length)];
-                    result.setPriceName(word);
+                    result.setPriceName(null);
+                }else{
+                    result.setPriceName(luckyTurntable.getPriceName());
                 }
+//                if(luckyTurntable.getPriceType() == PriceTypeEnum.WORD.code()){
+//                    String words[] = luckyTurntable.getPriceName().split(Constants.WORDS_CUT);
+//                    if(words.length < 1){
+//                        continue;
+//                    }
+//                    String word = words[RandomUtil.getRandomNum(words.length)];
+//                    result.setPriceName(word);
+//                }
                 result.setPriceType(luckyTurntable.getPriceType());
             }
             result.setRecordId(findResult.getId());
