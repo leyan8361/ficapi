@@ -14,7 +14,7 @@ public class LuckTurntablePriceVo {
     @ApiModelProperty(value = "奖品名称")
     private String priceName;
 
-    @ApiModelProperty(value = "奖品类型")
+    @ApiModelProperty(value = "奖品类型(0,10TFC)(1,影视金句)(2,微信号)(3,礼品)(4,电影票)(5,50TFC)(6,200TFC)(7,5000TFC)")
     private Integer priceType;
 
     @ApiModelProperty(value = "奖品中奖概率")
@@ -42,5 +42,13 @@ public class LuckTurntablePriceVo {
 
     public void setProbability(BigDecimal probability) {
         this.probability = probability;
+    }
+
+    public Integer getPriceType() {
+        return priceType;
+    }
+
+    public void setPriceType(Integer priceType) {
+        this.priceType = priceType;
     }
 }
