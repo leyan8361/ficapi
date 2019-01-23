@@ -60,35 +60,19 @@ public class ApiLuckTurntableController {
         return ResponseEntity.ok(result);
     }
 
-//    @GetMapping("/receive")
-//    @ApiOperation("Api-领取")
-//    @ApiImplicitParams({
-//            @ApiImplicitParam(dataType = "int", name = "userId", value = "用户ID", required = true),
-//            @ApiImplicitParam(dataType = "int", name = "recordId", value = "记录ID", required = true)
-//    })
-//    @ApiResponses({
-//            @ApiResponse(code = 5012, message = "LUCK_RECORD_NOT_FOUND"),
-//            @ApiResponse(code = 5014, message = "LUCK_RECORD_IS_UN_BINGO"),
-//            @ApiResponse(code = 200, message = "SUCCESS")
-//    })
-//    public ResponseEntity receive(@RequestParam Integer userId,@RequestParam Integer recordId){
-//        log.debug(" do receive action !!");
-//        ResponseVo result = luckTurntableService.receive(userId,recordId);
-//        return ResponseEntity.ok(result);
-//    }
-
     @GetMapping("/getBingoRecord")
     @ApiOperation("Api-获取中奖记录")
     @ApiImplicitParams({
             @ApiImplicitParam(dataType = "int", name = "userId", value = "用户ID", required = true),
-            @ApiImplicitParam(dataType = "int", name = "pageNum", value = "页码", required = true)
+            @ApiImplicitParam(dataType = "int", name = "pageNum", value = "页码", required = true),
+            @ApiImplicitParam(dataType = "int", name = "type", value = "(0,全部)(1,未领取)(2,已领取)", required = true)
     })
     @ApiResponses({
             @ApiResponse(code = 200, message = "SUCCESS",response = LuckTurntableRecordVo.class)
     })
-    public ResponseEntity getBingoRecord(@RequestParam int userId,@RequestParam int pageNum){
+    public ResponseEntity getBingoRecord(@RequestParam int userId,@RequestParam int pageNum,@RequestParam int type){
         log.debug(" do getBingoRecord action !!");
-        ResponseVo result = luckTurntableService.getBingoRecord(userId,pageNum);
+        ResponseVo result = luckTurntableService.getBingoRecord(userId,pageNum,type);
         return ResponseEntity.ok(result);
     }
 }

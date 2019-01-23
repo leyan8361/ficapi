@@ -250,7 +250,7 @@ public class LuckTurntableServiceImpl implements LuckTurntableService {
     }
 
     @Override
-    public ResponseVo getBingoRecord(int userId,int pageNum) {
+    public ResponseVo getBingoRecord(int userId,int pageNum,int type) {
         PageVo pageVo = new PageVo();
         pageVo.setPageNum(pageNum);
         User user = userMapper.get(userId);
@@ -259,7 +259,7 @@ public class LuckTurntableServiceImpl implements LuckTurntableService {
             return new ResponseVo(ErrorCodeEnum.USER_NOT_EXIST,null);
         }
         List<LuckTurntableRecordVo> resultList = new ArrayList<>();
-        List<LuckyRecord> findByUserId = luckyRecordMapper.findByUserIdWithPage(userId,pageVo.getPageNum()*10);
+        List<LuckyRecord> findByUserId = luckyRecordMapper.findByUserIdWithPage(userId,pageVo.getPageNum()*10,type);
         for(LuckyRecord findResult: findByUserId){
             LuckTurntableRecordVo result = new LuckTurntableRecordVo();
             if(null != findResult.getBingoPrice()){
@@ -381,7 +381,8 @@ public class LuckTurntableServiceImpl implements LuckTurntableService {
         }
 
         /** 币 */
-        if(luckyTurntable.getPriceType() == PriceTypeEnum.FIFTY.code() ||
+        if(luckyTurntable.getPriceType() == PriceTypeEnum.TEN.code() ||
+                luckyTurntable.getPriceType() == PriceTypeEnum.FIFTY.code() ||
                 luckyTurntable.getPriceType() == PriceTypeEnum.FIVE_THOUSAND.code() ||
                 luckyTurntable.getPriceType() == PriceTypeEnum.TWO_HUNDRED.code()
         ){

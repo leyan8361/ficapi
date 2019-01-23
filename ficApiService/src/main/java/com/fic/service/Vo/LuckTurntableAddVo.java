@@ -12,7 +12,7 @@ public class LuckTurntableAddVo {
     @ApiModelProperty(value = "奖品名称",required = true,example = "")
     private String priceName;
 
-    @ApiModelProperty(value = "(100,封面)(0,谢谢参与)(1,影视金句)(2,微信号)(3,礼品)(4,电影票)(5,50TFC)(6,200TFC)(7,5000TFC)",required = true,example = "0")
+    @ApiModelProperty(value = "(100,封面)(0,10TFC)(1,影视金句)(2,微信号)(3,礼品)(4,电影票)(5,50TFC)(6,200TFC)(7,5000TFC)",required = true,example = "0")
     private Integer priceType;
 
     @ApiModelProperty(value = "概率",required = true,example = "1")

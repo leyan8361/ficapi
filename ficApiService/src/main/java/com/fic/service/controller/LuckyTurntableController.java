@@ -71,30 +71,6 @@ public class LuckyTurntableController {
         return ResponseEntity.ok(result);
     }
 
-    @GetMapping("/getLuckRecord")
-    @ApiOperation("查看用户抽奖数据 (0,查看所有)(1,待审批)(2,已审批)")
-    @ApiImplicitParams({
-            @ApiImplicitParam(dataType = "int", name = "condition", value = " (0,查看所有)(1,待审批)(2,已审批)", required = true)
-    })
-    @ApiResponses({
-            @ApiResponse(code = 200, message = "SUCCESS",response = OmLuckyRecordVo.class)
-    })
-    public ResponseEntity getLuckRecord(@RequestParam int condition) {
-        log.debug(" lucky getLuckRecord!!!");
-        ResponseVo result = luckTurntableService.getLuckRecord(condition);
-        return ResponseEntity.ok(result);
-    }
-
-    @GetMapping("/approveReceive")
-    @ApiOperation("修改用户抽奖已领取")
-    @ApiImplicitParams({
-            @ApiImplicitParam(dataType = "int", name = "recordId", value = "用户抽奖记录ID", required = true)
-    })
-    public ResponseEntity approveReceive(@RequestParam int recordId) {
-        log.debug(" lucky approveReceive!!!");
-        ResponseVo result = luckTurntableService.approveReceive(recordId);
-        return ResponseEntity.ok(result);
-    }
 
     @GetMapping("/onShelf")
     @ApiOperation("上架")

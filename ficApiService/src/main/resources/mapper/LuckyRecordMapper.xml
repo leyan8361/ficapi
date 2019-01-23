@@ -118,7 +118,14 @@
     select * from lucky_record where status = 1 order by created_time desc limit 0,10;
   </select>
   <select id="findByUserIdWithPage" resultMap="BaseResultMap">
-    select * from lucky_record where user_id = #{userId} and status = 1 order by created_time desc limit #{offset},10;
+    select * from lucky_record where user_id = #{userId} and status = 1
+    <if test="type == 1">
+      and is_receive = 0
+    </if>
+    <if test="type == 2">
+      and is_receive = 1
+    </if>
+    order by created_time desc limit #{offset},10;
   </select>
   <select id="countByBingoPrice" resultType="int">
     select count(*) from lucky_record where bingo_price = #{bingoPrice};

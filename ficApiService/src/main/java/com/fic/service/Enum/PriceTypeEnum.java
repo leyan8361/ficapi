@@ -6,16 +6,16 @@ package com.fic.service.Enum;
  *   @Discription:
 **/
 public enum PriceTypeEnum {
-//(0,谢谢参与)(1,影视金句)(2,微信号)(3,礼品)(4,)(5,50TFC)(6,200TFC)(7,5000TFC)
-    THANK(0),//谢谢参与
-    WORD(1),//影视金句
-    WE_CHAT(2),//微信号
+//(0,10TFC)(1,影视金句)(2,微信号)(3,礼品)(4,)(5,50TFC)(6,200TFC)(7,5000TFC)
+    TEN(0),
+    WORD(1),
+    WE_CHAT(2),
     GIFT(3),//礼品
-    MOVIE_TICKET(4),//电影票
-    FIFTY(5),//500TFC
-    TWO_HUNDRED(6),//200TFC
-    FIVE_THOUSAND(7),//5000TFC
-    COVER(100)//封面
+    MOVIE_TICKET(4),
+    FIFTY(5),
+    TWO_HUNDRED(6),
+    FIVE_THOUSAND(7),
+    COVER(100)
     ;
 
     private Integer code;
