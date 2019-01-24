@@ -94,4 +94,12 @@ public class LuckyTurntableController {
         return ResponseEntity.ok(result);
     }
 
+    @GetMapping("/statics")
+    @ApiOperation("统计")
+    public ResponseEntity statics() {
+        log.debug(" lucky statics!!!");
+        ResponseVo result = luckTurntableService.statics();
+        return ResponseEntity.ok(result);
+    }
+
 }

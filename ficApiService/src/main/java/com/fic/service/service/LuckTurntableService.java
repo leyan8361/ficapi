@@ -26,6 +26,8 @@ public interface LuckTurntableService {
 
     ResponseVo shelf(int id);
 
+    ResponseVo statics();
+
     /** api */
     ResponseVo getPrice(int userId);
 

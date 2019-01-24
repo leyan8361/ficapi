@@ -31,4 +31,6 @@ public interface LuckyRecordMapper {
     List<LuckyRecord> findAllByReceive(@Param("whichType") int whichType);
 
     int updateReceiveById(int id);
+
+    List<LuckyRecord> findAll();
 }

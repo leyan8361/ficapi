@@ -27,4 +27,27 @@ public enum PriceTypeEnum {
     PriceTypeEnum(Integer code) {
         this.code = code;
     }
+
+    public  static PriceTypeEnum getCode(int code){
+        switch (code){
+            case 0:
+                return PriceTypeEnum.TEN;
+            case 1:
+                return PriceTypeEnum.WORD;
+            case 2:
+                return PriceTypeEnum.WE_CHAT;
+            case 3:
+                return PriceTypeEnum.GIFT;
+            case 4:
+                return PriceTypeEnum.MOVIE_TICKET;
+            case 5:
+                return PriceTypeEnum.FIFTY;
+            case 6:
+                return PriceTypeEnum.TWO_HUNDRED;
+            case 7:
+                return PriceTypeEnum.FIVE_THOUSAND;
+                default:
+                    return null;
+        }
+    }
 }
