@@ -35,4 +35,6 @@ public interface LuckyTurntableMapper {
     BigDecimal sumProbability(int exceptId);
 
     int updateStatusById(int id,int status);
+
+    LuckyTurntable findByType(int type);
 }

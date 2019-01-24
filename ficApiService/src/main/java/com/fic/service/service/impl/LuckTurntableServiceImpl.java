@@ -297,6 +297,7 @@ public class LuckTurntableServiceImpl implements LuckTurntableService {
     @Transactional(isolation= Isolation.READ_COMMITTED,propagation= Propagation.REQUIRED,rollbackFor = Exception.class)
     public ResponseVo draw(Integer userId, Integer priceId,String word) {
         BigDecimal fee = new BigDecimal("20");
+        LuckyDrawResultVo result = new LuckyDrawResultVo();
         LuckyRecord luckyRecord = new LuckyRecord();
         User user = userMapper.get(userId);
         if(null == user){
@@ -380,6 +381,7 @@ public class LuckTurntableServiceImpl implements LuckTurntableService {
                 balance = balance.subtract(restAmount);
             }
         }
+        invest.setBalance(balance);
         int updateInvestResult = investMapper.updateBalanceAndRewardBalance(balance,rewardBalance,userId);
         if(updateInvestResult <=0){
             log.error("更新奖励余额失败");
@@ -411,9 +413,18 @@ public class LuckTurntableServiceImpl implements LuckTurntableService {
                 log.error("领取，更新资产失败，user id :{}",userId);
                 throw new RuntimeException();
             }
+            invest.setBalance(wonBalance);
         }
 
-        return new ResponseVo(ErrorCodeEnum.SUCCESS,null);
+        LuckyTurntable wordsTurntable = luckyTurntableMapper.findByType(PriceTypeEnum.WORD.code());
+        if(null == wordsTurntable  || StringUtils.isEmpty(wordsTurntable.getPriceName())){
+            log.debug("查找金句失败");
+            throw new RuntimeException();
+        }
+        String words[] = wordsTurntable.getPriceName().split(Constants.WORDS_CUT);
+        result.setWord(words[RandomUtil.getRandomNum(words.length)]);
+        result.setBalance(invest.getBalance());
+        return new ResponseVo(ErrorCodeEnum.SUCCESS,result);
     }
 
     @Override

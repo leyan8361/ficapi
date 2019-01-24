@@ -1,9 +1,6 @@
 package com.fic.service.controller.api.v1;
 
-import com.fic.service.Vo.LuckTurntableInfoVo;
-import com.fic.service.Vo.LuckTurntablePriceVo;
-import com.fic.service.Vo.LuckTurntableRecordVo;
-import com.fic.service.Vo.ResponseVo;
+import com.fic.service.Vo.*;
 import com.fic.service.service.LuckTurntableService;
 import io.swagger.annotations.*;
 import org.slf4j.Logger;
@@ -52,7 +49,7 @@ public class ApiLuckTurntableController {
             @ApiImplicitParam(dataType = "string", name = "word", value = "中奖金句时传入金句", required = false)
     })
     @ApiResponses({
-            @ApiResponse(code = 200, message = "SUCCESS")
+            @ApiResponse(code = 200, message = "SUCCESS",response = LuckyDrawResultVo.class)
     })
     public ResponseEntity draw(@RequestParam Integer userId,@RequestParam Integer priceId,@RequestParam(required = false) String word){
         log.debug(" do draw action !!");
