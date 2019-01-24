@@ -2,10 +2,7 @@ package com.fic.service.service.impl;
 
 import com.fic.service.constants.WeChatProperties;
 import com.fic.service.service.WebChatPayService;
-import com.fic.service.utils.DateUtil;
-import com.fic.service.utils.MD5Util;
-import com.fic.service.utils.WxPaySignatureUtils;
-import com.fic.service.utils.XmlUtil;
+import com.fic.service.utils.*;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,8 +18,12 @@ public class WebChatPayServiceImpl implements WebChatPayService {
 
     private final Logger log = LoggerFactory.getLogger(WebChatPayServiceImpl.class);
 
+    private static final String WX_PAY_URL = "https://api.mch.weixin.qq.com/pay/unifiedorder";
+
     @Autowired
     WeChatProperties weChatProperties;
+    @Autowired
+    OkHttpUtil okHttpUtil;
 
     @Override
     public JSONObject wxPay(String total_fee, String imei, String ip, String openid) {
@@ -45,6 +46,8 @@ public class WebChatPayServiceImpl implements WebChatPayService {
         payParam.put("sign", WxPaySignatureUtils.signatureSHA1(payParam));
 
         String xml = XmlUtil.mapToXml(payParam);
+
+
         return null;
     }
 
