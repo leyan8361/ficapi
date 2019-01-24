@@ -1,6 +1,7 @@
 package com.fic.service.utils;
 
 import com.fic.service.Vo.BetRankingVo;
+import com.fic.service.entity.BalanceStatement;
 
 import java.util.List;
 
@@ -40,6 +41,35 @@ public class SortUtil {
             rankingVos.set(high,rankingVos.get(low));
         }
         rankingVos.set(low,temp);
+        return low ;
+    }
+
+    public static void quickSortBalanceState(List<BalanceStatement> balanceStatements, int low, int high){
+        if(low < high) {
+            int middle = getMiddleBalanceState(balanceStatements,low,high);
+            getMiddleBalanceState(balanceStatements, low, middle-1);
+            getMiddleBalanceState(balanceStatements, middle+1, high);
+        }
+    }
+    public static int getMiddleBalanceState(List<BalanceStatement> balanceStatements, int low,int high){
+        if(low == balanceStatements.size() || high == balanceStatements.size()){
+            return low-1;
+        }
+        BalanceStatement temp = balanceStatements.get(low);
+        while(low < high)
+        {
+            while(low < high && balanceStatements.get(high).getCreatedTime().compareTo(temp.getCreatedTime()) <= 0)
+            {
+                high--;
+            }
+            balanceStatements.set(low,balanceStatements.get(high));
+            while(low < high && balanceStatements.get(low).getCreatedTime().compareTo(temp.getCreatedTime()) > 0)
+            {
+                low++;
+            }
+            balanceStatements.set(high,balanceStatements.get(low));
+        }
+        balanceStatements.set(low,temp);
         return low ;
     }
 

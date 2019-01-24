@@ -3,7 +3,9 @@ package com.fic.service.controller;
 import com.fic.service.Enum.CoinUSDEnum;
 import com.fic.service.Vo.QueryTransactionResultVo;
 import com.fic.service.constants.ServerProperties;
+import com.fic.service.entity.BalanceStatement;
 import com.fic.service.entity.TickerRecord;
+import com.fic.service.mapper.BalanceStatementMapper;
 import com.fic.service.mapper.UserMapper;
 import com.fic.service.scheduled.BetScheduledService;
 import com.fic.service.scheduled.TransactionScheduledService;
@@ -11,9 +13,7 @@ import com.fic.service.service.MaoYanService;
 import com.fic.service.service.SmsService;
 import com.fic.service.service.TransactionRecordService;
 import com.fic.service.service.WalletService;
-import com.fic.service.utils.EmailUtil;
-import com.fic.service.utils.OkCoinUtil;
-import com.fic.service.utils.Web3jUtil;
+import com.fic.service.utils.*;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
@@ -26,6 +26,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  *   @Author Xie
@@ -61,6 +65,8 @@ public class HomeController {
     OkCoinUtil okCoinUtil;
     @Autowired
     EmailUtil emailUtil;
+    @Autowired
+    BalanceStatementMapper balanceStatementMapper;
 
     @GetMapping("/home")
     @ApiOperation("获取首页数据 , 拉票房，开奖")
@@ -131,5 +137,51 @@ public class HomeController {
         return ResponseEntity.ok().body("success");
     }
 
+    @GetMapping("/testDistributionBalance")
+    public ResponseEntity testDistributionBalance() {
+
+        List<BalanceStatement> balanceStatements = balanceStatementMapper.findAll();
+
+        Map<String,List<BalanceStatement>> needSortMap = new HashMap<>();
+
+        for(BalanceStatement ba :  balanceStatements){
+            if(null == ba.getAmount() && null!=ba.getInvestDetailId()){
+                continue;
+            }
+            if(needSortMap.containsKey(ba.getUserId()+"")){
+                needSortMap.get(ba.getUserId()+"").add(ba);
+            }else{
+                List<BalanceStatement> newBalan = new ArrayList<>();
+                newBalan.add(ba);
+                needSortMap.put(ba.getUserId()+"",newBalan);
+            }
+        }
+
+        int count = 0;
+        for(Map.Entry<String,List<BalanceStatement>> map : needSortMap.entrySet()){
+            List<BalanceStatement> sortList = map.getValue();
+            if(sortList.size() > 1){
+                for(int i = 0 ; i < sortList.size(); i++){
+                    for(int j = 0; j < sortList.size()-1-i; j++){
+                        if(sortList.get(j).getCreatedTime().compareTo(sortList.get(j+1).getCreatedTime()) >0){
+                            BalanceStatement temp = sortList.get(j);
+                            sortList.set(j,sortList.get(j+1));
+                            sortList.set(j+1,temp);
+                        }
+                    }
+                }
+            }
+            count = count+1;
+//            if(map.getKey().equals(114+"")){
+//                for(BalanceStatement result: sortList){
+                    System.out.println("用户ID : "+map.getKey() + " | " + " 余额 第一条 时间 : " + DateUtil.dateToStrMatSec(sortList.get(0).getCreatedTime()) +" 金额  : " + sortList.get(0).getAmount());
+//                }
+//            }
+         }
+
+
+        System.out.println("总数 : " + count);
+        return ResponseEntity.ok().body("success");
+    }
 
 }
