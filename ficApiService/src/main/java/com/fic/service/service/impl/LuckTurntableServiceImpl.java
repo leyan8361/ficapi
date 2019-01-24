@@ -76,6 +76,7 @@ public class LuckTurntableServiceImpl implements LuckTurntableService {
             exist.setPriceUrl(newPath);
             saveResult = luckyTurntableMapper.insertSelective(exist);
         }else{
+            exist.setPriceUrl(newPath);
             saveResult = luckyTurntableMapper.updateByPrimaryKey(exist);
         }
         if(saveResult <=0){
