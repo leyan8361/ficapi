@@ -6,6 +6,10 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @ConfigurationProperties
 public class WeChatProperties {
 
+
+    @Value("${we.chat.app.id}")
+    String appId;
+
     @Value("${we.chat.api.key}")
     String apiKey;
 
@@ -37,5 +41,13 @@ public class WeChatProperties {
 
     public void setNotifyUrl(String notifyUrl) {
         this.notifyUrl = notifyUrl;
+    }
+
+    public String getAppId() {
+        return appId;
+    }
+
+    public void setAppId(String appId) {
+        this.appId = appId;
     }
 }
