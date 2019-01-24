@@ -19,6 +19,9 @@ public class WeChatProperties {
     @Value("${we.chat.notify.url}")
     String notifyUrl;
 
+    @Value("${we.chat.mch}")
+    String merchandiseCode;
+
     public String getApiKey() {
         return apiKey;
     }
@@ -49,5 +52,13 @@ public class WeChatProperties {
 
     public void setAppId(String appId) {
         this.appId = appId;
+    }
+
+    public String getMerchandiseCode() {
+        return merchandiseCode;
+    }
+
+    public void setMerchandiseCode(String merchandiseCode) {
+        this.merchandiseCode = merchandiseCode;
     }
 }
