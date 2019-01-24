@@ -19,9 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 @Service
 public class LuckTurntableServiceImpl implements LuckTurntableService {
@@ -459,5 +457,78 @@ public class LuckTurntableServiceImpl implements LuckTurntableService {
             throw new RuntimeException();
         }
         return new ResponseVo(ErrorCodeEnum.SUCCESS,null);
+    }
+
+    @Override
+    public ResponseVo statics() {
+        List<LuckTurntableStaticsVo> resultList = new ArrayList<>();
+        Map<String,List<LuckyRecord>> groupMap = new HashMap<>();
+        List<LuckyRecord> luckyRecords = luckyRecordMapper.findAll();
+        for(LuckyRecord luckyRecord : luckyRecords){
+            String key = luckyRecord.getUserId().toString();
+            if(groupMap.containsKey(key)){
+                groupMap.get(key).add(luckyRecord);
+            }else{
+                List<LuckyRecord> newRecordList = new ArrayList<>();
+                newRecordList.add(luckyRecord);
+                groupMap.put(key,newRecordList);
+            }
+        }
+        for(Map.Entry<String,List<LuckyRecord>> map : groupMap.entrySet()){
+            List<LuckyRecord> userRecords = map.getValue();
+            LuckTurntableStaticsVo result = new LuckTurntableStaticsVo();
+
+            String telephone = userMapper.findTelephoneById(Integer.valueOf(map.getKey()));
+            result.setTelephone(telephone);
+            result.setUserId(Integer.valueOf(map.getKey()));
+
+            Integer ten = 0;//PriceTypeEnum.TEN.code();
+            Integer word = 0;//PriceTypeEnum.WORD.code();
+            Integer weChat = 0;//PriceTypeEnum.WE_CHAT.code();
+            Integer gift = 0;//PriceTypeEnum.GIFT.code();
+            Integer movieTicket = 0;//PriceTypeEnum.MOVIE_TICKET.code();
+            Integer fifty = 0;//PriceTypeEnum.FIFTY.code();
+            Integer twoHundred = 0;//PriceTypeEnum.TWO_HUNDRED.code();
+            Integer fiveThousand  = 0;//PriceTypeEnum.FIVE_THOUSAND.code();
+            Integer totalDraw = 0;
+            for(LuckyRecord luckyRecord : userRecords){
+                LuckyTurntable luckyTurntable = luckyTurntableMapper.get(luckyRecord.getBingoPrice());
+                totalDraw = totalDraw+1;
+                switch (PriceTypeEnum.getCode(luckyTurntable.getPriceType())){
+                    case TEN:
+                        ten = ten+1;
+                        break;
+                    case WORD:
+                        word = word+1;
+                        break;
+                    case WE_CHAT:
+                        weChat = weChat+1;
+                        break;
+                    case GIFT:
+                        gift = gift +1;
+                        break;
+                    case MOVIE_TICKET:
+                        movieTicket = movieTicket+1;
+                        break;
+                    case FIFTY:
+                        fifty = fifty+1;
+                        break;
+                    case TWO_HUNDRED:
+                        twoHundred = twoHundred+1;
+                        break;
+                    case FIVE_THOUSAND:
+                        fiveThousand = fiveThousand+1;
+                        break;
+                        default:
+                            continue;
+                }
+            }
+            String bingoStr = "[10TFC："+ten+"次; 金句："+word+"；微信号："+weChat+"次；礼品："+gift+"次；电影票："+movieTicket+"次; 50TFC:"+fifty+"次；" +
+                    "200TFC："+twoHundred+"次；5000TFC：" +fiveThousand+"次]";
+            result.setBingoStr(bingoStr);
+            result.setTotalDraw(totalDraw);
+            resultList.add(result);
+        }
+        return new ResponseVo(ErrorCodeEnum.SUCCESS,resultList);
     }
 }

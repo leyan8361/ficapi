@@ -146,4 +146,7 @@
   <update id="updateReceiveById">
     update lucky_record set is_receive = 1 where id = #{id} and status = 1
   </update>
+  <select id="findAll" resultMap="BaseResultMap">
+    select * from lucky_record;
+  </select>
 </mapper>
