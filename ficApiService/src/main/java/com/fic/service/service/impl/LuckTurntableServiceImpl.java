@@ -269,7 +269,7 @@ public class LuckTurntableServiceImpl implements LuckTurntableService {
                     throw new RuntimeException();
                 }
                 if(luckyTurntable.getPriceType() == PriceTypeEnum.WORD.code()){
-                    result.setPriceName("影视金句");
+                    result.setPriceName("淘影说");
                 }else{
                     result.setPriceName(luckyTurntable.getPriceName());
                 }
