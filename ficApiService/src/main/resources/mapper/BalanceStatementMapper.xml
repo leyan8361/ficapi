@@ -171,7 +171,7 @@
       and type in (10,11)
     </if>
     <if test="param.type == 4">
-      and type not in (4,6,7,8,9,10,11,12)
+      and type not in (4,6,7,8,9,10,11,12,13)
     </if>
     order by b.created_time desc limit #{offset},10;
   </select>
@@ -187,7 +187,7 @@
       and type in (10,11)
     </if>
     <if test="type == 4">
-      and type not in (4,6,7,8,9,10,11,12)
+      and type not in (4,6,7,8,9,10,11,12,13)
     </if>
     ;
   </select>
