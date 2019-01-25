@@ -5,20 +5,28 @@ package com.fic.service.Enum;
  */
 public enum WxPayStatusEnum {
 
-    NOTPAY(0),
-    SUCCESS(1),
-    USERPAYING(2),
-    PAYERROR(3),
+    NOTPAY(0,"NOTPAY"),
+    SUCCESS(1,"SUCCESS"),
+    USERPAYING(2,"USERPAYING"),
+    PAYERROR(3,"PAYERROR"),
     REFUND(4),
     CLOSED(5);
 
     private Integer code;
 
-    WxPayStatusEnum(Integer code) {
+    private String value;
+
+
+    WxPayStatusEnum(Integer code, String value) {
         this.code = code;
+        this.value = value;
     }
 
     public Integer code() {
         return code;
+    }
+
+    public String value() {
+        return value;
     }
 }

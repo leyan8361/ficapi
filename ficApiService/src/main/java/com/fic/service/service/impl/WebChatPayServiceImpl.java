@@ -77,6 +77,15 @@ public class WebChatPayServiceImpl implements WebChatPayService {
             log.error("微信支付，创建预支付订单失败 result xml : {}", resultStr);
             return new ResponseVo(ErrorCodeEnum.WE_CHAT_PAY_FAILED, null);
         }
+
+        /**验证签名*/
+        String returnSign = resultMap.get("sign");
+        if(!returnSign.equals(sign)){
+            /**验证签名失败*/
+            log.error("微信支付，创建预支付订单，验证签名失败 result xml :{}, request xml :{}",resultStr,xml);
+            return new ResponseVo(ErrorCodeEnum.WE_CHAT_PAY_FAILED, null);
+        }
+
         wxPayInfo.setStatus(WxOrderStatusEnum.BUILD_ORDER_SUCCESS.code());
         wxPayInfo.setPayStatus(WxPayStatusEnum.NOTPAY.code());
         wxPayInfo.setPrepayId(resultMap.get("prepay_id"));//微信支付标识，用于app请求支付
@@ -135,6 +144,14 @@ public class WebChatPayServiceImpl implements WebChatPayService {
             log.error("微信支付，查询订单失败 result xml : {}", resultStr);
             return new ResponseVo(ErrorCodeEnum.WE_CHAT_PAY_QUERY_FAILED, null);
         }
+        /**验证签名*/
+        String returnSign = resultMap.get("sign");
+        if(!returnSign.equals(sign)){
+            /**验证签名失败*/
+            log.error("微信支付，查询订单失败，验证签名失败 result xml :{}, request xml :{}",resultStr,xml);
+            return new ResponseVo(ErrorCodeEnum.WE_CHAT_PAY_QUERY_FAILED, null);
+        }
+
 
         return null;
     }
