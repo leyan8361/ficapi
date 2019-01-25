@@ -1,14 +1,15 @@
 package com.fic.service.service.impl;
 
 import com.fic.service.constants.WeChatProperties;
+import com.fic.service.entity.WxPayInfo;
 import com.fic.service.service.WebChatPayService;
 import com.fic.service.utils.*;
-import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -26,18 +27,19 @@ public class WebChatPayServiceImpl implements WebChatPayService {
     OkHttpUtil okHttpUtil;
 
     @Override
-    public JSONObject wxPay(String total_fee, String imei, String ip, String openid) {
+    public WxPayInfo wxPay(String total_fee, String imei, String ip, String openid) {
         log.debug("创建预支付订单 totalFee:{}, imei:{},ip:{},openId:{}",total_fee,imei,ip,openid);
+        WxPayInfo result = new WxPayInfo();
         Map<String,String> payParam = new HashMap<>();
         String orderNum = getOrderNum();
-        payParam.put("appid", weChatProperties.getAppId()); //小程序 aapid
+        payParam.put("appid", weChatProperties.getAppId()); //TODO 小程序 aapid
         payParam.put("attach", orderNum);//附加数据
         payParam.put("body", "淘影充值");//商品描述
         payParam.put("device_info", "WEB");//
-        payParam.put("mch_id", weChatProperties.getMerchandiseCode());//商品号
+        payParam.put("mch_id", weChatProperties.getMerchandiseCode());//TODO 商品号
         payParam.put("nonce_str", getNonceStr());//随机字符串
-        payParam.put("notify_url", weChatProperties.getNotifyUrl());//异步通知URL
-        payParam.put("openid", openid);//微信用户 id
+        payParam.put("notify_url", weChatProperties.getNotifyUrl());//TODO 异步通知URL
+        payParam.put("openid", openid);//TODO 微信用户 id
         payParam.put("out_trade_no", orderNum);//订单号
         payParam.put("sign_type", "MD5");
         payParam.put("spbill_create_ip", ip);
@@ -46,9 +48,22 @@ public class WebChatPayServiceImpl implements WebChatPayService {
         payParam.put("sign", WxPaySignatureUtils.signatureSHA1(payParam));
 
         String xml = XmlUtil.mapToXml(payParam);
-
-
-        return null;
+        String resultStr = okHttpUtil.postForWxPay(WX_PAY_URL,xml);
+        if(null == resultStr){
+            log.error("微信支付，创建预支付订单失败");
+            return null;
+        }
+        Map<String,String> resultMap = XmlUtil.xmlToMap(resultStr);
+        if(resultMap.get("return_code").indexOf("SUCCESS") != -1){
+            result.setStatus(0);
+        }else{
+            result.setStatus(1);
+        }
+        result.setOrderNum(orderNum);
+        result.setCreatedTime(new Date());
+        result.setRequestBody(xml);
+        result.setResponseBody(resultStr);
+        return result;
     }
 
     private static String getOrderNum(){

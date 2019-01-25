@@ -3,6 +3,8 @@ package com.fic.service.utils;
 import com.fic.service.service.impl.WebChatPayServiceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -11,7 +13,10 @@ import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 import java.io.StringWriter;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -22,6 +27,7 @@ import java.util.Map;
 public class XmlUtil {
 
     private static final Logger log = LoggerFactory.getLogger(XmlUtil.class);
+
     /**
      * 将Map转换为XML格式的字符串
      *
@@ -65,4 +71,33 @@ public class XmlUtil {
         return output;
     }
 
+    /**
+     * xml to map
+     * @param xml
+     * @return
+     * @throws Exception
+     */
+    public static Map<String, String> xmlToMap(String xml){
+        try {
+            Map<String, String> data = new HashMap<>();
+            DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
+            InputStream stream = new ByteArrayInputStream(xml.getBytes("UTF-8"));
+            org.w3c.dom.Document doc = documentBuilder.parse(stream);
+            doc.getDocumentElement().normalize();
+            NodeList nodeList = doc.getDocumentElement().getChildNodes();
+            for (int idx = 0; idx < nodeList.getLength(); ++idx) {
+                Node node = nodeList.item(idx);
+                if (node.getNodeType() == Node.ELEMENT_NODE) {
+                    org.w3c.dom.Element element = (org.w3c.dom.Element) node;
+                    data.put(element.getNodeName(), element.getTextContent());
+                }
+            }
+            stream.close();
+            return data;
+        } catch (Exception ex) {
+            log.error("Invalid XML, can not convert to map, exception :{},xml :{}",ex,xml);
+            throw new RuntimeException();
+        }
+    }
 }

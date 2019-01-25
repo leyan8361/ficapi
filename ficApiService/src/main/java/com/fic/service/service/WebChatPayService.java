@@ -1,12 +1,12 @@
 package com.fic.service.service;
 
 
-import org.json.JSONObject;
+import com.fic.service.entity.WxPayInfo;
 
 public interface WebChatPayService {
 
     /**
      * 统计下单
      */
-    JSONObject wxPay(String total_fee, String imei, String ip, String openid);
+    WxPayInfo wxPay(String total_fee, String imei, String ip, String openid);
 }

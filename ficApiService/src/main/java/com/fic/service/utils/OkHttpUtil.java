@@ -123,24 +123,24 @@ public class OkHttpUtil {
         return result;
     }
 
-    public JSONObject postForWxPay(String url,String xml){
+    public String postForWxPay(String url,String xml){
         MediaType xmlContentType = MediaType.parse("application/xml; charset=utf-8");
         RequestBody body = RequestBody.create(xmlContentType,xml);
         Request request = new Request.Builder().url(url).post(body).build();
         Call call = client.newCall(request);
-        JSONObject result = null;
+        String result = null;
         try{
             Response response = call.execute();
             if(response.isSuccessful()){
                 String resultStr = response.body().string();
-                result = new JSONObject(resultStr);
+                result = resultStr;
             }
             response.close();
         }catch(IOException io){
-            log.error("okhttpClient exception,post  url :{}",url);
+            log.error("okhttpClient wx pay exception,post  url :{}",url);
             io.printStackTrace();
         }
-        return null;
+        return result;
     }
 
     /**
