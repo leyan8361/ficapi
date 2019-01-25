@@ -1,9 +1,14 @@
 package com.fic.service.service.impl;
 
+import com.fic.service.Enum.BooleanStatusEnum;
+import com.fic.service.Enum.ErrorCodeEnum;
+import com.fic.service.Vo.ResponseVo;
 import com.fic.service.constants.WeChatProperties;
 import com.fic.service.entity.WxPayInfo;
+import com.fic.service.mapper.WxPayInfoMapper;
 import com.fic.service.service.WebChatPayService;
 import com.fic.service.utils.*;
+import org.omg.PortableInterceptor.SYSTEM_EXCEPTION;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,14 +25,17 @@ public class WebChatPayServiceImpl implements WebChatPayService {
     private final Logger log = LoggerFactory.getLogger(WebChatPayServiceImpl.class);
 
     private static final String WX_PAY_URL = "https://api.mch.weixin.qq.com/pay/unifiedorder";
+    private static final String WX_CHECK_ORDER_URL = "https://api.mch.weixin.qq.com/pay/orderquery";
 
     @Autowired
     WeChatProperties weChatProperties;
     @Autowired
     OkHttpUtil okHttpUtil;
+    @Autowired
+    WxPayInfoMapper wxPayInfoMapper;
 
     @Override
-    public WxPayInfo wxPay(String total_fee, String imei, String ip, String openid) {
+    public ResponseVo wxPay(String total_fee, String imei, String ip, String openid) {
         log.debug("创建预支付订单 totalFee:{}, imei:{},ip:{},openId:{}",total_fee,imei,ip,openid);
         WxPayInfo result = new WxPayInfo();
         Map<String,String> payParam = new HashMap<>();
@@ -35,7 +43,7 @@ public class WebChatPayServiceImpl implements WebChatPayService {
         payParam.put("appid", weChatProperties.getAppId()); //TODO 小程序 aapid
         payParam.put("attach", orderNum);//附加数据
         payParam.put("body", "淘影充值");//商品描述
-        payParam.put("device_info", "WEB");//
+        payParam.put("device_info", "APP");//
         payParam.put("mch_id", weChatProperties.getMerchandiseCode());//TODO 商品号
         payParam.put("nonce_str", getNonceStr());//随机字符串
         payParam.put("notify_url", weChatProperties.getNotifyUrl());//TODO 异步通知URL
@@ -51,19 +59,48 @@ public class WebChatPayServiceImpl implements WebChatPayService {
         String resultStr = okHttpUtil.postForWxPay(WX_PAY_URL,xml);
         if(null == resultStr){
             log.error("微信支付，创建预支付订单失败");
-            return null;
+            return new ResponseVo(ErrorCodeEnum.WE_CHAT_PAY_FAILED,null);
         }
         Map<String,String> resultMap = XmlUtil.xmlToMap(resultStr);
+
         if(resultMap.get("return_code").indexOf("SUCCESS") != -1){
-            result.setStatus(0);
+            result.setStatus(BooleanStatusEnum.NO.code());
         }else{
-            result.setStatus(1);
+            result.setStatus(BooleanStatusEnum.YES.code());
+            result.setPrePayId(resultMap.get("prepay_id"));
         }
         result.setOrderNum(orderNum);
         result.setCreatedTime(new Date());
         result.setRequestBody(xml);
         result.setResponseBody(resultStr);
-        return result;
+
+        int savePayInfo = wxPayInfoMapper.insertSelective(result);
+        if(savePayInfo <=0){
+            log.error("微信支付，创建预支付订单失败");
+            return new ResponseVo(ErrorCodeEnum.WE_CHAT_PAY_FAILED,null);
+        }
+        //TODO 返回值
+
+
+        return new ResponseVo(ErrorCodeEnum.SUCCESS,result);
+    }
+
+    @Override
+    public ResponseVo wxCheckOrder(String orderNum) {
+        log.debug("查询订单 order num:{}",orderNum);
+        WxPayInfo findResult = wxPayInfoMapper.findByOrderNum(orderNum);
+        if(null == findResult){
+            log.debug("查询订单状态失败，order Num :{}",orderNum);
+            return new ResponseVo(ErrorCodeEnum.WE_CHAT_PAY_ORDER_NOT_EXIST,null);
+        }
+        Map<String,String> payParam = new HashMap<>();
+        payParam.put("appid", weChatProperties.getAppId()); //TODO 小程序 aapid
+        payParam.put("mch_id", weChatProperties.getMerchandiseCode());//TODO 商品号
+        payParam.put("transaction_id", findResult.getp());
+        payParam.put("nonce_str", findResult.getNoncestr());
+        payParam.put("out_trade_no", orderNum);//订单号
+        payParam.put("sign", findResult.getSign());
+        return null;
     }
 
     private static String getOrderNum(){

@@ -5,6 +5,8 @@ import java.util.Date;
 public class WxPayInfo {
     private Integer id;
 
+    private String prepayId;
+
     private String orderNum;
 
     private Integer status;
@@ -15,12 +17,26 @@ public class WxPayInfo {
 
     private Date createdTime;
 
+    private String sign;
+
+    private String partnerId;
+
+    private String noncestr;
+
     public Integer getId() {
         return id;
     }
 
     public void setId(Integer id) {
         this.id = id;
+    }
+
+    public String getPrepayId() {
+        return prepayId;
+    }
+
+    public void setPrepayId(String prepayId) {
+        this.prepayId = prepayId;
     }
 
     public String getOrderNum() {
@@ -39,14 +55,6 @@ public class WxPayInfo {
         this.status = status;
     }
 
-    public Date getCreatedTime() {
-        return createdTime;
-    }
-
-    public void setCreatedTime(Date createdTime) {
-        this.createdTime = createdTime;
-    }
-
     public String getRequestBody() {
         return requestBody;
     }
@@ -61,5 +69,37 @@ public class WxPayInfo {
 
     public void setResponseBody(String responseBody) {
         this.responseBody = responseBody;
+    }
+
+    public Date getCreatedTime() {
+        return createdTime;
+    }
+
+    public void setCreatedTime(Date createdTime) {
+        this.createdTime = createdTime;
+    }
+
+    public String getSign() {
+        return sign;
+    }
+
+    public void setSign(String sign) {
+        this.sign = sign;
+    }
+
+    public String getPartnerId() {
+        return partnerId;
+    }
+
+    public void setPartnerId(String partnerId) {
+        this.partnerId = partnerId;
+    }
+
+    public String getNoncestr() {
+        return noncestr;
+    }
+
+    public void setNoncestr(String noncestr) {
+        this.noncestr = noncestr;
     }
 }

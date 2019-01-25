@@ -16,4 +16,6 @@ public interface WxPayInfoMapper {
     WxPayInfo selectByPrimaryKey(Integer id);
 
     int updateByPrimaryKeySelective(WxPayInfo record);
+
+    WxPayInfo findByOrderNum(String orderNum);
 }
