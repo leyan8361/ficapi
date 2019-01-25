@@ -4,6 +4,7 @@ import com.fic.service.Vo.BetScenceVo;
 import com.fic.service.Vo.ResponseVo;
 import com.fic.service.entity.BetScence;
 import com.fic.service.entity.BetScenceMovie;
+import com.fic.service.scheduled.BetScheduledService;
 import com.fic.service.service.BetScenceService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -15,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.util.Date;
 
 /**
@@ -31,6 +33,8 @@ public class BetScenceController {
 
     @Autowired
     BetScenceService betScenceService;
+    @Autowired
+    BetScheduledService betScheduledService;
 
     @GetMapping("/getAll")
     @ApiOperation("查看所有项目")
@@ -57,6 +61,41 @@ public class BetScenceController {
         return ResponseEntity.ok(result);
     }
 
+    @GetMapping("/recharge")
+    @ApiOperation("充值备用金")
+    @ApiImplicitParams({
+            @ApiImplicitParam(dataType = "double", name = "amount", value = "充值金额")
+    })
+    public ResponseEntity recharge(@RequestParam BigDecimal amount) {
+        System.out.println("recharge !!!!!");
+        betScheduledService.recharge(amount);
+        return ResponseEntity.ok().body("success");
+    }
+
+    @GetMapping("/returning")
+    @ApiOperation("人工赔付")
+    public ResponseEntity returning() {
+        System.out.println("returning !!!!!");
+        betScheduledService.makeUpReturning();
+        return ResponseEntity.ok().body("success");
+    }
+
+    @GetMapping("/reward")
+    @ApiOperation("人工分奖池")
+    public ResponseEntity pull() {
+        System.out.println("reward !!!!!");
+        betScheduledService.rewardPool();
+        return ResponseEntity.ok().body("success");
+    }
+
+    @GetMapping("/doOpenPrice")
+    @ApiOperation("人工开奖")
+    public ResponseEntity doOpenPrice() {
+        System.out.println("doOpenPrice !!!!!");
+        betScheduledService.doBoxPull();//拉数据
+        betScheduledService.openPrice();
+        return ResponseEntity.ok().body("success");
+    }
 
 //    @GetMapping("/onShelf")
 //    @ApiOperation("上架竞猜项目")

@@ -947,4 +947,19 @@ public class BetScheduledService {
         }
     }
 
+    @Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+    public void recharge(BigDecimal amount){
+        BetScence betScence = betScenceMapper.getByBetType(BetTypeEnum.ODD_EVEN.getCode());
+        if(null == betScence){
+            log.error("充值备用金失败,无猜单双项目");
+            return;
+        }
+        betScence.setTotalReservation(betScence.getTotalReservation().add(amount));
+        int updateResult = betScenceMapper.updateByPrimaryKeySelective(betScence);
+        if(updateResult <=0){
+            log.error("更新备用金失败");
+            throw new RuntimeException();
+        }
+    }
+
 }

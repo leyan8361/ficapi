@@ -63,29 +63,10 @@ public class HomeController {
     EmailUtil emailUtil;
 
     @GetMapping("/home")
-    @ApiOperation("获取首页数据 , 拉票房，开奖")
+    @ApiOperation("首页")
     public ResponseEntity home() {
         System.out.println("index !!!!!");
         log.debug(" Home Page !!!");
-        betScheduledService.doBoxPull();//拉数据
-        betScheduledService.openPrice();
-        return ResponseEntity.ok().body("success");
-    }
-
-    @GetMapping("/reward")
-    @ApiOperation("分奖池")
-//    @RequiresAuthentication
-    public ResponseEntity pull() {
-        System.out.println("reward !!!!!");
-        betScheduledService.rewardPool();
-        return ResponseEntity.ok().body("success");
-    }
-
-    @GetMapping("/returning")
-    @ApiOperation("赔付")
-    public ResponseEntity returning() {
-        System.out.println("returning !!!!!");
-        betScheduledService.makeUpReturning();
         return ResponseEntity.ok().body("success");
     }
 
