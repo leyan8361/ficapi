@@ -75,8 +75,24 @@ public class AccountServiceImpl implements AccountService {
         loginUserInfoVo.setUsername(user.getUserName());
         loginUserInfoVo.setNickName(user.getNickName());
         loginUserInfoVo.setEmail(user.getEmail());
-        if(StringUtils.isNotEmpty(user.getPayPassword())){
-            loginUserInfoVo.setAuth(true);
+        UserAuth userAuth = userAuthMapper.findByUserId(user.getId());
+        if(null == userAuth){
+            loginUserInfoVo.setAuthStatus(0);
+        }else{
+            if(userAuth.getStatus() == 0){
+                loginUserInfoVo.setAuthStatus(1);
+            }
+            if(userAuth.getStatus() == 1){
+                loginUserInfoVo.setAuthStatus(2);
+            }
+            if(userAuth.getStatus() == 2){
+                loginUserInfoVo.setAuthStatus(3);
+            }
+        }
+        if(StringUtils.isEmpty(user.getPayPassword())){
+            loginUserInfoVo.setSetPayPassword(false);
+        }else{
+            loginUserInfoVo.setSetPayPassword(true);
         }
         String userAgent = request.getHeader("User-Agent");
         String ipAddress = request.getRemoteAddr();
@@ -312,9 +328,17 @@ public class AccountServiceImpl implements AccountService {
         UserAuth userAuth = userAuthMapper.findByUserId(userId);
         result.setUserId(userId);
         if(null == userAuth){
-            result.setAuth(false);
+            result.setAuthStatus(0);
         }else{
-            result.setAuth(true);
+            if(userAuth.getStatus() == 0){
+                result.setAuthStatus(1);
+            }
+            if(userAuth.getStatus() == 1){
+                result.setAuthStatus(2);
+            }
+            if(userAuth.getStatus() == 2){
+                result.setAuthStatus(3);
+            }
         }
         if(StringUtils.isEmpty(user.getPayPassword())){
             result.setSetPayPassword(false);
