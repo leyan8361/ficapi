@@ -8,7 +8,7 @@ public interface WebChatPayService {
     /**
      * 统计下单
      */
-    ResponseVo wxPay(String total_fee, String imei, String ip, String openid);
+    ResponseVo wxPay(String total_fee, String imei, String ip, String openid,Integer userId);
 
     /**
      * 查询订单

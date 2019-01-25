@@ -3,6 +3,7 @@
 <mapper namespace="com.fic.service.mapper.WxPayInfoMapper">
   <resultMap id="BaseResultMap" type="com.fic.service.entity.WxPayInfo">
     <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="user_id" jdbcType="INTEGER" property="userId" />
     <result column="prepay_id" jdbcType="VARCHAR" property="prepayId" />
     <result column="order_num" jdbcType="VARCHAR" property="orderNum" />
     <result column="status" jdbcType="INTEGER" property="status" />
@@ -13,10 +14,11 @@
     <result column="noncestr" jdbcType="VARCHAR" property="noncestr" />
     <result column="transaction_id" jdbcType="VARCHAR" property="transactionId" />
     <result column="notify_time" jdbcType="TIMESTAMP" property="notifyTime" />
+    <result column="pay_status" jdbcType="INTEGER" property="payStatus" />
   </resultMap>
   <sql id="Base_Column_List">
-    id, prepay_id, order_num, status, request_body, response_body, created_time, sign,
-    noncestr, transaction_id, notify_time
+    id, user_id, prepay_id, order_num, status, request_body, response_body, created_time,
+    sign, noncestr, transaction_id, notify_time, pay_status
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
     select
@@ -29,20 +31,25 @@
     where id = #{id,jdbcType=INTEGER}
   </delete>
   <insert id="insert" parameterType="com.fic.service.entity.WxPayInfo">
-    insert into wx_pay_info (id, prepay_id, order_num,
-      status, request_body, response_body,
-      created_time, sign, noncestr,
-      transaction_id, notify_time)
-    values (#{id,jdbcType=INTEGER}, #{prepayId,jdbcType=VARCHAR}, #{orderNum,jdbcType=VARCHAR},
-      #{status,jdbcType=INTEGER}, #{requestBody,jdbcType=VARCHAR}, #{responseBody,jdbcType=VARCHAR},
-      #{createdTime,jdbcType=TIMESTAMP}, #{sign,jdbcType=VARCHAR}, #{noncestr,jdbcType=VARCHAR},
-      #{transactionId,jdbcType=VARCHAR}, #{notifyTime,jdbcType=TIMESTAMP})
+    insert into wx_pay_info (id, user_id, prepay_id,
+      order_num, status, request_body,
+      response_body, created_time, sign,
+      noncestr, transaction_id, notify_time,
+      pay_status)
+    values (#{id,jdbcType=INTEGER}, #{userId,jdbcType=INTEGER}, #{prepayId,jdbcType=VARCHAR},
+      #{orderNum,jdbcType=VARCHAR}, #{status,jdbcType=INTEGER}, #{requestBody,jdbcType=VARCHAR},
+      #{responseBody,jdbcType=VARCHAR}, #{createdTime,jdbcType=TIMESTAMP}, #{sign,jdbcType=VARCHAR},
+      #{noncestr,jdbcType=VARCHAR}, #{transactionId,jdbcType=VARCHAR}, #{notifyTime,jdbcType=TIMESTAMP},
+      #{payStatus,jdbcType=INTEGER})
   </insert>
   <insert id="insertSelective" parameterType="com.fic.service.entity.WxPayInfo">
     insert into wx_pay_info
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="id != null">
         id,
+      </if>
+      <if test="userId != null">
+        user_id,
       </if>
       <if test="prepayId != null">
         prepay_id,
@@ -74,10 +81,16 @@
       <if test="notifyTime != null">
         notify_time,
       </if>
+      <if test="payStatus != null">
+        pay_status,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="id != null">
         #{id,jdbcType=INTEGER},
+      </if>
+      <if test="userId != null">
+        #{userId,jdbcType=INTEGER},
       </if>
       <if test="prepayId != null">
         #{prepayId,jdbcType=VARCHAR},
@@ -109,11 +122,17 @@
       <if test="notifyTime != null">
         #{notifyTime,jdbcType=TIMESTAMP},
       </if>
+      <if test="payStatus != null">
+        #{payStatus,jdbcType=INTEGER},
+      </if>
     </trim>
   </insert>
   <update id="updateByPrimaryKeySelective" parameterType="com.fic.service.entity.WxPayInfo">
     update wx_pay_info
     <set>
+      <if test="userId != null">
+        user_id = #{userId,jdbcType=INTEGER},
+      </if>
       <if test="prepayId != null">
         prepay_id = #{prepayId,jdbcType=VARCHAR},
       </if>
@@ -144,12 +163,16 @@
       <if test="notifyTime != null">
         notify_time = #{notifyTime,jdbcType=TIMESTAMP},
       </if>
+      <if test="payStatus != null">
+        pay_status = #{payStatus,jdbcType=INTEGER},
+      </if>
     </set>
     where id = #{id,jdbcType=INTEGER}
   </update>
   <update id="updateByPrimaryKey" parameterType="com.fic.service.entity.WxPayInfo">
     update wx_pay_info
-    set prepay_id = #{prepayId,jdbcType=VARCHAR},
+    set user_id = #{userId,jdbcType=INTEGER},
+      prepay_id = #{prepayId,jdbcType=VARCHAR},
       order_num = #{orderNum,jdbcType=VARCHAR},
       status = #{status,jdbcType=INTEGER},
       request_body = #{requestBody,jdbcType=VARCHAR},
@@ -158,7 +181,8 @@
       sign = #{sign,jdbcType=VARCHAR},
       noncestr = #{noncestr,jdbcType=VARCHAR},
       transaction_id = #{transactionId,jdbcType=VARCHAR},
-      notify_time = #{notifyTime,jdbcType=TIMESTAMP}
+      notify_time = #{notifyTime,jdbcType=TIMESTAMP},
+      pay_status = #{payStatus,jdbcType=INTEGER}
     where id = #{id,jdbcType=INTEGER}
   </update>
   <select id="findByOrderNum" resultMap="BaseResultMap">

@@ -2,6 +2,8 @@ package com.fic.service.service.impl;
 
 import com.fic.service.Enum.BooleanStatusEnum;
 import com.fic.service.Enum.ErrorCodeEnum;
+import com.fic.service.Enum.WxOrderStatusEnum;
+import com.fic.service.Enum.WxPayStatusEnum;
 import com.fic.service.Vo.ResponseVo;
 import com.fic.service.Vo.WcPreOrderResultVo;
 import com.fic.service.constants.WeChatProperties;
@@ -9,7 +11,6 @@ import com.fic.service.entity.WxPayInfo;
 import com.fic.service.mapper.WxPayInfoMapper;
 import com.fic.service.service.WebChatPayService;
 import com.fic.service.utils.*;
-import org.omg.PortableInterceptor.SYSTEM_EXCEPTION;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,8 +37,8 @@ public class WebChatPayServiceImpl implements WebChatPayService {
     WxPayInfoMapper wxPayInfoMapper;
 
     @Override
-    public ResponseVo wxPay(String total_fee, String imei, String ip, String openid) {
-        log.debug("创建预支付订单 totalFee:{}, imei:{},ip:{},openId:{}",total_fee,imei,ip,openid);
+    public ResponseVo wxPay(String total_fee, String imei, String ip, String openid,Integer userId) {
+        log.debug("创建预支付订单 totalFee:{}, imei:{},ip:{},openId:{},user id :{}",total_fee,imei,ip,openid,userId);
         WxPayInfo wxPayInfo = new WxPayInfo();
         Map<String,String> payParam = new HashMap<>();
         String orderNum = getOrderNum();
@@ -66,18 +67,26 @@ public class WebChatPayServiceImpl implements WebChatPayService {
         }
         Map<String,String> resultMap = XmlUtil.xmlToMap(resultStr);
 
-        if(resultMap.get("return_code").indexOf("SUCCESS") != -1){
-            wxPayInfo.setStatus(BooleanStatusEnum.NO.code());
-        }else{
-            wxPayInfo.setStatus(BooleanStatusEnum.YES.code());
-            wxPayInfo.setPrepayId(resultMap.get("prepay_id"));//微信支付标识，用于app请求支付
+        if(resultMap.get("return_code").indexOf("SUCCESS") != -1) {
+            /** 请求失败 */
+            log.error("微信支付，创建预支付订单失败 result xml : {}", resultStr);
+            return new ResponseVo(ErrorCodeEnum.WE_CHAT_PAY_FAILED, null);
         }
+        if(resultMap.get("result_code").indexOf("SUCCESS") != -1){
+            /** 请求失败 */
+            log.error("微信支付，创建预支付订单失败 result xml : {}", resultStr);
+            return new ResponseVo(ErrorCodeEnum.WE_CHAT_PAY_FAILED, null);
+        }
+        wxPayInfo.setStatus(WxOrderStatusEnum.BUILD_ORDER_SUCCESS.code());
+        wxPayInfo.setPayStatus(WxPayStatusEnum.NOTPAY.code());
+        wxPayInfo.setPrepayId(resultMap.get("prepay_id"));//微信支付标识，用于app请求支付
         wxPayInfo.setOrderNum(orderNum);
         wxPayInfo.setCreatedTime(new Date());
         wxPayInfo.setRequestBody(xml);
         wxPayInfo.setResponseBody(resultStr);
         wxPayInfo.setNoncestr(nonceStr);
         wxPayInfo.setSign(sign);
+        wxPayInfo.setUserId(userId);
         int savePayInfo = wxPayInfoMapper.insertSelective(wxPayInfo);
         if(savePayInfo <=0){
             log.error("微信支付，创建预支付订单失败");
@@ -110,7 +119,22 @@ public class WebChatPayServiceImpl implements WebChatPayService {
         String sign = WxPaySignatureUtils.signatureSHA1(payParam);
         payParam.put("sign", sign);
         String xml = XmlUtil.mapToXml(payParam);
-
+        String resultStr = okHttpUtil.postForWxPay(WX_CHECK_ORDER_URL,xml);
+        if(null == resultStr){
+            log.error("微信支付，查询订单失败");
+            return new ResponseVo(ErrorCodeEnum.WE_CHAT_PAY_FAILED,null);
+        }
+        Map<String,String> resultMap = XmlUtil.xmlToMap(resultStr);
+        if(resultMap.get("return_code").indexOf("SUCCESS") != -1) {
+            /** 请求失败 */
+            log.error("微信支付，查询订单失败 result xml : {}", resultStr);
+            return new ResponseVo(ErrorCodeEnum.WE_CHAT_PAY_QUERY_FAILED, null);
+        }
+        if(resultMap.get("result_code").indexOf("SUCCESS") != -1){
+            /** 请求失败 */
+            log.error("微信支付，查询订单失败 result xml : {}", resultStr);
+            return new ResponseVo(ErrorCodeEnum.WE_CHAT_PAY_QUERY_FAILED, null);
+        }
 
         return null;
     }
