@@ -36,7 +36,7 @@ public class ApiV2AccountController {
     DeviceMapper deviceMapper;
 
     @GetMapping(value = "/updatePayPassword")
-    @ApiOperation("Api-设置或更新支付密码")
+    @ApiOperation("Api-修改支付密码")
     @ApiImplicitParams({
             @ApiImplicitParam(dataType = "int", name = "userId", value = "用户ID", required = true),
             @ApiImplicitParam(dataType = "string", name = "oldPayPassword", value = "旧支付密码MD5结果", required = true),
