@@ -19,9 +19,11 @@ public class WxPayInfo {
 
     private String sign;
 
-    private String partnerId;
-
     private String noncestr;
+
+    private String transactionId;
+
+    private Date notifyTime;
 
     public Integer getId() {
         return id;
@@ -87,19 +89,27 @@ public class WxPayInfo {
         this.sign = sign;
     }
 
-    public String getPartnerId() {
-        return partnerId;
-    }
-
-    public void setPartnerId(String partnerId) {
-        this.partnerId = partnerId;
-    }
-
     public String getNoncestr() {
         return noncestr;
     }
 
     public void setNoncestr(String noncestr) {
         this.noncestr = noncestr;
+    }
+
+    public String getTransactionId() {
+        return transactionId;
+    }
+
+    public void setTransactionId(String transactionId) {
+        this.transactionId = transactionId;
+    }
+
+    public Date getNotifyTime() {
+        return notifyTime;
+    }
+
+    public void setNotifyTime(Date notifyTime) {
+        this.notifyTime = notifyTime;
     }
 }

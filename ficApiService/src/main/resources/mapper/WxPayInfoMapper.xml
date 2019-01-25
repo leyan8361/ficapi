@@ -10,12 +10,13 @@
     <result column="response_body" jdbcType="VARCHAR" property="responseBody" />
     <result column="created_time" jdbcType="TIMESTAMP" property="createdTime" />
     <result column="sign" jdbcType="VARCHAR" property="sign" />
-    <result column="partner_id" jdbcType="VARCHAR" property="partnerId" />
     <result column="noncestr" jdbcType="VARCHAR" property="noncestr" />
+    <result column="transaction_id" jdbcType="VARCHAR" property="transactionId" />
+    <result column="notify_time" jdbcType="TIMESTAMP" property="notifyTime" />
   </resultMap>
   <sql id="Base_Column_List">
     id, prepay_id, order_num, status, request_body, response_body, created_time, sign,
-    partner_id, noncestr
+    noncestr, transaction_id, notify_time
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
     select
@@ -30,12 +31,12 @@
   <insert id="insert" parameterType="com.fic.service.entity.WxPayInfo">
     insert into wx_pay_info (id, prepay_id, order_num,
       status, request_body, response_body,
-      created_time, sign, partner_id,
-      noncestr)
+      created_time, sign, noncestr,
+      transaction_id, notify_time)
     values (#{id,jdbcType=INTEGER}, #{prepayId,jdbcType=VARCHAR}, #{orderNum,jdbcType=VARCHAR},
       #{status,jdbcType=INTEGER}, #{requestBody,jdbcType=VARCHAR}, #{responseBody,jdbcType=VARCHAR},
-      #{createdTime,jdbcType=TIMESTAMP}, #{sign,jdbcType=VARCHAR}, #{partnerId,jdbcType=VARCHAR},
-      #{noncestr,jdbcType=VARCHAR})
+      #{createdTime,jdbcType=TIMESTAMP}, #{sign,jdbcType=VARCHAR}, #{noncestr,jdbcType=VARCHAR},
+      #{transactionId,jdbcType=VARCHAR}, #{notifyTime,jdbcType=TIMESTAMP})
   </insert>
   <insert id="insertSelective" parameterType="com.fic.service.entity.WxPayInfo">
     insert into wx_pay_info
@@ -64,11 +65,14 @@
       <if test="sign != null">
         sign,
       </if>
-      <if test="partnerId != null">
-        partner_id,
-      </if>
       <if test="noncestr != null">
         noncestr,
+      </if>
+      <if test="transactionId != null">
+        transaction_id,
+      </if>
+      <if test="notifyTime != null">
+        notify_time,
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
@@ -96,11 +100,14 @@
       <if test="sign != null">
         #{sign,jdbcType=VARCHAR},
       </if>
-      <if test="partnerId != null">
-        #{partnerId,jdbcType=VARCHAR},
-      </if>
       <if test="noncestr != null">
         #{noncestr,jdbcType=VARCHAR},
+      </if>
+      <if test="transactionId != null">
+        #{transactionId,jdbcType=VARCHAR},
+      </if>
+      <if test="notifyTime != null">
+        #{notifyTime,jdbcType=TIMESTAMP},
       </if>
     </trim>
   </insert>
@@ -128,11 +135,14 @@
       <if test="sign != null">
         sign = #{sign,jdbcType=VARCHAR},
       </if>
-      <if test="partnerId != null">
-        partner_id = #{partnerId,jdbcType=VARCHAR},
-      </if>
       <if test="noncestr != null">
         noncestr = #{noncestr,jdbcType=VARCHAR},
+      </if>
+      <if test="transactionId != null">
+        transaction_id = #{transactionId,jdbcType=VARCHAR},
+      </if>
+      <if test="notifyTime != null">
+        notify_time = #{notifyTime,jdbcType=TIMESTAMP},
       </if>
     </set>
     where id = #{id,jdbcType=INTEGER}
@@ -146,8 +156,9 @@
       response_body = #{responseBody,jdbcType=VARCHAR},
       created_time = #{createdTime,jdbcType=TIMESTAMP},
       sign = #{sign,jdbcType=VARCHAR},
-      partner_id = #{partnerId,jdbcType=VARCHAR},
-      noncestr = #{noncestr,jdbcType=VARCHAR}
+      noncestr = #{noncestr,jdbcType=VARCHAR},
+      transaction_id = #{transactionId,jdbcType=VARCHAR},
+      notify_time = #{notifyTime,jdbcType=TIMESTAMP}
     where id = #{id,jdbcType=INTEGER}
   </update>
   <select id="findByOrderNum" resultMap="BaseResultMap">

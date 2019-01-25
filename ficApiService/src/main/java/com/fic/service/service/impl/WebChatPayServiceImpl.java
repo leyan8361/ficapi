@@ -3,6 +3,7 @@ package com.fic.service.service.impl;
 import com.fic.service.Enum.BooleanStatusEnum;
 import com.fic.service.Enum.ErrorCodeEnum;
 import com.fic.service.Vo.ResponseVo;
+import com.fic.service.Vo.WcPreOrderResultVo;
 import com.fic.service.constants.WeChatProperties;
 import com.fic.service.entity.WxPayInfo;
 import com.fic.service.mapper.WxPayInfoMapper;
@@ -37,15 +38,16 @@ public class WebChatPayServiceImpl implements WebChatPayService {
     @Override
     public ResponseVo wxPay(String total_fee, String imei, String ip, String openid) {
         log.debug("创建预支付订单 totalFee:{}, imei:{},ip:{},openId:{}",total_fee,imei,ip,openid);
-        WxPayInfo result = new WxPayInfo();
+        WxPayInfo wxPayInfo = new WxPayInfo();
         Map<String,String> payParam = new HashMap<>();
         String orderNum = getOrderNum();
+        String nonceStr = getNonceStr();
         payParam.put("appid", weChatProperties.getAppId()); //TODO 小程序 aapid
         payParam.put("attach", orderNum);//附加数据
         payParam.put("body", "淘影充值");//商品描述
         payParam.put("device_info", "APP");//
-        payParam.put("mch_id", weChatProperties.getMerchandiseCode());//TODO 商品号
-        payParam.put("nonce_str", getNonceStr());//随机字符串
+        payParam.put("mch_id", weChatProperties.getPartnerId());//TODO 商品号
+        payParam.put("nonce_str", nonceStr);//随机字符串
         payParam.put("notify_url", weChatProperties.getNotifyUrl());//TODO 异步通知URL
         payParam.put("openid", openid);//TODO 微信用户 id
         payParam.put("out_trade_no", orderNum);//订单号
@@ -53,7 +55,8 @@ public class WebChatPayServiceImpl implements WebChatPayService {
         payParam.put("spbill_create_ip", ip);
         payParam.put("total_fee", total_fee);
         payParam.put("trade_type", "APP");
-        payParam.put("sign", WxPaySignatureUtils.signatureSHA1(payParam));
+        String sign = WxPaySignatureUtils.signatureSHA1(payParam);
+        payParam.put("sign", sign);
 
         String xml = XmlUtil.mapToXml(payParam);
         String resultStr = okHttpUtil.postForWxPay(WX_PAY_URL,xml);
@@ -64,24 +67,29 @@ public class WebChatPayServiceImpl implements WebChatPayService {
         Map<String,String> resultMap = XmlUtil.xmlToMap(resultStr);
 
         if(resultMap.get("return_code").indexOf("SUCCESS") != -1){
-            result.setStatus(BooleanStatusEnum.NO.code());
+            wxPayInfo.setStatus(BooleanStatusEnum.NO.code());
         }else{
-            result.setStatus(BooleanStatusEnum.YES.code());
-            result.setPrePayId(resultMap.get("prepay_id"));
+            wxPayInfo.setStatus(BooleanStatusEnum.YES.code());
+            wxPayInfo.setPrepayId(resultMap.get("prepay_id"));//微信支付标识，用于app请求支付
         }
-        result.setOrderNum(orderNum);
-        result.setCreatedTime(new Date());
-        result.setRequestBody(xml);
-        result.setResponseBody(resultStr);
-
-        int savePayInfo = wxPayInfoMapper.insertSelective(result);
+        wxPayInfo.setOrderNum(orderNum);
+        wxPayInfo.setCreatedTime(new Date());
+        wxPayInfo.setRequestBody(xml);
+        wxPayInfo.setResponseBody(resultStr);
+        wxPayInfo.setNoncestr(nonceStr);
+        wxPayInfo.setSign(sign);
+        int savePayInfo = wxPayInfoMapper.insertSelective(wxPayInfo);
         if(savePayInfo <=0){
             log.error("微信支付，创建预支付订单失败");
             return new ResponseVo(ErrorCodeEnum.WE_CHAT_PAY_FAILED,null);
         }
-        //TODO 返回值
-
-
+        WcPreOrderResultVo result = new WcPreOrderResultVo();
+        result.setAppId(weChatProperties.getAppId());
+        result.setNoncestr(nonceStr);
+        result.setPartnerid(weChatProperties.getPartnerId());
+        result.setPrepayid(wxPayInfo.getPrepayId());
+        result.setSign(sign);
+        result.setTimestamp(DateUtil.getTimeStamp());
         return new ResponseVo(ErrorCodeEnum.SUCCESS,result);
     }
 
@@ -95,11 +103,15 @@ public class WebChatPayServiceImpl implements WebChatPayService {
         }
         Map<String,String> payParam = new HashMap<>();
         payParam.put("appid", weChatProperties.getAppId()); //TODO 小程序 aapid
-        payParam.put("mch_id", weChatProperties.getMerchandiseCode());//TODO 商品号
-        payParam.put("transaction_id", findResult.getp());
+        payParam.put("mch_id", weChatProperties.getPartnerId());//TODO 商品号
+        payParam.put("transaction_id", findResult.getTransactionId());
         payParam.put("nonce_str", findResult.getNoncestr());
         payParam.put("out_trade_no", orderNum);//订单号
-        payParam.put("sign", findResult.getSign());
+        String sign = WxPaySignatureUtils.signatureSHA1(payParam);
+        payParam.put("sign", sign);
+        String xml = XmlUtil.mapToXml(payParam);
+
+
         return null;
     }
 
