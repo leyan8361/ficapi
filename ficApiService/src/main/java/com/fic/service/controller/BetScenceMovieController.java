@@ -55,7 +55,7 @@ public class BetScenceMovieController {
             @ApiImplicitParam(dataType = "string", name = "choiceInput", value = "当场次选择<中级场，选择题>，此项票房单位 ，必填,例:'万'或'十万'，'百分'，'千万'，'亿'"),
             @ApiImplicitParam(dataType = "string", name = "sumBoxInput", value = "当场次选择<高级场>，此项票房单位必填,默认千万,例:'万'或'十万'，'百分'，'千万'，'亿'"),
     })
-    @ApiOperation("设置场次")
+    @ApiOperation("增加新场次")
     public ResponseEntity addMoive(@RequestParam("scenceId") int scenceId,
                                    @RequestParam("movieId") int movieId,
                                    @RequestParam("startDay") String startDay,
@@ -86,7 +86,7 @@ public class BetScenceMovieController {
             @ApiImplicitParam(dataType = "string", name = "endDay", value = "结束时间"),
             @ApiImplicitParam(dataType = "double", name = "sort", value = "排序，小的排前面",example = "0")
     })
-    @ApiOperation("设置场次")
+    @ApiOperation("更新旧场次")
     public ResponseEntity update(@RequestParam("id") int id,
                                    @RequestParam(value = "startDay",required = false) String startDay,
                                    @RequestParam(value = "endDay",required = false) String endDay,
@@ -107,7 +107,7 @@ public class BetScenceMovieController {
     @ApiImplicitParams({
             @ApiImplicitParam(dataType = "int", name = "id", value = "场次ID"),
     })
-    @ApiOperation("为项目删除电影")
+    @ApiOperation("为项目删除场次，注：已有人竞猜的场次无法删除")
     public ResponseEntity delete(@RequestParam("id") int id
     ) {
         log.debug(" delete movie for scence !!!");
