@@ -709,7 +709,7 @@ public class BetScenceServiceImpl implements BetScenceService {
             List<BetRankingRecordVo> todayBetRecord = betUserMapper.findToDayRecord(betUserId,toDay);
             result.setUserId(betUserId);
             result.setPlayRecord(todayBetRecord);
-            if(todayBetRecord.size() < 0){
+            if(todayBetRecord.size() <= 0){
                 continue;
             }
             resultList.add(result);
