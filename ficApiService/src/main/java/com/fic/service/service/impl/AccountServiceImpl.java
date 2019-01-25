@@ -352,4 +352,24 @@ public class AccountServiceImpl implements AccountService {
         result.setUsername(user.getUserName());
         return new ResponseVo(ErrorCodeEnum.SUCCESS,result);
     }
+
+    @Override
+    @Transactional(isolation= Isolation.READ_COMMITTED,propagation= Propagation.REQUIRED,rollbackFor = Exception.class)
+    public ResponseVo updatePayPassword(int userId, String oldPayPassword, String newPayPassword) {
+        User user = userMapper.get(userId);
+        if(null == user){
+            log.error("修改密码失败, user id :{}",userId);
+            return new ResponseVo(ErrorCodeEnum.USER_NOT_EXIST,null);
+        }
+        if(StringUtils.isEmpty(oldPayPassword) || !oldPayPassword.equals(user.getPayPassword())){
+            return new ResponseVo(ErrorCodeEnum.USER_PAY_PASSWORD_NOT_MATCH,null);
+        }
+        user.setPayPassword(newPayPassword);
+        int updateResult = userMapper.updateByPrimaryKey(user);
+        if(updateResult <=0){
+            log.error("更新支付密码失败，user id :{}",user.getId());
+            throw new RuntimeException();
+        }
+        return new ResponseVo(ErrorCodeEnum.SUCCESS,null);
+    }
 }
