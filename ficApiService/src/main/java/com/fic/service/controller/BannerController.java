@@ -1,5 +1,6 @@
 package com.fic.service.controller;
 
+import com.fic.service.Enum.ErrorCodeEnum;
 import com.fic.service.Vo.BannerInfoVo;
 import com.fic.service.Vo.ResponseVo;
 import com.fic.service.service.BannerInfoService;
@@ -10,6 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 /**
  * @Author Xie
@@ -25,6 +28,21 @@ public class BannerController {
 
     @Autowired
     BannerInfoService bannerInfoService;
+
+    @GetMapping("/getAll")
+    @ApiOperation("Api-获取所有")
+    @ApiResponses({
+            @ApiResponse(code = 500, message = "System ERROR"),
+            @ApiResponse(code = 200, message = "SUCCESS",response = BannerInfoVo.class)
+    })
+    public ResponseEntity getAll() {
+        log.debug("banner getAll Action !!!");
+        List<BannerInfoVo> resultList = bannerInfoService.getAll();
+        if(resultList.isEmpty()){
+            return ResponseEntity.ok(new ResponseVo(ErrorCodeEnum.SUCCESS,resultList));
+        }
+        return ResponseEntity.ok(new ResponseVo(ErrorCodeEnum.SUCCESS,resultList));
+    }
 
     @PostMapping(value = "/add")
     @ApiOperation("Api-新增")
