@@ -209,7 +209,7 @@ public class ApiAccountController {
     })
     @ApiResponses({
             @ApiResponse(code = 1020, message = "USER_PAY_PASSWORD_NOT_SET"),
-            @ApiResponse(code = 1020, message = "USER_PAY_PASSWORD_NOT_MATCH"),
+            @ApiResponse(code = 1021, message = "USER_PAY_PASSWORD_NOT_MATCH"),
             @ApiResponse(code = 200, message = "SUCCESS")
     })
     public ResponseEntity checkPayPassword(@RequestParam Integer userId,@RequestParam String payPassword){
