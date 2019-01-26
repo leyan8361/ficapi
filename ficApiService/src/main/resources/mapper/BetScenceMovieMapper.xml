@@ -223,4 +223,7 @@
   <select id="getAll" resultMap="BaseResultMap">
     select * from bet_scence_movie order by id desc;
   </select>
+  <select id="findAllMovieOn" resultMap="BaseResultMap">
+    select * from bet_scence_movie where start_day >= #{startDay};
+  </select>
 </mapper>

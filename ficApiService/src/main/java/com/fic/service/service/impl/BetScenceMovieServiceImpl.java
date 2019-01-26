@@ -30,6 +30,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -112,5 +113,11 @@ public class BetScenceMovieServiceImpl implements BetScenceMovieService {
     public ResponseVo getAll() {
         List<BetScenceMovie> result = betScenceMovieMapper.getAll();
         return new ResponseVo(ErrorCodeEnum.SUCCESS,result);
+    }
+
+    @Override
+    public ResponseVo getMovieOn() {
+        List<BetScenceMovie> resultList = betScenceMovieMapper.findAllMovieOn(DateUtil.dateToStrMatDay(new Date()));
+        return new ResponseVo(ErrorCodeEnum.SUCCESS,resultList);
     }
 }

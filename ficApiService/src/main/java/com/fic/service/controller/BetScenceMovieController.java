@@ -43,6 +43,13 @@ public class BetScenceMovieController {
         return ResponseEntity.ok(result);
     }
 
+    @GetMapping("/getScenceOn")
+    @ApiOperation("查看正在竞猜的电影")
+    public ResponseEntity getScenceOn() {
+        log.debug(" getScenceOn !!!");
+        ResponseVo result = betScenceMovieService.getMovieOn();
+        return ResponseEntity.ok(result);
+    }
 
     @GetMapping("/add")
     @ApiImplicitParams({
