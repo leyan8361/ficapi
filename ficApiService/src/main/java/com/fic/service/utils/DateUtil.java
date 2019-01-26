@@ -129,7 +129,19 @@ public class DateUtil {
         return result;
     }
 
-    public static String getThisWeekMonDay(Date date){
+    public static String getToDayStart(){
+        Date date = new Date();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        Instant instant = date.toInstant();
+        ZoneId zoneId = ZoneId.systemDefault();
+        LocalDateTime localDate = instant.atZone(zoneId).toLocalDateTime();
+        localDate = localDate.withHour(0).withMinute(0).withSecond(02);
+        String result = formatter.format(localDate);
+        return result;
+    }
+
+    public static String getThisWeekMonDay(){
+        Date date = new Date();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         Instant instant = date.toInstant();
         ZoneId zoneId = ZoneId.systemDefault();
@@ -140,6 +152,28 @@ public class DateUtil {
             day = day -1;
         }
         localDate = localDate.minusDays(day).withHour(0).withMinute(0).withSecond(01);
+        String result = formatter.format(localDate);
+        return result;
+    }
+
+    public static String getLastSevenDayStart(){
+        Date date = new Date();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        Instant instant = date.toInstant();
+        ZoneId zoneId = ZoneId.systemDefault();
+        LocalDateTime localDate = instant.atZone(zoneId).toLocalDateTime();
+        localDate = localDate.minusDays(7).withHour(0).withMinute(0).withSecond(01);
+        String result = formatter.format(localDate);
+        return result;
+    }
+
+    public static String getTodayDayEnd(){
+        Date date = new Date();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        Instant instant = date.toInstant();
+        ZoneId zoneId = ZoneId.systemDefault();
+        LocalDateTime localDate = instant.atZone(zoneId).toLocalDateTime();
+        localDate = localDate.withHour(23).withMinute(59).withSecond(58);
         String result = formatter.format(localDate);
         return result;
     }
@@ -372,6 +406,12 @@ public class DateUtil {
         return false;
     }
 
+    public static String getTheMaxStartDay(){
+        return "1970-01-01 01:00:00";
+    }
+    public static String getTheMaxEndDay(){
+        return "2500-12-31 23:59:00";
+    }
 
     public static int getSubstractDay(Date date1,Date date2)
     {
@@ -408,34 +448,25 @@ public class DateUtil {
         }
     }
 
-
-    public static void main(String args[]) throws ParseException {
-//        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-//        LocalDateTime date = LocalDateTime.of(2019,1,2,00,19,59);
-//        LocalDateTime zeroTime = LocalDateTime.of(date.getYear(),date.getMonth(),date.getDayOfMonth(),00,00,00);
-//        LocalDateTime endLock= LocalDateTime.of(date.getYear(),date.getMonth(),date.getDayOfMonth(),00,20,00);
-//        LocalDateTime startLock  = LocalDateTime.of(date.getYear(),date.getMonth(),date.getDayOfMonth(),23,50,00);
-//        /** 开奖(23:50:00 - 00:20:00)，不允许下注*/
-//        if(date.compareTo(zeroTime) >=0 && date.compareTo(endLock) <= 0){
-//            /** 00:00:00 <= bet Time < 00:20:00*/
-//            System.out.println("00:00:00 <= bet Time < 00:20:00");
-//        }
-//        if(date.compareTo(startLock) >=0 && date.compareTo(zeroTime) >= 0){
-//            /** 23:50:00 <= bet Time < 00:00:00*/
-//            System.out.println("23:50:00 <= bet Time < 00:00:00");
-//        }
-//        //        if(date.compareTo(startLock) <=0){
-////            return true;
-////        }
-////        if(date.compareTo(endLock) >=0){
-////            return true;
-////        }
-//        System.out.println("start lock time : " + formatter.format(startLock));
-//        System.out.println("end lock time : " + formatter.format(endLock));
-//        System.out.println("now time : " + formatter.format(date));
-        Date now = new Date();
-        System.out.println(DateUtil.getThisWeekMonDayBegin(now));
-        System.out.println(DateUtil.getThisWeekMonDayEnd(now));
+    public static String getUnixTime() {
+        return Instant.now().toString();
     }
+
+    public static int getWeekDay(Date date){
+        Instant instant = date.toInstant();
+        ZoneId zoneId = ZoneId.systemDefault();
+        LocalDateTime localDate = instant.atZone(zoneId).toLocalDateTime();
+        int nowDay = localDate.getDayOfWeek().getValue();
+        return nowDay;
+    }
+
+    public static void main(String args[]){
+//        boxInfo.setScale(0,BigDecimal.ROUND_DOWN).remainder(new BigDecimal("2")).compareTo(BigDecimal.ZERO) == 0
+//        BigDecimal test = new BigDecimal("7");
+//        BigDecimal test1 = new BigDecimal("9");
+//        System.out.println(test.divide(test1,2,BigDecimal.ROUND_DOWN));
+    }
+
+
 
 }

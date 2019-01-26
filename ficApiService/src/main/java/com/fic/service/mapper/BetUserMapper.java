@@ -64,4 +64,12 @@ public interface BetUserMapper {
     BetUser findByBetAmountAndUserIdAndCreatedTime(BigDecimal amount, int userId, String createdTime);
 
     String findMovieNameById(int id);
+
+    List<BetUser> findLastWinner();
+
+    List<Integer> findBetRanking(String startDay,String endDay);
+
+    List<BetRankingRecordVo> findToDayRecord(int userId,String today);
+
+    List<BetUser> findAllByUserIdAndCreatedTime(int userId,String startDay,String endDay);
 }

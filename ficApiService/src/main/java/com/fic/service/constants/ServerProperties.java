@@ -19,6 +19,14 @@ public class ServerProperties {
     String storeLocation;
     @Value("${server.mao.yan.url}")
     String maoYanUrl;
+    @Value("${contact.address}")
+    String contactAddress;
+    @Value("${ok.api.key}")
+    String okApiKey;
+    @Value("${ok.api.secret.key}")
+    String okApiSecretKey;
+    @Value("${ok.server.url}")
+    String okServerUrl;
 
     public String getMaoYanUrl() {
         return maoYanUrl;
@@ -52,4 +60,35 @@ public class ServerProperties {
         this.prefix = prefix;
     }
 
+    public String getContactAddress() {
+        return contactAddress;
+    }
+
+    public void setContactAddress(String contactAddress) {
+        this.contactAddress = contactAddress;
+    }
+
+    public String getOkApiKey() {
+        return okApiKey;
+    }
+
+    public void setOkApiKey(String okApiKey) {
+        this.okApiKey = okApiKey;
+    }
+
+    public String getOkApiSecretKey() {
+        return okApiSecretKey;
+    }
+
+    public void setOkApiSecretKey(String okApiSecretKey) {
+        this.okApiSecretKey = okApiSecretKey;
+    }
+
+    public String getOkServerUrl() {
+        return okServerUrl;
+    }
+
+    public void setOkServerUrl(String okServerUrl) {
+        this.okServerUrl = okServerUrl;
+    }
 }

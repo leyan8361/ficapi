@@ -45,6 +45,8 @@ public class BalanceServiceImpl implements BalanceService {
     BetUserMapper betUserMapper;
     @Autowired
     RewardMapper rewardMapper;
+    @Autowired
+    TransactionRecordMapper transactionRecordMapper;
 
     @Override
     public TradeRecordInfoVo getTradeRecord(Integer userId) {
@@ -155,12 +157,17 @@ public class BalanceServiceImpl implements BalanceService {
         return tradeRecordVoList;
     }
 
-
     @Override
     public ResponseVo getTradeRecordV2(TradeRecordRequestVo condition) {
         TradeRecordInfoV2Vo result = new TradeRecordInfoV2Vo();
-        String startDay = DateUtil.getThisMonthBegin(condition.getMonth());
-        String endDay = DateUtil.getThisMonthEnd(condition.getMonth());
+        String startDay = DateUtil.getTheMaxStartDay();
+        String endDay = DateUtil.getTheMaxEndDay();
+        if(StringUtils.isNotEmpty(condition.getMonth())){
+            startDay = DateUtil.getThisMonthBegin(condition.getMonth());
+            endDay = DateUtil.getThisMonthEnd(condition.getMonth());
+        }
+        BigDecimal sumWayIn = balanceStatementMapper.sumByWayAndTime(condition.getUserId(),FinanceWayEnum.IN.getCode(),condition.getType(),startDay,endDay);
+        BigDecimal sumWayOut = balanceStatementMapper.sumByWayAndTime(condition.getUserId(),FinanceWayEnum.OUT.getCode(),condition.getType(),startDay,endDay);
         int offset = condition.getPageNum()*10;
         List<BalanceStatement> findResult = balanceStatementMapper.findByCondition(startDay,endDay,condition,offset);
         if(findResult.size() == 0){
@@ -180,7 +187,7 @@ public class BalanceServiceImpl implements BalanceService {
             /** 分销奖励 */
             if(balanceStatement.getType() == FinanceTypeEnum.REWARD.getCode()){
                 Distribution distribution = distributionMapper.selectByPrimaryKey(balanceStatement.getDistributionId());
-                if(null == distribution) {
+                if(null == distribution && !(balanceStatement.getAmount().compareTo(new BigDecimal("1000"))==0)) {
                     log.error(" 查询交易明细失败，分销奖励结果为空 distribution id :{}", balanceStatement.getDistributionId());
                     continue;
                 }
@@ -263,6 +270,10 @@ public class BalanceServiceImpl implements BalanceService {
                 item.setMoveName(movie.getMovieName());
                 item.setAmount(detail.getAmount());
                 item.setCreatedTime(balanceStatement.getCreatedTime());
+                if(null == sumWayOut){
+                    sumWayOut = BigDecimal.ZERO;
+                }
+                sumWayOut = sumWayOut.add(item.getAmount());
             }
 
             /** 竞猜奖励 */
@@ -324,6 +335,36 @@ public class BalanceServiceImpl implements BalanceService {
                 item.setCreatedTime(balanceStatement.getCreatedTime());
             }
 
+            /** 转出 */
+            if(balanceStatement.getType() == FinanceTypeEnum.TRANSFER_OUT.getCode()){
+                item.setAmount(balanceStatement.getAmount().setScale(0,BigDecimal.ROUND_DOWN));
+                item.setCreatedTime(balanceStatement.getCreatedTime());
+            }
+
+            /** 转账中 */
+            if(balanceStatement.getType() == FinanceTypeEnum.TRANSFERING.getCode()){
+                item.setAmount(balanceStatement.getAmount().setScale(0,BigDecimal.ROUND_DOWN));
+                item.setCreatedTime(balanceStatement.getCreatedTime());
+            }
+
+            /** 转入 */
+            if(balanceStatement.getType() == FinanceTypeEnum.PAYEE_IN.getCode()){
+                item.setAmount(balanceStatement.getAmount().setScale(0,BigDecimal.ROUND_DOWN));
+                item.setCreatedTime(balanceStatement.getCreatedTime());
+            }
+
+            /** 抽奖 */
+            if(balanceStatement.getType() == FinanceTypeEnum.DRAW.getCode()){
+                item.setAmount(balanceStatement.getAmount().setScale(0,BigDecimal.ROUND_DOWN));
+                item.setCreatedTime(balanceStatement.getCreatedTime());
+            }
+
+            /** 充值 */
+            if(balanceStatement.getType() == FinanceTypeEnum.RECHARGE.getCode()){
+                item.setAmount(balanceStatement.getAmount().setScale(0,BigDecimal.ROUND_DOWN));
+                item.setCreatedTime(balanceStatement.getCreatedTime());
+            }
+
             item.setType(balanceStatement.getType());
             item.setWay(balanceStatement.getWay());
 
@@ -336,13 +377,12 @@ public class BalanceServiceImpl implements BalanceService {
                 totalExpend = totalExpend.add(item.getAmount());
             }
 
-
             items.add(item);
         }
 
         result.setItems(items);
-        result.setIncome(totalIncome);
-        result.setExpend(totalExpend);
+        result.setIncome(null!=sumWayIn?sumWayIn.setScale(0,BigDecimal.ROUND_DOWN):BigDecimal.ZERO);
+        result.setExpend(null!=sumWayOut?sumWayOut.setScale(0,BigDecimal.ROUND_DOWN):BigDecimal.ZERO);
 
         return new ResponseVo(ErrorCodeEnum.SUCCESS,result);
     }

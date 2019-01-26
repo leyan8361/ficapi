@@ -28,6 +28,10 @@ public interface BetScenceService {
 
     ResponseVo getAll();
 
+    ResponseVo getSignData(int userId);
+
+    ResponseVo getBetRanking();
+
     ResponseVo onShelf(int id);
 
     ResponseVo shelf(int id);

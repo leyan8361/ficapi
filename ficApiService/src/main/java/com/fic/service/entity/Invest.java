@@ -22,6 +22,8 @@ public class Invest {
 
     private BigDecimal rewardBalance;
 
+    private BigDecimal lockBalance;
+
     private byte status;
 
     public Integer getInvestId() {
@@ -106,5 +108,13 @@ public class Invest {
 
     public void setRewardBalance(BigDecimal rewardBalance) {
         this.rewardBalance = rewardBalance;
+    }
+
+    public BigDecimal getLockBalance() {
+        return lockBalance;
+    }
+
+    public void setLockBalance(BigDecimal lockBalance) {
+        this.lockBalance = lockBalance;
     }
 }

@@ -91,7 +91,7 @@
     where id = #{id,jdbcType=INTEGER}
   </update>
   <select id="findByTelephone" resultMap="BaseResultMap">
-    select * from sms_queue where telephone = #{telephone} group by created_time desc limit 0,1;
+    select * from sms_queue where telephone = #{telephone} order by created_time desc limit 0,1;
   </select>
   <delete id="deleteByTelephone">
     delete from sms_queue where telephone=#{telephone}

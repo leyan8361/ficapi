@@ -25,6 +25,10 @@ public class LoginUserInfoVo {
     private String nickName;
     @ApiModelProperty(value = "邮箱")
     private String email;
+    @ApiModelProperty(value = "(0,未实名)(1,审核中)(2,审核成功)(3,审核失败)")
+    private int authStatus;
+    @ApiModelProperty(value = "是否设置支付密码,true为已设置，false未设置")
+    private boolean isSetPayPassword = false;
 
     public String getNickName() {
         return nickName;
@@ -80,5 +84,21 @@ public class LoginUserInfoVo {
 
     public void setMyInviteCode(String myInviteCode) {
         this.myInviteCode = myInviteCode;
+    }
+
+    public int getAuthStatus() {
+        return authStatus;
+    }
+
+    public void setAuthStatus(int authStatus) {
+        this.authStatus = authStatus;
+    }
+
+    public boolean isSetPayPassword() {
+        return isSetPayPassword;
+    }
+
+    public void setSetPayPassword(boolean setPayPassword) {
+        isSetPayPassword = setPayPassword;
     }
 }

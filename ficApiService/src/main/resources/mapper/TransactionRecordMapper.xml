@@ -1,0 +1,269 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fic.service.mapper.TransactionRecordMapper">
+  <resultMap id="BaseResultMap" type="com.fic.service.entity.TransactionRecord">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="user_id" jdbcType="INTEGER" property="userId" />
+    <result column="from_address" jdbcType="VARCHAR" property="fromAddress" />
+    <result column="to_address" jdbcType="VARCHAR" property="toAddress" />
+    <result column="amount" jdbcType="DECIMAL" property="amount" />
+    <result column="fee" jdbcType="DECIMAL" property="fee" />
+    <result column="transaction_address" jdbcType="VARCHAR" property="transactionAddress" />
+    <result column="status" jdbcType="INTEGER" property="status" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="way" jdbcType="INTEGER" property="way" />
+    <result column="created_time" jdbcType="TIMESTAMP" property="createdTime" />
+    <result column="transaction_hash" jdbcType="VARCHAR" property="transactionHash" />
+    <result column="coin_type" jdbcType="VARCHAR" property="coinType" />
+    <result column="in_come_time" jdbcType="TIMESTAMP" property="inComeTime" />
+    <result column="coin_rate" jdbcType="DECIMAL" property="coinRate" />
+    <result column="coin_num" jdbcType="DECIMAL" property="coinNum" />
+    <result column="gas_price" jdbcType="DECIMAL" property="gasPrice" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, user_id, from_address, to_address, amount, fee, transaction_address, status,
+    remark, way, created_time, transaction_hash, coin_type, in_come_time, coin_rate,
+    coin_num, gas_price
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from transaction_record
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from transaction_record
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.fic.service.entity.TransactionRecord">
+    insert into transaction_record (id, user_id, from_address,
+      to_address, amount, fee,
+      transaction_address, status, remark,
+      way, created_time, transaction_hash,
+      coin_type, in_come_time, coin_rate,
+      coin_num, gas_price)
+    values (#{id,jdbcType=INTEGER}, #{userId,jdbcType=INTEGER}, #{fromAddress,jdbcType=VARCHAR},
+      #{toAddress,jdbcType=VARCHAR}, #{amount,jdbcType=DECIMAL}, #{fee,jdbcType=DECIMAL},
+      #{transactionAddress,jdbcType=VARCHAR}, #{status,jdbcType=INTEGER}, #{remark,jdbcType=VARCHAR},
+      #{way,jdbcType=INTEGER}, #{createdTime,jdbcType=TIMESTAMP}, #{transactionHash,jdbcType=VARCHAR},
+      #{coinType,jdbcType=VARCHAR}, #{inComeTime,jdbcType=TIMESTAMP}, #{coinRate,jdbcType=DECIMAL},
+      #{coinNum,jdbcType=DECIMAL}, #{gasPrice,jdbcType=DECIMAL})
+  </insert>
+  <insert id="insertSelective" parameterType="com.fic.service.entity.TransactionRecord" useGeneratedKeys="true" keyProperty="id">
+    insert into transaction_record
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="userId != null">
+        user_id,
+      </if>
+      <if test="fromAddress != null">
+        from_address,
+      </if>
+      <if test="toAddress != null">
+        to_address,
+      </if>
+      <if test="amount != null">
+        amount,
+      </if>
+      <if test="fee != null">
+        fee,
+      </if>
+      <if test="transactionAddress != null">
+        transaction_address,
+      </if>
+      <if test="status != null">
+        status,
+      </if>
+      <if test="remark != null">
+        remark,
+      </if>
+      <if test="way != null">
+        way,
+      </if>
+      <if test="createdTime != null">
+        created_time,
+      </if>
+      <if test="transactionHash != null">
+        transaction_hash,
+      </if>
+      <if test="coinType != null">
+        coin_type,
+      </if>
+      <if test="inComeTime != null">
+        in_come_time,
+      </if>
+      <if test="coinRate != null">
+        coin_rate,
+      </if>
+      <if test="coinNum != null">
+        coin_num,
+      </if>
+      <if test="gasPrice != null">
+        gas_price,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="userId != null">
+        #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="fromAddress != null">
+        #{fromAddress,jdbcType=VARCHAR},
+      </if>
+      <if test="toAddress != null">
+        #{toAddress,jdbcType=VARCHAR},
+      </if>
+      <if test="amount != null">
+        #{amount,jdbcType=DECIMAL},
+      </if>
+      <if test="fee != null">
+        #{fee,jdbcType=DECIMAL},
+      </if>
+      <if test="transactionAddress != null">
+        #{transactionAddress,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null">
+        #{status,jdbcType=INTEGER},
+      </if>
+      <if test="remark != null">
+        #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="way != null">
+        #{way,jdbcType=INTEGER},
+      </if>
+      <if test="createdTime != null">
+        #{createdTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="transactionHash != null">
+        #{transactionHash,jdbcType=VARCHAR},
+      </if>
+      <if test="coinType != null">
+        #{coinType,jdbcType=VARCHAR},
+      </if>
+      <if test="inComeTime != null">
+        #{inComeTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="coinRate != null">
+        #{coinRate,jdbcType=DECIMAL},
+      </if>
+      <if test="coinNum != null">
+        #{coinNum,jdbcType=DECIMAL},
+      </if>
+      <if test="gasPrice != null">
+        #{gasPrice,jdbcType=DECIMAL},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.fic.service.entity.TransactionRecord">
+    update transaction_record
+    <set>
+      <if test="userId != null">
+        user_id = #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="fromAddress != null">
+        from_address = #{fromAddress,jdbcType=VARCHAR},
+      </if>
+      <if test="toAddress != null">
+        to_address = #{toAddress,jdbcType=VARCHAR},
+      </if>
+      <if test="amount != null">
+        amount = #{amount,jdbcType=DECIMAL},
+      </if>
+      <if test="fee != null">
+        fee = #{fee,jdbcType=DECIMAL},
+      </if>
+      <if test="transactionAddress != null">
+        transaction_address = #{transactionAddress,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null">
+        status = #{status,jdbcType=INTEGER},
+      </if>
+      <if test="remark != null">
+        remark = #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="way != null">
+        way = #{way,jdbcType=INTEGER},
+      </if>
+      <if test="createdTime != null">
+        created_time = #{createdTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="transactionHash != null">
+        transaction_hash = #{transactionHash,jdbcType=VARCHAR},
+      </if>
+      <if test="coinType != null">
+        coin_type = #{coinType,jdbcType=VARCHAR},
+      </if>
+      <if test="inComeTime != null">
+        in_come_time = #{inComeTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="coinRate != null">
+        coin_rate = #{coinRate,jdbcType=DECIMAL},
+      </if>
+      <if test="coinNum != null">
+        coin_num = #{coinNum,jdbcType=DECIMAL},
+      </if>
+      <if test="gasPrice != null">
+        gas_price = #{gasPrice,jdbcType=DECIMAL},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.fic.service.entity.TransactionRecord">
+    update transaction_record
+    set user_id = #{userId,jdbcType=INTEGER},
+      from_address = #{fromAddress,jdbcType=VARCHAR},
+      to_address = #{toAddress,jdbcType=VARCHAR},
+      amount = #{amount,jdbcType=DECIMAL},
+      fee = #{fee,jdbcType=DECIMAL},
+      transaction_address = #{transactionAddress,jdbcType=VARCHAR},
+      status = #{status,jdbcType=INTEGER},
+      remark = #{remark,jdbcType=VARCHAR},
+      way = #{way,jdbcType=INTEGER},
+      created_time = #{createdTime,jdbcType=TIMESTAMP},
+      transaction_hash = #{transactionHash,jdbcType=VARCHAR},
+      coin_type = #{coinType,jdbcType=VARCHAR},
+      in_come_time = #{inComeTime,jdbcType=TIMESTAMP},
+      coin_rate = #{coinRate,jdbcType=DECIMAL},
+      coin_num = #{coinNum,jdbcType=DECIMAL},
+      gas_price = #{gasPrice,jdbcType=DECIMAL}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <select id="findAllByType" resultMap="BaseResultMap">
+    select * from transaction_record where
+    <if test="condition == 0">
+      1=1
+    </if>
+    <if test="condition == 1">
+      (status = 0 or status = 2)
+    </if>
+    <if test="condition == 2">
+      status not in (0,2)
+    </if>;
+  </select>
+  <update id="updateStatus">
+    update transaction_record set status = #{status}
+    <if test="remark != null">
+      ,remark = #{remark}
+    </if>
+    where id = #{id}
+  </update>
+  <select id="findAllWaitConfirm" resultMap="BaseResultMap">
+    select * from transaction_record where way = 1 and status = 2;
+  </select>
+  <update id="updateStatusForeachList" parameterType="java.util.List">
+    <foreach collection="recordList" item="item" index="index" open="" close="" separator=";">
+      update transaction_record
+      <set>
+        status = #{item.status}
+      </set>
+      where id = ${item.id}
+    </foreach>
+  </update>
+  <select id="findAllByUserIdAndPage" resultMap="BaseResultMap">
+    select * from transaction_record where user_id = #{userId} order by created_time desc limit #{offset},10;
+  </select>
+</mapper>

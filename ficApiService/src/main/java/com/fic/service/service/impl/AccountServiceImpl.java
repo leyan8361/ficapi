@@ -62,6 +62,8 @@ public class AccountServiceImpl implements AccountService {
     WalletService walletService;
     @Autowired
     DeviceMapper deviceMapper;
+    @Autowired
+    UserAuthMapper userAuthMapper;
 
     @Override
     @Transactional(isolation= Isolation.READ_COMMITTED,propagation= Propagation.REQUIRED,rollbackFor = Exception.class)
@@ -73,6 +75,25 @@ public class AccountServiceImpl implements AccountService {
         loginUserInfoVo.setUsername(user.getUserName());
         loginUserInfoVo.setNickName(user.getNickName());
         loginUserInfoVo.setEmail(user.getEmail());
+        UserAuth userAuth = userAuthMapper.findByUserId(user.getId());
+        if(null == userAuth){
+            loginUserInfoVo.setAuthStatus(0);
+        }else{
+            if(userAuth.getStatus() == 0){
+                loginUserInfoVo.setAuthStatus(1);
+            }
+            if(userAuth.getStatus() == 1){
+                loginUserInfoVo.setAuthStatus(2);
+            }
+            if(userAuth.getStatus() == 2){
+                loginUserInfoVo.setAuthStatus(3);
+            }
+        }
+        if(StringUtils.isEmpty(user.getPayPassword())){
+            loginUserInfoVo.setSetPayPassword(false);
+        }else{
+            loginUserInfoVo.setSetPayPassword(true);
+        }
         String userAgent = request.getHeader("User-Agent");
         String ipAddress = request.getRemoteAddr();
         TokenBase token = this.saveToken(user,userAgent,ipAddress);
@@ -181,7 +202,6 @@ public class AccountServiceImpl implements AccountService {
            }
        }
 
-
         return user;
     }
 
@@ -240,5 +260,116 @@ public class AccountServiceImpl implements AccountService {
         return new String(Base64.encode(newToken));
     }
 
+    @Override
+    @Transactional(isolation= Isolation.READ_COMMITTED,propagation= Propagation.REQUIRED,rollbackFor = Exception.class)
+    public ResponseVo updateUserName(int userId, String telephone) {
+        User user = userMapper.get(userId);
+        if(null == user){
+            log.error("更新手机号失败，用户不存在");
+            return new ResponseVo(ErrorCodeEnum.USER_NOT_EXIST,null);
+        }
+        String existTel = user.getUserName();
+        if(telephone.equals(existTel)){
+            return new ResponseVo(ErrorCodeEnum.TELEPHONE_IS_BEING_USED,null);
+        }
+        int checkIfExist = userMapper.checkIfExistByTelephone(telephone);
+        if(checkIfExist >0){
+            log.error("用户手机号重复,telephone :{}",telephone);
+            return new ResponseVo(ErrorCodeEnum.TELEPHONE_EXIST,null);
+        }
 
+        int updateResult = userMapper.updateUserName(userId,telephone);
+        if(updateResult <=0){
+            log.error("更新手机号失败，userId:{}",userId);
+            throw new RuntimeException();
+        }
+        return new ResponseVo(ErrorCodeEnum.SUCCESS,null);
+    }
+
+    @Override
+    @Transactional(isolation= Isolation.READ_COMMITTED,propagation= Propagation.REQUIRED,rollbackFor = Exception.class)
+    public ResponseVo updateEmail(int userId, String email,String password) {
+        User user = userMapper.get(userId);
+        if(null == user){
+            log.error("更新邮箱失败，用户不存在");
+            return new ResponseVo(ErrorCodeEnum.USER_NOT_EXIST,null);
+        }
+        String existEmail = user.getEmail();
+        if(email.equals(existEmail)){
+            return new ResponseVo(ErrorCodeEnum.EMAIL_IS_BEING_USED,null);
+        }
+        int checkIfExist = userMapper.checkIfExistByEmail(email);
+        if(checkIfExist >0){
+            log.error("用户邮箱重复,telephone :{}",email);
+            return new ResponseVo(ErrorCodeEnum.EMAIL_EXIST,null);
+        }
+
+        if(!user.getPassword().equals(password)){
+            log.debug("绑定邮箱，登录密码错误");
+            return new ResponseVo(ErrorCodeEnum.PASSWORD_NOT_MATCH,null);
+        }
+
+        int updateResult = userMapper.updateEmail(userId,email);
+        if(updateResult <=0){
+            log.error("更新邮箱失败，userId:{}",userId);
+            throw new RuntimeException();
+        }
+        return new ResponseVo(ErrorCodeEnum.SUCCESS,null);
+    }
+
+    @Override
+    public ResponseVo getUserInfo(int userId) {
+        LoginUserInfoVo result = new LoginUserInfoVo();
+        User user = userMapper.get(userId);
+        if(null == user){
+            log.error("查找用户信息失败 user id :{}",userId);
+            return new ResponseVo(ErrorCodeEnum.USER_NOT_EXIST,null);
+        }
+        UserAuth userAuth = userAuthMapper.findByUserId(userId);
+        result.setUserId(userId);
+        if(null == userAuth){
+            result.setAuthStatus(0);
+        }else{
+            if(userAuth.getStatus() == 0){
+                result.setAuthStatus(1);
+            }
+            if(userAuth.getStatus() == 1){
+                result.setAuthStatus(2);
+            }
+            if(userAuth.getStatus() == 2){
+                result.setAuthStatus(3);
+            }
+        }
+        if(StringUtils.isEmpty(user.getPayPassword())){
+            result.setSetPayPassword(false);
+        }else{
+            result.setSetPayPassword(true);
+        }
+        result.setEmail(user.getEmail());
+        result.setNickName(user.getNickName());
+        result.setHimageUrl(uploadProperties.getUrl(user.getHimageUrl()));
+        result.setMyInviteCode(user.getUserInviteCode());
+        result.setUsername(user.getUserName());
+        return new ResponseVo(ErrorCodeEnum.SUCCESS,result);
+    }
+
+    @Override
+    @Transactional(isolation= Isolation.READ_COMMITTED,propagation= Propagation.REQUIRED,rollbackFor = Exception.class)
+    public ResponseVo updatePayPassword(int userId, String oldPayPassword, String newPayPassword) {
+        User user = userMapper.get(userId);
+        if(null == user){
+            log.error("修改密码失败, user id :{}",userId);
+            return new ResponseVo(ErrorCodeEnum.USER_NOT_EXIST,null);
+        }
+        if(StringUtils.isEmpty(oldPayPassword) || !oldPayPassword.equals(user.getPayPassword())){
+            return new ResponseVo(ErrorCodeEnum.USER_PAY_PASSWORD_NOT_MATCH,null);
+        }
+        user.setPayPassword(newPayPassword);
+        int updateResult = userMapper.updateByPrimaryKey(user);
+        if(updateResult <=0){
+            log.error("更新支付密码失败，user id :{}",user.getId());
+            throw new RuntimeException();
+        }
+        return new ResponseVo(ErrorCodeEnum.SUCCESS,null);
+    }
 }

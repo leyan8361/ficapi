@@ -81,9 +81,6 @@ public class ApiV2MovieController {
                 for(int j = 0 ; j < needSorted.size(); j++){
                     if(!needSorted.get(i).getId().equals(needSorted.get(j).getId())){
                         BalanceStatement temp = null;
-                        if(needSorted.get(i).getId() == 212 || needSorted.get(j).getId() == 212){
-                            log.debug("logsfds");
-                        }
                         if(needSorted.get(i).getCreatedTime().compareTo(needSorted.get(j).getCreatedTime()) < 0){
 //                            if(needSorted.get(i).getUserId() == 114){
 //                                log.debug("logsfds");
@@ -99,15 +96,8 @@ public class ApiV2MovieController {
                 }
             }
 
-            for(int m = 0; m < needSorted.size(); m++){
-                if(needSorted.get(m).getUserId() == 114){
-                    System.out.println("id: " +needSorted.get(m).getId()+"用户ID :"+needSorted.get(m).getUserId()+" created_time : "+ DateUtil.dateToStrMatSec(needSorted.get(m).getCreatedTime())
-                    );
-                }
 
-            }
 
-//
                 if(null == needSorted.get(0).getAmount() || needSorted.get(0).getAmount().compareTo(new BigDecimal("1000")) < 0){
                     System.out.println("id: " +needSorted.get(0).getId()+"用户ID :"+needSorted.get(0).getUserId()+" amount :" + needSorted.get(0).getAmount()
                             +" type : "+ needSorted.get(0).getType() +" created_time : "+ DateUtil.dateToStrMatSec(needSorted.get(0).getCreatedTime())

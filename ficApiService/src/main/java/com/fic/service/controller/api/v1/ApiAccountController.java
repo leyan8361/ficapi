@@ -35,7 +35,7 @@ import java.util.List;
 @Api(description = "Api-账户相关，登录、登出、注册、获取账户信息")
 public class ApiAccountController {
 
-    private final Logger log = LoggerFactory.getLogger(HomeController.class);
+    private final Logger log = LoggerFactory.getLogger(ApiAccountController.class);
 
     @Autowired
     UserMapper userMapper;
@@ -275,5 +275,54 @@ public class ApiAccountController {
         return ResponseEntity.ok(new ResponseVo(ErrorCodeEnum.SUCCESS,resultList));
     }
 
+    @GetMapping(value = "/updateTelephone")
+    @ApiOperation("Api-修改手机号")
+    @ApiImplicitParams({
+            @ApiImplicitParam(dataType = "int", name = "userId", value = "用户ID", required = true),
+            @ApiImplicitParam(dataType = "string", name = "telephone", value = "手机", required = true)
+    })
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "SUCCESS")
+    })
+    public ResponseEntity updateTelephone(@RequestParam int userId,@RequestParam String telephone){
+        log.debug(" do updateTelephone Action !!!");
+        ResponseVo result = accountService.updateUserName(userId,telephone);
+        return ResponseEntity.ok(result);
+    }
+
+    @GetMapping(value = "/updateEmail")
+    @ApiOperation("Api-修改邮箱")
+    @ApiImplicitParams({
+            @ApiImplicitParam(dataType = "int", name = "userId", value = "用户ID", required = true),
+            @ApiImplicitParam(dataType = "string", name = "email", value = "邮箱地址", required = true),
+            @ApiImplicitParam(dataType = "string", name = "password", value = "登录密码MD5结果", required = true)
+    })
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "SUCCESS"),
+            @ApiResponse(code = 1001, message = "User Not Exist"),
+            @ApiResponse(code = 1032, message = "EMAIL_IS_BEING_USED"),
+            @ApiResponse(code = 1033, message = "EMAIL_EXIST"),
+            @ApiResponse(code = 1000, message = "Password UnMatch")
+    })
+    public ResponseEntity updateEmail(@RequestParam int userId,@RequestParam String email,@RequestParam String password){
+        log.debug(" do updateTelephone Action !!!");
+        ResponseVo result = accountService.updateEmail(userId,email,password);
+        return ResponseEntity.ok(result);
+    }
+
+
+    @GetMapping(value = "/getUserInfo")
+    @ApiOperation("Api-获取用户信息")
+    @ApiImplicitParams({
+            @ApiImplicitParam(dataType = "int", name = "userId", value = "用户ID", required = true)
+    })
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "SUCCESS",response = LoginUserInfoVo.class)
+    })
+    public ResponseEntity getUserInfo(@RequestParam int userId){
+        log.debug(" do getUserInfo Action !!!");
+        ResponseVo result = accountService.getUserInfo(userId);
+        return ResponseEntity.ok(result);
+    }
 
 }

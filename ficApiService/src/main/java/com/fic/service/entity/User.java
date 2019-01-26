@@ -40,11 +40,6 @@ public class User implements Serializable {
     private String himageUrl;
 
     /**
-     * 钱包地块
-     */
-    private String walletAddress;
-
-    /**
      * 用户推荐码
      */
     private String userInviteCode;
@@ -558,14 +553,6 @@ public class User implements Serializable {
 
     public void setPayPassword(String payPassword) {
         this.payPassword = payPassword;
-    }
-
-    public String getWalletAddress() {
-        return walletAddress;
-    }
-
-    public void setWalletAddress(String walletAddress) {
-        this.walletAddress = walletAddress;
     }
 
     public String gettUserInviteCode() {

@@ -12,4 +12,6 @@ public interface SmsService {
         ErrorCodeEnum send(String telphone);
 
         ErrorCodeEnum check(String telephone, String code);
+
+        ErrorCodeEnum sendMail(String email);
 }

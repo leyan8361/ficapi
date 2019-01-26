@@ -1,14 +1,23 @@
 package com.fic.service.utils;
 
+import com.fic.service.Enum.OkCoinHeadersEnum;
+import com.fic.service.constants.ServerProperties;
 import okhttp3.*;
+import org.apache.http.client.methods.RequestBuilder;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import java.io.IOException;
+import java.security.InvalidKeyException;
+import java.time.Instant;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -22,6 +31,9 @@ public class OkHttpUtil {
     private final Logger log = LoggerFactory.getLogger(Web3jUtil.class);
 
     private OkHttpClient client = null;
+
+    @Autowired
+    ServerProperties serverProperties;
 
     @PostConstruct
     public void init(){
@@ -55,6 +67,40 @@ public class OkHttpUtil {
         }catch(IOException io){
             log.error("okhttpClient exception, get url :{}",url);
             io.printStackTrace();
+        }
+        return result;
+    }
+
+    /**
+     * get for ok coin api
+     * @return
+     */
+    public String getForOkCoin(String path,String queryString){
+        String result = "";
+        String timestamp = DateUtil.getUnixTime();
+        String requestUrl = "";
+        try{
+            Map<String,String> headersParam = new HashMap<String,String>();
+            headersParam.put(OkCoinHeadersEnum.OK_ACCESS_KEY.header(),serverProperties.getOkApiKey());
+            headersParam.put(OkCoinHeadersEnum.OK_ACCESS_PASSPHRASE.header(),serverProperties.getOkApiSecretKey());
+            headersParam.put(OkCoinHeadersEnum.OK_ACCESS_SIGN.header(),HmacSHA256Base64Utils.sign(timestamp, "GET",path,queryString,"",serverProperties.getOkApiSecretKey()));
+            headersParam.put(OkCoinHeadersEnum.OK_ACCESS_TIMESTAMP.header(),timestamp);
+            Headers headers = Headers.of(headersParam);
+            requestUrl = serverProperties.getOkServerUrl() + path + queryString;
+            Request request = new Request.Builder().url(requestUrl).headers(headers).build();
+            Call call = client.newCall(request);
+            Response response = call.execute();
+            if(response.isSuccessful()){
+                result = response.body().string();
+            }
+            response.close();
+        }catch(IOException io){
+            log.error("okhttpClient exception, get with header url :{}",requestUrl);
+            io.printStackTrace();
+        } catch (CloneNotSupportedException e) {
+            e.printStackTrace();
+        } catch (InvalidKeyException e) {
+            e.printStackTrace();
         }
         return result;
     }

@@ -4,6 +4,7 @@ import com.fic.service.Enum.ErrorCodeEnum;
 import com.fic.service.Vo.ResponseVo;
 import com.fic.service.mapper.UserMapper;
 import com.fic.service.service.SmsService;
+import com.fic.service.utils.EmailUtil;
 import com.fic.service.utils.RegexUtil;
 import io.swagger.annotations.*;
 import org.slf4j.Logger;
@@ -31,6 +32,8 @@ public class ApiSmsController {
     SmsService smsService;
     @Autowired
     UserMapper userMapper;
+    @Autowired
+    EmailUtil emailUtil;
 
     @GetMapping("/sendSms")
     @ApiOperation("Api-发送")
@@ -52,11 +55,27 @@ public class ApiSmsController {
         return ResponseEntity.ok(new ResponseVo(result,null));
     }
 
+
+    @GetMapping("/sendEmail")
+    @ApiOperation("Api-发送邮件")
+    @ApiImplicitParams({
+            @ApiImplicitParam(dataType = "string", name = "email", value = "邮箱地址", required = true)
+    })
+    @ApiResponses({
+            @ApiResponse(code = 1034, message = "NOT_A_EMAIL"),
+            @ApiResponse(code = 200, message = "SUCCESS")
+    })
+    public ResponseEntity sendEmail(@RequestParam String email) {
+        log.debug(" do sendEmail action !!");
+        ErrorCodeEnum result = smsService.sendMail(email);
+        return ResponseEntity.ok(new ResponseVo(ErrorCodeEnum.SUCCESS,result));
+    }
+
     @GetMapping("/checkCode")
     @ApiOperation("Api-Check验证码")
     @ApiImplicitParams({
-            @ApiImplicitParam(dataType = "string", name = "telephone", value = "手机号", required = true),
-            @ApiImplicitParam(dataType = "string", name = "code", value = "手机号", required = true)
+            @ApiImplicitParam(dataType = "string", name = "telephone", value = "手机号 or Email", required = true),
+            @ApiImplicitParam(dataType = "string", name = "code", value = "验证码", required = true)
     })
     @ApiResponses({
             @ApiResponse(code = 1013, message = "VALIDATE_CODE_INVALID"),
