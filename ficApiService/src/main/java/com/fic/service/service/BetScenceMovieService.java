@@ -17,4 +17,6 @@ public interface BetScenceMovieService {
     ResponseVo update(BetScenceMovie scenceMovie);
 
     ResponseVo delete(int id);
+
+    ResponseVo getMovieOn();
 }

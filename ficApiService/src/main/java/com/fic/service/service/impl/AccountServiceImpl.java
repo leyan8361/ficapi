@@ -75,8 +75,24 @@ public class AccountServiceImpl implements AccountService {
         loginUserInfoVo.setUsername(user.getUserName());
         loginUserInfoVo.setNickName(user.getNickName());
         loginUserInfoVo.setEmail(user.getEmail());
-        if(StringUtils.isNotEmpty(user.getPayPassword())){
-            loginUserInfoVo.setAuth(true);
+        UserAuth userAuth = userAuthMapper.findByUserId(user.getId());
+        if(null == userAuth){
+            loginUserInfoVo.setAuthStatus(0);
+        }else{
+            if(userAuth.getStatus() == 0){
+                loginUserInfoVo.setAuthStatus(1);
+            }
+            if(userAuth.getStatus() == 1){
+                loginUserInfoVo.setAuthStatus(2);
+            }
+            if(userAuth.getStatus() == 2){
+                loginUserInfoVo.setAuthStatus(3);
+            }
+        }
+        if(StringUtils.isEmpty(user.getPayPassword())){
+            loginUserInfoVo.setSetPayPassword(false);
+        }else{
+            loginUserInfoVo.setSetPayPassword(true);
         }
         String userAgent = request.getHeader("User-Agent");
         String ipAddress = request.getRemoteAddr();
@@ -312,9 +328,17 @@ public class AccountServiceImpl implements AccountService {
         UserAuth userAuth = userAuthMapper.findByUserId(userId);
         result.setUserId(userId);
         if(null == userAuth){
-            result.setAuth(false);
+            result.setAuthStatus(0);
         }else{
-            result.setAuth(true);
+            if(userAuth.getStatus() == 0){
+                result.setAuthStatus(1);
+            }
+            if(userAuth.getStatus() == 1){
+                result.setAuthStatus(2);
+            }
+            if(userAuth.getStatus() == 2){
+                result.setAuthStatus(3);
+            }
         }
         if(StringUtils.isEmpty(user.getPayPassword())){
             result.setSetPayPassword(false);
@@ -327,5 +351,25 @@ public class AccountServiceImpl implements AccountService {
         result.setMyInviteCode(user.getUserInviteCode());
         result.setUsername(user.getUserName());
         return new ResponseVo(ErrorCodeEnum.SUCCESS,result);
+    }
+
+    @Override
+    @Transactional(isolation= Isolation.READ_COMMITTED,propagation= Propagation.REQUIRED,rollbackFor = Exception.class)
+    public ResponseVo updatePayPassword(int userId, String oldPayPassword, String newPayPassword) {
+        User user = userMapper.get(userId);
+        if(null == user){
+            log.error("修改密码失败, user id :{}",userId);
+            return new ResponseVo(ErrorCodeEnum.USER_NOT_EXIST,null);
+        }
+        if(StringUtils.isEmpty(oldPayPassword) || !oldPayPassword.equals(user.getPayPassword())){
+            return new ResponseVo(ErrorCodeEnum.USER_PAY_PASSWORD_NOT_MATCH,null);
+        }
+        user.setPayPassword(newPayPassword);
+        int updateResult = userMapper.updateByPrimaryKey(user);
+        if(updateResult <=0){
+            log.error("更新支付密码失败，user id :{}",user.getId());
+            throw new RuntimeException();
+        }
+        return new ResponseVo(ErrorCodeEnum.SUCCESS,null);
     }
 }

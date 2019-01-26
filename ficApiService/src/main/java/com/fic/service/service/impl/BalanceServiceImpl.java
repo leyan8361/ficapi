@@ -270,6 +270,10 @@ public class BalanceServiceImpl implements BalanceService {
                 item.setMoveName(movie.getMovieName());
                 item.setAmount(detail.getAmount());
                 item.setCreatedTime(balanceStatement.getCreatedTime());
+                if(null == sumWayOut){
+                    sumWayOut = BigDecimal.ZERO;
+                }
+                sumWayOut = sumWayOut.add(item.getAmount());
             }
 
             /** 竞猜奖励 */

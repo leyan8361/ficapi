@@ -269,7 +269,7 @@ public class LuckTurntableServiceImpl implements LuckTurntableService {
                     throw new RuntimeException();
                 }
                 if(luckyTurntable.getPriceType() == PriceTypeEnum.WORD.code()){
-                    result.setPriceName("影视金句");
+                    result.setPriceName("淘影说");
                 }else{
                     result.setPriceName(luckyTurntable.getPriceName());
                 }
@@ -380,6 +380,7 @@ public class LuckTurntableServiceImpl implements LuckTurntableService {
             }
         }
         invest.setBalance(balance);
+        invest.setRewardBalance(rewardBalance);
         int updateInvestResult = investMapper.updateBalanceAndRewardBalance(balance,rewardBalance,userId);
         if(updateInvestResult <=0){
             log.error("更新奖励余额失败");
@@ -421,7 +422,7 @@ public class LuckTurntableServiceImpl implements LuckTurntableService {
         }
         String words[] = wordsTurntable.getPriceName().split(Constants.WORDS_CUT);
         result.setWord(words[RandomUtil.getRandomNum(words.length)]);
-        result.setBalance(invest.getBalance());
+        result.setBalance(invest.getBalance().add(invest.getRewardBalance()));
         return new ResponseVo(ErrorCodeEnum.SUCCESS,result);
     }
 

@@ -227,8 +227,8 @@ public class BetScheduledService {
                             returnUser.setReserveFee(reserveFee);
                         }
                         returnUser.setBingo(BingoStatusEnum.CLOSE_RETURNING.getCode().byteValue());
-                        BigDecimal returningFee = returning.subtract(totalFee);
-                        totalRealReserve = totalRealReserve.add(returningFee);
+                        BigDecimal returningFee = returning.subtract(betFee.add(reserveFee));
+                        totalRealReserve = totalRealReserve.add(reserveFee);
                         totalBetFee = totalBetFee.add(betFee);
                         returnUser.setCloseWithReturning(returningFee);
                         generateBalanceAndUpdateInvest(returnUser.getUserId(), returningFee, FinanceTypeEnum.BET_RETURNING.getCode());
@@ -943,6 +943,21 @@ public class BetScheduledService {
         int updateBetScence = betScenceMapper.updateByPrimaryKey(betScence);
         if(updateBetScence <=0){
             log.error(" 更改退还金额失败，betscence :{}",betScence.toString());
+            throw new RuntimeException();
+        }
+    }
+
+    @Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+    public void recharge(BigDecimal amount){
+        BetScence betScence = betScenceMapper.getByBetType(BetTypeEnum.ODD_EVEN.getCode());
+        if(null == betScence){
+            log.error("充值备用金失败,无猜单双项目");
+            return;
+        }
+        betScence.setTotalReservation(betScence.getTotalReservation().add(amount));
+        int updateResult = betScenceMapper.updateByPrimaryKeySelective(betScence);
+        if(updateResult <=0){
+            log.error("更新备用金失败");
             throw new RuntimeException();
         }
     }

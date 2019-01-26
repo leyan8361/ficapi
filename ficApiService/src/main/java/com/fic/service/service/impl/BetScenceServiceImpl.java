@@ -528,7 +528,6 @@ public class BetScenceServiceImpl implements BetScenceService {
 
             BoxOffice boxOffice = boxOfficeMapper.findByDay(DateUtil.dateToStrMatDay(betScenceMovie.getStartDay()),betMovie.getId());
             if(null != boxOffice){
-                log.debug(" 票房记录为空，scence movie start day :{}, movie id :{}",DateUtil.dateToStrMatDay(betScenceMovie.getStartDay()),betMovie.getId());
                 if(betScence.getBetType().equals(BetTypeEnum.ODD_EVEN.getCode().byteValue())){
                     /** 单双时 */
                     BigDecimal boxInfo = boxOffice.getBoxInfo().setScale(0,BigDecimal.ROUND_DOWN);
@@ -709,7 +708,7 @@ public class BetScenceServiceImpl implements BetScenceService {
             List<BetRankingRecordVo> todayBetRecord = betUserMapper.findToDayRecord(betUserId,toDay);
             result.setUserId(betUserId);
             result.setPlayRecord(todayBetRecord);
-            if(todayBetRecord.size() < 0){
+            if(todayBetRecord.size() <= 0){
                 continue;
             }
             resultList.add(result);

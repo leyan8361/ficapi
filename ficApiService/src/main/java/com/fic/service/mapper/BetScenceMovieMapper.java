@@ -39,5 +39,7 @@ public interface BetScenceMovieMapper {
 
     List<BetScenceMovie> getAll();
 
+    List<BetScenceMovie> findAllMovieOn(String startDay);
+
 //    List<BetScenceMovie> findHighLevelByMovieName(String startDay,String endDay);
 }
