@@ -9,8 +9,8 @@ public enum WxPayStatusEnum {
     SUCCESS(1,"SUCCESS"),
     USERPAYING(2,"USERPAYING"),
     PAYERROR(3,"PAYERROR"),
-    REFUND(4),
-    CLOSED(5);
+    REFUND(4,"REFUND"),
+    CLOSED(5,"CLOSED");
 
     private Integer code;
 

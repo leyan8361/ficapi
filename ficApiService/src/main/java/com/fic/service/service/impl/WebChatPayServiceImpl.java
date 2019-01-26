@@ -151,7 +151,7 @@ public class WebChatPayServiceImpl implements WebChatPayService {
             log.error("微信支付，查询订单失败，验证签名失败 result xml :{}, request xml :{}",resultStr,xml);
             return new ResponseVo(ErrorCodeEnum.WE_CHAT_PAY_QUERY_FAILED, null);
         }
-
+        //TODO change status
 
         return null;
     }
