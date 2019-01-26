@@ -38,6 +38,8 @@ public class RewardServiceImpl implements RewardService {
     InvestMapper investMapper;
     @Autowired
     BalanceStatementMapper balanceStatementMapper;
+    @Autowired
+    InvestDetailMapper investDetailMapper;
 
     @Override
     @Transactional(isolation= Isolation.READ_COMMITTED,propagation= Propagation.REQUIRED,rollbackFor = Exception.class)
@@ -69,6 +71,18 @@ public class RewardServiceImpl implements RewardService {
             statement.setType(FinanceTypeEnum.REWARD.getCode());
             statement.setCreatedTime(new Date());
             statement.setDistributionId(distributionSelf.getId());
+            int saveStatementResult = balanceStatementMapper.insert(statement);
+            if(saveStatementResult <=0){
+                log.error("不分销，保存余额变动失败");
+                throw new RuntimeException();
+            }
+        }else{
+            BalanceStatement statement = new BalanceStatement();
+            statement.setUserId(user.getId());
+            statement.setWay(FinanceWayEnum.OUT.getCode());
+            statement.setType(FinanceTypeEnum.INVEST.getCode());
+            statement.setCreatedTime(new Date());
+            statement.setInvestDetailId(investDetailId);
             int saveStatementResult = balanceStatementMapper.insert(statement);
             if(saveStatementResult <=0){
                 log.error("不分销，保存余额变动失败");
