@@ -114,6 +114,17 @@ public class DateUtil {
         return date_;
     }
 
+    public static Date strYMDHMSToDate(String dateStr) {
+        SimpleDateFormat simpleFormatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        Date date = null;
+        try {
+            date  = simpleFormatter.parse(dateStr);
+        }catch (ParseException e){
+            e.printStackTrace();
+        }
+        return date;
+    }
+
     public static Date plusMin(Date date, int min) {
         Calendar calendar = new GregorianCalendar();
         calendar.setTime(date);

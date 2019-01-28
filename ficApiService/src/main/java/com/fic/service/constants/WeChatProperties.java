@@ -19,6 +19,9 @@ public class WeChatProperties {
     @Value("${we.chat.notify.url}")
     String notifyUrl;
 
+    @Value("${we.chat.refund.notify.url}")
+    String refundUrl;
+
     @Value("${we.chat.partner.id}")
     String partnerId;
 
@@ -60,5 +63,13 @@ public class WeChatProperties {
 
     public void setPartnerId(String partnerId) {
         this.partnerId = partnerId;
+    }
+
+    public String getRefundUrl() {
+        return refundUrl;
+    }
+
+    public void setRefundUrl(String refundUrl) {
+        this.refundUrl = refundUrl;
     }
 }

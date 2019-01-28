@@ -13,11 +13,13 @@ public class WxPayInfo {
 
     private Integer status;
 
+    private Integer payStatus;
+
+    private Integer refundStatus;
+
     private String requestBody;
 
     private String responseBody;
-
-    private Date createdTime;
 
     private String sign;
 
@@ -25,9 +27,19 @@ public class WxPayInfo {
 
     private String transactionId;
 
+    private String refundId;
+
+    private String amount;
+
+    private String refundNo;
+
     private Date notifyTime;
 
-    private Integer payStatus;
+    private Date createdTime;
+
+    private Date updatedTime;
+
+    private Integer type;
 
     public Integer getId() {
         return id;
@@ -69,6 +81,22 @@ public class WxPayInfo {
         this.status = status;
     }
 
+    public Integer getPayStatus() {
+        return payStatus;
+    }
+
+    public void setPayStatus(Integer payStatus) {
+        this.payStatus = payStatus;
+    }
+
+    public Integer getRefundStatus() {
+        return refundStatus;
+    }
+
+    public void setRefundStatus(Integer refundStatus) {
+        this.refundStatus = refundStatus;
+    }
+
     public String getRequestBody() {
         return requestBody;
     }
@@ -83,14 +111,6 @@ public class WxPayInfo {
 
     public void setResponseBody(String responseBody) {
         this.responseBody = responseBody;
-    }
-
-    public Date getCreatedTime() {
-        return createdTime;
-    }
-
-    public void setCreatedTime(Date createdTime) {
-        this.createdTime = createdTime;
     }
 
     public String getSign() {
@@ -117,6 +137,30 @@ public class WxPayInfo {
         this.transactionId = transactionId;
     }
 
+    public String getRefundId() {
+        return refundId;
+    }
+
+    public void setRefundId(String refundId) {
+        this.refundId = refundId;
+    }
+
+    public String getAmount() {
+        return amount;
+    }
+
+    public void setAmount(String amount) {
+        this.amount = amount;
+    }
+
+    public String getRefundNo() {
+        return refundNo;
+    }
+
+    public void setRefundNo(String refundNo) {
+        this.refundNo = refundNo;
+    }
+
     public Date getNotifyTime() {
         return notifyTime;
     }
@@ -125,11 +169,52 @@ public class WxPayInfo {
         this.notifyTime = notifyTime;
     }
 
-    public Integer getPayStatus() {
-        return payStatus;
+    public Date getCreatedTime() {
+        return createdTime;
     }
 
-    public void setPayStatus(Integer payStatus) {
-        this.payStatus = payStatus;
+    public void setCreatedTime(Date createdTime) {
+        this.createdTime = createdTime;
+    }
+
+    public Date getUpdatedTime() {
+        return updatedTime;
+    }
+
+    public void setUpdatedTime(Date updatedTime) {
+        this.updatedTime = updatedTime;
+    }
+
+    public Integer getType() {
+        return type;
+    }
+
+    public void setType(Integer type) {
+        this.type = type;
+    }
+
+    @Override
+    public String toString() {
+        return "WxPayInfo{" +
+                "id=" + id +
+                ", userId=" + userId +
+                ", prepayId='" + prepayId + '\'' +
+                ", orderNum='" + orderNum + '\'' +
+                ", status=" + status +
+                ", payStatus=" + payStatus +
+                ", refundStatus=" + refundStatus +
+                ", requestBody='" + requestBody + '\'' +
+                ", responseBody='" + responseBody + '\'' +
+                ", sign='" + sign + '\'' +
+                ", noncestr='" + noncestr + '\'' +
+                ", transactionId='" + transactionId + '\'' +
+                ", refundId='" + refundId + '\'' +
+                ", amount='" + amount + '\'' +
+                ", refundNo='" + refundNo + '\'' +
+                ", notifyTime=" + notifyTime +
+                ", createdTime=" + createdTime +
+                ", updatedTime=" + updatedTime +
+                ", type=" + type +
+                '}';
     }
 }
