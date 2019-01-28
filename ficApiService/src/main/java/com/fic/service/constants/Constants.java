@@ -78,6 +78,7 @@ public class Constants {
         public static final String BANNER_PATH = "/api/v1/banner/**";//版本号
         public static final String LOG_OUT_PATH = "/api/v1/logout/**";//登出
         public static final String BOOT_PAGE_PATH = "/api/v1/bootPage/**";//登出
+        public static final String WE_CHAT_NOTIFY_PATH = "/api/v1/weChat/notify";//微信异步回调
         public static final Map<String,String> pathMatchFilterMap = new HashMap<String,String>();
 
         static {
@@ -92,5 +93,6 @@ public class Constants {
                 pathMatchFilterMap.put(LOG_OUT_PATH,LOG_OUT_PATH);
                 pathMatchFilterMap.put(BOOT_PAGE_PATH,BOOT_PAGE_PATH);
                 pathMatchFilterMap.put(EMAIL_PATH,EMAIL_PATH);
+                pathMatchFilterMap.put(WE_CHAT_NOTIFY_PATH,WE_CHAT_NOTIFY_PATH);
         }
 }

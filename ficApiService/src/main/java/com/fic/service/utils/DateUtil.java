@@ -103,6 +103,17 @@ public class DateUtil {
         return formatter.format(date);
     }
 
+    public static Date strMatSecToDate(String timeStamp){
+        SimpleDateFormat simpleFormatter = new SimpleDateFormat("yyyyMMddHHmmss");
+        Date date_ = null;
+        try {
+            date_ = simpleFormatter.parse(timeStamp);
+        }catch (ParseException e){
+            e.printStackTrace();
+        }
+        return date_;
+    }
+
     public static Date plusMin(Date date, int min) {
         Calendar calendar = new GregorianCalendar();
         calendar.setTime(date);

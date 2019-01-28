@@ -6,11 +6,11 @@ package com.fic.service.Enum;
  */
 public enum WxOrderStatusEnum {
 
-    BUILD_ORDER_SUCCESS(0),
-    BUILD_ORDER_FAILED(1),
-    SUCCESS(2),
-    CANCEL(3),
-    FAILED(4);
+    BUILD_ORDER_SUCCESS(0),//创建预支付成功
+    BUILD_ORDER_FAILED(1),//创建预支付失败
+    SUCCESS(2),//已完成
+    CANCEL(3),//取消
+    FAILED(4);//支付失败
 
     private Integer code;
 
