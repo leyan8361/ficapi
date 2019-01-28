@@ -839,7 +839,7 @@ public class BetScheduledService {
             }
         }
 
-        throw new RuntimeException();
+//        throw new RuntimeException();
     }
 
 
