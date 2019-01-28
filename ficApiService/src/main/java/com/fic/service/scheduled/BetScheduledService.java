@@ -686,13 +686,7 @@ public class BetScheduledService {
                                                 log.debug("连续五次竞猜 userId :{},id:{}",countBetTimeUser.get(i+4).getUserId(),countBetTimeUser.get(i+3).getId());
                                                 /** 连续五次往下 */
                                                 rewardMap.get(Constants.FIVE_T).add(userId);
-                                                if(i+5 < betSize){
-                                                    /** 若未达到size,跳到 94 */
-                                                    i = i+4;
-                                                }else{
-                                                    /** 目标index达到size ,结束 */
-                                                    break;
-                                                }
+                                                break;
                                             }else{
                                                 /** 连续四次 继续*/
                                                 rewardMap.get(Constants.FOUR_T).add(userId);
@@ -704,7 +698,6 @@ public class BetScheduledService {
                                                     break;
                                                 }
                                             }
-                                            continue;
                                         }else{
                                             /** 连续四次 结束*/
                                             rewardMap.get(Constants.FOUR_T).add(userId);
@@ -846,7 +839,7 @@ public class BetScheduledService {
             }
         }
 
-//        throw new RuntimeException();
+        throw new RuntimeException();
     }
 
 
