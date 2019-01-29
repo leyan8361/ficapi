@@ -52,7 +52,12 @@ public class BroadcastServiceImpl implements BroadcastService {
         if(type == BroadcastTypeEnum.DRAW.code()){
             /** 抽奖 */
             List<LuckyRecord> luckyRecords = luckyRecordMapper.findLastTen();
-            for(LuckyRecord record : luckyRecords){
+            /** 前5个大礼品*/
+            List<LuckyRecord> goodGift = luckyRecordMapper.findGiftCondition(1);
+            /** 后5个差礼品*/
+            List<LuckyRecord> betGift = luckyRecordMapper.findGiftCondition(2);
+
+            for(LuckyRecord record : goodGift) {
                 BetBroadcastVo broadcastVo = new BetBroadcastVo();
                 LuckyTurntable luckyTurntable = luckyTurntableMapper.get(record.getBingoPrice());
                 if(null == luckyTurntable){
@@ -61,26 +66,53 @@ public class BroadcastServiceImpl implements BroadcastService {
                 if(null == luckyTurntable.getPriceType()){
                     continue;
                 }
-                if(luckyTurntable.getPriceType() == PriceTypeEnum.TEN.code() ||
-                        luckyTurntable.getPriceType() == PriceTypeEnum.FIFTY.code() ||
-                        luckyTurntable.getPriceType() == PriceTypeEnum.FIVE_THOUSAND.code() ||
-                        luckyTurntable.getPriceType() == PriceTypeEnum.TWO_HUNDRED.code()){
+                String telephone = userMapper.findTelephoneById(record.getUserId());
+                if(StringUtils.isEmpty(telephone)){
+                    continue;
+                }
+                broadcastVo.setTelephone(RegexUtil.replaceTelephone(telephone));
+                if(luckyTurntable.getPriceType() == PriceTypeEnum.FIVE_THOUSAND.code() ||
+                                luckyTurntable.getPriceType() == PriceTypeEnum.FIFTY.code() ||
+                                luckyTurntable.getPriceType() == PriceTypeEnum.TWO_HUNDRED.code()){
                     broadcastVo.setPrice(luckyTurntable.getAmount().setScale(0,BigDecimal.ROUND_DOWN).toString() + "TFC");
-                }else if(luckyTurntable.getPriceType() == PriceTypeEnum.WORD.code()){
-                    String words[] = luckyTurntable.getPriceName().split(Constants.WORDS_CUT);
-                    if(words.length >= record.getTrace()){
-                        String word = words[record.getTrace()];
-                        broadcastVo.setPrice("淘影说：" +word);
-                    }
                 }else{
                     broadcastVo.setPrice(luckyTurntable.getPriceName());
+                }
+                broadcastVoList.add(broadcastVo);
+            }
+
+            for(LuckyRecord record : betGift) {
+                BetBroadcastVo broadcastVo = new BetBroadcastVo();
+                LuckyTurntable luckyTurntable = luckyTurntableMapper.get(record.getBingoPrice());
+                if(null == luckyTurntable){
+                    continue;
+                }
+                if(null == luckyTurntable.getPriceType()){
+                    continue;
                 }
                 String telephone = userMapper.findTelephoneById(record.getUserId());
                 if(StringUtils.isEmpty(telephone)){
                     continue;
                 }
                 broadcastVo.setTelephone(RegexUtil.replaceTelephone(telephone));
-                broadcastVoList.add(broadcastVo);
+                if(luckyTurntable.getPriceType() == PriceTypeEnum.TEN.code()){
+                    broadcastVo.setPrice(luckyTurntable.getAmount().setScale(0,BigDecimal.ROUND_DOWN).toString() + "TFC");
+                }
+                if(luckyTurntable.getPriceType() == PriceTypeEnum.WORD.code()){
+                    String words[] = luckyTurntable.getPriceName().split(Constants.WORDS_CUT);
+                    if(words.length >= record.getTrace()){
+                        String word = words[record.getTrace()];
+                        broadcastVo.setPrice("淘影说：" +word);
+                    }
+                }
+                if(StringUtils.isEmpty(broadcastVo.getPrice())){
+                    broadcastVo.setPrice(luckyTurntable.getPriceName());
+                }
+                if(broadcastVoList.size() < 10){
+                    broadcastVoList.add(broadcastVo);
+                }else{
+                    break;
+                }
             }
         }
         return new ResponseVo(ErrorCodeEnum.SUCCESS,broadcastVoList);

@@ -24,6 +24,8 @@ public interface LuckyRecordMapper {
 
     List<LuckyRecord> findLastTen();
 
+    List<LuckyRecord> findGiftCondition(@Param("type") int type);
+
     List<LuckyRecord> findByUserIdWithPage(int userId,int offset,int type);
 
     int countByBingoPrice(int bingoPrice);

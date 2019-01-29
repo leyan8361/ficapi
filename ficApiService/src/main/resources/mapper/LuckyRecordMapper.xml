@@ -149,4 +149,21 @@
   <select id="findAll" resultMap="BaseResultMap">
     select * from lucky_record;
   </select>
+  <select id="findGiftCondition" resultMap="BaseResultMap">
+    SELECT
+	r.*
+    FROM
+        lucky_record r
+    LEFT JOIN lucky_turntable t ON r.bingo_price = t.id
+    WHERE
+    <if test="type == 1">
+      (t.price_type = 3 or t.price_type = 4 or t.price_type = 5 or t.price_type = 6 or t.price_type = 7)
+      group by r.bingo_price
+    </if>
+    <if test="type == 2">
+      (t.price_type = 0 or t.price_type = 1 or t.price_type = 2)
+    </if>
+    ORDER BY
+	r.created_time DESC limit 0,10
+  </select>
 </mapper>
