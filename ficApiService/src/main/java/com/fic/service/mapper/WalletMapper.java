@@ -28,4 +28,6 @@ public interface WalletMapper {
 
     List<Wallet> findAll();
 
+    int checkIfExist(String address);
+
 }

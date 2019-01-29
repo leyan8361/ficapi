@@ -112,6 +112,49 @@ public class TransactionRecordServiceImpl implements TransactionRecordService {
 
     @Override
     @Transactional(isolation= Isolation.READ_COMMITTED,propagation= Propagation.REQUIRED,rollbackFor = Exception.class)
+    public ResponseVo addAddress(WalletAddAddressVo walletAddAddressVo) {
+        int checkIfExist = walletMapper.checkIfExist(walletAddAddressVo.getAddress());
+        if(checkIfExist > 0){
+            log.debug("该地址已被使用");
+            return new ResponseVo(ErrorCodeEnum.ADDRESS_EXIST,null);
+        }
+        Wallet wallet = new Wallet();
+        wallet.setCoinType(walletAddAddressVo.getCoinType());
+        wallet.setWalletAddress(walletAddAddressVo.getAddress());
+        wallet.setUserId(walletAddAddressVo.getUserId());
+        wallet.setUpdatedTime(new Date());
+        wallet.setCreatedTime(new Date());
+        int saveResult = walletMapper.insertSelective(wallet);
+        if(saveResult <=0){
+            log.error("新增钱包地址，保存异常");
+            throw new RuntimeException();
+        }
+        return new ResponseVo(ErrorCodeEnum.SUCCESS,null);
+    }
+
+    @Override
+    public ResponseVo getAllAddress(Integer userId) {
+        List<AddressVo> resultList = new ArrayList<>();
+        List<Wallet> findResult = walletMapper.findByUserId(userId);
+        if(findResult.size() <=0 ){
+            return new ResponseVo(ErrorCodeEnum.SUCCESS,resultList);
+        }
+        for(Wallet wallet : findResult){
+            AddressVo addressVo = new AddressVo();
+            addressVo.setAddress(wallet.getWalletAddress());
+            addressVo.setCoinType(wallet.getCoinType());
+            resultList.add(addressVo);
+        }
+        return new ResponseVo(ErrorCodeEnum.SUCCESS,resultList);
+    }
+
+    /**
+     * 提币 申请
+     * @param transactionVo
+     * @return
+     */
+    @Override
+    @Transactional(isolation= Isolation.READ_COMMITTED,propagation= Propagation.REQUIRED,rollbackFor = Exception.class)
     public ResponseVo doTransactionApply(DoTransactionVo transactionVo) {
         User user = userMapper.get(transactionVo.getUserId());
         if(null == user){
@@ -151,7 +194,7 @@ public class TransactionRecordServiceImpl implements TransactionRecordService {
         result.setTransactionAddress(serverProperties.getContactAddress());
         result.setFee(BigDecimal.ZERO);
         result.setWay(FinanceWayEnum.OUT.getCode());
-        result.setInComeTime(new Date());
+//        result.setInComeTime(new Date());
         int saveResult = transactionRecordMapper.insertSelective(result);
         if(saveResult<=0){
             log.error(" 转账申请失败，");
@@ -165,6 +208,20 @@ public class TransactionRecordServiceImpl implements TransactionRecordService {
         int updateInvestResult = investMapper.updateLockBalance(resultBalance,resultLockBalance,transactionVo.getUserId());
         if(updateInvestResult <=0){
             log.error("转出申请，更新invest失败");
+            throw new RuntimeException();
+        }
+
+        BalanceStatement transferRecord = new BalanceStatement();
+        transferRecord.setTraceId(result.getId());
+        transferRecord.setCreatedTime(new Date());
+        transferRecord.setUserId(transactionVo.getUserId());
+        transferRecord.setWay(FinanceWayEnum.OUT.getCode());
+        transferRecord.setAmount(transactionVo.getAmount());
+        transferRecord.setType(FinanceTypeEnum.TRANSFERING.getCode());
+
+        int saveBalanceResult = balanceStatementMapper.insertSelective(transferRecord);
+        if(saveBalanceResult <=0){
+            log.error("转出申请，生成余额变更记录失败");
             throw new RuntimeException();
         }
         return new ResponseVo(ErrorCodeEnum.SUCCESS,null);
@@ -420,6 +477,11 @@ public class TransactionRecordServiceImpl implements TransactionRecordService {
         return new ResponseVo(ErrorCodeEnum.SUCCESS,null);
     }
 
+    /**
+     * 站内转币
+     * @param transactionVo
+     * @return
+     */
     @Override
     public ResponseVo doTransactionApply(DoTranTokenVo transactionVo) {
         User user = userMapper.get(transactionVo.getUserId());

@@ -65,29 +65,29 @@ public class Web3jUtil {
 
     @PostConstruct
     public void init(){
-//        try{
-//            if(web3j==null){
-//                synchronized (Web3jUtil.class){
-//                    if(web3j==null){
-//                        web3j = Web3j.build(new HttpService(serverProperties.getWalletUrl()));
-//                        web3j.web3ClientVersion().send();
-//                        log.debug(" Wallet Servet Connected!");
-//                    }
-//                }
-//            }
-//            if(admin==null){
-//                synchronized (Web3jUtil.class){
-//                    if(admin==null){
-//                        admin = Admin.build(new HttpService(serverProperties.getWalletUrl()));
-//                        admin.web3ClientVersion().send();
-//                        log.debug(" Wallet Server Admin Connected!");
-//                    }
-//                }
-//            }
-//        }catch(IOException e){
-//            log.error(" Wallet Servet Connected Failed !");
-//            e.printStackTrace();
-//        }
+        try{
+            if(web3j==null){
+                synchronized (Web3jUtil.class){
+                    if(web3j==null){
+                        web3j = Web3j.build(new HttpService(serverProperties.getWalletUrl()));
+                        web3j.web3ClientVersion().send();
+                        log.debug(" Wallet Servet Connected!");
+                    }
+                }
+            }
+            if(admin==null){
+                synchronized (Web3jUtil.class){
+                    if(admin==null){
+                        admin = Admin.build(new HttpService(serverProperties.getWalletUrl()));
+                        admin.web3ClientVersion().send();
+                        log.debug(" Wallet Server Admin Connected!");
+                    }
+                }
+            }
+        }catch(IOException e){
+            log.error(" Wallet Servet Connected Failed !");
+            e.printStackTrace();
+        }
     }
 
     @PreDestroy
@@ -159,22 +159,22 @@ public class Web3jUtil {
                     gasLimit, serverProperties.getContactAddress(), encodedFunction);
             byte[] signedMessage = TransactionEncoder.signMessage(rawTransaction, credentials);
             String hexValue = Numeric.toHexString(signedMessage);
-//            EthSendTransaction ethSendTransaction = web3j.ethSendRawTransaction(hexValue).sendAsync().get();
-//            if(ethSendTransaction.hasError()){
-//                Response.Error err = ethSendTransaction.getError();
-//                if(err.getMessage().equals("insufficient funds for gas * price + value")){
-//                    log.error("Error : " + ethSendTransaction.getError().getMessage());
-//                    result.setSuccess(false);
-//                    result.setErrorCodeEnum(ErrorCodeEnum.TRAN_OUT_NOT_ENOUGH_GAS);
-//                    return result;
-//                }
-//            }
-//            transactionHash = ethSendTransaction.getTransactionHash();
-//            if(StringUtils.isEmpty(transactionHash)){
-//                result.setSuccess(false);
-//                result.setErrorCodeEnum(ErrorCodeEnum.TRAN_FAILED_EXCEPTION);
-//                return result;
-//            }
+            EthSendTransaction ethSendTransaction = web3j.ethSendRawTransaction(hexValue).sendAsync().get();
+            if(ethSendTransaction.hasError()){
+                Response.Error err = ethSendTransaction.getError();
+                if(err.getMessage().equals("insufficient funds for gas * price + value")){
+                    log.error("Error : " + ethSendTransaction.getError().getMessage());
+                    result.setSuccess(false);
+                    result.setErrorCodeEnum(ErrorCodeEnum.TRAN_OUT_NOT_ENOUGH_GAS);
+                    return result;
+                }
+            }
+            transactionHash = ethSendTransaction.getTransactionHash();
+            if(StringUtils.isEmpty(transactionHash)){
+                result.setSuccess(false);
+                result.setErrorCodeEnum(ErrorCodeEnum.TRAN_FAILED_EXCEPTION);
+                return result;
+            }
             result.setSuccess(true);
             result.setTxHash(transactionHash);
             return result;

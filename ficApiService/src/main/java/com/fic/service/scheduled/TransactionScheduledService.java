@@ -59,18 +59,6 @@ public class TransactionScheduledService {
                 log.debug("the transaction record has no txHash userId:{},tranId:{}",record.getUserId(),record.getId());
                 continue;
             }
-            QueryTransactionResultVo result  = web3jUtil.queryTransactionStatus(txHash,record.getGasPrice());
-            if(result.getStatus() == 0){
-                record.setStatus(TransactionStatusEnum.FAILED.getCode());
-                continue;
-            }
-            if(result.getStatus() != 1){
-                continue;
-            }
-            record.setStatus(TransactionStatusEnum.SUCCESS.getCode());
-            record.setFee(result.getGasUsed());
-            record.setInComeTime(new Date());
-
             User user = userMapper.get(record.getUserId());
             if(null == user){
                 log.error("1.用户不存在， 查询交易 user id :{}",record.getUserId());
@@ -82,31 +70,59 @@ public class TransactionScheduledService {
                 log.error("2.资产不存在，查询交易 user id :{}",record.getUserId());
                 continue;
             }
+            QueryTransactionResultVo result  = web3jUtil.queryTransactionStatus(txHash,record.getGasPrice());
+            if(result.getStatus() == 0){
+                /** 交易失败 */
+                record.setStatus(TransactionStatusEnum.FAILED.getCode());
+                /** 恢复 余额*/
+                if(invest.getLockBalance().compareTo(record.getAmount()) >=0){
+                    BigDecimal resultLockBalance = invest.getLockBalance().subtract(record.getAmount());
+                    BigDecimal balance = invest.getBalance().add(record.getAmount());
+                    int updateLockBalance = investMapper.updateLockBalance(balance,resultLockBalance,invest.getUserId());
+                    if(updateLockBalance <=0){
+                        log.error("3.更新资产失败，查询交易，user id :{}",record.getUserId());
+                        throw new RuntimeException();
+                    }
+                }else{
+                    log.error("4.监听到账，用户锁定金额不足以扣款，异常处理");
+                    continue;
+                }
+                continue;
+            }
+            if(result.getStatus() != 1){
+                continue;
+            }
+            record.setStatus(TransactionStatusEnum.SUCCESS.getCode());
+            record.setFee(result.getGasUsed());
+            record.setInComeTime(new Date());
 
-            if(invest.getLockBalance().compareTo(record.getAmount()) >0){
+            if(invest.getLockBalance().compareTo(record.getAmount()) >=0){
                 BigDecimal resultLockBalance = invest.getLockBalance().subtract(record.getAmount());
                 int updateLockBalance = investMapper.updateLockBalance(invest.getBalance(),resultLockBalance,invest.getUserId());
                 if(updateLockBalance <=0){
                     log.error("3.更新资产失败，查询交易，user id :{}",record.getUserId());
                     throw new RuntimeException();
                 }
+            }else{
+                log.error("4.监听到账，用户锁定金额不足以扣款，异常处理");
+                continue;
             }
 
             /**
              * 处理余额
              */
-            BalanceStatement balanceStatement = new BalanceStatement();
-            balanceStatement.setUserId(user.getId());
-            balanceStatement.setCreatedTime(new Date());
-            balanceStatement.setType(FinanceTypeEnum.TRANSFER_OUT.getCode());
-            balanceStatement.setAmount(record.getAmount());
-            balanceStatement.setWay(FinanceWayEnum.OUT.getCode());
-            balanceStatement.setTraceId(record.getId());
-            int saveBalanceResult = balanceStatementMapper.insertSelective(balanceStatement);
-            if(saveBalanceResult <=0){
-                log.error("4.转出，生成余额失败 balance statement :{}",balanceStatement.toString());
-                throw new RuntimeException();
-            }
+//            BalanceStatement balanceStatement = new BalanceStatement();
+//            balanceStatement.setUserId(user.getId());
+//            balanceStatement.setCreatedTime(new Date());
+//            balanceStatement.setType(FinanceTypeEnum.TRANSFER_OUT.getCode());
+//            balanceStatement.setAmount(record.getAmount());
+//            balanceStatement.setWay(FinanceWayEnum.OUT.getCode());
+//            balanceStatement.setTraceId(record.getId());
+//            int saveBalanceResult = balanceStatementMapper.insertSelective(balanceStatement);
+//            if(saveBalanceResult <=0){
+//                log.error("4.转出，生成余额失败 balance statement :{}",balanceStatement.toString());
+//                throw new RuntimeException();
+//            }
         }
         int updateResult = transactionRecordMapper.updateStatusForeachList(waitConfirmTran);
         if(waitConfirmTran.size() > 0 && updateResult <=0){

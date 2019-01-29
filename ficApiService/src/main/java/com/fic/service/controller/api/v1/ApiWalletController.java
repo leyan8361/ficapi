@@ -2,10 +2,7 @@ package com.fic.service.controller.api.v1;
 
 
 import com.fic.service.Enum.ErrorCodeEnum;
-import com.fic.service.Vo.AppTransactionRecordVo;
-import com.fic.service.Vo.DoTranTokenVo;
-import com.fic.service.Vo.DoTransactionVo;
-import com.fic.service.Vo.ResponseVo;
+import com.fic.service.Vo.*;
 import com.fic.service.service.TransactionRecordService;
 import com.fic.service.service.WalletService;
 import io.swagger.annotations.*;
@@ -44,17 +41,6 @@ public class ApiWalletController {
         return ResponseEntity.ok(new ResponseVo(ErrorCodeEnum.SUCCESS,result));
     }
 
-//    @PostMapping("/doTransactionOutApply")
-//    @ApiOperation("Api-申请转出")
-//    @ApiResponses({
-//            @ApiResponse(code = 200, message = "SUCCESS",response = BigInteger.class)
-//    })
-//    public ResponseEntity doTransactionOutApply(@RequestBody DoTransactionVo transactionVo) {
-//        log.debug(" doTransactionOutApply action !!");
-//        ResponseVo result = transactionRecordService.doTransactionApply(transactionVo);
-//        return ResponseEntity.ok(new ResponseVo(ErrorCodeEnum.SUCCESS,result));
-//    }
-
     @PostMapping("/doTransactionOutApply")
     @ApiOperation("Api-申请转出")
     @ApiResponses({
@@ -83,4 +69,31 @@ public class ApiWalletController {
         ResponseVo result = transactionRecordService.getTransactionRecord(userId,pageNum);
         return ResponseEntity.ok(result);
     }
+
+    @PostMapping("/addWalletAddress")
+    @ApiOperation("Api-添加钱包地址")
+    @ApiResponses({
+            @ApiResponse(code = 6007, message = "ADDRESS_EXIST"),
+            @ApiResponse(code = 200, message = "SUCCESS")
+    })
+    public ResponseEntity addWalletAddress(@RequestBody WalletAddAddressVo walletAddAddressVo) {
+        log.debug(" addWalletAddress action !!");
+        ResponseVo result = transactionRecordService.addAddress(walletAddAddressVo);
+        return ResponseEntity.ok(result);
+    }
+
+    @PostMapping("/getAllAddress")
+    @ApiOperation("Api-获取所有地址")
+    @ApiImplicitParams({
+            @ApiImplicitParam(dataType = "int", name = "userId", value = "用户ID", required = true)
+    })
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "SUCCESS",response = AddressVo.class)
+    })
+    public ResponseEntity getAllAddress(@RequestParam Integer userId) {
+        log.debug(" getAllAddress action !!");
+        ResponseVo result = transactionRecordService.getAllAddress(userId);
+        return ResponseEntity.ok(result);
+    }
+
 }

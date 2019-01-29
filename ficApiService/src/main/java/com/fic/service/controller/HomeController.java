@@ -92,8 +92,8 @@ public class HomeController {
 //         List<String> result = web3jUtil.getAccountlist();
 //        web3jUtil.unLock("0x937b3080025cdae1a7e9f564405ecc29beeaa181","f379eaf3c831b04de153469d1bec345e");
 //        web3jUtil.getEthBalance(toAddress);
-//        QueryTransactionResultVo result = web3jUtil.queryTransactionStatus(txHash,new BigDecimal(0.000000004));
-//        log.debug(" hash : {} ，状态 : {}, gasFee :{}",txHash,result.getStatus(),result.getGasUsed());
+        QueryTransactionResultVo result = web3jUtil.queryTransactionStatus(txHash,new BigDecimal(0.000000004));
+        log.debug(" hash : {} ，状态 : {}, gasFee :{}",txHash,result.getStatus(),result.getGasUsed());
 //        transactionRecordService.doTransactionOut(userId,amount,toAddress);
         return ResponseEntity.ok().body("success");
     }

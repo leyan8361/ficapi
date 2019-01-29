@@ -3,6 +3,7 @@ package com.fic.service.service;
 import com.fic.service.Vo.DoTranTokenVo;
 import com.fic.service.Vo.DoTransactionVo;
 import com.fic.service.Vo.ResponseVo;
+import com.fic.service.Vo.WalletAddAddressVo;
 
 import java.math.BigDecimal;
 
@@ -19,6 +20,10 @@ public interface TransactionRecordService{
     ResponseVo approve(int id,String remark);
     //TODO
     ResponseVo reject(int id,String remark);
+
+    ResponseVo addAddress(WalletAddAddressVo walletAddAddressVo);
+
+    ResponseVo getAllAddress(Integer userId);
 
     ResponseVo approveForTFC(int id,String remark);
 

@@ -59,7 +59,7 @@ public class TransactionController {
     }
 
     @GetMapping("/approveTransaction")
-    @ApiOperation("Api-审核转出申请")
+    @ApiOperation("Api-App站内转出 审核")
     @ApiImplicitParams({
             @ApiImplicitParam(dataType = "int", name = "id", value = "转账ID", required = true),
             @ApiImplicitParam(dataType = "boolean", name = "approve", value = "(true,通过)(false,不通过)",required = true),
@@ -80,6 +80,32 @@ public class TransactionController {
             response = transactionRecordService.approveForTFC(id,remark);
         }else{
             response = transactionRecordService.rejectForTFC(id,remark);
+        }
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/approveToExchange")
+    @ApiOperation("Api-转出-->交易所 审核")
+    @ApiImplicitParams({
+            @ApiImplicitParam(dataType = "int", name = "id", value = "转账ID", required = true),
+            @ApiImplicitParam(dataType = "boolean", name = "approve", value = "(true,通过)(false,不通过)",required = true),
+            @ApiImplicitParam(dataType = "string", name = "remark", value = "备注"),
+    })
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "SUCCESS")
+    })
+    public ResponseEntity approveToExchange(@RequestParam int id,@RequestParam boolean approve,@RequestParam(required = false) String remark) {
+        log.debug(" approveToExchange Action !!!");
+        TransactionRecord result = transactionRecordMapper.selectByPrimaryKey(id);
+        if(null == result){
+            log.error(" transaction not found id:{}",id);
+            return ResponseEntity.ok(new ResponseVo(ErrorCodeEnum.TRANSACTION_NOT_FOUND,null));
+        }
+        ResponseVo response = null;
+        if(approve){
+            response = transactionRecordService.approve(id,remark);
+        }else{
+            response = transactionRecordService.reject(id,remark);
         }
         return ResponseEntity.ok(response);
     }
