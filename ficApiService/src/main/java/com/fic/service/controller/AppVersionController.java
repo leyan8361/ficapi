@@ -48,7 +48,7 @@ public class AppVersionController {
     })
     public ResponseEntity add(@RequestParam(name = "version") String version,
                               @RequestParam(name = "deviceType") int deviceType,
-                              @ApiParam(value = "对应版本的app安装文件",name = "appFile",required = true) MultipartFile appFile) {
+                              @ApiParam(value = "对应版本的app安装文件",name = "appFile",required = false) MultipartFile appFile) {
         log.debug(" app version add Action !!!");
         ResponseVo responseVo = appVersionService.add(version,deviceType,appFile);
         return ResponseEntity.ok(responseVo);
@@ -60,7 +60,7 @@ public class AppVersionController {
             @ApiImplicitParam(dataType = "int", name = "id", value = "版本ID", required = true),
             @ApiImplicitParam(dataType = "string", name = "version", value = "版本号", required = true,example = "vX.X.X,vXX.XX.XX"),
             @ApiImplicitParam(dataType = "int", name = "deviceType", value = "客户端类型 [0,android],[1,ios]", required = true, example = "0"),
-            @ApiImplicitParam(dataType = "file", name = "appFile", value = "对应版本的app安装文件", required = true)
+            @ApiImplicitParam(dataType = "file", name = "appFile", value = "对应版本的app安装文件", required = false)
     })
     @ApiResponses({
             @ApiResponse(code = 3201, message = "EXIST"),
