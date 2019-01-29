@@ -14,10 +14,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -99,6 +96,31 @@ public class WalletController {
             return ResponseEntity.ok(new ResponseVo(ErrorCodeEnum.SUCCESS,wallet));
         }
         return ResponseEntity.ok(new ResponseVo(ErrorCodeEnum.SUCCESS,resultList));
+    }
+
+    @DeleteMapping("/deleteAll")
+    @ApiOperation("Api-删除所有用户钱包")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "SUCCESS")
+    })
+    public ResponseEntity deleteAll() {
+        log.debug(" deleteAll Action !!!");
+        ResponseVo result = walletService.deleteAll();
+        return ResponseEntity.ok(result);
+    }
+
+    @DeleteMapping("/deleteByUserId")
+    @ApiOperation("Api-删除某个用户所有钱包")
+    @ApiImplicitParams({
+            @ApiImplicitParam(dataType = "int", name = "userId", value = "用户ID", required = true)
+    })
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "SUCCESS")
+    })
+    public ResponseEntity deleteByUserId(@RequestParam Integer userId) {
+        log.debug(" deleteByUserId Action !!!");
+        ResponseVo result = walletService.deleteByUserId(userId);
+        return ResponseEntity.ok(result);
     }
 
 }

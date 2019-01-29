@@ -27,14 +27,14 @@ public class ApiWalletController {
     @Autowired
     TransactionRecordService transactionRecordService;
 
-    @GetMapping("/getBalance")
-    @ApiOperation("Api-查询钱包余额")
-    @ApiImplicitParams({
-            @ApiImplicitParam(dataType = "int", name = "userId", value = "用户ID", required = true)
-    })
-    @ApiResponses({
-            @ApiResponse(code = 200, message = "SUCCESS",response = BigInteger.class)
-    })
+//    @GetMapping("/getBalance")
+//    @ApiOperation("Api-查询钱包余额")
+//    @ApiImplicitParams({
+//            @ApiImplicitParam(dataType = "int", name = "userId", value = "用户ID", required = true)
+//    })
+//    @ApiResponses({
+//            @ApiResponse(code = 200, message = "SUCCESS",response = BigInteger.class)
+//    })
     public ResponseEntity getBalance(@RequestParam int userId) {
         log.debug(" do getTokenBalance action !!");
         ResponseVo result = walletService.queryBalanceByUserId(userId);
@@ -42,15 +42,27 @@ public class ApiWalletController {
     }
 
     @PostMapping("/doTransactionOutApply")
-    @ApiOperation("Api-申请转出")
+    @ApiOperation("Api-站内申请转出")
     @ApiResponses({
             @ApiResponse(code = 6005, message = "PAYEE_NOT_EXIST"),
             @ApiResponse(code = 6006, message = "TRAN_CAN_NOT_TO_SELF"),
             @ApiResponse(code = 2001, message = "INVEST_BALANCE_NOT_ENOUGH"),
             @ApiResponse(code = 200, message = "SUCCESS",response = BigInteger.class)
     })
-    public ResponseEntity doTransactionOutApply(@RequestBody DoTranTokenVo transactionVo) {
+    public ResponseEntity doTransactionOutApplyForApp(@RequestBody DoTranTokenVo transactionVo) {
         log.debug(" doTransactionOutApply action !!");
+        ResponseVo result = transactionRecordService.doTransactionApply(transactionVo);
+        return ResponseEntity.ok(result);
+    }
+
+    @PostMapping("/doTransactionOutApplyForEx")
+    @ApiOperation("Api-站外申请转出")
+    @ApiResponses({
+            @ApiResponse(code = 2001, message = "INVEST_BALANCE_NOT_ENOUGH"),
+            @ApiResponse(code = 200, message = "SUCCESS",response = BigInteger.class)
+    })
+    public ResponseEntity doTransactionOutApplyForExchange(@RequestBody DoTransactionVo transactionVo) {
+        log.debug(" doTransactionOutApplyForEx action !!");
         ResponseVo result = transactionRecordService.doTransactionApply(transactionVo);
         return ResponseEntity.ok(result);
     }

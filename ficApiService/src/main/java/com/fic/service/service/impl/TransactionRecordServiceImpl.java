@@ -7,6 +7,7 @@ import com.fic.service.Enum.TransactionStatusEnum;
 import com.fic.service.Vo.*;
 import com.fic.service.constants.Constants;
 import com.fic.service.constants.ServerProperties;
+import com.fic.service.constants.UploadProperties;
 import com.fic.service.entity.*;
 import com.fic.service.mapper.*;
 import com.fic.service.service.TransactionRecordService;
@@ -14,7 +15,9 @@ import com.fic.service.utils.BeanUtil;
 import com.fic.service.utils.DateUtil;
 import com.fic.service.utils.RegexUtil;
 import com.fic.service.utils.Web3jUtil;
+import jnr.constants.Constant;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.tomcat.util.bcel.Const;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -77,16 +80,20 @@ public class TransactionRecordServiceImpl implements TransactionRecordService {
             throw new RuntimeException();
         }
         BigDecimal walletBalance = web3jUtil.getEthBalance(record.getFromAddress());
-        if(BigDecimal.ZERO.compareTo(walletBalance) <= 0){
+        if(walletBalance.compareTo(BigDecimal.ZERO) <= 0){
             log.debug("审批转出申请，地址ETH余额不足，无法转出 wallet adderss :{}",record.getFromAddress());
             return new ResponseVo(ErrorCodeEnum.TRAN_OUT_NOT_ENOUGH_GAS,"用户钱包地址无以太坊，无法转出");
         }
         Wallet wallet = walletMapper.findByAddressByCompany(record.getUserId());
 
-        TransactionOutVo result = web3jUtil.doTransactionOut(record.getAmount(),wallet.getPassword(),wallet.getKeystore(),record.getToAddress());
+        String keyStore = serverProperties.getStoreLocation()+record.getUserId()+"/"+wallet.getKeystore();
+        TransactionOutVo result = web3jUtil.doTransactionOut(record.getAmount(),wallet.getPassword(),keyStore,record.getToAddress());
         if(!result.isSuccess()){
             log.debug("审批转出申请，转出发送合约失败");
             return new ResponseVo(result.getErrorCodeEnum(),null);
+        }
+        if(null != result.getGasPrice()){
+            record.setGasPrice(new BigDecimal(result.getGasPrice()));
         }
         record.setTransactionHash(result.getTxHash());
         record.setStatus(TransactionStatusEnum.WAIT_CONFIRM.getCode());
@@ -179,7 +186,7 @@ public class TransactionRecordServiceImpl implements TransactionRecordService {
         }
 
         BigDecimal walletBalance = web3jUtil.getEthBalance(wallet.getWalletAddress());
-        if(BigDecimal.ZERO.compareTo(walletBalance) <= 0){
+        if(walletBalance.compareTo(BigDecimal.ZERO) <= 0){
             log.debug("转出申请不允许，钱包余额不足， wallet adderss :{}",wallet.getWalletAddress());
             return new ResponseVo(ErrorCodeEnum.TRAN_OUT_NOT_ENOUGH_GAS,null);
         }
@@ -190,6 +197,7 @@ public class TransactionRecordServiceImpl implements TransactionRecordService {
         result.setToAddress(transactionVo.getToAddress());
         result.setStatus(TransactionStatusEnum.APPLY.getCode());
         result.setCreatedTime(new Date());
+        result.setCoinType(Constants.TFC);
         result.setUserId(transactionVo.getUserId());
         result.setTransactionAddress(serverProperties.getContactAddress());
         result.setFee(BigDecimal.ZERO);

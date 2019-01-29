@@ -11,7 +11,9 @@ import com.fic.service.mapper.TransactionRecordMapper;
 import com.fic.service.mapper.UserMapper;
 import com.fic.service.mapper.WalletMapper;
 import com.fic.service.service.WalletService;
+import com.fic.service.utils.FileUtil;
 import com.fic.service.utils.Web3jUtil;
+import net.bytebuddy.asm.Advice;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,6 +41,8 @@ public class WalletServiceImpl implements WalletService {
     WalletMapper walletMapper;
     @Autowired
     TransactionRecordMapper transactionRecordMapper;
+    @Autowired
+    FileUtil fileUtil;
 
     @Override
     public List<Wallet> findAll() {
@@ -69,6 +73,7 @@ public class WalletServiceImpl implements WalletService {
         wallet.setCreatedTime(new Date());
         wallet.setUpdatedTime(new Date());
         wallet.setBalance(BigInteger.ZERO);
+        wallet.setPassword(user.getPassword());
         wallet.setCoinType(Constants.TFC);
         wallet.setCreatedBy(1);//标记为公司生成的
         int saveResult = walletMapper.insertSelective(wallet);
@@ -95,5 +100,18 @@ public class WalletServiceImpl implements WalletService {
         return new ResponseVo(ErrorCodeEnum.SUCCESS,balance);
     }
 
+    @Override
+    public ResponseVo deleteAll() {
+        walletMapper.deleteAll();
+        fileUtil.delete(serverProperties.getStoreLocation());
+        return new ResponseVo(ErrorCodeEnum.SUCCESS,null);
+    }
 
+    @Override
+    public ResponseVo deleteByUserId(Integer userId) {
+        walletMapper.deleteByUserId(userId);
+        String path = serverProperties.getStoreLocation()+userId+"/";
+        fileUtil.delete(path);
+        return new ResponseVo(ErrorCodeEnum.SUCCESS,null);
+    }
 }

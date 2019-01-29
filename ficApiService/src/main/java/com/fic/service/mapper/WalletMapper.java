@@ -28,6 +28,10 @@ public interface WalletMapper {
 
     List<Wallet> findAll();
 
+    int deleteAll();
+
+    int deleteByUserId(Integer userId);
+
     int checkIfExist(String address);
 
 }

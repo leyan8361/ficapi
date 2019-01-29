@@ -462,9 +462,14 @@ public class DateUtil {
 
     public static void main(String args[]){
 //        boxInfo.setScale(0,BigDecimal.ROUND_DOWN).remainder(new BigDecimal("2")).compareTo(BigDecimal.ZERO) == 0
-//        BigDecimal test = new BigDecimal("7");
+        BigDecimal test = new BigDecimal("0.000099");
 //        BigDecimal test1 = new BigDecimal("9");
 //        System.out.println(test.divide(test1,2,BigDecimal.ROUND_DOWN));
+        if(test.compareTo(BigDecimal.ZERO) > 0){
+            System.out.println(true);
+        }else{
+            System.out.println(false);
+        }
     }
 
 

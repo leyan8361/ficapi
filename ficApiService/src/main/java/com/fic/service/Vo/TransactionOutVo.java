@@ -2,6 +2,9 @@ package com.fic.service.Vo;
 
 import com.fic.service.Enum.ErrorCodeEnum;
 
+import java.math.BigDecimal;
+import java.math.BigInteger;
+
 /**
  * @Author Xie
  * @Date $date$
@@ -14,6 +17,8 @@ public class TransactionOutVo {
     private String txHash;
 
     private ErrorCodeEnum errorCodeEnum;
+
+    private BigInteger gasPrice;
 
     public boolean isSuccess() {
         return success;
@@ -37,5 +42,13 @@ public class TransactionOutVo {
 
     public void setErrorCodeEnum(ErrorCodeEnum errorCodeEnum) {
         this.errorCodeEnum = errorCodeEnum;
+    }
+
+    public BigInteger getGasPrice() {
+        return gasPrice;
+    }
+
+    public void setGasPrice(BigInteger gasPrice) {
+        this.gasPrice = gasPrice;
     }
 }

@@ -159,7 +159,7 @@ public class Web3jUtil {
                     gasLimit, serverProperties.getContactAddress(), encodedFunction);
             byte[] signedMessage = TransactionEncoder.signMessage(rawTransaction, credentials);
             String hexValue = Numeric.toHexString(signedMessage);
-            EthSendTransaction ethSendTransaction = web3j.ethSendRawTransaction(hexValue).sendAsync().get();
+            EthSendTransaction ethSendTransaction = null;//web3j.ethSendRawTransaction(hexValue).sendAsync().get();
             if(ethSendTransaction.hasError()){
                 Response.Error err = ethSendTransaction.getError();
                 if(err.getMessage().equals("insufficient funds for gas * price + value")){
@@ -175,6 +175,7 @@ public class Web3jUtil {
                 result.setErrorCodeEnum(ErrorCodeEnum.TRAN_FAILED_EXCEPTION);
                 return result;
             }
+            result.setGasPrice(gasPrice);
             result.setSuccess(true);
             result.setTxHash(transactionHash);
             return result;

@@ -1,12 +1,11 @@
 package com.fic.service.scheduled;
 
-import com.fic.service.Enum.ErrorCodeEnum;
-import com.fic.service.Enum.FinanceTypeEnum;
-import com.fic.service.Enum.FinanceWayEnum;
 import com.fic.service.Enum.TransactionStatusEnum;
 import com.fic.service.Vo.QueryTransactionResultVo;
-import com.fic.service.Vo.ResponseVo;
-import com.fic.service.entity.*;
+import com.fic.service.entity.BalanceStatement;
+import com.fic.service.entity.Invest;
+import com.fic.service.entity.TransactionRecord;
+import com.fic.service.entity.User;
 import com.fic.service.mapper.BalanceStatementMapper;
 import com.fic.service.mapper.InvestMapper;
 import com.fic.service.mapper.TransactionRecordMapper;
@@ -21,7 +20,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-import org.web3j.utils.Convert;
 
 import java.math.BigDecimal;
 import java.util.Date;
@@ -48,7 +46,7 @@ public class TransactionScheduledService {
      * 查询交易
      * status (0,失败)(1,成功)(2,交易挂起)
      */
-//    @Scheduled(cron = "*/30 * * * * ?")
+    @Scheduled(cron = "*/30 * * * * ?")
     @Transactional(isolation= Isolation.READ_COMMITTED,propagation= Propagation.REQUIRED,rollbackFor = Exception.class)
     public void doQueryTransactionStatus() {
         log.debug(" do update transaction status !");
@@ -75,6 +73,16 @@ public class TransactionScheduledService {
                 /** 交易失败 */
                 record.setStatus(TransactionStatusEnum.FAILED.getCode());
                 /** 恢复 余额*/
+                BalanceStatement balanceStatement = balanceStatementMapper.findByUserIdAndTransfing(record.getUserId(),record.getId());
+                if(null == balanceStatement){
+                    log.error("监听到账，恢复余额失败 userId :{},tran record :{}",record.getUserId(),record.getId());
+                    continue;
+                }
+                int deleteBalance = balanceStatementMapper.deleteByPrimaryKey(balanceStatement.getId());
+                if(deleteBalance <=0){
+                    log.error("监听到账，恢复余额失败，balance id :{}",balanceStatement.getId());
+                    throw new RuntimeException();
+                }
                 if(invest.getLockBalance().compareTo(record.getAmount()) >=0){
                     BigDecimal resultLockBalance = invest.getLockBalance().subtract(record.getAmount());
                     BigDecimal balance = invest.getBalance().add(record.getAmount());
@@ -93,7 +101,9 @@ public class TransactionScheduledService {
                 continue;
             }
             record.setStatus(TransactionStatusEnum.SUCCESS.getCode());
-            record.setFee(result.getGasUsed());
+            if(null != result.getGasUsed()){
+                record.setFee(result.getGasUsed());
+            }
             record.setInComeTime(new Date());
 
             if(invest.getLockBalance().compareTo(record.getAmount()) >=0){
@@ -124,11 +134,14 @@ public class TransactionScheduledService {
 //                throw new RuntimeException();
 //            }
         }
-        int updateResult = transactionRecordMapper.updateStatusForeachList(waitConfirmTran);
-        if(waitConfirmTran.size() > 0 && updateResult <=0){
-            log.error("update transaction status failed!");
-            throw new RuntimeException();
+        if(waitConfirmTran.size() >0){
+            int updateResult = transactionRecordMapper.updateStatusForeachList(waitConfirmTran);
+            if(waitConfirmTran.size() > 0 && updateResult <=0){
+                log.error("update transaction status failed!");
+                throw new RuntimeException();
+            }
         }
+
     }
 
 //    @Scheduled(cron = "*/5 * * * * ?")

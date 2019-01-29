@@ -30,5 +30,5 @@ public interface TransactionRecordMapper {
 
     List<TransactionRecord> findAllWaitConfirm();
 
-    int updateStatusForeachList(List<TransactionRecord> recordList);
+    int updateStatusForeachList(@Param("recordList") List<TransactionRecord> recordList);
 }

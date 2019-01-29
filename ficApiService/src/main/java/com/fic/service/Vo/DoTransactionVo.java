@@ -16,10 +16,10 @@ public class DoTransactionVo {
     @ApiModelProperty(value = "用户ID",required = true)
     private Integer userId;
 
-    @ApiModelProperty("转入转出目标地址,当转入时，此项不用填写")
+    @ApiModelProperty(value = "转出目标地址",required = true)
     private String toAddress;
 
-    @ApiModelProperty(value = "转账金额",required = true)
+    @ApiModelProperty(value = "转账金额(TFC)",required = true)
     private BigDecimal amount;
 
     public Integer getUserId() {

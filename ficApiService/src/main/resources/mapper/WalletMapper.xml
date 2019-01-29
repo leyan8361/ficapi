@@ -173,4 +173,10 @@
   <select id="checkIfExist" resultMap="BaseResultMap">
     select count(*) from wallet where wallet_address = #{address}
   </select>
+  <delete id="deleteAll">
+    delete from wallet where 1=1;
+  </delete>
+  <delete id="deleteByUserId">
+    delete from wallet where user_id = #{userId}
+  </delete>
 </mapper>

@@ -36,6 +36,15 @@ public interface WalletService {
      */
     ResponseVo queryBalanceByUserId(int userId);
 
+    /**
+     * 删除所有用户钱包
+     */
+    ResponseVo deleteAll();
+    /**
+     * 删除某个用户钱包
+     */
+    ResponseVo deleteByUserId(Integer userId);
+
 
 
 }

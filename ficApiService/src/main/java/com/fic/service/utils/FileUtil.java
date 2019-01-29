@@ -56,6 +56,20 @@ public class FileUtil {
         toDelete.deleteOnExit();
     }
 
+    public void delete(String path){
+        File toDelete = new File(path);
+        File [] b = toDelete.listFiles();
+        for(int i =0;i<b.length;i++){
+            if(b[i].isFile()){
+                b[i].delete();
+            }else{
+                deleteAll(b[i]);
+            }
+        }
+        toDelete.delete();
+    }
+
+
     public void deleteAll(File f){
         File [] b = f.listFiles();
         for(int i =0;i<b.length;i++){
