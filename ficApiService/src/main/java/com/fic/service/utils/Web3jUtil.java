@@ -159,7 +159,7 @@ public class Web3jUtil {
                     gasLimit, serverProperties.getContactAddress(), encodedFunction);
             byte[] signedMessage = TransactionEncoder.signMessage(rawTransaction, credentials);
             String hexValue = Numeric.toHexString(signedMessage);
-            EthSendTransaction ethSendTransaction = null;//web3j.ethSendRawTransaction(hexValue).sendAsync().get();
+            EthSendTransaction ethSendTransaction = web3j.ethSendRawTransaction(hexValue).sendAsync().get();
             if(ethSendTransaction.hasError()){
                 Response.Error err = ethSendTransaction.getError();
                 if(err.getMessage().equals("insufficient funds for gas * price + value")){
@@ -235,6 +235,7 @@ public class Web3jUtil {
             if(statusInt.compareTo(BigInteger.ONE) == 0){
                 BigInteger gasUsedRaw = Numeric.decodeQuantity(transactionReceipt.getGasUsedRaw());
                 BigDecimal gasUsed = new BigDecimal(gasUsedRaw.intValue()).multiply(gasPrice).setScale(9,BigDecimal.ROUND_HALF_UP);
+                gasUsed = Convert.fromWei(gasUsed, Convert.Unit.ETHER);
                 resultVo.setGasUsed(gasUsed);
                 resultVo.setFrom(transactionReceipt.getFrom());
                 resultVo.setTo(transactionReceipt.getTo());

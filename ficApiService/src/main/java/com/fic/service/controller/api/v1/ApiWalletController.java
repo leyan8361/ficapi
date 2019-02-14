@@ -108,4 +108,18 @@ public class ApiWalletController {
         return ResponseEntity.ok(result);
     }
 
+    @DeleteMapping("/deleteById")
+    @ApiOperation("Api-删除某个钱包地址")
+    @ApiImplicitParams({
+            @ApiImplicitParam(dataType = "int", name = "id", value = "钱包地址ID", required = true)
+    })
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "SUCCESS",response = AddressVo.class)
+    })
+    public ResponseEntity deleteById(@RequestParam Integer id) {
+        log.debug(" delete wallet by id  action !!");
+        ResponseVo result = walletService.deleteById(id);
+        return ResponseEntity.ok(result);
+    }
+
 }

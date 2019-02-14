@@ -14,7 +14,7 @@ public class WalletAddAddressVo {
     @ApiModelProperty(value = "用户ID",required = true)
     private Integer userId;
 
-    @ApiModelProperty(value = "币种",required = true)
+    @ApiModelProperty(value = "币种",required = true,example = "TFC")
     private String coinType;
 
     @ApiModelProperty(value = "地址",required = true)

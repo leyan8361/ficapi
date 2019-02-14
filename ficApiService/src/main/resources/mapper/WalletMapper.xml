@@ -170,7 +170,7 @@
   <select id="findByUserId" resultMap="BaseResultMap">
     select * from wallet where user_id = #{userId};
   </select>
-  <select id="checkIfExist" resultMap="BaseResultMap">
+  <select id="checkIfExist" resultType="int">
     select count(*) from wallet where wallet_address = #{address}
   </select>
   <delete id="deleteAll">

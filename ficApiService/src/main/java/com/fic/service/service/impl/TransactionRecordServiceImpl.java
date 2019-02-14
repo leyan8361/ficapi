@@ -148,6 +148,12 @@ public class TransactionRecordServiceImpl implements TransactionRecordService {
         }
         for(Wallet wallet : findResult){
             AddressVo addressVo = new AddressVo();
+            if(null == wallet.getCreatedBy()){
+                addressVo.setType(1);
+            }else{
+                addressVo.setType(0);
+            }
+            addressVo.setId(wallet.getId());
             addressVo.setAddress(wallet.getWalletAddress());
             addressVo.setCoinType(wallet.getCoinType());
             resultList.add(addressVo);

@@ -101,6 +101,7 @@ public class WalletServiceImpl implements WalletService {
     }
 
     @Override
+    @Transactional(isolation= Isolation.READ_COMMITTED,propagation= Propagation.REQUIRED,rollbackFor = Exception.class)
     public ResponseVo deleteAll() {
         walletMapper.deleteAll();
         fileUtil.delete(serverProperties.getStoreLocation());
@@ -108,10 +109,18 @@ public class WalletServiceImpl implements WalletService {
     }
 
     @Override
+    @Transactional(isolation= Isolation.READ_COMMITTED,propagation= Propagation.REQUIRED,rollbackFor = Exception.class)
     public ResponseVo deleteByUserId(Integer userId) {
         walletMapper.deleteByUserId(userId);
         String path = serverProperties.getStoreLocation()+userId+"/";
         fileUtil.delete(path);
+        return new ResponseVo(ErrorCodeEnum.SUCCESS,null);
+    }
+
+    @Override
+    @Transactional(isolation= Isolation.READ_COMMITTED,propagation= Propagation.REQUIRED,rollbackFor = Exception.class)
+    public ResponseVo deleteById(Integer id) {
+        walletMapper.deleteByPrimaryKey(id);
         return new ResponseVo(ErrorCodeEnum.SUCCESS,null);
     }
 }

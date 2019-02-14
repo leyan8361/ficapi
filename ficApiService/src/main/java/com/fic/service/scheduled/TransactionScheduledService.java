@@ -105,7 +105,6 @@ public class TransactionScheduledService {
                 record.setFee(result.getGasUsed());
             }
             record.setInComeTime(new Date());
-
             if(invest.getLockBalance().compareTo(record.getAmount()) >=0){
                 BigDecimal resultLockBalance = invest.getLockBalance().subtract(record.getAmount());
                 int updateLockBalance = investMapper.updateLockBalance(invest.getBalance(),resultLockBalance,invest.getUserId());

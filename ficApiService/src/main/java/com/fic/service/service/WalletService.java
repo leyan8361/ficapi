@@ -41,10 +41,13 @@ public interface WalletService {
      */
     ResponseVo deleteAll();
     /**
-     * 删除某个用户钱包
+     * 删除某个用户钱包 OM删除
      */
     ResponseVo deleteByUserId(Integer userId);
-
+    /**
+     * 删除用户添加的钱包地址
+     */
+    ResponseVo deleteById(Integer id);
 
 
 }
